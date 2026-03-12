@@ -173,7 +173,7 @@
                 <div class="w-full bg-white p-4 rounded-xl shadow-sm border border-gray-100 text-sm">
                     <h4 class="font-bold text-gray-900 mb-2 border-b pb-1">Spécifications Jante</h4>
                     <div class="flex justify-between mb-1"><span class="text-gray-500">Hauteur:</span> <span id="modal-hauteur" class="font-semibold text-gray-800"></span></div>
-                    <div class="flex justify-between"><span class="text-gray-500">Finition:</span> <span class="font-semibold text-gray-800">UD Matte Carbone</span></div>
+                    <div class="flex justify-between"><span class="text-gray-500">Profil:</span> <span class="font-semibold text-gray-800">Aérodynamique optimisé</span></div>
                 </div>
             </div>
             
@@ -200,7 +200,7 @@
                     </div>
                     
                     <!-- Choix des Rayons -->
-                    <div>
+                    <div class="mb-5">
                         <label class="block text-xs font-bold text-gray-500 mb-2">2. Rayons (Spokes)</label>
                         <!-- Ajout des datas : poids unitaire exact de chaque rayon -->
                         <select id="config-rayons" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-3 text-sm font-semibold text-gray-800 focus:outline-none focus:ring-2 focus:ring-brand-accent focus:border-transparent cursor-pointer shadow-sm" onchange="updateConfig()">
@@ -208,6 +208,15 @@
                             <option value="T33" data-price="0" data-spoke-weight="3.2" selected>Carbone T33 (Rigidité brutale, 3.2g/pièce)</option>
                             <option value="T40" data-price="0" data-spoke-weight="3.3">Carbone T40 (Sprint massif, 3.3g/pièce)</option>
                             <option value="T52" data-price="20" data-spoke-weight="5.2">Carbone T52 (Stiffness ultime, 5.2g/pièce) [+20€]</option>
+                        </select>
+                    </div>
+
+                    <!-- Choix de la Finition -->
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 mb-2">3. Finition (Finish)</label>
+                        <select id="config-finition" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-3 text-sm font-semibold text-gray-800 focus:outline-none focus:ring-2 focus:ring-brand-accent focus:border-transparent cursor-pointer shadow-sm" onchange="updateConfig()">
+                            <option value="UD Matte" data-price="0" data-weight="0" selected>UD Matte Carbone (Classique)</option>
+                            <option value="Glossy Black" data-price="0" data-weight="0">Paintless Glossy Black (Brillant brut)</option>
                         </select>
                     </div>
                 </div>
@@ -396,28 +405,31 @@
             // On récupère les choix de l'utilisateur
             const moyeuSelect = document.getElementById('config-moyeu');
             const rayonSelect = document.getElementById('config-rayons');
+            const finitionSelect = document.getElementById('config-finition');
             
             // On récupère les prix
             const moyeuPrice = parseInt(moyeuSelect.options[moyeuSelect.selectedIndex].getAttribute('data-price')) || 0;
             const rayonPrice = parseInt(rayonSelect.options[rayonSelect.selectedIndex].getAttribute('data-price')) || 0;
+            const finitionPrice = parseInt(finitionSelect.options[finitionSelect.selectedIndex].getAttribute('data-price')) || 0;
             
             // On récupère les variables techniques pour le calcul du poids
             const hubWeight = parseInt(moyeuSelect.options[moyeuSelect.selectedIndex].getAttribute('data-hub-weight')) || 238;
             const spokeCount = parseInt(moyeuSelect.options[moyeuSelect.selectedIndex].getAttribute('data-spokes')) || 40;
             const rimDiff = parseInt(moyeuSelect.options[moyeuSelect.selectedIndex].getAttribute('data-rim-diff')) || 0;
+            const finitionWeight = parseInt(finitionSelect.options[finitionSelect.selectedIndex].getAttribute('data-weight')) || 0;
             
             // Poids unitaire du rayon
             const spokeWeight = parseFloat(rayonSelect.options[rayonSelect.selectedIndex].getAttribute('data-spoke-weight')) || 2.1;
 
             // Calcul du Prix
-            const finalPrice = currentBasePrice + moyeuPrice + rayonPrice;
+            const finalPrice = currentBasePrice + moyeuPrice + rayonPrice + finitionPrice;
             
             // Calcul du Poids ultra-précis
             // 1. Poids de la configuration de base (Moyeu RT240 + 40 rayons T32) = 238 + (40 * 2.1) = 322g
             const baseComboWeight = 322; 
             
-            // 2. Poids de la nouvelle configuration (Nouveau moyeu + (nb rayons * poids du rayon) + différence de jante)
-            const newComboWeight = hubWeight + (spokeCount * spokeWeight) + rimDiff;
+            // 2. Poids de la nouvelle configuration (Nouveau moyeu + (nb rayons * poids du rayon) + différence de jante + poids finition)
+            const newComboWeight = hubWeight + (spokeCount * spokeWeight) + rimDiff + finitionWeight;
             
             // 3. Application à la base venant du Google Sheet
             const finalWeight = Math.round(currentBaseWeight - baseComboWeight + newComboWeight);
