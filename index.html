@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DFS Wheels - La Réunion | Roues Carbone</title>
+    <title>Karbòn Péi - La Réunion | Roues & Composants</title>
     
     <!-- Tailwind CSS pour le style -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -16,7 +16,9 @@
                     colors: {
                         'dfs-blue': '#1e40af', 
                         'dfs-dark': '#0f172a',
-                        'dfs-accent': '#3b82f6'
+                        'dfs-accent': '#3b82f6',
+                        'brand-main': '#0f172a', /* Remplacement générique */
+                        'brand-accent': '#eab308' /* Touche de jaune/or */
                     }
                 }
             }
@@ -41,22 +43,22 @@
         }
     </style>
 </head>
-<body class="bg-gray-100 text-gray-800 font-sans selection:bg-dfs-blue selection:text-white">
+<body class="bg-gray-100 text-gray-800 font-sans selection:bg-brand-accent selection:text-white">
 
     <!-- En-tête -->
-    <header class="bg-dfs-dark text-white sticky top-0 z-50 shadow-lg">
+    <header class="bg-brand-main text-white sticky top-0 z-50 shadow-lg">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
             <div class="flex items-center gap-3">
-                <i class="fa-solid fa-dharmachakra text-dfs-accent text-3xl"></i>
+                <i class="fa-solid fa-volcano text-brand-accent text-3xl"></i>
                 <div>
-                    <h1 class="text-2xl font-black tracking-widest">DFS <span class="text-dfs-accent">WHEELS</span></h1>
-                    <p class="text-xs text-gray-400 font-medium tracking-wider uppercase">Distributeur 974</p>
+                    <h1 class="text-2xl font-black tracking-widest">KARBÒN <span class="text-brand-accent">PÉI</span></h1>
+                    <p class="text-xs text-gray-400 font-medium tracking-wider uppercase">Matériel Haute Performance - 974</p>
                 </div>
             </div>
             <div>
-                <a href="#catalogue" class="hidden md:inline-block text-sm text-gray-300 hover:text-white mr-6 transition">Modèles</a>
-                <a href="#technologie" class="hidden md:inline-block text-sm text-gray-300 hover:text-white mr-6 transition">Technologie</a>
-                <a href="#catalogue" class="bg-dfs-accent hover:bg-blue-500 text-white text-sm font-bold py-2 px-5 rounded-full shadow-md transition duration-300">
+                <a href="#catalogue" class="hidden md:inline-block text-sm text-gray-300 hover:text-white mr-6 transition">Catalogue</a>
+                <a href="#technologie" class="hidden md:inline-block text-sm text-gray-300 hover:text-white mr-6 transition">Nos Marques</a>
+                <a href="#catalogue" class="bg-brand-accent hover:bg-yellow-400 text-brand-main text-sm font-bold py-2 px-5 rounded-full shadow-md transition duration-300">
                     Commander
                 </a>
             </div>
@@ -64,19 +66,19 @@
     </header>
 
     <!-- Bannière / Hero Section -->
-    <div class="relative bg-dfs-dark py-24 md:py-32 overflow-hidden">
+    <div class="relative bg-brand-main py-24 md:py-32 overflow-hidden">
         <!-- Image de fond sombre -->
         <div class="absolute inset-0 opacity-20">
-            <img src="https://images.unsplash.com/photo-1534723328310-e82dad3ee43f?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80" alt="Velo de course" class="w-full h-full object-cover">
+            <img src="https://images.unsplash.com/photo-1534723328310-e82dad3ee43f?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80" alt="" class="w-full h-full object-cover">
         </div>
         <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <span class="bg-dfs-accent text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide mb-4 inline-block">Performances validées à La Réunion</span>
-            <h2 class="text-4xl md:text-6xl font-black text-white mb-6 tracking-tight">La légèreté. <br/><span class="text-transparent bg-clip-text bg-gradient-to-r from-dfs-accent to-blue-300">La rigidité brutale.</span></h2>
+            <span class="bg-brand-accent text-brand-main text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide mb-4 inline-block">Sélectionné pour La Réunion</span>
+            <h2 class="text-4xl md:text-6xl font-black text-white mb-6 tracking-tight">Le meilleur du carbone. <br/><span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-accent to-yellow-200">Sans intermédiaire.</span></h2>
             <p class="text-lg md:text-xl text-gray-300 max-w-2xl mx-auto mb-10">
-                Des roues en carbone conçues avec les moyeux céramique R2 et rayons plats T33. L'arme absolue pour le Maïdo ou le sprint.
+                Des composants ultra-performants testés sur nos routes. Retrouvez notre sélection de marques pointues (DFS, etc.) en stock sur l'île ou sur commande.
             </p>
             <div class="flex justify-center gap-4">
-                <a href="#catalogue" class="bg-white text-dfs-dark hover:bg-gray-100 font-bold py-3 px-8 rounded-full shadow-lg transition duration-300">
+                <a href="#catalogue" class="bg-white text-brand-main hover:bg-gray-100 font-bold py-3 px-8 rounded-full shadow-lg transition duration-300">
                     Voir le catalogue
                 </a>
             </div>
@@ -107,7 +109,8 @@
     <!-- Section Technologie -->
     <section id="technologie" class="bg-white py-16">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h3 class="text-3xl font-black text-center mb-12">Pourquoi choisir le Moyeu R2 ?</h3>
+            <h3 class="text-3xl font-black text-center mb-4">Zoom sur : Les Moyeux DFS R2</h3>
+            <p class="text-center text-gray-600 max-w-2xl mx-auto mb-12">Nous équipons certaines de nos roues avec la technologie de notre marque partenaire DFS, offrant un des meilleurs rapports qualité/prix du marché mondial.</p>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
                 <div class="p-6">
                     <i class="fa-solid fa-bolt text-4xl text-dfs-accent mb-4"></i>
@@ -129,17 +132,17 @@
     </section>
 
     <!-- Footer -->
-    <footer class="bg-dfs-dark text-gray-400 py-12">
+    <footer class="bg-brand-main text-gray-400 py-12">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <i class="fa-solid fa-dharmachakra text-dfs-accent text-2xl mb-4"></i>
-            <p class="text-white font-bold text-lg mb-2">DFS Wheels La Réunion</p>
+            <i class="fa-solid fa-volcano text-brand-accent text-2xl mb-4"></i>
+            <p class="text-white font-bold text-lg mb-2">Karbòn Péi - La Réunion</p>
             <p class="text-sm mb-6">Micro-entreprise en cours d'immatriculation.<br/>TVA non applicable, art. 293 B du CGI.</p>
             <div class="flex justify-center gap-6 mb-8">
                 <a href="#" class="text-gray-400 hover:text-white transition"><i class="fa-brands fa-facebook text-xl"></i></a>
                 <a href="#" class="text-gray-400 hover:text-white transition"><i class="fa-brands fa-instagram text-xl"></i></a>
                 <a href="#" class="text-gray-400 hover:text-white transition"><i class="fa-brands fa-youtube text-xl"></i></a>
             </div>
-            <p class="text-xs text-gray-500">&copy; 2026 DFS Wheels. Site propulsé par GitHub Pages.</p>
+            <p class="text-xs text-gray-500">&copy; 2026 Karbòn Péi. Site propulsé par GitHub Pages.</p>
         </div>
     </footer>
 
