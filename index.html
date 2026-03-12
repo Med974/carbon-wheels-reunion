@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DFS Wheels - La Réunion | Roues Carbone</title>
+    
+    <!-- Tailwind CSS pour le style -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'dfs-blue': '#1e40af', // Un bleu plus profond
+                        'dfs-dark': '#0f172a',
+                        'dfs-accent': '#3b82f6'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Ajout d'un petit effet de transition pour les cartes */
+        .wheel-card:hover {
+            transform: translateY(-5px);
+        }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800 font-sans selection:bg-dfs-blue selection:text-white">
+
+    <!-- En-tête -->
+    <header class="bg-dfs-dark text-white sticky top-0 z-50 shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <i class="fa-solid fa-dharmachakra text-dfs-accent text-3xl"></i>
+                <div>
+                    <h1 class="text-2xl font-black tracking-widest">DFS <span class="text-dfs-accent">WHEELS</span></h1>
+                    <p class="text-xs text-gray-400 font-medium tracking-wider uppercase">Distributeur 974</p>
+                </div>
+            </div>
+            <div>
+                <a href="#catalogue" class="hidden md:inline-block text-sm text-gray-300 hover:text-white mr-6 transition">Modèles</a>
+                <a href="#technologie" class="hidden md:inline-block text-sm text-gray-300 hover:text-white mr-6 transition">Technologie</a>
+                <a href="#catalogue" class="bg-dfs-accent hover:bg-blue-500 text-white text-sm font-bold py-2 px-5 rounded-full shadow-md transition duration-300">
+                    Commander
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Bannière / Hero Section -->
+    <div class="relative bg-dfs-dark py-24 md:py-32 overflow-hidden">
+        <!-- Image de fond sombre -->
+        <div class="absolute inset-0 opacity-20">
+            <img src="https://images.unsplash.com/photo-1534723328310-e82dad3ee43f?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80" alt="" class="w-full h-full object-cover">
+        </div>
+        <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <span class="bg-dfs-accent text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide mb-4 inline-block">Performances validées à La Réunion</span>
+            <h2 class="text-4xl md:text-6xl font-black text-white mb-6 tracking-tight">La légèreté. <br/><span class="text-transparent bg-clip-text bg-gradient-to-r from-dfs-accent to-blue-300">La rigidité brutale.</span></h2>
+            <p class="text-lg md:text-xl text-gray-300 max-w-2xl mx-auto mb-10">
+                Des roues en carbone conçues avec les moyeux céramique R2 et rayons plats T33. L'arme absolue pour le Maïdo ou le sprint.
+            </p>
+            <div class="flex justify-center gap-4">
+                <a href="#catalogue" class="bg-white text-dfs-dark hover:bg-gray-100 font-bold py-3 px-8 rounded-full shadow-lg transition duration-300">
+                    Voir le catalogue
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section Catalogue -->
+    <main id="catalogue" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <div class="flex justify-between items-end mb-10 border-b border-gray-300 pb-4">
+            <div>
+                <h3 class="text-3xl font-black text-gray-900">En stock & Sur commande</h3>
+                <p class="text-gray-500 mt-1">Expédition express à La Réunion ou remise en main propre.</p>
+            </div>
+        </div>
+        
+        <!-- Grille des produits -->
+        <div id="products-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            
+            <!-- Message de chargement -->
+            <div id="loading-message" class="col-span-full flex flex-col items-center justify-center py-20">
+                <i class="fa-solid fa-circle-notch fa-spin text-dfs-accent text-4xl mb-4"></i>
+                <p class="text-lg text-gray-600 font-medium">Connexion au stock en temps réel...</p>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Section Technologie (Fixe, pas dans la BDD) -->
+    <section id="technologie" class="bg-white py-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h3 class="text-3xl font-black text-center mb-12">Pourquoi choisir le Moyeu R2 ?</h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+                <div class="p-6">
+                    <i class="fa-solid fa-bolt text-4xl text-dfs-accent mb-4"></i>
+                    <h4 class="text-xl font-bold mb-2">Ratchet SSF (45T/72T)</h4>
+                    <p class="text-gray-600 text-sm">Engagement quasi instantané de 5° à 8°. Transfert de puissance direct idéal pour les relances en danseuse.</p>
+                </div>
+                <div class="p-6">
+                    <i class="fa-solid fa-shield-halved text-4xl text-dfs-accent mb-4"></i>
+                    <h4 class="text-xl font-bold mb-2">Corps Titane TC4</h4>
+                    <p class="text-gray-600 text-sm">Fini les cassettes qui marquent l'aluminium. Le corps de roue libre en titane garantit une durabilité extrême.</p>
+                </div>
+                <div class="p-6">
+                    <i class="fa-solid fa-fan text-4xl text-dfs-accent mb-4"></i>
+                    <h4 class="text-xl font-bold mb-2">Roulements Céramique EZO</h4>
+                    <p class="text-gray-600 text-sm">Une fluidité exceptionnelle pour économiser des watts sur chaque kilomètre plat, avec une maintenance sans outil.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-dfs-dark text-gray-400 py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <i class="fa-solid fa-dharmachakra text-dfs-accent text-2xl mb-4"></i>
+            <p class="text-white font-bold text-lg mb-2">DFS Wheels La Réunion</p>
+            <p class="text-sm mb-6">Micro-entreprise en cours d'immatriculation.<br/>TVA non applicable, art. 293 B du CGI.</p>
+            <div class="flex justify-center gap-6 mb-8">
+                <a href="#" class="text-gray-400 hover:text-white transition"><i class="fa-brands fa-facebook text-xl"></i></a>
+                <a href="#" class="text-gray-400 hover:text-white transition"><i class="fa-brands fa-instagram text-xl"></i></a>
+                <a href="#" class="text-gray-400 hover:text-white transition"><i class="fa-brands fa-youtube text-xl"></i></a>
+            </div>
+            <p class="text-xs text-gray-500">&copy; 2026 DFS Wheels. Site propulsé par GitHub Pages.</p>
+        </div>
+    </footer>
+
+    <!-- Script de récupération des données -->
+    <script>
+        // Ton API Google Sheet
+        const API_URL = 'https://script.google.com/macros/s/AKfycbwi5uRAIjQ2vjbL7h9_LWAUzArqb4oNDNzHWqfM4dIkINVlY6v1Qv4no9V5ScitexSq/exec';
+
+        async function loadCatalogue() {
+            try {
+                const response = await fetch(API_URL);
+                const data = await response.json();
+                
+                document.getElementById('loading-message').style.display = 'none';
+                const grid = document.getElementById('products-grid');
+                grid.innerHTML = '';
+
+                data.forEach(roue => {
+                    // Vérification de sécurité si la ligne est vide
+                    if(!roue.Nom) return;
+
+                    // Gestion de l'image (si vide, on met une image de vélo par défaut Unsplash)
+                    let imageUrl = roue.Image ? roue.Image.split(',')[0].trim() : 'https://images.unsplash.com/photo-1511994298241-608e28f14fde?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80';
+                    
+                    // Formatage du prix
+                    let prixAffiche = roue.Prix ? `${roue.Prix} €` : 'Sur commande';
+                    
+                    // Statut dynamique (Vert si en stock, Orange si vendu/commande)
+                    let statutBadge = '';
+                    if (roue.Statut && roue.Statut.toLowerCase().includes('stock')) {
+                        statutBadge = `<span class="absolute top-4 left-4 bg-green-500 text-white text-xs font-bold px-3 py-1 rounded shadow-md"><i class="fa-solid fa-check mr-1"></i> En Stock Réunion</span>`;
+                    } else if (roue.Statut) {
+                        statutBadge = `<span class="absolute top-4 left-4 bg-orange-500 text-white text-xs font-bold px-3 py-1 rounded shadow-md"><i class="fa-solid fa-plane mr-1"></i> ${roue.Statut}</span>`;
+                    }
+
+                    const cardHtml = `
+                        <div class="wheel-card bg-white rounded-xl shadow-md overflow-hidden transition-all duration-300 border border-gray-100 flex flex-col relative group">
+                            
+                            ${statutBadge}
+                            
+                            <!-- Image avec effet de zoom au survol -->
+                            <div class="overflow-hidden h-64 bg-gray-50 flex items-center justify-center p-4">
+                                <img src="${imageUrl}" alt="${roue.Nom}" class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500">
+                            </div>
+                            
+                            <div class="p-6 flex flex-col flex-grow">
+                                <div class="flex justify-between items-start mb-4">
+                                    <h4 class="text-xl font-black text-gray-900 leading-tight">${roue.Nom}</h4>
+                                    <span class="bg-dfs-dark text-white text-lg font-bold px-3 py-1 rounded-lg ml-2 whitespace-nowrap">${prixAffiche}</span>
+                                </div>
+                                
+                                <div class="grid grid-cols-2 gap-y-3 gap-x-2 text-sm text-gray-600 mb-6 bg-gray-50 p-4 rounded-lg border border-gray-100">
+                                    <div class="flex flex-col">
+                                        <span class="text-xs uppercase tracking-wider text-gray-400 font-bold mb-1">Hauteur</span>
+                                        <span class="font-semibold text-gray-800"><i class="fa-solid fa-arrows-up-down text-dfs-accent mr-1"></i> ${roue.Hauteur || '-'}</span>
+                                    </div>
+                                    <div class="flex flex-col">
+                                        <span class="text-xs uppercase tracking-wider text-gray-400 font-bold mb-1">Poids</span>
+                                        <span class="font-semibold text-gray-800"><i class="fa-solid fa-weight-scale text-dfs-accent mr-1"></i> ${roue.Poids || '-'}</span>
+                                    </div>
+                                    <div class="flex flex-col col-span-2">
+                                        <span class="text-xs uppercase tracking-wider text-gray-400 font-bold mb-1">Moyeux</span>
+                                        <span class="font-semibold text-gray-800"><i class="fa-solid fa-gear text-dfs-accent mr-1"></i> ${roue.Moyeu || '-'}</span>
+                                    </div>
+                                    <div class="flex flex-col col-span-2">
+                                        <span class="text-xs uppercase tracking-wider text-gray-400 font-bold mb-1">Rayons</span>
+                                        <span class="font-semibold text-gray-800"><i class="fa-solid fa-lines-leaning text-dfs-accent mr-1"></i> ${roue.Rayon || '-'}</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="mt-auto">
+                                    <button onclick="alert('Redirection vers Stripe... (Lien à configurer)')" class="w-full bg-gray-900 hover:bg-dfs-accent text-white font-bold py-3 px-4 rounded-lg flex justify-between items-center transition duration-300 shadow-md hover:shadow-lg">
+                                        <span>Acheter via carte</span>
+                                        <i class="fa-brands fa-stripe-s text-xl"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    grid.insertAdjacentHTML('beforeend', cardHtml);
+                });
+
+            } catch (error) {
+                console.error('Erreur:', error);
+                document.getElementById('loading-message').innerHTML = `
+                    <div class="bg-red-50 text-red-600 p-4 rounded-lg text-center border border-red-200">
+                        <i class="fa-solid fa-triangle-exclamation text-2xl mb-2"></i>
+                        <p class="font-bold">Erreur de connexion</p>
+                        <p class="text-sm mt-1">Impossible de charger le catalogue. Vérifiez l'URL de l'API Google.</p>
+                    </div>`;
+            }
+        }
+
+        loadCatalogue();
+    </script>
+</body>
+</html>
