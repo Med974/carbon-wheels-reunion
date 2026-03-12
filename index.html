@@ -296,8 +296,11 @@
                             </div>
                             
                             <div class="p-6 flex flex-col flex-grow text-center">
-                                <h4 class="text-xl font-black text-gray-900 mb-1">${roue.Nom}</h4>
-                                <p class="text-sm text-gray-500 mb-4">Hauteur : ${roue.Hauteur || '-'}</p>
+                                <h4 class="text-xl font-black text-gray-900 mb-2">${roue.Nom}</h4>
+                                <div class="flex justify-center items-center gap-3 text-sm text-gray-600 mb-4 font-medium">
+                                    <span class="flex items-center"><i class="fa-solid fa-arrows-up-down text-brand-accent mr-1.5"></i> ${roue.Hauteur || '-'}</span>
+                                    ${roue.Poids ? `<span class="text-gray-300">|</span><span class="flex items-center"><i class="fa-solid fa-weight-scale text-brand-accent mr-1.5"></i> Dès ${roue.Poids} g</span>` : ''}
+                                </div>
                                 
                                 <div class="mt-auto border-t border-gray-100 pt-4">
                                     <span class="block text-xs uppercase tracking-wider text-gray-400 font-bold mb-1">Prix de départ</span>
