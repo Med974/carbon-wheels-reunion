@@ -183,4 +183,301 @@
             </div>
             
             <!-- Droite : Configurateur -->
-            <div class="w-full md:w-1/2 p-6
+            <div class="w-full md:w-1/2 p-6 md:p-8 flex flex-col">
+                <span id="modal-badge" class="text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide w-max mb-3"></span>
+                <h3 id="modal-title" class="text-3xl font-black text-gray-900 mb-2 leading-tight"></h3>
+                <p id="modal-desc" class="text-sm text-gray-500 mb-6"></p>
+
+                <!-- LE CONFIGURATEUR -->
+                <div id="configurator-section" class="bg-gray-50 p-5 rounded-xl border border-gray-200 mb-6">
+                    <h4 class="text-sm font-bold text-gray-900 uppercase tracking-wider mb-4 flex items-center">
+                        <i class="fa-solid fa-sliders text-brand-accent mr-2"></i> Personnalisation
+                    </h4>
+                    
+                    <!-- Choix du Moyeu -->
+                    <div class="mb-5">
+                        <label class="block text-xs font-bold text-gray-500 mb-2">1. Moyeu (Hub) & Jante</label>
+                        <!-- Ajout des datas : poids du moyeu, nombre de rayons, et surpoids de la jante (UXL vs SUXL) -->
+                        <select id="config-moyeu" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-3 text-sm font-semibold text-gray-800 focus:outline-none focus:ring-2 focus:ring-brand-accent focus:border-transparent cursor-pointer shadow-sm" onchange="updateConfig()">
+                            <option value="RT240" data-price="0" data-hub-weight="238" data-spokes="40" data-rim-diff="0">DFS RT240 (Jantes SUXL, 40 rayons)</option>
+                            <option value="R2" data-price="50" data-hub-weight="285" data-spokes="45" data-rim-diff="60" selected>DFS R2 Céramique (Jantes UXL, 45 rayons) [+50€]</option>
+                        </select>
+                        
+                        <!-- Recommandation affichée dynamiquement pour le moyeu R2 -->
+                        <div id="msg-reco-r2" class="mt-3 bg-yellow-50 border border-yellow-200 rounded-lg p-3 flex gap-3 text-sm text-yellow-800 transition-all duration-300">
+                            <i class="fa-solid fa-medal text-brand-accent text-lg mt-0.5"></i>
+                            <p><strong>Notre recommandation :</strong> Le moyeu R2 est plus robuste, possède des roulements plus gros et nécessite moins de maintenance. Parfaitement adapté à nos routes !</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Choix des Rayons -->
+                    <div class="mb-5">
+                        <label class="block text-xs font-bold text-gray-500 mb-2">2. Rayons (Spokes)</label>
+                        <!-- Ajout des dimensions de chaque rayon -->
+                        <select id="config-rayons" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-3 text-sm font-semibold text-gray-800 focus:outline-none focus:ring-2 focus:ring-brand-accent focus:border-transparent cursor-pointer shadow-sm" onchange="updateConfig()">
+                            <option id="opt-t32" value="T32" data-price="0" data-spoke-weight="2.1">Carbone T32 (Aéro pur, 3.2 x 0.98mm - 2.1g)</option>
+                            <option value="T33" data-price="0" data-spoke-weight="3.2" selected>Carbone T33 (Rigidité brutale, 3.3 x 0.98mm - 3.2g)</option>
+                            <option value="T40" data-price="0" data-spoke-weight="3.3">Carbone T40 (Sprint massif, 4.0 x 0.95mm - 3.3g)</option>
+                            <option value="T52" data-price="0" data-spoke-weight="5.2">Carbone T52 (Rigidité ultime, 5.2 x 0.95mm - 5.2g)</option>
+                        </select>
+                    </div>
+
+                    <!-- Choix de la Finition -->
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 mb-2">3. Finition (Finish)</label>
+                        <select id="config-finition" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-3 text-sm font-semibold text-gray-800 focus:outline-none focus:ring-2 focus:ring-brand-accent focus:border-transparent cursor-pointer shadow-sm" onchange="updateConfig()">
+                            <option value="UD Matte" data-price="0" data-weight="0" selected>UD Matte Carbone (Classique)</option>
+                            <option value="Glossy Black" data-price="0" data-weight="0">Paintless Glossy Black (Brillant brut)</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <!-- Bilan Prix & Poids dynamique -->
+                <div class="flex justify-between items-end mb-6 bg-brand-main text-white p-4 rounded-xl shadow-md">
+                    <div>
+                        <span class="block text-xs text-gray-400 font-bold uppercase tracking-wider mb-1">Poids total estimé</span>
+                        <div class="text-xl font-bold flex items-center flex-wrap">
+                            <i class="fa-solid fa-weight-scale text-brand-accent mr-2"></i>
+                            <span id="calc-weight">--</span> g 
+                            <span class="text-sm text-gray-400 ml-2 font-medium whitespace-nowrap">+/- 30g</span>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <span class="block text-xs text-gray-400 font-bold uppercase tracking-wider mb-1">Prix final</span>
+                        <div class="text-3xl font-black text-brand-accent">
+                            <span id="calc-price">--</span> €
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-auto">
+                    <button id="modal-buy-btn" onclick="alert('Redirection vers le panier avec vos options...')" class="w-full bg-brand-accent hover:bg-yellow-400 text-brand-main font-bold py-4 rounded-xl flex justify-center items-center gap-3 transition duration-300 shadow-lg">
+                        <span id="buy-btn-text">Acheter ma configuration</span>
+                        <i class="fa-solid fa-cart-shopping text-xl"></i>
+                    </button>
+                    <p class="text-center text-xs text-gray-400 mt-3"><i class="fa-solid fa-shield-halved mr-1"></i> Paiement 100% sécurisé (Stripe)</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script de récupération des données et gestion modale -->
+    <script>
+        const API_URL = 'https://script.google.com/macros/s/AKfycbwi5uRAIjQ2vjbL7h9_LWAUzArqb4oNDNzHWqfM4dIkINVlY6v1Qv4no9V5ScitexSq/exec';
+        
+        let globalCatalogue = [];
+        
+        // Variables pour stocker la base du modèle ouvert
+        let currentBasePrice = 0;
+        let currentBaseWeight = 0;
+
+        async function loadCatalogue() {
+            try {
+                const response = await fetch(API_URL);
+                const data = await response.json();
+                globalCatalogue = data; 
+                
+                document.getElementById('loading-message').style.display = 'none';
+                const grid = document.getElementById('products-grid');
+                grid.innerHTML = '';
+
+                data.forEach((roue, index) => {
+                    if(!roue.Nom) return;
+
+                    let imageUrl = roue.Image ? roue.Image.split(',')[0].trim() : 'https://images.unsplash.com/photo-1511994298241-608e28f14fde?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80';
+                    
+                    // On affiche "À partir de" sur le catalogue
+                    let prixAffiche = roue.Prix ? `Dès ${roue.Prix} €` : 'Sur devis';
+                    
+                    let statutBadge = '';
+                    if (roue.Statut && roue.Statut.toLowerCase().includes('stock')) {
+                        statutBadge = `<span class="absolute top-4 left-4 bg-green-500 text-white text-xs font-bold px-3 py-1 rounded shadow-md z-10"><i class="fa-solid fa-check mr-1"></i> En Stock</span>`;
+                    } else if (roue.Statut) {
+                        statutBadge = `<span class="absolute top-4 left-4 bg-orange-500 text-white text-xs font-bold px-3 py-1 rounded shadow-md z-10"><i class="fa-solid fa-plane mr-1"></i> ${roue.Statut}</span>`;
+                    }
+
+                    const cardHtml = `
+                        <div onclick="openModal(${index})" class="wheel-card bg-white rounded-xl shadow-md overflow-hidden border border-gray-100 flex flex-col relative group cursor-pointer">
+                            ${statutBadge}
+                            
+                            <div class="overflow-hidden h-64 bg-gray-50 flex items-center justify-center p-4 relative">
+                                <img src="${imageUrl}" alt="${roue.Nom}" class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500">
+                                <div class="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition flex items-center justify-center">
+                                    <span class="bg-brand-main text-white text-sm font-bold px-5 py-2 rounded-full shadow-lg transform translate-y-4 group-hover:translate-y-0 transition"><i class="fa-solid fa-sliders mr-2"></i>Configurer</span>
+                                </div>
+                            </div>
+                            
+                            <div class="p-6 flex flex-col flex-grow text-center">
+                                <h4 class="text-xl font-black text-gray-900 mb-2">${roue.Nom}</h4>
+                                <div class="flex justify-center items-center gap-3 text-sm text-gray-600 mb-4 font-medium">
+                                    <span class="flex items-center"><i class="fa-solid fa-arrows-up-down text-brand-accent mr-1.5"></i> ${roue.Hauteur || '-'}</span>
+                                    ${roue.Poids ? `<span class="text-gray-300">|</span><span class="flex items-center"><i class="fa-solid fa-weight-scale text-brand-accent mr-1.5"></i> Dès ${roue.Poids} g</span>` : ''}
+                                </div>
+                                
+                                <div class="mt-auto border-t border-gray-100 pt-4">
+                                    <span class="block text-xs uppercase tracking-wider text-gray-400 font-bold mb-1">Prix de départ</span>
+                                    <span class="text-2xl font-black text-brand-accent">${prixAffiche}</span>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    grid.insertAdjacentHTML('beforeend', cardHtml);
+                });
+
+            } catch (error) {
+                console.error('Erreur:', error);
+                document.getElementById('loading-message').innerHTML = `
+                    <div class="bg-red-50 text-red-600 p-4 rounded-lg text-center border border-red-200">
+                        <i class="fa-solid fa-triangle-exclamation text-2xl mb-2"></i>
+                        <p class="font-bold">Erreur de connexion</p>
+                    </div>`;
+            }
+        }
+
+        // --- Fonctions de la fenêtre modale et du configurateur ---
+        
+        function openModal(index) {
+            const roue = globalCatalogue[index];
+            if(!roue) return;
+
+            // Enregistrement des valeurs de base (on s'assure que ce sont des nombres)
+            // Dans ton Google Sheet, "Prix" et "Poids" doivent être la config la plus légère (RT240 + T32)
+            currentBasePrice = parseInt(roue.Prix) || 0;
+            currentBaseWeight = parseInt(roue.Poids) || 0;
+
+            document.getElementById('modal-title').textContent = roue.Nom;
+            document.getElementById('modal-desc').textContent = roue.Description || "Sélectionnez vos composants pour obtenir le poids et le prix exact de votre paire de roues.";
+            document.getElementById('modal-hauteur').textContent = roue.Hauteur || '-';
+
+            // Gestion du badge
+            const badge = document.getElementById('modal-badge');
+            if (roue.Statut && roue.Statut.toLowerCase().includes('stock')) {
+                badge.className = 'text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide w-max mb-3 bg-green-100 text-green-700';
+                badge.innerHTML = '<i class="fa-solid fa-check mr-1"></i> En Stock Réunion';
+            } else {
+                badge.className = 'text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide w-max mb-3 bg-orange-100 text-orange-700';
+                badge.innerHTML = `<i class="fa-solid fa-plane mr-1"></i> ${roue.Statut || 'Sur Commande'}`;
+            }
+
+            // Galerie d'images (inchangée)
+            let images = roue.Image ? roue.Image.split(',') : ['https://images.unsplash.com/photo-1511994298241-608e28f14fde?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80'];
+            const mainImg = document.getElementById('modal-main-img');
+            mainImg.src = images[0].trim();
+            const thumbContainer = document.getElementById('modal-thumbnails');
+            thumbContainer.innerHTML = '';
+            
+            if (images.length > 1) {
+                images.forEach((imgUrl, i) => {
+                    const cleanUrl = imgUrl.trim();
+                    const thumb = document.createElement('img');
+                    thumb.src = cleanUrl;
+                    thumb.className = `w-16 h-16 object-cover rounded-lg cursor-pointer border-2 transition-all ${i === 0 ? 'border-brand-accent shadow-md scale-105' : 'border-transparent hover:border-gray-300 opacity-70 hover:opacity-100'}`;
+                    
+                    thumb.onclick = () => {
+                        mainImg.src = cleanUrl;
+                        Array.from(thumbContainer.children).forEach(c => {
+                            c.classList.remove('border-brand-accent', 'shadow-md', 'scale-105');
+                            c.classList.add('border-transparent', 'opacity-70');
+                        });
+                        thumb.classList.remove('border-transparent', 'opacity-70');
+                        thumb.classList.add('border-brand-accent', 'shadow-md', 'scale-105');
+                    };
+                    thumbContainer.appendChild(thumb);
+                });
+            }
+
+            // Gestion intelligente du configurateur selon le type de roue
+            const nomRoueLC = roue.Nom.toLowerCase();
+            const isConfigurable = !nomRoueLC.includes('bâton') && !nomRoueLC.includes('tri-spoke') && !nomRoueLC.includes('lenticulaire') && !nomRoueLC.includes('disc');
+            
+            if (isConfigurable) {
+                document.getElementById('configurator-section').style.display = 'block';
+                document.getElementById('buy-btn-text').textContent = 'Acheter ma configuration';
+                updateConfig(); // Met à jour avec les options sélectionnées
+            } else {
+                document.getElementById('configurator-section').style.display = 'none';
+                document.getElementById('buy-btn-text').textContent = 'Acheter ce modèle';
+                // Affiche les valeurs brutes du tableur
+                document.getElementById('calc-price').textContent = currentBasePrice > 0 ? currentBasePrice : '--';
+                document.getElementById('calc-weight').textContent = currentBaseWeight > 0 ? currentBaseWeight : '--';
+            }
+
+            document.getElementById('product-modal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            document.getElementById('product-modal').classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        }
+
+        document.getElementById('product-modal').addEventListener('click', function(e) {
+            if (e.target === this) closeModal();
+        });
+
+        // --- LA LOGIQUE DE CALCUL DU CONFIGURATEUR ---
+        function updateConfig() {
+            // On récupère les choix de l'utilisateur
+            const moyeuSelect = document.getElementById('config-moyeu');
+            const rayonSelect = document.getElementById('config-rayons');
+            const finitionSelect = document.getElementById('config-finition');
+            
+            const optT32 = document.getElementById('opt-t32');
+            const msgRecoR2 = document.getElementById('msg-reco-r2');
+
+            // --- Logique d'incompatibilité et recommandations ---
+            const isR2 = moyeuSelect.value === 'R2';
+            
+            if (isR2) {
+                // Si on a choisi le Moyeu R2
+                optT32.disabled = true;
+                optT32.style.display = 'none'; // Cache l'option du menu
+                msgRecoR2.style.display = 'flex'; // Affiche la recommandation
+                
+                // Forcer le changement si T32 était sélectionné
+                if (rayonSelect.value === 'T32') {
+                    rayonSelect.value = 'T33';
+                }
+            } else {
+                // Si on a choisi un autre moyeu (RT240)
+                optT32.disabled = false;
+                optT32.style.display = 'block'; // Réaffiche l'option
+                msgRecoR2.style.display = 'none'; // Cache la recommandation
+            }
+            
+            // On récupère les prix
+            const moyeuPrice = parseInt(moyeuSelect.options[moyeuSelect.selectedIndex].getAttribute('data-price')) || 0;
+            const rayonPrice = parseInt(rayonSelect.options[rayonSelect.selectedIndex].getAttribute('data-price')) || 0;
+            const finitionPrice = parseInt(finitionSelect.options[finitionSelect.selectedIndex].getAttribute('data-price')) || 0;
+            
+            // On récupère les variables techniques pour le calcul du poids
+            const hubWeight = parseInt(moyeuSelect.options[moyeuSelect.selectedIndex].getAttribute('data-hub-weight')) || 238;
+            const spokeCount = parseInt(moyeuSelect.options[moyeuSelect.selectedIndex].getAttribute('data-spokes')) || 40;
+            const rimDiff = parseInt(moyeuSelect.options[moyeuSelect.selectedIndex].getAttribute('data-rim-diff')) || 0;
+            const finitionWeight = parseInt(finitionSelect.options[finitionSelect.selectedIndex].getAttribute('data-weight')) || 0;
+            
+            // Poids unitaire du rayon
+            const spokeWeight = parseFloat(rayonSelect.options[rayonSelect.selectedIndex].getAttribute('data-spoke-weight')) || 2.1;
+
+            // Calcul du Prix
+            const finalPrice = currentBasePrice + moyeuPrice + rayonPrice + finitionPrice;
+            
+            // Calcul du Poids ultra-précis
+            // 1. Poids de la configuration de base (Moyeu RT240 + 40 rayons T32) = 238 + (40 * 2.1) = 322g
+            const baseComboWeight = 322; 
+            
+            // 2. Poids de la nouvelle configuration (Nouveau moyeu + (nb rayons * poids du rayon) + différence de jante + poids finition)
+            const newComboWeight = hubWeight + (spokeCount * spokeWeight) + rimDiff + finitionWeight;
+            
+            // 3. Application à la base venant du Google Sheet
+            const finalWeight = Math.round(currentBaseWeight - baseComboWeight + newComboWeight);
+
+            // Affichage
+            document.getElementById('calc-price').textContent = finalPrice > 0 ? finalPrice : '--';
+            document.getElementById('calc-weight').textContent = finalWeight > 0 ? finalWeight : '--';
+        }
+
+        loadCatalogue();
+    </script>
+</body>
+</html>
