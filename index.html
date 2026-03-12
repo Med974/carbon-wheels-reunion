@@ -14,7 +14,7 @@
             theme: {
                 extend: {
                     colors: {
-                        'dfs-blue': '#1e40af', // Un bleu plus profond
+                        'dfs-blue': '#1e40af', 
                         'dfs-dark': '#0f172a',
                         'dfs-accent': '#3b82f6'
                     }
@@ -23,9 +23,21 @@
         }
     </script>
     <style>
-        /* Ajout d'un petit effet de transition pour les cartes */
+        /* Effet de transition fluide pour les cartes */
+        .wheel-card {
+            transition: all 0.3s ease;
+        }
         .wheel-card:hover {
             transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        /* Masquer la scrollbar de la galerie miniature */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
         }
     </style>
 </head>
@@ -55,7 +67,7 @@
     <div class="relative bg-dfs-dark py-24 md:py-32 overflow-hidden">
         <!-- Image de fond sombre -->
         <div class="absolute inset-0 opacity-20">
-            <img src="https://images.unsplash.com/photo-1534723328310-e82dad3ee43f?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80" alt="" class="w-full h-full object-cover">
+            <img src="https://images.unsplash.com/photo-1534723328310-e82dad3ee43f?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80" alt="Velo de course" class="w-full h-full object-cover">
         </div>
         <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <span class="bg-dfs-accent text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide mb-4 inline-block">Performances validées à La Réunion</span>
@@ -76,7 +88,7 @@
         <div class="flex justify-between items-end mb-10 border-b border-gray-300 pb-4">
             <div>
                 <h3 class="text-3xl font-black text-gray-900">En stock & Sur commande</h3>
-                <p class="text-gray-500 mt-1">Expédition express à La Réunion ou remise en main propre.</p>
+                <p class="text-gray-500 mt-1">Cliquez sur un modèle pour voir les détails et photos.</p>
             </div>
         </div>
         
@@ -92,7 +104,7 @@
         </div>
     </main>
 
-    <!-- Section Technologie (Fixe, pas dans la BDD) -->
+    <!-- Section Technologie -->
     <section id="technologie" class="bg-white py-16">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <h3 class="text-3xl font-black text-center mb-12">Pourquoi choisir le Moyeu R2 ?</h3>
@@ -131,46 +143,106 @@
         </div>
     </footer>
 
-    <!-- Script de récupération des données -->
+    <!-- FENÊTRE MODALE (DÉTAILS PRODUIT) -->
+    <div id="product-modal" class="fixed inset-0 z-[100] hidden bg-black/80 flex items-center justify-center p-4 backdrop-blur-sm transition-opacity">
+        <div class="bg-white rounded-2xl w-full max-w-5xl max-h-[90vh] overflow-y-auto flex flex-col md:flex-row relative shadow-2xl">
+            <!-- Bouton Fermer -->
+            <button onclick="closeModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-900 z-10 bg-white rounded-full p-2 shadow hover:bg-gray-100 transition">
+                <i class="fa-solid fa-xmark text-2xl px-1"></i>
+            </button>
+            
+            <!-- Gauche : Galerie Photos -->
+            <div class="w-full md:w-1/2 bg-gray-50 p-6 flex flex-col items-center border-r border-gray-200">
+                <div class="h-64 md:h-96 w-full flex items-center justify-center mb-4">
+                    <img id="modal-main-img" src="" alt="Roue" class="max-w-full max-h-full object-contain drop-shadow-xl">
+                </div>
+                <!-- Miniatures -->
+                <div id="modal-thumbnails" class="flex gap-3 overflow-x-auto py-2 w-full no-scrollbar justify-center">
+                    <!-- Les miniatures s'injectent ici -->
+                </div>
+            </div>
+            
+            <!-- Droite : Informations -->
+            <div class="w-full md:w-1/2 p-6 md:p-10 flex flex-col">
+                <span id="modal-badge" class="text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide w-max mb-4"></span>
+                <h3 id="modal-title" class="text-3xl font-black text-gray-900 mb-2 leading-tight"></h3>
+                <div id="modal-price" class="text-2xl font-bold text-dfs-accent mb-6"></div>
+                
+                <p id="modal-desc" class="text-gray-600 mb-8 leading-relaxed"></p>
+                
+                <h4 class="text-sm font-bold text-gray-900 uppercase tracking-wider mb-3 border-b pb-2">Spécifications Techniques</h4>
+                <div class="grid grid-cols-2 gap-y-4 gap-x-4 text-sm mb-8">
+                    <div>
+                        <span class="block text-gray-400 font-bold mb-1">Hauteur</span>
+                        <span id="modal-hauteur" class="font-semibold text-gray-800"></span>
+                    </div>
+                    <div>
+                        <span class="block text-gray-400 font-bold mb-1">Poids</span>
+                        <span id="modal-poids" class="font-semibold text-gray-800"></span>
+                    </div>
+                    <div>
+                        <span class="block text-gray-400 font-bold mb-1">Moyeux</span>
+                        <span id="modal-moyeux" class="font-semibold text-gray-800"></span>
+                    </div>
+                    <div>
+                        <span class="block text-gray-400 font-bold mb-1">Rayons</span>
+                        <span id="modal-rayons" class="font-semibold text-gray-800"></span>
+                    </div>
+                </div>
+                
+                <div class="mt-auto">
+                    <button id="modal-buy-btn" onclick="alert('Redirection vers Stripe...')" class="w-full bg-dfs-dark hover:bg-dfs-accent text-white font-bold py-4 rounded-xl flex justify-center items-center gap-3 transition duration-300 shadow-lg">
+                        <span>Acheter maintenant</span>
+                        <i class="fa-brands fa-stripe-s text-2xl"></i>
+                    </button>
+                    <p class="text-center text-xs text-gray-400 mt-3"><i class="fa-solid fa-shield-halved mr-1"></i> Paiement 100% sécurisé</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script de récupération des données et gestion modale -->
     <script>
-        // Ton API Google Sheet
         const API_URL = 'https://script.google.com/macros/s/AKfycbwi5uRAIjQ2vjbL7h9_LWAUzArqb4oNDNzHWqfM4dIkINVlY6v1Qv4no9V5ScitexSq/exec';
+        
+        // Stockage global des données pour la modale
+        let globalCatalogue = [];
 
         async function loadCatalogue() {
             try {
                 const response = await fetch(API_URL);
                 const data = await response.json();
+                globalCatalogue = data; // Sauvegarde dans la variable globale
                 
                 document.getElementById('loading-message').style.display = 'none';
                 const grid = document.getElementById('products-grid');
                 grid.innerHTML = '';
 
-                data.forEach(roue => {
-                    // Vérification de sécurité si la ligne est vide
+                data.forEach((roue, index) => {
                     if(!roue.Nom) return;
 
-                    // Gestion de l'image (si vide, on met une image de vélo par défaut Unsplash)
                     let imageUrl = roue.Image ? roue.Image.split(',')[0].trim() : 'https://images.unsplash.com/photo-1511994298241-608e28f14fde?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80';
-                    
-                    // Formatage du prix
                     let prixAffiche = roue.Prix ? `${roue.Prix} €` : 'Sur commande';
                     
-                    // Statut dynamique (Vert si en stock, Orange si vendu/commande)
                     let statutBadge = '';
                     if (roue.Statut && roue.Statut.toLowerCase().includes('stock')) {
-                        statutBadge = `<span class="absolute top-4 left-4 bg-green-500 text-white text-xs font-bold px-3 py-1 rounded shadow-md"><i class="fa-solid fa-check mr-1"></i> En Stock Réunion</span>`;
+                        statutBadge = `<span class="absolute top-4 left-4 bg-green-500 text-white text-xs font-bold px-3 py-1 rounded shadow-md z-10"><i class="fa-solid fa-check mr-1"></i> En Stock Réunion</span>`;
                     } else if (roue.Statut) {
-                        statutBadge = `<span class="absolute top-4 left-4 bg-orange-500 text-white text-xs font-bold px-3 py-1 rounded shadow-md"><i class="fa-solid fa-plane mr-1"></i> ${roue.Statut}</span>`;
+                        statutBadge = `<span class="absolute top-4 left-4 bg-orange-500 text-white text-xs font-bold px-3 py-1 rounded shadow-md z-10"><i class="fa-solid fa-plane mr-1"></i> ${roue.Statut}</span>`;
                     }
 
                     const cardHtml = `
-                        <div class="wheel-card bg-white rounded-xl shadow-md overflow-hidden transition-all duration-300 border border-gray-100 flex flex-col relative group">
+                        <!-- Ajout du cursor-pointer et du onclick pour ouvrir la modale -->
+                        <div onclick="openModal(${index})" class="wheel-card bg-white rounded-xl shadow-md overflow-hidden border border-gray-100 flex flex-col relative group cursor-pointer">
                             
                             ${statutBadge}
                             
-                            <!-- Image avec effet de zoom au survol -->
-                            <div class="overflow-hidden h-64 bg-gray-50 flex items-center justify-center p-4">
+                            <div class="overflow-hidden h-64 bg-gray-50 flex items-center justify-center p-4 relative">
                                 <img src="${imageUrl}" alt="${roue.Nom}" class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500">
+                                <!-- Petit overlay au survol pour inciter au clic -->
+                                <div class="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition flex items-center justify-center">
+                                    <span class="bg-white/90 text-gray-900 text-sm font-bold px-4 py-2 rounded-full shadow-lg transform translate-y-4 group-hover:translate-y-0 transition">Voir détails</span>
+                                </div>
                             </div>
                             
                             <div class="p-6 flex flex-col flex-grow">
@@ -188,20 +260,13 @@
                                         <span class="text-xs uppercase tracking-wider text-gray-400 font-bold mb-1">Poids</span>
                                         <span class="font-semibold text-gray-800"><i class="fa-solid fa-weight-scale text-dfs-accent mr-1"></i> ${roue.Poids || '-'}</span>
                                     </div>
-                                    <div class="flex flex-col col-span-2">
-                                        <span class="text-xs uppercase tracking-wider text-gray-400 font-bold mb-1">Moyeux</span>
-                                        <span class="font-semibold text-gray-800"><i class="fa-solid fa-gear text-dfs-accent mr-1"></i> ${roue.Moyeu || '-'}</span>
-                                    </div>
-                                    <div class="flex flex-col col-span-2">
-                                        <span class="text-xs uppercase tracking-wider text-gray-400 font-bold mb-1">Rayons</span>
-                                        <span class="font-semibold text-gray-800"><i class="fa-solid fa-lines-leaning text-dfs-accent mr-1"></i> ${roue.Rayon || '-'}</span>
-                                    </div>
                                 </div>
                                 
                                 <div class="mt-auto">
-                                    <button onclick="alert('Redirection vers Stripe... (Lien à configurer)')" class="w-full bg-gray-900 hover:bg-dfs-accent text-white font-bold py-3 px-4 rounded-lg flex justify-between items-center transition duration-300 shadow-md hover:shadow-lg">
-                                        <span>Acheter via carte</span>
-                                        <i class="fa-brands fa-stripe-s text-xl"></i>
+                                    <!-- event.stopPropagation() empêche le clic du bouton d'ouvrir aussi la modale -->
+                                    <button onclick="event.stopPropagation(); alert('Redirection vers Stripe...')" class="w-full bg-dfs-dark hover:bg-dfs-accent text-white font-bold py-3 px-4 rounded-lg flex justify-center items-center gap-2 transition duration-300 shadow-md">
+                                        <span>Acheter</span>
+                                        <i class="fa-solid fa-cart-shopping"></i>
                                     </button>
                                 </div>
                             </div>
@@ -216,11 +281,88 @@
                     <div class="bg-red-50 text-red-600 p-4 rounded-lg text-center border border-red-200">
                         <i class="fa-solid fa-triangle-exclamation text-2xl mb-2"></i>
                         <p class="font-bold">Erreur de connexion</p>
-                        <p class="text-sm mt-1">Impossible de charger le catalogue. Vérifiez l'URL de l'API Google.</p>
+                        <p class="text-sm mt-1">Impossible de charger le catalogue.</p>
                     </div>`;
             }
         }
 
+        // --- Fonctions de la fenêtre modale ---
+        
+        function openModal(index) {
+            const roue = globalCatalogue[index];
+            if(!roue) return;
+
+            // Remplissage des textes
+            document.getElementById('modal-title').textContent = roue.Nom;
+            document.getElementById('modal-price').textContent = roue.Prix ? `${roue.Prix} €` : 'Sur commande';
+            
+            // Si tu ajoutes une colonne "Description" dans Google Sheet, elle s'affichera. Sinon, texte par défaut.
+            document.getElementById('modal-desc').textContent = roue.Description || "Paire de roues carbone haute performance, montée à la main avec les meilleurs composants pour exceller sur les routes de La Réunion. Rigidité latérale maximale et fluidité exceptionnelle.";
+            
+            document.getElementById('modal-hauteur').innerHTML = `<i class="fa-solid fa-arrows-up-down text-dfs-accent mr-1"></i> ${roue.Hauteur || '-'}`;
+            document.getElementById('modal-poids').innerHTML = `<i class="fa-solid fa-weight-scale text-dfs-accent mr-1"></i> ${roue.Poids || '-'}`;
+            document.getElementById('modal-moyeux').innerHTML = `<i class="fa-solid fa-gear text-dfs-accent mr-1"></i> ${roue.Moyeu || '-'}`;
+            document.getElementById('modal-rayons').innerHTML = `<i class="fa-solid fa-lines-leaning text-dfs-accent mr-1"></i> ${roue.Rayon || '-'}`;
+
+            // Gestion du badge statut
+            const badge = document.getElementById('modal-badge');
+            if (roue.Statut && roue.Statut.toLowerCase().includes('stock')) {
+                badge.className = 'text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide w-max mb-4 bg-green-100 text-green-700';
+                badge.innerHTML = '<i class="fa-solid fa-check mr-1"></i> En Stock Réunion';
+            } else {
+                badge.className = 'text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide w-max mb-4 bg-orange-100 text-orange-700';
+                badge.innerHTML = `<i class="fa-solid fa-plane mr-1"></i> ${roue.Statut || 'Sur Commande'}`;
+            }
+
+            // Gestion de la galerie d'images
+            let images = roue.Image ? roue.Image.split(',') : ['https://images.unsplash.com/photo-1511994298241-608e28f14fde?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80'];
+            
+            const mainImg = document.getElementById('modal-main-img');
+            mainImg.src = images[0].trim(); // On met la première image par défaut
+            
+            const thumbContainer = document.getElementById('modal-thumbnails');
+            thumbContainer.innerHTML = ''; // On nettoie les anciennes miniatures
+            
+            // S'il y a plus d'une image, on crée les miniatures
+            if (images.length > 1) {
+                images.forEach((imgUrl, i) => {
+                    const cleanUrl = imgUrl.trim();
+                    const thumb = document.createElement('img');
+                    thumb.src = cleanUrl;
+                    // Style de la miniature (bordure bleue si sélectionnée)
+                    thumb.className = `w-20 h-20 object-cover rounded-lg cursor-pointer border-2 transition-all ${i === 0 ? 'border-dfs-accent shadow-md scale-105' : 'border-transparent hover:border-gray-300 opacity-70 hover:opacity-100'}`;
+                    
+                    // Comportement au clic sur une miniature
+                    thumb.onclick = () => {
+                        mainImg.src = cleanUrl;
+                        // Mise à jour des bordures
+                        Array.from(thumbContainer.children).forEach(c => {
+                            c.classList.remove('border-dfs-accent', 'shadow-md', 'scale-105');
+                            c.classList.add('border-transparent', 'opacity-70');
+                        });
+                        thumb.classList.remove('border-transparent', 'opacity-70');
+                        thumb.classList.add('border-dfs-accent', 'shadow-md', 'scale-105');
+                    };
+                    thumbContainer.appendChild(thumb);
+                });
+            }
+
+            // Affichage de la modale et blocage du scroll de fond
+            document.getElementById('product-modal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            document.getElementById('product-modal').classList.add('hidden');
+            document.body.style.overflow = 'auto'; // Réactiver le scroll
+        }
+
+        // Fermer la modale si on clique à côté de la fenêtre blanche
+        document.getElementById('product-modal').addEventListener('click', function(e) {
+            if (e.target === this) closeModal();
+        });
+
+        // Lancement au démarrage
         loadCatalogue();
     </script>
 </body>
