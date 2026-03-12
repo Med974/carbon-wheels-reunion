@@ -184,7 +184,7 @@
                 <p id="modal-desc" class="text-sm text-gray-500 mb-6"></p>
 
                 <!-- LE CONFIGURATEUR -->
-                <div class="bg-gray-50 p-5 rounded-xl border border-gray-200 mb-6">
+                <div id="configurator-section" class="bg-gray-50 p-5 rounded-xl border border-gray-200 mb-6">
                     <h4 class="text-sm font-bold text-gray-900 uppercase tracking-wider mb-4 flex items-center">
                         <i class="fa-solid fa-sliders text-brand-accent mr-2"></i> Personnalisation
                     </h4>
@@ -231,7 +231,7 @@
                 
                 <div class="mt-auto">
                     <button id="modal-buy-btn" onclick="alert('Redirection vers le panier avec vos options...')" class="w-full bg-brand-accent hover:bg-yellow-400 text-brand-main font-bold py-4 rounded-xl flex justify-center items-center gap-3 transition duration-300 shadow-lg">
-                        <span>Acheter ma configuration</span>
+                        <span id="buy-btn-text">Acheter ma configuration</span>
                         <i class="fa-solid fa-cart-shopping text-xl"></i>
                     </button>
                     <p class="text-center text-xs text-gray-400 mt-3"><i class="fa-solid fa-shield-halved mr-1"></i> Paiement 100% sécurisé (Stripe)</p>
@@ -362,8 +362,21 @@
                 });
             }
 
-            // Mise à jour initiale des calculs
-            updateConfig();
+            // Gestion intelligente du configurateur selon le type de roue
+            const nomRoueLC = roue.Nom.toLowerCase();
+            const isConfigurable = !nomRoueLC.includes('bâton') && !nomRoueLC.includes('tri-spoke') && !nomRoueLC.includes('lenticulaire') && !nomRoueLC.includes('disc');
+            
+            if (isConfigurable) {
+                document.getElementById('configurator-section').style.display = 'block';
+                document.getElementById('buy-btn-text').textContent = 'Acheter ma configuration';
+                updateConfig(); // Met à jour avec les options sélectionnées
+            } else {
+                document.getElementById('configurator-section').style.display = 'none';
+                document.getElementById('buy-btn-text').textContent = 'Acheter ce modèle';
+                // Affiche les valeurs brutes du tableur
+                document.getElementById('calc-price').textContent = currentBasePrice > 0 ? currentBasePrice : '--';
+                document.getElementById('calc-weight').textContent = currentBaseWeight > 0 ? currentBaseWeight : '--';
+            }
 
             document.getElementById('product-modal').classList.remove('hidden');
             document.body.style.overflow = 'hidden';
