@@ -213,12 +213,12 @@
                     <!-- Choix des Rayons -->
                     <div class="mb-5">
                         <label class="block text-xs font-bold text-gray-500 mb-2">2. Rayons (Spokes)</label>
-                        <!-- Ajout des datas : poids unitaire exact de chaque rayon -->
+                        <!-- Ajout des dimensions de chaque rayon -->
                         <select id="config-rayons" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-3 text-sm font-semibold text-gray-800 focus:outline-none focus:ring-2 focus:ring-brand-accent focus:border-transparent cursor-pointer shadow-sm" onchange="updateConfig()">
-                            <option id="opt-t32" value="T32" data-price="0" data-spoke-weight="2.1">Carbone T32 (Aéro pur, 2.1g/pièce)</option>
-                            <option value="T33" data-price="0" data-spoke-weight="3.2" selected>Carbone T33 (Rigidité brutale, 3.2g/pièce)</option>
-                            <option value="T40" data-price="0" data-spoke-weight="3.3">Carbone T40 (Sprint massif, 3.3g/pièce)</option>
-                            <option value="T52" data-price="20" data-spoke-weight="5.2">Carbone T52 (Stiffness ultime, 5.2g/pièce) [+20€]</option>
+                            <option id="opt-t32" value="T32" data-price="0" data-spoke-weight="2.1">Carbone T32 (Aéro pur, 3.2 x 0.98mm - 2.1g)</option>
+                            <option value="T33" data-price="0" data-spoke-weight="3.2" selected>Carbone T33 (Rigidité brutale, 3.3 x 0.98mm - 3.2g)</option>
+                            <option value="T40" data-price="0" data-spoke-weight="3.3">Carbone T40 (Sprint massif, 4.0 x 0.95mm - 3.3g)</option>
+                            <option value="T52" data-price="20" data-spoke-weight="5.2">Carbone T52 (Stiffness ultime, 5.2 x 0.95mm - 5.2g) [+20€]</option>
                         </select>
                     </div>
 
@@ -236,9 +236,10 @@
                 <div class="flex justify-between items-end mb-6 bg-brand-main text-white p-4 rounded-xl shadow-md">
                     <div>
                         <span class="block text-xs text-gray-400 font-bold uppercase tracking-wider mb-1">Poids total estimé</span>
-                        <div class="text-xl font-bold flex items-center">
+                        <div class="text-xl font-bold flex items-center flex-wrap">
                             <i class="fa-solid fa-weight-scale text-brand-accent mr-2"></i>
-                            <span id="calc-weight">--</span> g
+                            <span id="calc-weight">--</span> g 
+                            <span class="text-sm text-gray-400 ml-2 font-medium whitespace-nowrap">+/- 30g</span>
                         </div>
                     </div>
                     <div class="text-right">
