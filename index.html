@@ -167,35 +167,56 @@
         </div>
         
         <!-- Grille des produits -->
-        <div id="products-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <!-- Message de chargement -->
-            <div id="loading-message" class="col-span-full flex flex-col items-center justify-center py-20">
-                <i class="fa-solid fa-circle-notch fa-spin text-brand-accent text-4xl mb-4"></i>
-                <p class="text-lg text-gray-600 font-medium">Connexion au stock en temps réel...</p>
-            </div>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div id="product-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <!-- Les produits seront injectés ici -->
         </div>
-    </main>
+    </div>
 
-    <!-- Section Technologie -->
-    <section id="technologie" class="bg-gray-50 py-16 border-y border-gray-200">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h3 class="text-3xl font-black text-center mb-4">Zoom sur : Les Moyeux DFS R2</h3>
-            <p class="text-center text-gray-600 max-w-2xl mx-auto mb-12">Nous équipons nos roues avec la technologie de pointe, offrant un des meilleurs rapports qualité/prix du marché.</p>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
-                <div class="p-6 bg-white rounded-2xl shadow-sm border border-gray-100">
-                    <i class="fa-solid fa-bolt text-4xl text-brand-accent mb-4"></i>
-                    <h4 class="text-xl font-bold mb-2">Ratchet SSF (45T/72T)</h4>
-                    <p class="text-gray-600 text-sm">Engagement quasi instantané de 5° à 8°. Transfert de puissance direct idéal pour les relances en danseuse sur nos pentes.</p>
+    <!-- Section Contact -->
+    <div class="bg-white py-16 border-t border-gray-100" id="contact">
+        <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-10">
+                <h2 class="text-3xl font-extrabold text-gray-900 mb-4">Une question ?</h2>
+                <p class="text-gray-500">Besoin d'un conseil pour choisir vos roues ou vérifier une compatibilité ? Écrivez-nous directement.</p>
+            </div>
+            
+            <!-- Formulaire relié à Formspree -->
+            <form action="https://formspree.io/f/xzdjgqlg" method="POST" class="space-y-6 bg-gray-50 p-8 rounded-2xl shadow-sm border border-gray-100">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Votre nom</label>
+                        <input type="text" name="name" id="name" required class="w-full bg-white border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-brand-accent focus:border-transparent">
+                    </div>
+                    <div>
+                        <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Votre adresse e-mail</label>
+                        <input type="email" name="email" id="email" required class="w-full bg-white border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-brand-accent focus:border-transparent">
+                    </div>
                 </div>
-                <div class="p-6 bg-white rounded-2xl shadow-sm border border-gray-100">
-                    <i class="fa-solid fa-shield-halved text-4xl text-brand-accent mb-4"></i>
-                    <h4 class="text-xl font-bold mb-2">Corps Titane TC4</h4>
-                    <p class="text-gray-600 text-sm">Fini les cassettes qui marquent l'aluminium. Le corps de roue libre en titane garantit une durabilité extrême.</p>
+                <div>
+                    <label for="message" class="block text-sm font-medium text-gray-700 mb-1">Votre message</label>
+                    <textarea name="message" id="message" rows="4" required class="w-full bg-white border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-brand-accent focus:border-transparent resize-none"></textarea>
                 </div>
-                <div class="p-6 bg-white rounded-2xl shadow-sm border border-gray-100">
-                    <i class="fa-solid fa-fan text-4xl text-brand-accent mb-4"></i>
-                    <h4 class="text-xl font-bold mb-2">Roulements Céramique</h4>
-                    <p class="text-gray-600 text-sm">Une fluidité exceptionnelle pour économiser des watts sur le plat, avec des roulements surdimensionnés pour plus de fiabilité.</p>
+                <button type="submit" class="w-full bg-brand-main text-white font-bold py-3 px-4 rounded-lg hover:bg-gray-800 transition-colors shadow-md">
+                    Envoyer le message
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-brand-main text-white py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div>
+                <h3 class="text-xl font-bold mb-4">Karbòn Péi</h3>
+                <p class="text-gray-400 text-sm">Roues carbone haute performance, sélectionnées pour les routes de La Réunion.</p>
+            </div>
+            <div>
+                <h4 class="font-bold mb-4">Contact</h4>
+                <div class="flex space-x-4">
+                    <!-- Bouton WhatsApp conservé -->
+                    <a href="https://wa.me/262693000000" target="_blank" class="text-gray-400 hover:text-white transition-colors"><i class="fa-brands fa-whatsapp text-2xl"></i></a>
+                    <!-- Bouton Instagram retiré comme demandé -->
                 </div>
             </div>
         </div>
