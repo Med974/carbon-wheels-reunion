@@ -159,6 +159,7 @@
                 <button onclick="filterCatalogue('Tout')" class="filter-btn active px-4 py-2 rounded-full border border-gray-300 text-sm font-bold whitespace-nowrap transition-colors">Tout voir</button>
                 <button onclick="filterCatalogue('Roues')" class="filter-btn px-4 py-2 rounded-full border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 text-sm font-bold whitespace-nowrap transition-colors">Roues Carbone</button>
                 <button onclick="filterCatalogue('Accessoires')" class="filter-btn px-4 py-2 rounded-full border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 text-sm font-bold whitespace-nowrap transition-colors">Accessoires</button>
+                <button onclick="filterCatalogue('Composants')" class="filter-btn px-4 py-2 rounded-full border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 text-sm font-bold whitespace-nowrap transition-colors">Composants</button>
             </div>
         </div>
         
@@ -588,9 +589,9 @@
                     statutBadge = `<span class="absolute top-4 left-4 bg-orange-500 text-white text-xs font-bold px-3 py-1 rounded shadow-md z-10"><i class="fa-solid fa-plane mr-1"></i> ${item.Statut}</span>`;
                 }
 
-                // Affichage différentiel Roue vs Accessoire
+                // Affichage différentiel Roue vs Accessoire/Composant
                 let specLigne = '';
-                if (cat.toLowerCase().includes('accessoire')) {
+                if (cat.toLowerCase().includes('accessoire') || cat.toLowerCase().includes('composant')) {
                     specLigne = `<span class="flex items-center"><i class="fa-solid fa-weight-scale text-brand-accent mr-1.5"></i> ${item.Poids || '-'} g</span>`;
                 } else {
                     specLigne = `
@@ -637,8 +638,8 @@
             currentBasePrice = parseInt(item.Prix) || 0;
             currentBaseWeight = parseInt(item.Poids) || 0;
             
-            // Déterminer si c'est un accessoire
-            isCurrentItemAccessory = (item.Categorie && item.Categorie.toLowerCase().includes('accessoire'));
+            // Déterminer si c'est un accessoire ou composant
+            isCurrentItemAccessory = (item.Categorie && (item.Categorie.toLowerCase().includes('accessoire') || item.Categorie.toLowerCase().includes('composant')));
 
             document.getElementById('modal-title').textContent = item.Nom;
             document.getElementById('modal-desc').textContent = item.Description || "Sélectionnez vos options pour ajouter ce produit au panier.";
