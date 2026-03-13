@@ -74,10 +74,13 @@
 
     <!-- Bannière / Hero Section -->
     <div class="relative bg-brand-main py-24 md:py-32 overflow-hidden">
-        <!-- Dégradé sombre et élégant -->
-        <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-gray-800 via-brand-main to-black opacity-90"></div>
-        <!-- Effet de trame technique -->
-        <div class="absolute inset-0" style="background-image: radial-gradient(rgba(234, 179, 8, 0.15) 1px, transparent 1px); background-size: 24px 24px;"></div>
+        
+        <!-- Image de fond du SL8 -->
+        <div class="absolute inset-0">
+            <img src="./images/SL8.jpg" alt="Vélo Tarmac SL8 équipé Karbòn Péi" class="w-full h-full object-cover">
+        </div>
+        <!-- Dégradé sombre pour garantir la lisibilité du texte -->
+        <div class="absolute inset-0 bg-gradient-to-t from-brand-main via-brand-main/80 to-brand-main/30"></div>
         
         <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center z-10">
             <span class="bg-brand-accent text-brand-main text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide mb-4 inline-block shadow-lg">Sélectionné pour La Réunion</span>
