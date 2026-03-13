@@ -398,9 +398,25 @@
 
         <!-- Footer Panier (Total & Validation) -->
         <div class="p-6 bg-white border-t border-gray-200 shadow-[0_-10px_15px_-3px_rgba(0,0,0,0.05)]">
+            <!-- Zone Code Promo -->
+            <div class="mb-4">
+                <div id="promo-input-container" class="flex gap-2">
+                    <input type="text" id="promo-code" placeholder="Code promo" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm uppercase focus:outline-none focus:ring-2 focus:ring-brand-accent">
+                    <button onclick="applyPromoCode()" class="bg-brand-main text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-gray-800 transition">Appliquer</button>
+                </div>
+                <div id="promo-message" class="text-xs mt-2 hidden"></div>
+                <div id="promo-active-container" class="hidden justify-between items-center bg-green-50 text-green-700 px-3 py-2 rounded-lg border border-green-200">
+                    <span class="text-sm font-bold"><i class="fa-solid fa-tag mr-1"></i> <span id="active-promo-name"></span></span>
+                    <button onclick="removePromoCode()" class="text-green-700 hover:text-green-900"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+            </div>
+
             <div class="flex justify-between items-end mb-6">
                 <span class="text-gray-500 font-bold uppercase text-sm tracking-wider">Total estimé</span>
-                <span class="text-3xl font-black text-brand-main"><span id="cart-total">0</span> €</span>
+                <div class="text-right">
+                    <span id="cart-original-total" class="text-sm text-gray-400 line-through hidden block">0 €</span>
+                    <span class="text-3xl font-black text-brand-main"><span id="cart-total">0</span> €</span>
+                </div>
             </div>
             
             <button onclick="checkoutWhatsApp()" id="checkout-btn" class="w-full bg-[#25D366] hover:bg-[#1da851] text-white font-bold py-4 rounded-xl flex justify-center items-center gap-3 transition duration-300 shadow-lg opacity-50 cursor-not-allowed" disabled>
@@ -423,6 +439,8 @@
         
         // --- GESTION DU PANIER ---
         let cart = [];
+        let appliedPromo = null;
+        let discountAmount = 0;
 
         function toggleCart() {
             const panel = document.getElementById('cart-panel');
@@ -466,7 +484,8 @@
                 price: finalPrice,
                 weight: finalWeight,
                 config: configText,
-                image: imgUrl
+                image: imgUrl,
+                isAccessory: isCurrentItemAccessory
             };
 
             cart.push(item);
@@ -510,8 +529,20 @@
 
             // Affichage des items
             let total = 0;
+            discountAmount = 0; // Réinitialiser la remise
+            
             cart.forEach(item => {
                 total += item.price;
+                
+                // Calcul de la remise si code promo actif
+                if (appliedPromo === 'CCPIKARBON') {
+                    if (!item.isAccessory) {
+                        discountAmount += 50; // -50€ sur chaque paire de roues
+                    } else {
+                        discountAmount += Math.round(item.price * 0.05); // -5% sur les accessoires
+                    }
+                }
+                
                 const div = document.createElement('div');
                 div.className = "bg-white p-4 rounded-xl border border-gray-100 shadow-sm flex gap-4 relative group";
                 div.innerHTML = `
@@ -531,7 +562,54 @@
                 container.appendChild(div);
             });
 
-            totalEl.textContent = total;
+            // Gestion de l'affichage du code promo
+            const promoInputContainer = document.getElementById('promo-input-container');
+            const promoActiveContainer = document.getElementById('promo-active-container');
+            const originalTotalEl = document.getElementById('cart-original-total');
+
+            if (appliedPromo) {
+                promoInputContainer.classList.add('hidden');
+                promoActiveContainer.classList.remove('hidden');
+                promoActiveContainer.classList.add('flex');
+                document.getElementById('active-promo-name').textContent = `${appliedPromo} (-${discountAmount}€)`;
+                
+                if (discountAmount > 0) {
+                    originalTotalEl.textContent = `${total} €`;
+                    originalTotalEl.classList.remove('hidden');
+                } else {
+                    originalTotalEl.classList.add('hidden');
+                }
+            } else {
+                promoInputContainer.classList.remove('hidden');
+                promoActiveContainer.classList.add('hidden');
+                promoActiveContainer.classList.remove('flex');
+                originalTotalEl.classList.add('hidden');
+                document.getElementById('promo-message').classList.add('hidden');
+            }
+
+            totalEl.textContent = total - discountAmount;
+        }
+
+        function applyPromoCode() {
+            const input = document.getElementById('promo-code');
+            const code = input.value.trim().toUpperCase();
+            const msgEl = document.getElementById('promo-message');
+
+            if (code === 'CCPIKARBON') {
+                appliedPromo = code;
+                input.value = '';
+                msgEl.classList.add('hidden');
+                updateCartUI();
+            } else {
+                msgEl.textContent = 'Code promo invalide.';
+                msgEl.className = 'text-xs mt-2 text-red-500 font-bold block';
+            }
+        }
+
+        function removePromoCode() {
+            appliedPromo = null;
+            discountAmount = 0;
+            updateCartUI();
         }
 
         function checkoutWhatsApp() {
@@ -551,7 +629,15 @@
                 total += item.price;
             });
             
-            msg += `*TOTAL ESTIMÉ : ${total} €*\n\n`;
+            if (appliedPromo) {
+                msg += `*TOTAL SANS REMISE : ${total} €*\n`;
+                msg += `*CODE PROMO : ${appliedPromo}*\n`;
+                msg += `*REMISE : -${discountAmount} €*\n`;
+                msg += `*TOTAL À PAYER : ${total - discountAmount} €*\n\n`;
+            } else {
+                msg += `*TOTAL À PAYER : ${total} €*\n\n`;
+            }
+            
             msg += `Comment pouvons-nous procéder pour le règlement (virement, espèces) et la remise en main propre ?`;
 
             const encodedMsg = encodeURIComponent(msg);
