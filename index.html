@@ -5,13 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Karbòn Péi - La Réunion | Roues & Composants</title>
     
-    <!-- Icône de l'onglet du navigateur (Favicon) - Le volcan est de retour -->
+    <!-- Icône de l'onglet du navigateur (Favicon) -->
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌋</text></svg>">
 
     <!-- Tailwind CSS pour le style -->
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- MISE À JOUR : Version 6.5.1 pour débloquer l'icône volcan -->
+    <!-- Font-Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
     
     <script>
@@ -22,72 +22,71 @@
                         'dfs-blue': '#1e40af', 
                         'dfs-dark': '#0f172a',
                         'dfs-accent': '#3b82f6',
-                        'brand-main': '#0f172a', /* Remplacement générique */
-                        'brand-accent': '#eab308' /* Touche de jaune/or */
+                        'brand-main': '#0f172a', 
+                        'brand-accent': '#eab308' 
                     }
                 }
             }
         }
     </script>
     <style>
-        /* Effet de transition fluide pour les cartes */
-        .wheel-card {
-            transition: all 0.3s ease;
-        }
-        .wheel-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-        }
-        /* Masquer la scrollbar de la galerie miniature */
-        .no-scrollbar::-webkit-scrollbar {
-            display: none;
-        }
-        .no-scrollbar {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-        }
+        html { scroll-behavior: smooth; }
+        .wheel-card { transition: all 0.3s ease; }
+        .wheel-card:hover { transform: translateY(-5px); box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        /* Animations du panier */
+        #cart-panel { transition: transform 0.3s ease-in-out; }
+        .cart-open { transform: translateX(0); }
+        .cart-closed { transform: translateX(100%); }
+        
+        /* Boutons de filtre actifs */
+        .filter-btn.active { background-color: #0f172a; color: white; border-color: #0f172a; }
     </style>
 </head>
-<body class="bg-gray-100 text-gray-800 font-sans selection:bg-brand-accent selection:text-white">
+<body class="bg-gray-100 text-gray-800 font-sans selection:bg-brand-accent selection:text-white relative">
 
     <!-- En-tête -->
-    <header class="bg-brand-main text-white sticky top-0 z-50 shadow-lg">
+    <header class="bg-brand-main text-white sticky top-0 z-40 shadow-lg">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
             <div class="flex items-center gap-3">
                 <i class="fa-solid fa-volcano text-brand-accent text-3xl"></i>
                 <div>
-                    <h1 class="text-2xl font-black tracking-widest">KARBÒN <span class="text-brand-accent">PÉI</span></h1>
-                    <p class="text-xs text-gray-400 font-medium tracking-wider uppercase">Matériel Haute Performance - 974</p>
+                    <h1 class="text-2xl font-black tracking-widest cursor-pointer" onclick="window.scrollTo(0,0)">KARBÒN <span class="text-brand-accent">PÉI</span></h1>
+                    <p class="text-xs text-gray-400 font-medium tracking-wider uppercase hidden sm:block">Matériel Haute Performance - 974</p>
                 </div>
             </div>
-            <div>
-                <a href="#catalogue" class="hidden md:inline-block text-sm text-gray-300 hover:text-white mr-6 transition">Catalogue</a>
-                <a href="#technologie" class="hidden md:inline-block text-sm text-gray-300 hover:text-white mr-6 transition">Nos Marques</a>
-                <a href="#catalogue" class="bg-brand-accent hover:bg-yellow-400 text-brand-main text-sm font-bold py-2 px-5 rounded-full shadow-md transition duration-300">
-                    Commander
-                </a>
+            <div class="flex items-center gap-4 sm:gap-6">
+                <a href="#catalogue" class="hidden md:inline-block text-sm text-gray-300 hover:text-white transition font-medium">Catalogue</a>
+                <a href="#technologie" class="hidden lg:inline-block text-sm text-gray-300 hover:text-white transition font-medium">Technologies</a>
+                <a href="#contact" class="hidden md:inline-block text-sm text-gray-300 hover:text-white transition font-medium">Contact</a>
+                
+                <!-- Icône Panier -->
+                <button onclick="toggleCart()" class="relative p-2 text-gray-300 hover:text-brand-accent transition">
+                    <i class="fa-solid fa-cart-shopping text-2xl"></i>
+                    <span id="cart-badge" class="absolute top-0 right-0 transform translate-x-1/4 -translate-y-1/4 bg-brand-accent text-brand-main text-xs font-black h-5 w-5 flex items-center justify-center rounded-full border-2 border-brand-main hidden">0</span>
+                </button>
             </div>
         </div>
     </header>
 
     <!-- Bannière / Hero Section -->
     <div class="relative bg-brand-main py-24 md:py-32 overflow-hidden">
-        
-        <!-- FOND PREMIUM 100% SÉCURISÉ (CSS UNIQUEMENT) -->
         <!-- Dégradé sombre et élégant -->
         <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-gray-800 via-brand-main to-black opacity-90"></div>
-        <!-- Effet de trame technique (façon fibre de carbone/grille) -->
+        <!-- Effet de trame technique -->
         <div class="absolute inset-0" style="background-image: radial-gradient(rgba(234, 179, 8, 0.15) 1px, transparent 1px); background-size: 24px 24px;"></div>
         
         <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center z-10">
             <span class="bg-brand-accent text-brand-main text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide mb-4 inline-block shadow-lg">Sélectionné pour La Réunion</span>
             <h2 class="text-4xl md:text-6xl font-black text-white mb-6 tracking-tight drop-shadow-md">Le meilleur du carbone. <br/><span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-accent to-yellow-200">Sans intermédiaire.</span></h2>
             <p class="text-lg md:text-xl text-gray-300 max-w-2xl mx-auto mb-10 drop-shadow">
-                Des composants ultra-performants testés sur nos routes. Configurez vos roues sur-mesure (Moyeux, Rayons) pour s'adapter à votre style de pilotage.
+                Des composants ultra-performants testés sur nos routes. Configurez vos roues sur-mesure ou commandez vos accessoires ultra-légers.
             </p>
             <div class="flex justify-center gap-4">
                 <a href="#catalogue" class="bg-white text-brand-main hover:bg-gray-100 font-bold py-3 px-8 rounded-full shadow-xl transition duration-300 transform hover:-translate-y-1">
-                    Voir le catalogue
+                    Voir la boutique
                 </a>
             </div>
         </div>
@@ -95,46 +94,79 @@
 
     <!-- Section Catalogue -->
     <main id="catalogue" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div class="flex justify-between items-end mb-10 border-b border-gray-300 pb-4">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 border-b border-gray-300 pb-4 gap-4">
             <div>
-                <h3 class="text-3xl font-black text-gray-900">Configurez vos roues</h3>
-                <p class="text-gray-500 mt-1">Choisissez une hauteur de jante pour commencer la configuration.</p>
+                <h3 class="text-3xl font-black text-gray-900">Notre Catalogue</h3>
+                <p class="text-gray-500 mt-1">Équipez votre machine avec ce qu'il se fait de mieux.</p>
+            </div>
+            
+            <!-- Filtres de Catégories -->
+            <div class="flex gap-2 overflow-x-auto no-scrollbar w-full md:w-auto pb-2 md:pb-0">
+                <button onclick="filterCatalogue('Tout')" class="filter-btn active px-4 py-2 rounded-full border border-gray-300 text-sm font-bold whitespace-nowrap transition-colors">Tout voir</button>
+                <button onclick="filterCatalogue('Roues')" class="filter-btn px-4 py-2 rounded-full border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 text-sm font-bold whitespace-nowrap transition-colors">Roues Carbone</button>
+                <button onclick="filterCatalogue('Accessoires')" class="filter-btn px-4 py-2 rounded-full border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 text-sm font-bold whitespace-nowrap transition-colors">Accessoires</button>
             </div>
         </div>
         
         <!-- Grille des produits -->
         <div id="products-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            
             <!-- Message de chargement -->
             <div id="loading-message" class="col-span-full flex flex-col items-center justify-center py-20">
                 <i class="fa-solid fa-circle-notch fa-spin text-brand-accent text-4xl mb-4"></i>
                 <p class="text-lg text-gray-600 font-medium">Connexion au stock en temps réel...</p>
             </div>
-
         </div>
     </main>
 
     <!-- Section Technologie -->
-    <section id="technologie" class="bg-white py-16">
+    <section id="technologie" class="bg-gray-50 py-16 border-y border-gray-200">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <h3 class="text-3xl font-black text-center mb-4">Zoom sur : Les Moyeux DFS R2</h3>
-            <p class="text-center text-gray-600 max-w-2xl mx-auto mb-12">Nous équipons nos roues avec la technologie de pointe DFS, offrant un des meilleurs rapports qualité/prix du marché mondial.</p>
+            <p class="text-center text-gray-600 max-w-2xl mx-auto mb-12">Nous équipons nos roues avec la technologie de pointe, offrant un des meilleurs rapports qualité/prix du marché.</p>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
-                <div class="p-6">
+                <div class="p-6 bg-white rounded-2xl shadow-sm border border-gray-100">
                     <i class="fa-solid fa-bolt text-4xl text-brand-accent mb-4"></i>
                     <h4 class="text-xl font-bold mb-2">Ratchet SSF (45T/72T)</h4>
-                    <p class="text-gray-600 text-sm">Engagement quasi instantané de 5° à 8°. Transfert de puissance direct idéal pour les relances en danseuse.</p>
+                    <p class="text-gray-600 text-sm">Engagement quasi instantané de 5° à 8°. Transfert de puissance direct idéal pour les relances en danseuse sur nos pentes.</p>
                 </div>
-                <div class="p-6">
+                <div class="p-6 bg-white rounded-2xl shadow-sm border border-gray-100">
                     <i class="fa-solid fa-shield-halved text-4xl text-brand-accent mb-4"></i>
                     <h4 class="text-xl font-bold mb-2">Corps Titane TC4</h4>
                     <p class="text-gray-600 text-sm">Fini les cassettes qui marquent l'aluminium. Le corps de roue libre en titane garantit une durabilité extrême.</p>
                 </div>
-                <div class="p-6">
+                <div class="p-6 bg-white rounded-2xl shadow-sm border border-gray-100">
                     <i class="fa-solid fa-fan text-4xl text-brand-accent mb-4"></i>
                     <h4 class="text-xl font-bold mb-2">Roulements Céramique</h4>
-                    <p class="text-gray-600 text-sm">Une fluidité exceptionnelle pour économiser des watts sur chaque kilomètre plat, avec une maintenance sans outil.</p>
+                    <p class="text-gray-600 text-sm">Une fluidité exceptionnelle pour économiser des watts sur le plat, avec des roulements surdimensionnés pour plus de fiabilité.</p>
                 </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section Contact -->
+    <section id="contact" class="bg-white py-16">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h3 class="text-3xl font-black text-gray-900 mb-4">Besoin d'un conseil ?</h3>
+            <p class="text-gray-600 mb-10">Nous sommes basés à La Réunion. N'hésitez pas à nous contacter pour une question technique, une commande spéciale ou une vérification de stock.</p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- WhatsApp (Principal) -->
+                <a href="https://wa.me/262692000000" target="_blank" class="flex items-center justify-center gap-4 bg-[#25D366] hover:bg-[#1da851] text-white p-6 rounded-2xl shadow-md transition transform hover:-translate-y-1">
+                    <i class="fa-brands fa-whatsapp text-4xl"></i>
+                    <div class="text-left">
+                        <span class="block font-black text-lg">Message WhatsApp</span>
+                        <span class="block text-sm opacity-90">Réponse très rapide</span>
+                    </div>
+                </a>
+                
+                <!-- Instagram -->
+                <a href="#" target="_blank" class="flex items-center justify-center gap-4 bg-gradient-to-r from-[#f09433] via-[#e6683c] to-[#bc1888] hover:opacity-90 text-white p-6 rounded-2xl shadow-md transition transform hover:-translate-y-1">
+                    <i class="fa-brands fa-instagram text-4xl"></i>
+                    <div class="text-left">
+                        <span class="block font-black text-lg">Instagram</span>
+                        <span class="block text-sm opacity-90">@karbonpei974</span>
+                    </div>
+                </a>
             </div>
         </div>
     </section>
@@ -145,12 +177,7 @@
             <i class="fa-solid fa-volcano text-brand-accent text-2xl mb-4"></i>
             <p class="text-white font-bold text-lg mb-2">Karbòn Péi - La Réunion</p>
             <p class="text-sm mb-6">Micro-entreprise en cours d'immatriculation.<br/>TVA non applicable, art. 293 B du CGI.</p>
-            <div class="flex justify-center gap-6 mb-8">
-                <a href="#" class="text-gray-400 hover:text-white transition"><i class="fa-brands fa-facebook text-xl"></i></a>
-                <a href="#" class="text-gray-400 hover:text-white transition"><i class="fa-brands fa-instagram text-xl"></i></a>
-                <a href="#" class="text-gray-400 hover:text-white transition"><i class="fa-brands fa-youtube text-xl"></i></a>
-            </div>
-            <p class="text-xs text-gray-500">&copy; 2026 Karbòn Péi. Site propulsé par GitHub Pages.</p>
+            <p class="text-xs text-gray-500">&copy; 2026 Karbòn Péi. Tous droits réservés.</p>
         </div>
     </footer>
 
@@ -165,15 +192,15 @@
             <!-- Gauche : Galerie Photos -->
             <div class="w-full md:w-1/2 bg-gray-50 p-6 flex flex-col items-center border-r border-gray-200">
                 <div class="h-64 md:h-80 w-full flex items-center justify-center mb-4">
-                    <img id="modal-main-img" src="" alt="Roue" class="max-w-full max-h-full object-contain drop-shadow-xl">
+                    <img id="modal-main-img" src="" alt="Produit" class="max-w-full max-h-full object-contain drop-shadow-xl">
                 </div>
                 <!-- Miniatures -->
                 <div id="modal-thumbnails" class="flex gap-3 overflow-x-auto py-2 w-full no-scrollbar justify-center mb-4">
                     <!-- Les miniatures s'injectent ici -->
                 </div>
                 
-                <!-- Spécifications fixes sous l'image (Ajout des largeurs) -->
-                <div class="w-full bg-white p-4 rounded-xl shadow-sm border border-gray-100 text-sm">
+                <!-- Spécifications fixes sous l'image (Caché pour les accessoires) -->
+                <div id="spec-jantes-box" class="w-full bg-white p-4 rounded-xl shadow-sm border border-gray-100 text-sm">
                     <h4 class="font-bold text-gray-900 mb-2 border-b pb-1">Spécifications Jante</h4>
                     <div class="flex justify-between mb-1"><span class="text-gray-500">Hauteur:</span> <span id="modal-hauteur" class="font-semibold text-gray-800"></span></div>
                     <div class="flex justify-between mb-1"><span class="text-gray-500">Largeur interne:</span> <span class="font-semibold text-gray-800">24 mm</span></div>
@@ -188,7 +215,7 @@
                 <h3 id="modal-title" class="text-3xl font-black text-gray-900 mb-2 leading-tight"></h3>
                 <p id="modal-desc" class="text-sm text-gray-500 mb-6"></p>
 
-                <!-- LE CONFIGURATEUR -->
+                <!-- LE CONFIGURATEUR (Caché pour les accessoires) -->
                 <div id="configurator-section" class="bg-gray-50 p-5 rounded-xl border border-gray-200 mb-6">
                     <h4 class="text-sm font-bold text-gray-900 uppercase tracking-wider mb-4 flex items-center">
                         <i class="fa-solid fa-sliders text-brand-accent mr-2"></i> Personnalisation
@@ -197,23 +224,19 @@
                     <!-- Choix du Moyeu -->
                     <div class="mb-5">
                         <label class="block text-xs font-bold text-gray-500 mb-2">1. Moyeu (Hub) & Jante</label>
-                        <!-- Ajout des datas : poids du moyeu, nombre de rayons, et surpoids de la jante (UXL vs SUXL) -->
                         <select id="config-moyeu" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-3 text-sm font-semibold text-gray-800 focus:outline-none focus:ring-2 focus:ring-brand-accent focus:border-transparent cursor-pointer shadow-sm" onchange="updateConfig()">
                             <option value="RT240" data-price="0" data-hub-weight="238" data-spokes="40" data-rim-diff="0">DFS RT240 (Jantes SUXL, 40 rayons)</option>
                             <option value="R2" data-price="50" data-hub-weight="285" data-spokes="45" data-rim-diff="60" selected>DFS R2 Céramique (Jantes UXL, 45 rayons) [+50€]</option>
                         </select>
-                        
-                        <!-- Recommandation affichée dynamiquement pour le moyeu R2 -->
                         <div id="msg-reco-r2" class="mt-3 bg-yellow-50 border border-yellow-200 rounded-lg p-3 flex gap-3 text-sm text-yellow-800 transition-all duration-300">
                             <i class="fa-solid fa-medal text-brand-accent text-lg mt-0.5"></i>
-                            <p><strong>Notre recommandation :</strong> Le moyeu R2 est plus robuste, possède des roulements plus gros et nécessite moins de maintenance. Parfaitement adapté à nos routes !</p>
+                            <p><strong>Recommandé :</strong> Le moyeu R2 est plus robuste, possède de plus gros roulements et nécessite moins d'entretien.</p>
                         </div>
                     </div>
                     
                     <!-- Choix des Rayons -->
                     <div class="mb-5">
                         <label class="block text-xs font-bold text-gray-500 mb-2">2. Rayons (Spokes)</label>
-                        <!-- Ajout des dimensions de chaque rayon -->
                         <select id="config-rayons" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-3 text-sm font-semibold text-gray-800 focus:outline-none focus:ring-2 focus:ring-brand-accent focus:border-transparent cursor-pointer shadow-sm" onchange="updateConfig()">
                             <option id="opt-t32" value="T32" data-price="0" data-spoke-weight="2.1">Carbone T32 (Aéro pur, 3.2 x 0.98mm - 2.1g)</option>
                             <option value="T33" data-price="0" data-spoke-weight="3.2" selected>Carbone T33 (Rigidité brutale, 3.3 x 0.98mm - 3.2g)</option>
@@ -235,15 +258,15 @@
                 <!-- Bilan Prix & Poids dynamique -->
                 <div class="flex justify-between items-end mb-6 bg-brand-main text-white p-4 rounded-xl shadow-md">
                     <div>
-                        <span class="block text-xs text-gray-400 font-bold uppercase tracking-wider mb-1">Poids total estimé</span>
+                        <span class="block text-xs text-gray-400 font-bold uppercase tracking-wider mb-1">Poids</span>
                         <div class="text-xl font-bold flex items-center flex-wrap">
                             <i class="fa-solid fa-weight-scale text-brand-accent mr-2"></i>
                             <span id="calc-weight">--</span> g 
-                            <span class="text-sm text-gray-400 ml-2 font-medium whitespace-nowrap">+/- 30g</span>
+                            <span id="calc-weight-margin" class="text-sm text-gray-400 ml-2 font-medium whitespace-nowrap">+/- 30g</span>
                         </div>
                     </div>
                     <div class="text-right">
-                        <span class="block text-xs text-gray-400 font-bold uppercase tracking-wider mb-1">Prix final</span>
+                        <span class="block text-xs text-gray-400 font-bold uppercase tracking-wider mb-1">Prix</span>
                         <div class="text-3xl font-black text-brand-accent">
                             <span id="calc-price">--</span> €
                         </div>
@@ -251,26 +274,203 @@
                 </div>
                 
                 <div class="mt-auto">
-                    <button id="modal-buy-btn" onclick="alert('Redirection vers le panier avec vos options...')" class="w-full bg-brand-accent hover:bg-yellow-400 text-brand-main font-bold py-4 rounded-xl flex justify-center items-center gap-3 transition duration-300 shadow-lg">
-                        <span id="buy-btn-text">Acheter ma configuration</span>
-                        <i class="fa-solid fa-cart-shopping text-xl"></i>
+                    <!-- Bouton Ajouter au Panier -->
+                    <button id="modal-buy-btn" onclick="addToCart()" class="w-full bg-brand-accent hover:bg-yellow-400 text-brand-main font-bold py-4 rounded-xl flex justify-center items-center gap-3 transition duration-300 shadow-lg">
+                        <span id="buy-btn-text">Ajouter au panier</span>
+                        <i class="fa-solid fa-cart-plus text-xl"></i>
                     </button>
-                    <p class="text-center text-xs text-gray-400 mt-3"><i class="fa-solid fa-shield-halved mr-1"></i> Paiement 100% sécurisé (Stripe)</p>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Script de récupération des données et gestion modale -->
+    <!-- PANIER LATÉRAL (SLIDE-OVER) -->
+    <div id="cart-overlay" class="fixed inset-0 bg-black/50 z-[110] hidden backdrop-blur-sm transition-opacity" onclick="toggleCart()"></div>
+    
+    <div id="cart-panel" class="cart-closed fixed inset-y-0 right-0 z-[120] w-full max-w-md bg-white shadow-2xl flex flex-col border-l border-gray-200">
+        <!-- Header Panier -->
+        <div class="p-6 bg-brand-main text-white flex justify-between items-center shadow-md">
+            <h2 class="text-xl font-black flex items-center gap-2">
+                <i class="fa-solid fa-cart-shopping text-brand-accent"></i> Mon Panier
+            </h2>
+            <button onclick="toggleCart()" class="text-gray-300 hover:text-white transition p-2">
+                <i class="fa-solid fa-xmark text-2xl"></i>
+            </button>
+        </div>
+
+        <!-- Contenu Panier -->
+        <div id="cart-items-container" class="flex-grow overflow-y-auto p-6 flex flex-col gap-4 bg-gray-50">
+            <!-- Vide par défaut, rempli par JS -->
+            <div id="empty-cart-msg" class="text-center text-gray-500 mt-10">
+                <i class="fa-solid fa-box-open text-4xl mb-3 text-gray-300"></i>
+                <p>Votre panier est vide.</p>
+                <button onclick="toggleCart()" class="mt-4 text-brand-main font-bold underline">Continuer mes achats</button>
+            </div>
+        </div>
+
+        <!-- Footer Panier (Total & Validation) -->
+        <div class="p-6 bg-white border-t border-gray-200 shadow-[0_-10px_15px_-3px_rgba(0,0,0,0.05)]">
+            <div class="flex justify-between items-end mb-6">
+                <span class="text-gray-500 font-bold uppercase text-sm tracking-wider">Total estimé</span>
+                <span class="text-3xl font-black text-brand-main"><span id="cart-total">0</span> €</span>
+            </div>
+            
+            <button onclick="checkoutWhatsApp()" id="checkout-btn" class="w-full bg-[#25D366] hover:bg-[#1da851] text-white font-bold py-4 rounded-xl flex justify-center items-center gap-3 transition duration-300 shadow-lg opacity-50 cursor-not-allowed" disabled>
+                <span>Commander via WhatsApp</span>
+                <i class="fa-brands fa-whatsapp text-xl"></i>
+            </button>
+            <p class="text-center text-xs text-gray-400 mt-3"><i class="fa-solid fa-handshake mr-1"></i> Paiement à la remise en main propre / livraison</p>
+        </div>
+    </div>
+
+
+    <!-- Script JS -->
     <script>
         const API_URL = 'https://script.google.com/macros/s/AKfycbwi5uRAIjQ2vjbL7h9_LWAUzArqb4oNDNzHWqfM4dIkINVlY6v1Qv4no9V5ScitexSq/exec';
         
         let globalCatalogue = [];
-        
-        // Variables pour stocker la base du modèle ouvert
         let currentBasePrice = 0;
         let currentBaseWeight = 0;
+        let isCurrentItemAccessory = false;
+        
+        // --- GESTION DU PANIER ---
+        let cart = [];
 
+        function toggleCart() {
+            const panel = document.getElementById('cart-panel');
+            const overlay = document.getElementById('cart-overlay');
+            
+            if (panel.classList.contains('cart-closed')) {
+                panel.classList.remove('cart-closed');
+                panel.classList.add('cart-open');
+                overlay.classList.remove('hidden');
+                document.body.style.overflow = 'hidden';
+            } else {
+                panel.classList.remove('cart-open');
+                panel.classList.add('cart-closed');
+                overlay.classList.add('hidden');
+                document.body.style.overflow = 'auto';
+            }
+        }
+
+        function addToCart() {
+            const title = document.getElementById('modal-title').textContent;
+            const finalPrice = parseInt(document.getElementById('calc-price').textContent) || 0;
+            const finalWeight = document.getElementById('calc-weight').textContent;
+            
+            let configText = "";
+            let imgUrl = document.getElementById('modal-main-img').src;
+
+            // Si c'est un produit configurable (Roues)
+            if (document.getElementById('configurator-section').style.display !== 'none') {
+                const moyeu = document.getElementById('config-moyeu').options[document.getElementById('config-moyeu').selectedIndex].text.split('(')[0].trim();
+                const rayon = document.getElementById('config-rayons').options[document.getElementById('config-rayons').selectedIndex].text.split('(')[0].trim();
+                const finition = document.getElementById('config-finition').options[document.getElementById('config-finition').selectedIndex].text.split('(')[0].trim();
+                configText = `${moyeu} | ${rayon} | ${finition}`;
+            } else {
+                configText = isCurrentItemAccessory ? "Accessoire" : "Modèle Standard";
+            }
+
+            const item = {
+                id: Date.now(),
+                title: title,
+                price: finalPrice,
+                weight: finalWeight,
+                config: configText,
+                image: imgUrl
+            };
+
+            cart.push(item);
+            updateCartUI();
+            
+            // Notification visuelle et fermeture modale
+            closeModal();
+            toggleCart(); // Ouvre le panier pour confirmer l'ajout
+        }
+
+        function removeFromCart(id) {
+            cart = cart.filter(item => item.id !== id);
+            updateCartUI();
+        }
+
+        function updateCartUI() {
+            const container = document.getElementById('cart-items-container');
+            const emptyMsg = document.getElementById('empty-cart-msg');
+            const badge = document.getElementById('cart-badge');
+            const totalEl = document.getElementById('cart-total');
+            const checkoutBtn = document.getElementById('checkout-btn');
+
+            // Mise à jour de la pastille
+            if (cart.length > 0) {
+                badge.textContent = cart.length;
+                badge.classList.remove('hidden');
+                emptyMsg.style.display = 'none';
+                checkoutBtn.disabled = false;
+                checkoutBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+            } else {
+                badge.classList.add('hidden');
+                emptyMsg.style.display = 'block';
+                checkoutBtn.disabled = true;
+                checkoutBtn.classList.add('opacity-50', 'cursor-not-allowed');
+            }
+
+            // Nettoyage des items existants (sauf le message vide)
+            Array.from(container.children).forEach(child => {
+                if(child.id !== 'empty-cart-msg') child.remove();
+            });
+
+            // Affichage des items
+            let total = 0;
+            cart.forEach(item => {
+                total += item.price;
+                const div = document.createElement('div');
+                div.className = "bg-white p-4 rounded-xl border border-gray-100 shadow-sm flex gap-4 relative group";
+                div.innerHTML = `
+                    <button onclick="removeFromCart(${item.id})" class="absolute -top-2 -right-2 bg-red-100 text-red-600 rounded-full w-6 h-6 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition shadow hover:bg-red-200"><i class="fa-solid fa-xmark"></i></button>
+                    <div class="w-16 h-16 bg-gray-50 rounded-lg flex-shrink-0 flex items-center justify-center p-1 border border-gray-100">
+                        <img src="${item.image}" class="w-full h-full object-contain">
+                    </div>
+                    <div class="flex-grow">
+                        <h5 class="font-bold text-gray-900 text-sm leading-tight mb-1">${item.title}</h5>
+                        <p class="text-[10px] text-gray-500 mb-2 font-medium bg-gray-50 p-1 rounded inline-block">${item.config}</p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs text-gray-400 font-medium"><i class="fa-solid fa-weight-scale mr-1"></i>${item.weight}g</span>
+                            <span class="font-black text-brand-accent">${item.price} €</span>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+
+            totalEl.textContent = total;
+        }
+
+        function checkoutWhatsApp() {
+            if (cart.length === 0) return;
+            
+            let numTelephone = "262692000000"; // TON NUMÉRO ICI
+            let msg = "👋 Bonjour Karbòn Péi ! Je souhaite passer commande :\n\n";
+            let total = 0;
+            
+            cart.forEach((item, index) => {
+                msg += `*${index + 1}. ${item.title}*\n`;
+                if(item.config !== "Accessoire" && item.config !== "Modèle Standard") {
+                    msg += `   - Config : ${item.config}\n`;
+                }
+                msg += `   - Poids : ${item.weight}g\n`;
+                msg += `   - Prix : ${item.price} €\n\n`;
+                total += item.price;
+            });
+            
+            msg += `*TOTAL ESTIMÉ : ${total} €*\n\n`;
+            msg += `Comment pouvons-nous procéder pour le règlement et la remise en main propre ?`;
+
+            const encodedMsg = encodeURIComponent(msg);
+            window.open(`https://wa.me/${numTelephone}?text=${encodedMsg}`, '_blank');
+        }
+
+
+        // --- GESTION DU CATALOGUE ET DES FILTRES ---
         async function loadCatalogue() {
             try {
                 const response = await fetch(API_URL);
@@ -278,89 +478,129 @@
                 globalCatalogue = data; 
                 
                 document.getElementById('loading-message').style.display = 'none';
-                const grid = document.getElementById('products-grid');
-                grid.innerHTML = '';
-
-                data.forEach((roue, index) => {
-                    if(!roue.Nom) return;
-
-                    let imageUrl = roue.Image ? roue.Image.split(',')[0].trim() : 'https://images.unsplash.com/photo-1511994298241-608e28f14fde?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80';
-                    
-                    // On affiche "À partir de" sur le catalogue
-                    let prixAffiche = roue.Prix ? `Dès ${roue.Prix} €` : 'Sur devis';
-                    
-                    let statutBadge = '';
-                    if (roue.Statut && roue.Statut.toLowerCase().includes('stock')) {
-                        statutBadge = `<span class="absolute top-4 left-4 bg-green-500 text-white text-xs font-bold px-3 py-1 rounded shadow-md z-10"><i class="fa-solid fa-check mr-1"></i> En Stock</span>`;
-                    } else if (roue.Statut) {
-                        statutBadge = `<span class="absolute top-4 left-4 bg-orange-500 text-white text-xs font-bold px-3 py-1 rounded shadow-md z-10"><i class="fa-solid fa-plane mr-1"></i> ${roue.Statut}</span>`;
-                    }
-
-                    const cardHtml = `
-                        <div onclick="openModal(${index})" class="wheel-card bg-white rounded-xl shadow-md overflow-hidden border border-gray-100 flex flex-col relative group cursor-pointer">
-                            ${statutBadge}
-                            
-                            <div class="overflow-hidden h-64 bg-gray-50 flex items-center justify-center p-4 relative">
-                                <img src="${imageUrl}" alt="${roue.Nom}" class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500">
-                                <div class="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition flex items-center justify-center">
-                                    <span class="bg-brand-main text-white text-sm font-bold px-5 py-2 rounded-full shadow-lg transform translate-y-4 group-hover:translate-y-0 transition"><i class="fa-solid fa-sliders mr-2"></i>Configurer</span>
-                                </div>
-                            </div>
-                            
-                            <div class="p-6 flex flex-col flex-grow text-center">
-                                <h4 class="text-xl font-black text-gray-900 mb-2">${roue.Nom}</h4>
-                                <div class="flex justify-center items-center gap-3 text-sm text-gray-600 mb-4 font-medium">
-                                    <span class="flex items-center"><i class="fa-solid fa-arrows-up-down text-brand-accent mr-1.5"></i> ${roue.Hauteur || '-'}</span>
-                                    ${roue.Poids ? `<span class="text-gray-300">|</span><span class="flex items-center"><i class="fa-solid fa-weight-scale text-brand-accent mr-1.5"></i> Dès ${roue.Poids} g</span>` : ''}
-                                </div>
-                                
-                                <div class="mt-auto border-t border-gray-100 pt-4">
-                                    <span class="block text-xs uppercase tracking-wider text-gray-400 font-bold mb-1">Prix de départ</span>
-                                    <span class="text-2xl font-black text-brand-accent">${prixAffiche}</span>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                    grid.insertAdjacentHTML('beforeend', cardHtml);
-                });
+                renderGrid('Tout');
 
             } catch (error) {
                 console.error('Erreur:', error);
                 document.getElementById('loading-message').innerHTML = `
                     <div class="bg-red-50 text-red-600 p-4 rounded-lg text-center border border-red-200">
                         <i class="fa-solid fa-triangle-exclamation text-2xl mb-2"></i>
-                        <p class="font-bold">Erreur de connexion</p>
+                        <p class="font-bold">Erreur de connexion au catalogue.</p>
                     </div>`;
             }
         }
 
-        // --- Fonctions de la fenêtre modale et du configurateur ---
-        
+        function filterCatalogue(category) {
+            // Mettre à jour les styles des boutons
+            const btns = document.querySelectorAll('.filter-btn');
+            btns.forEach(btn => {
+                if (btn.textContent.includes(category) || (category === 'Tout' && btn.textContent === 'Tout voir')) {
+                    btn.classList.add('active', 'bg-brand-main', 'text-white');
+                    btn.classList.remove('bg-white', 'text-gray-700');
+                } else {
+                    btn.classList.remove('active', 'bg-brand-main', 'text-white');
+                    btn.classList.add('bg-white', 'text-gray-700');
+                }
+            });
+            
+            renderGrid(category);
+        }
+
+        function renderGrid(filterCategory) {
+            const grid = document.getElementById('products-grid');
+            grid.innerHTML = '';
+            
+            let count = 0;
+
+            globalCatalogue.forEach((item, index) => {
+                if(!item.Nom) return;
+                
+                // On détermine la catégorie (par défaut "Roues" si non spécifié dans le Sheet)
+                const cat = (item.Categorie && item.Categorie.trim() !== "") ? item.Categorie.trim() : "Roues";
+                
+                // Filtrage
+                if (filterCategory !== 'Tout' && !cat.toLowerCase().includes(filterCategory.toLowerCase())) return;
+                
+                count++;
+
+                let imageUrl = item.Image ? item.Image.split(',')[0].trim() : 'https://images.unsplash.com/photo-1511994298241-608e28f14fde?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80';
+                let prixAffiche = item.Prix ? `Dès ${item.Prix} €` : 'Sur devis';
+                
+                let statutBadge = '';
+                if (item.Statut && item.Statut.toLowerCase().includes('stock')) {
+                    statutBadge = `<span class="absolute top-4 left-4 bg-green-500 text-white text-xs font-bold px-3 py-1 rounded shadow-md z-10"><i class="fa-solid fa-check mr-1"></i> En Stock</span>`;
+                } else if (item.Statut) {
+                    statutBadge = `<span class="absolute top-4 left-4 bg-orange-500 text-white text-xs font-bold px-3 py-1 rounded shadow-md z-10"><i class="fa-solid fa-plane mr-1"></i> ${item.Statut}</span>`;
+                }
+
+                // Affichage différentiel Roue vs Accessoire
+                let specLigne = '';
+                if (cat.toLowerCase().includes('accessoire')) {
+                    specLigne = `<span class="flex items-center"><i class="fa-solid fa-weight-scale text-brand-accent mr-1.5"></i> ${item.Poids || '-'} g</span>`;
+                } else {
+                    specLigne = `
+                        <span class="flex items-center"><i class="fa-solid fa-arrows-up-down text-brand-accent mr-1.5"></i> ${item.Hauteur || '-'}</span>
+                        ${item.Poids ? `<span class="text-gray-300">|</span><span class="flex items-center"><i class="fa-solid fa-weight-scale text-brand-accent mr-1.5"></i> Dès ${item.Poids} g</span>` : ''}
+                    `;
+                }
+
+                const cardHtml = `
+                    <div onclick="openModal(${index})" class="wheel-card bg-white rounded-xl shadow-md overflow-hidden border border-gray-100 flex flex-col relative group cursor-pointer">
+                        ${statutBadge}
+                        <div class="overflow-hidden h-64 bg-gray-50 flex items-center justify-center p-4 relative">
+                            <img src="${imageUrl}" alt="${item.Nom}" class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500">
+                            <div class="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition flex items-center justify-center">
+                                <span class="bg-brand-main text-white text-sm font-bold px-5 py-2 rounded-full shadow-lg transform translate-y-4 group-hover:translate-y-0 transition"><i class="fa-solid fa-eye mr-2"></i>Voir le produit</span>
+                            </div>
+                        </div>
+                        <div class="p-6 flex flex-col flex-grow text-center">
+                            <h4 class="text-xl font-black text-gray-900 mb-2">${item.Nom}</h4>
+                            <div class="flex justify-center items-center gap-3 text-sm text-gray-600 mb-4 font-medium">
+                                ${specLigne}
+                            </div>
+                            <div class="mt-auto border-t border-gray-100 pt-4">
+                                <span class="block text-xs uppercase tracking-wider text-gray-400 font-bold mb-1">Prix unitaire</span>
+                                <span class="text-2xl font-black text-brand-accent">${prixAffiche}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                grid.insertAdjacentHTML('beforeend', cardHtml);
+            });
+            
+            if (count === 0) {
+                grid.innerHTML = `<p class="col-span-full text-center text-gray-500 py-10">Aucun produit dans cette catégorie pour le moment.</p>`;
+            }
+        }
+
+
+        // --- MODALE ET CONFIGURATEUR ---
         function openModal(index) {
-            const roue = globalCatalogue[index];
-            if(!roue) return;
+            const item = globalCatalogue[index];
+            if(!item) return;
 
-            // Enregistrement des valeurs de base (on s'assure que ce sont des nombres)
-            // Dans ton Google Sheet, "Prix" et "Poids" doivent être la config la plus légère (RT240 + T32)
-            currentBasePrice = parseInt(roue.Prix) || 0;
-            currentBaseWeight = parseInt(roue.Poids) || 0;
+            currentBasePrice = parseInt(item.Prix) || 0;
+            currentBaseWeight = parseInt(item.Poids) || 0;
+            
+            // Déterminer si c'est un accessoire
+            isCurrentItemAccessory = (item.Categorie && item.Categorie.toLowerCase().includes('accessoire'));
 
-            document.getElementById('modal-title').textContent = roue.Nom;
-            document.getElementById('modal-desc').textContent = roue.Description || "Sélectionnez vos composants pour obtenir le poids et le prix exact de votre paire de roues.";
-            document.getElementById('modal-hauteur').textContent = roue.Hauteur || '-';
+            document.getElementById('modal-title').textContent = item.Nom;
+            document.getElementById('modal-desc').textContent = item.Description || "Sélectionnez vos options pour ajouter ce produit au panier.";
+            document.getElementById('modal-hauteur').textContent = item.Hauteur || '-';
 
-            // Gestion du badge
+            // Badge
             const badge = document.getElementById('modal-badge');
-            if (roue.Statut && roue.Statut.toLowerCase().includes('stock')) {
+            if (item.Statut && item.Statut.toLowerCase().includes('stock')) {
                 badge.className = 'text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide w-max mb-3 bg-green-100 text-green-700';
                 badge.innerHTML = '<i class="fa-solid fa-check mr-1"></i> En Stock Réunion';
             } else {
                 badge.className = 'text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide w-max mb-3 bg-orange-100 text-orange-700';
-                badge.innerHTML = `<i class="fa-solid fa-plane mr-1"></i> ${roue.Statut || 'Sur Commande'}`;
+                badge.innerHTML = `<i class="fa-solid fa-plane mr-1"></i> ${item.Statut || 'Sur Commande'}`;
             }
 
-            // Galerie d'images (inchangée)
-            let images = roue.Image ? roue.Image.split(',') : ['https://images.unsplash.com/photo-1511994298241-608e28f14fde?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80'];
+            // Galerie d'images
+            let images = item.Image ? item.Image.split(',') : ['https://images.unsplash.com/photo-1511994298241-608e28f14fde?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80'];
             const mainImg = document.getElementById('modal-main-img');
             mainImg.src = images[0].trim();
             const thumbContainer = document.getElementById('modal-thumbnails');
@@ -386,18 +626,35 @@
                 });
             }
 
-            // Gestion intelligente du configurateur selon le type de roue
-            const nomRoueLC = roue.Nom.toLowerCase();
-            const isConfigurable = !nomRoueLC.includes('bâton') && !nomRoueLC.includes('tri-spoke') && !nomRoueLC.includes('lenticulaire') && !nomRoueLC.includes('disc');
+            // Gestion de l'affichage (Accessoire vs Roue Configurable vs Roue Non Configurable)
+            const nomLC = item.Nom.toLowerCase();
+            const isWheelConfigurable = !isCurrentItemAccessory && !nomLC.includes('bâton') && !nomLC.includes('tri-spoke') && !nomLC.includes('lenticulaire') && !nomLC.includes('disc');
             
-            if (isConfigurable) {
-                document.getElementById('configurator-section').style.display = 'block';
-                document.getElementById('buy-btn-text').textContent = 'Acheter ma configuration';
-                updateConfig(); // Met à jour avec les options sélectionnées
-            } else {
+            const specJantesBox = document.getElementById('spec-jantes-box');
+            const weightMargin = document.getElementById('calc-weight-margin');
+            
+            if (isCurrentItemAccessory) {
+                // ACCESSOIRE : on cache les specs de jante et le configurateur
+                specJantesBox.style.display = 'none';
+                weightMargin.style.display = 'none'; // Pas de +/- 30g sur un axe
                 document.getElementById('configurator-section').style.display = 'none';
-                document.getElementById('buy-btn-text').textContent = 'Acheter ce modèle';
-                // Affiche les valeurs brutes du tableur
+                
+                document.getElementById('calc-price').textContent = currentBasePrice > 0 ? currentBasePrice : '--';
+                document.getElementById('calc-weight').textContent = currentBaseWeight > 0 ? currentBaseWeight : '--';
+            } 
+            else if (isWheelConfigurable) {
+                // ROUE CONFIGURABLE : on affiche tout
+                specJantesBox.style.display = 'block';
+                weightMargin.style.display = 'inline';
+                document.getElementById('configurator-section').style.display = 'block';
+                updateConfig(); 
+            } 
+            else {
+                // ROUE SPÉCIALE (Bâtons...) : Specs jante ON, Configurateur OFF
+                specJantesBox.style.display = 'block';
+                weightMargin.style.display = 'inline';
+                document.getElementById('configurator-section').style.display = 'none';
+                
                 document.getElementById('calc-price').textContent = currentBasePrice > 0 ? currentBasePrice : '--';
                 document.getElementById('calc-weight').textContent = currentBaseWeight > 0 ? currentBaseWeight : '--';
             }
@@ -408,16 +665,19 @@
 
         function closeModal() {
             document.getElementById('product-modal').classList.add('hidden');
-            document.body.style.overflow = 'auto';
+            if (document.getElementById('cart-panel').classList.contains('cart-closed')) {
+                document.body.style.overflow = 'auto';
+            }
         }
 
         document.getElementById('product-modal').addEventListener('click', function(e) {
             if (e.target === this) closeModal();
         });
 
-        // --- LA LOGIQUE DE CALCUL DU CONFIGURATEUR ---
+        // Fonction de calcul de la roue
         function updateConfig() {
-            // On récupère les choix de l'utilisateur
+            if (isCurrentItemAccessory) return; // Sécurité
+            
             const moyeuSelect = document.getElementById('config-moyeu');
             const rayonSelect = document.getElementById('config-rayons');
             const finitionSelect = document.getElementById('config-finition');
@@ -425,54 +685,34 @@
             const optT32 = document.getElementById('opt-t32');
             const msgRecoR2 = document.getElementById('msg-reco-r2');
 
-            // --- Logique d'incompatibilité et recommandations ---
+            // Logique d'incompatibilité
             const isR2 = moyeuSelect.value === 'R2';
-            
             if (isR2) {
-                // Si on a choisi le Moyeu R2
                 optT32.disabled = true;
-                optT32.style.display = 'none'; // Cache l'option du menu
-                msgRecoR2.style.display = 'flex'; // Affiche la recommandation
-                
-                // Forcer le changement si T32 était sélectionné
-                if (rayonSelect.value === 'T32') {
-                    rayonSelect.value = 'T33';
-                }
+                optT32.style.display = 'none';
+                msgRecoR2.style.display = 'flex';
+                if (rayonSelect.value === 'T32') rayonSelect.value = 'T33';
             } else {
-                // Si on a choisi un autre moyeu (RT240)
                 optT32.disabled = false;
-                optT32.style.display = 'block'; // Réaffiche l'option
-                msgRecoR2.style.display = 'none'; // Cache la recommandation
+                optT32.style.display = 'block';
+                msgRecoR2.style.display = 'none';
             }
             
-            // On récupère les prix
             const moyeuPrice = parseInt(moyeuSelect.options[moyeuSelect.selectedIndex].getAttribute('data-price')) || 0;
             const rayonPrice = parseInt(rayonSelect.options[rayonSelect.selectedIndex].getAttribute('data-price')) || 0;
             const finitionPrice = parseInt(finitionSelect.options[finitionSelect.selectedIndex].getAttribute('data-price')) || 0;
             
-            // On récupère les variables techniques pour le calcul du poids
             const hubWeight = parseInt(moyeuSelect.options[moyeuSelect.selectedIndex].getAttribute('data-hub-weight')) || 238;
             const spokeCount = parseInt(moyeuSelect.options[moyeuSelect.selectedIndex].getAttribute('data-spokes')) || 40;
             const rimDiff = parseInt(moyeuSelect.options[moyeuSelect.selectedIndex].getAttribute('data-rim-diff')) || 0;
             const finitionWeight = parseInt(finitionSelect.options[finitionSelect.selectedIndex].getAttribute('data-weight')) || 0;
-            
-            // Poids unitaire du rayon
             const spokeWeight = parseFloat(rayonSelect.options[rayonSelect.selectedIndex].getAttribute('data-spoke-weight')) || 2.1;
 
-            // Calcul du Prix
             const finalPrice = currentBasePrice + moyeuPrice + rayonPrice + finitionPrice;
-            
-            // Calcul du Poids ultra-précis
-            // 1. Poids de la configuration de base (Moyeu RT240 + 40 rayons T32) = 238 + (40 * 2.1) = 322g
             const baseComboWeight = 322; 
-            
-            // 2. Poids de la nouvelle configuration (Nouveau moyeu + (nb rayons * poids du rayon) + différence de jante + poids finition)
             const newComboWeight = hubWeight + (spokeCount * spokeWeight) + rimDiff + finitionWeight;
-            
-            // 3. Application à la base venant du Google Sheet
             const finalWeight = Math.round(currentBaseWeight - baseComboWeight + newComboWeight);
 
-            // Affichage
             document.getElementById('calc-price').textContent = finalPrice > 0 ? finalPrice : '--';
             document.getElementById('calc-weight').textContent = finalWeight > 0 ? finalWeight : '--';
         }
