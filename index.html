@@ -167,14 +167,21 @@
         </div>
         
         <!-- Grille des produits -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div id="product-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <!-- Les produits seront injectés ici -->
+        <div class="py-4">
+            <!-- Message de chargement corrigé -->
+            <div id="loading-message" class="text-center py-10">
+                <i class="fa-solid fa-circle-notch fa-spin text-4xl text-brand-accent mb-4"></i>
+                <p class="text-gray-500 font-medium">Chargement du catalogue...</p>
+            </div>
+            
+            <div id="product-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Les produits seront injectés ici -->
+            </div>
         </div>
-    </div>
+    </main>
 
     <!-- Section Contact -->
-    <div class="bg-white py-16 border-t border-gray-100" id="contact">
+    <section id="contact" class="bg-white py-16 border-t border-gray-100">
         <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-10">
                 <h2 class="text-3xl font-extrabold text-gray-900 mb-4">Une question ?</h2>
@@ -201,49 +208,15 @@
                     Envoyer le message
                 </button>
             </form>
-        </div>
-    </div>
 
-    <!-- Footer -->
-    <footer class="bg-brand-main text-white py-12">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div>
-                <h3 class="text-xl font-bold mb-4">Karbòn Péi</h3>
-                <p class="text-gray-400 text-sm">Roues carbone haute performance, sélectionnées pour les routes de La Réunion.</p>
-            </div>
-            <div>
-                <h4 class="font-bold mb-4">Contact</h4>
-                <div class="flex space-x-4">
-                    <!-- Bouton WhatsApp conservé -->
-                    <a href="https://wa.me/262693000000" target="_blank" class="text-gray-400 hover:text-white transition-colors"><i class="fa-brands fa-whatsapp text-2xl"></i></a>
-                    <!-- Bouton Instagram retiré comme demandé -->
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Section Contact -->
-    <section id="contact" class="bg-white py-16">
-        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <h3 class="text-3xl font-black text-gray-900 mb-4">Besoin d'un conseil ?</h3>
-            <p class="text-gray-600 mb-10">Nous sommes basés à La Réunion. N'hésitez pas à nous contacter pour une question technique, une vérification de stock, ou une commande spéciale (nous pouvons par exemple réaliser des combos avec des hauteurs de roues différentes à l'avant et à l'arrière !).</p>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="mt-12 text-center">
+                <p class="text-gray-600 mb-6">Nous sommes basés à La Réunion. Vous pouvez aussi nous contacter via WhatsApp pour une réponse encore plus rapide.</p>
                 <!-- WhatsApp (Principal) -->
-                <a href="https://wa.me/262692693870" target="_blank" class="flex items-center justify-center gap-4 bg-[#25D366] hover:bg-[#1da851] text-white p-6 rounded-2xl shadow-md transition transform hover:-translate-y-1">
-                    <i class="fa-brands fa-whatsapp text-4xl"></i>
+                <a href="https://wa.me/262692693870" target="_blank" class="inline-flex items-center justify-center gap-4 bg-[#25D366] hover:bg-[#1da851] text-white py-4 px-8 rounded-2xl shadow-md transition transform hover:-translate-y-1">
+                    <i class="fa-brands fa-whatsapp text-3xl"></i>
                     <div class="text-left">
                         <span class="block font-black text-lg">Message WhatsApp</span>
                         <span class="block text-sm opacity-90">Réponse très rapide</span>
-                    </div>
-                </a>
-                
-                <!-- Instagram -->
-                <a href="#" target="_blank" class="flex items-center justify-center gap-4 bg-gradient-to-r from-[#f09433] via-[#e6683c] to-[#bc1888] hover:opacity-90 text-white p-6 rounded-2xl shadow-md transition transform hover:-translate-y-1">
-                    <i class="fa-brands fa-instagram text-4xl"></i>
-                    <div class="text-left">
-                        <span class="block font-black text-lg">Instagram</span>
-                        <span class="block text-sm opacity-90">@karbonpei974</span>
                     </div>
                 </a>
             </div>
@@ -252,11 +225,25 @@
 
     <!-- Footer -->
     <footer class="bg-brand-main text-gray-400 py-12">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <i class="fa-solid fa-volcano text-brand-accent text-2xl mb-4"></i>
-            <p class="text-white font-bold text-lg mb-2">Karbòn Péi - La Réunion</p>
-            <p class="text-sm mb-6">Micro-entreprise en cours d'immatriculation.<br/>TVA non applicable, art. 293 B du CGI.</p>
-            <p class="text-xs text-gray-500">&copy; 2026 Karbòn Péi. Tous droits réservés.</p>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-3 gap-8 items-center text-center md:text-left">
+            <div>
+                <div class="flex justify-center md:justify-start items-center gap-2 mb-4">
+                    <i class="fa-solid fa-volcano text-brand-accent text-2xl"></i>
+                    <h3 class="text-xl font-bold text-white">Karbòn Péi</h3>
+                </div>
+                <p class="text-sm">Roues carbone haute performance, sélectionnées pour les routes de La Réunion.</p>
+            </div>
+            <div class="text-center">
+                <p class="text-sm mb-2">Micro-entreprise en cours d'immatriculation.<br/>TVA non applicable, art. 293 B du CGI.</p>
+                <p class="text-xs text-gray-500">&copy; 2026 Karbòn Péi. Tous droits réservés.</p>
+            </div>
+            <div class="md:text-right">
+                <h4 class="font-bold text-white mb-4">Contact</h4>
+                <div class="flex justify-center md:justify-end space-x-4">
+                    <!-- Bouton WhatsApp conservé -->
+                    <a href="https://wa.me/262692693870" target="_blank" class="text-gray-400 hover:text-white transition-colors"><i class="fa-brands fa-whatsapp text-2xl"></i></a>
+                </div>
+            </div>
         </div>
     </footer>
 
@@ -597,7 +584,8 @@
         }
 
         function renderGrid(filterCategory) {
-            const grid = document.getElementById('products-grid');
+            const grid = document.getElementById('product-grid'); // CORRECTION ICI (Singulier au lieu de Pluriel)
+            if (!grid) return;
             grid.innerHTML = '';
             
             let count = 0;
