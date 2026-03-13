@@ -322,20 +322,29 @@
                 <p id="modal-desc" class="text-sm text-gray-500 mb-6"></p>
 
                 <div id="configurator-section" class="bg-gray-50 p-5 rounded-xl border border-gray-200 mb-6">
+                    <h4 class="text-sm font-bold text-gray-900 uppercase tracking-wider mb-4 flex items-center">
+                        <i class="fa-solid fa-sliders text-brand-accent mr-2"></i> Personnalisation
+                    </h4>
+                    
                     <div class="mb-5">
                         <label class="block text-xs font-bold text-gray-500 mb-2">1. Moyeu (Hub)</label>
                         <select id="config-moyeu" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-3 text-sm font-semibold" onchange="updateConfig()">
                             <option value="RT240" data-price="0" data-hub-weight="238" data-spokes="40" data-rim-diff="0">DFS RT240 (Jantes SUXL, 40 rayons)</option>
                             <option value="R2" data-price="50" data-hub-weight="285" data-spokes="45" data-rim-diff="60" selected>DFS R2 Céramique (Jantes UXL, 45 rayons) [+50€]</option>
                         </select>
+                        <div id="msg-reco-r2" class="mt-3 bg-yellow-50 border border-yellow-200 rounded-lg p-3 flex gap-3 text-sm text-yellow-800 transition-all duration-300">
+                            <i class="fa-solid fa-medal text-brand-accent text-lg mt-0.5"></i>
+                            <p><strong>Recommandé :</strong> Le moyeu R2 est plus robuste, possède de plus gros roulements et nécessite moins d'entretien.</p>
+                        </div>
                     </div>
                     
                     <div class="mb-5">
                         <label class="block text-xs font-bold text-gray-500 mb-2">2. Rayons (Spokes)</label>
                         <select id="config-rayons" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-3 text-sm font-semibold" onchange="updateConfig()">
-                            <option id="opt-t32" value="T32" data-price="0" data-spoke-weight="2.1">Carbone T32 (2.1g)</option>
-                            <option value="T33" data-price="0" data-spoke-weight="3.2" selected>Carbone T33 (3.2g)</option>
-                            <option value="T40" data-price="0" data-spoke-weight="3.3">Carbone T40 (3.3g)</option>
+                            <option id="opt-t32" value="T32" data-price="0" data-spoke-weight="2.1">Carbone T32 (Aéro pur, 3.2 x 0.98mm - 2.1g)</option>
+                            <option value="T33" data-price="0" data-spoke-weight="3.2" selected>Carbone T33 (Rigidité brutale, 3.3 x 0.98mm - 3.2g)</option>
+                            <option value="T40" data-price="0" data-spoke-weight="3.3">Carbone T40 (Sprint massif, 4.0 x 0.95mm - 3.3g)</option>
+                            <option value="T52" data-price="0" data-spoke-weight="5.2">Carbone T52 (Rigidité ultime, 5.2 x 0.95mm - 5.2g)</option>
                         </select>
                     </div>
 
@@ -408,162 +417,455 @@
 
     <script>
         const API_URL = 'https://script.google.com/macros/s/AKfycbwi5uRAIjQ2vjbL7h9_LWAUzArqb4oNDNzHWqfM4dIkINVlY6v1Qv4no9V5ScitexSq/exec';
-        let globalCatalogue = [], cart = [], appliedPromo = null, discountAmount = 0;
-        let currentBasePrice = 0, currentBaseWeight = 0, isCurrentItemAccessory = false;
+        
+        let globalCatalogue = [];
+        let currentBasePrice = 0;
+        let currentBaseWeight = 0;
+        let isCurrentItemAccessory = false;
+        
+        // --- GESTION DU PANIER ---
+        let cart = [];
+        let appliedPromo = null;
+        let discountAmount = 0;
 
         function toggleCart() {
-            const panel = document.getElementById('cart-panel'), overlay = document.getElementById('cart-overlay');
-            panel.classList.toggle('cart-closed'); panel.classList.toggle('cart-open'); overlay.classList.toggle('hidden');
+            const panel = document.getElementById('cart-panel');
+            const overlay = document.getElementById('cart-overlay');
+            
+            if (panel.classList.contains('cart-closed')) {
+                panel.classList.remove('cart-closed');
+                panel.classList.add('cart-open');
+                overlay.classList.remove('hidden');
+                document.body.style.overflow = 'hidden';
+            } else {
+                panel.classList.remove('cart-open');
+                panel.classList.add('cart-closed');
+                overlay.classList.add('hidden');
+                document.body.style.overflow = 'auto';
+            }
         }
 
         function changeR2View(src) {
             const img = document.getElementById('r2-main-view');
-            img.onerror = null; // Désactive l'image de secours pour voir la vraie photo ou l'erreur
+            img.onerror = null;
             img.src = src;
         }
 
+        function addToCart() {
+            const title = document.getElementById('modal-title').textContent;
+            const finalPrice = parseInt(document.getElementById('calc-price').textContent) || 0;
+            const finalWeight = document.getElementById('calc-weight').textContent;
+            
+            let configText = "";
+            let imgUrl = document.getElementById('modal-main-img').src;
+
+            if (document.getElementById('configurator-section').style.display !== 'none') {
+                const moyeu = document.getElementById('config-moyeu').options[document.getElementById('config-moyeu').selectedIndex].text.split('(')[0].trim();
+                const rayon = document.getElementById('config-rayons').options[document.getElementById('config-rayons').selectedIndex].text.split('(')[0].trim();
+                const rouelibre = document.getElementById('config-rouelibre').value;
+                const finition = document.getElementById('config-finition').options[document.getElementById('config-finition').selectedIndex].text.split('(')[0].trim();
+                configText = `${moyeu} | ${rayon} | ${rouelibre} | ${finition}`;
+            } else {
+                configText = isCurrentItemAccessory ? "Accessoire" : "Modèle Standard";
+            }
+
+            const item = {
+                id: Date.now(),
+                title: title,
+                price: finalPrice,
+                weight: finalWeight,
+                config: configText,
+                image: imgUrl,
+                isAccessory: isCurrentItemAccessory
+            };
+
+            cart.push(item);
+            updateCartUI();
+            closeModal();
+            toggleCart();
+        }
+
+        function removeFromCart(id) {
+            cart = cart.filter(item => item.id !== id);
+            updateCartUI();
+        }
+
+        function updateCartUI() {
+            const container = document.getElementById('cart-items-container');
+            const emptyMsg = document.getElementById('empty-cart-msg');
+            const badge = document.getElementById('cart-badge');
+            const totalEl = document.getElementById('cart-total');
+            const checkoutBtn = document.getElementById('checkout-btn');
+
+            if (cart.length > 0) {
+                badge.textContent = cart.length;
+                badge.classList.remove('hidden');
+                emptyMsg.style.display = 'none';
+                checkoutBtn.disabled = false;
+                checkoutBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+            } else {
+                badge.classList.add('hidden');
+                emptyMsg.style.display = 'block';
+                checkoutBtn.disabled = true;
+                checkoutBtn.classList.add('opacity-50', 'cursor-not-allowed');
+            }
+
+            Array.from(container.children).forEach(child => {
+                if(child.id !== 'empty-cart-msg') child.remove();
+            });
+
+            let total = 0;
+            discountAmount = 0;
+            
+            cart.forEach(item => {
+                total += item.price;
+                if (appliedPromo === 'CCPIKARBON') {
+                    if (!item.isAccessory) discountAmount += 50;
+                    else discountAmount += Math.round(item.price * 0.05);
+                }
+                
+                const div = document.createElement('div');
+                div.className = "bg-white p-4 rounded-xl border border-gray-100 shadow-sm flex gap-4 relative group";
+                div.innerHTML = `
+                    <button onclick="removeFromCart(${item.id})" class="absolute -top-2 -right-2 bg-red-100 text-red-600 rounded-full w-6 h-6 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition shadow hover:bg-red-200"><i class="fa-solid fa-xmark"></i></button>
+                    <div class="w-16 h-16 bg-gray-50 rounded-lg flex-shrink-0 flex items-center justify-center p-1 border border-gray-100">
+                        <img src="${item.image}" class="w-full h-full object-contain">
+                    </div>
+                    <div class="flex-grow">
+                        <h5 class="font-bold text-gray-900 text-sm leading-tight mb-1">${item.title}</h5>
+                        <p class="text-[10px] text-gray-500 mb-2 font-medium bg-gray-50 p-1 rounded inline-block">${item.config}</p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs text-gray-400 font-medium"><i class="fa-solid fa-weight-scale mr-1"></i>${item.weight}g</span>
+                            <span class="font-black text-brand-accent">${item.price} €</span>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+
+            const promoInputContainer = document.getElementById('promo-input-container');
+            const promoActiveContainer = document.getElementById('promo-active-container');
+            const originalTotalEl = document.getElementById('cart-original-total');
+
+            if (appliedPromo) {
+                promoInputContainer.classList.add('hidden');
+                promoActiveContainer.classList.remove('hidden');
+                promoActiveContainer.classList.add('flex');
+                document.getElementById('active-promo-name').textContent = `${appliedPromo} (-${discountAmount}€)`;
+                
+                if (discountAmount > 0) {
+                    originalTotalEl.textContent = `${total} €`;
+                    originalTotalEl.classList.remove('hidden');
+                } else {
+                    originalTotalEl.classList.add('hidden');
+                }
+            } else {
+                promoInputContainer.classList.remove('hidden');
+                promoActiveContainer.classList.add('hidden');
+                promoActiveContainer.classList.remove('flex');
+                originalTotalEl.classList.add('hidden');
+            }
+
+            totalEl.textContent = total - discountAmount;
+        }
+
+        function applyPromoCode() {
+            const input = document.getElementById('promo-code');
+            const code = input.value.trim().toUpperCase();
+            if (code === 'CCPIKARBON') {
+                appliedPromo = code;
+                input.value = '';
+                updateCartUI();
+            }
+        }
+
+        function removePromoCode() {
+            appliedPromo = null;
+            discountAmount = 0;
+            updateCartUI();
+        }
+
+        function checkoutWhatsApp() {
+            if (cart.length === 0) return;
+            let msg = "👋 Bonjour Karbòn Péi ! Je souhaite passer commande :\n\n";
+            let total = 0;
+            
+            cart.forEach((item, index) => {
+                msg += `*${index + 1}. ${item.title}*\n`;
+                if(item.config !== "Accessoire" && item.config !== "Modèle Standard") {
+                    msg += `   - Config : ${item.config}\n`;
+                }
+                msg += `   - Poids : ${item.weight}g\n`;
+                msg += `   - Prix : ${item.price} €\n\n`;
+                total += item.price;
+            });
+            
+            if (appliedPromo) {
+                msg += `*TOTAL SANS REMISE : ${total} €*\n`;
+                msg += `*CODE PROMO : ${appliedPromo}*\n`;
+                msg += `*REMISE : -${discountAmount} €*\n`;
+                msg += `*TOTAL À PAYER : ${total - discountAmount} €*\n\n`;
+            } else {
+                msg += `*TOTAL À PAYER : ${total} €*\n\n`;
+            }
+            
+            msg += `Comment pouvons-nous procéder pour le règlement (virement, espèces) et la remise en main propre ?`;
+            const encodedMsg = encodeURIComponent(msg);
+            window.open(`https://wa.me/262692693870?text=${encodedMsg}`, '_blank');
+        }
+
+        // --- GESTION DU CATALOGUE ET DES FILTRES ---
         async function loadCatalogue() {
             try {
                 const response = await fetch(API_URL);
                 globalCatalogue = await response.json();
                 document.getElementById('loading-message').style.display = 'none';
                 renderGrid('Tout');
-            } catch (e) { console.error(e); }
+            } catch (error) {
+                console.error('Erreur:', error);
+                document.getElementById('loading-message').innerHTML = `
+                    <div class="bg-red-50 text-red-600 p-4 rounded-lg text-center border border-red-200">
+                        <i class="fa-solid fa-triangle-exclamation text-2xl mb-2"></i>
+                        <p class="font-bold">Erreur de connexion au catalogue.</p>
+                    </div>`;
+            }
         }
 
-        function filterCatalogue(category) { renderGrid(category); }
+        function filterCatalogue(category) {
+            const btns = document.querySelectorAll('.filter-btn');
+            btns.forEach(btn => {
+                if (btn.textContent.includes(category) || (category === 'Tout' && btn.textContent === 'Tout voir')) {
+                    btn.classList.add('active', 'bg-brand-main', 'text-white');
+                    btn.classList.remove('bg-white', 'text-gray-700');
+                } else {
+                    btn.classList.remove('active', 'bg-brand-main', 'text-white');
+                    btn.classList.add('bg-white', 'text-gray-700');
+                }
+            });
+            renderGrid(category);
+        }
 
-        function renderGrid(filter) {
-            const grid = document.getElementById('product-grid'); grid.innerHTML = '';
+        function renderGrid(filterCategory) {
+            const grid = document.getElementById('product-grid');
+            if (!grid) return;
+            grid.innerHTML = '';
+            let count = 0;
+
             globalCatalogue.forEach((item, index) => {
-                const cat = item.Categorie || "Roues";
-                if (filter !== 'Tout' && !cat.toLowerCase().includes(filter.toLowerCase())) return;
+                if(!item.Nom) return;
                 
-                const nomLC = item.Nom.toLowerCase();
-                const isFixedPrice = nomLC.includes('bâton') || nomLC.includes('lenticulaire') || cat.includes('Accessoire');
-                let prix = item.Prix ? (isFixedPrice ? `${item.Prix} €` : `Dès ${item.Prix} €`) : 'Sur devis';
+                const cat = (item.Categorie && item.Categorie.trim() !== "") ? item.Categorie.trim() : "Roues";
+                if (filterCategory !== 'Tout' && !cat.toLowerCase().includes(filterCategory.toLowerCase())) return;
+                count++;
 
-                let statut = '';
+                const nomLC = item.Nom.toLowerCase();
+                const isFixedPriceWheel = nomLC.includes('bâton') || nomLC.includes('tri-spoke') || nomLC.includes('lenticulaire') || nomLC.includes('disc');
+                const isAccessory = cat.toLowerCase().includes('accessoire') || cat.toLowerCase().includes('composant');
+
+                let imageUrl = item.Image ? item.Image.split(',')[0].trim() : 'https://images.unsplash.com/photo-1511994298241-608e28f14fde?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80';
+                let prixAffiche = 'Sur devis';
+                if (item.Prix) {
+                    prixAffiche = (isAccessory || isFixedPriceWheel) ? `${item.Prix} €` : `Dès ${item.Prix} €`;
+                }
+                
+                let statutBadge = '';
                 if (item.Statut) {
-                    const s = item.Statut.toLowerCase();
-                    if (s.includes('stock')) statut = '<span class="absolute top-4 left-4 bg-green-500 text-white text-xs font-bold px-3 py-1 rounded shadow-md z-10">En Stock</span>';
-                    else if (s.includes('arrivage')) statut = '<span class="absolute top-4 left-4 bg-blue-500 text-white text-xs font-bold px-3 py-1 rounded shadow-md z-10">Arrivage</span>';
-                    else statut = `<span class="absolute top-4 left-4 bg-orange-500 text-white text-xs font-bold px-3 py-1 rounded shadow-md z-10">${item.Statut}</span>`;
+                    const statutLC = item.Statut.toLowerCase();
+                    if (statutLC.includes('stock')) {
+                        statutBadge = `<span class="absolute top-4 left-4 bg-green-500 text-white text-xs font-bold px-3 py-1 rounded shadow-md z-10"><i class="fa-solid fa-check mr-1"></i> En Stock</span>`;
+                    } else if (statutLC.includes('arrivage')) {
+                        statutBadge = `<span class="absolute top-4 left-4 bg-blue-500 text-white text-xs font-bold px-3 py-1 rounded shadow-md z-10"><i class="fa-solid fa-truck-fast mr-1"></i> Arrivage en cours</span>`;
+                    } else {
+                        statutBadge = `<span class="absolute top-4 left-4 bg-orange-500 text-white text-xs font-bold px-3 py-1 rounded shadow-md z-10"><i class="fa-solid fa-plane mr-1"></i> ${item.Statut}</span>`;
+                    }
                 }
 
-                grid.insertAdjacentHTML('beforeend', `
-                    <div onclick="openModal(${index})" class="wheel-card bg-white rounded-xl shadow-md overflow-hidden relative group cursor-pointer border border-gray-100">
-                        ${statut}
-                        <div class="h-56 bg-gray-50 flex items-center justify-center p-4">
-                            <img src="${item.Image ? item.Image.split(',')[0] : ''}" class="max-h-full object-contain group-hover:scale-105 transition duration-500">
+                let specLigne = '';
+                if (isAccessory) {
+                    specLigne = `<span class="flex items-center"><i class="fa-solid fa-weight-scale text-brand-accent mr-1.5"></i> ${item.Poids || '-'} g</span>`;
+                } else {
+                    let weightPrefix = isFixedPriceWheel ? '' : 'Dès ';
+                    specLigne = `
+                        <span class="flex items-center"><i class="fa-solid fa-arrows-up-down text-brand-accent mr-1.5"></i> ${item.Hauteur || '-'}</span>
+                        ${item.Poids ? `<span class="text-gray-300">|</span><span class="flex items-center"><i class="fa-solid fa-weight-scale text-brand-accent mr-1.5"></i> ${weightPrefix}${item.Poids} g</span>` : ''}
+                    `;
+                }
+
+                const cardHtml = `
+                    <div onclick="openModal(${index})" class="wheel-card bg-white rounded-xl shadow-md overflow-hidden border border-gray-100 flex flex-col relative group cursor-pointer">
+                        ${statutBadge}
+                        <div class="overflow-hidden h-64 bg-gray-50 flex items-center justify-center p-4 relative">
+                            <img src="${imageUrl}" alt="${item.Nom}" class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500">
+                            <div class="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition flex items-center justify-center">
+                                <span class="bg-brand-main text-white text-sm font-bold px-5 py-2 rounded-full shadow-lg transform translate-y-4 group-hover:translate-y-0 transition"><i class="fa-solid fa-eye mr-2"></i>Voir le produit</span>
+                            </div>
                         </div>
-                        <div class="p-6 text-center">
-                            <h4 class="font-black text-gray-900 mb-2">${item.Nom}</h4>
-                            <div class="text-xs text-gray-500 mb-4">${item.Hauteur || '-'} | ${item.Poids || '-'}g</div>
-                            <span class="text-xl font-black text-brand-accent">${prix}</span>
+                        <div class="p-6 flex flex-col flex-grow text-center">
+                            <h4 class="text-xl font-black text-gray-900 mb-2">${item.Nom}</h4>
+                            <div class="flex justify-center items-center gap-3 text-sm text-gray-600 mb-4 font-medium">
+                                ${specLigne}
+                            </div>
+                            <div class="mt-auto border-t border-gray-100 pt-4">
+                                <span class="block text-xs uppercase tracking-wider text-gray-400 font-bold mb-1">Prix unitaire</span>
+                                <span class="text-2xl font-black text-brand-accent">${prixAffiche}</span>
+                            </div>
                         </div>
                     </div>
-                `);
+                `;
+                grid.insertAdjacentHTML('beforeend', cardHtml);
             });
+            
+            if (count === 0) {
+                grid.innerHTML = `<p class="col-span-full text-center text-gray-500 py-10">Aucun produit dans cette catégorie pour le moment.</p>`;
+            }
         }
 
+        // --- MODALE ET CONFIGURATEUR ---
         function openModal(index) {
             const item = globalCatalogue[index];
+            if(!item) return;
+
             currentBasePrice = parseInt(item.Prix) || 0;
             currentBaseWeight = parseInt(item.Poids) || 0;
-            isCurrentItemAccessory = item.Categorie?.includes('Accessoire') || item.Categorie?.includes('Composant');
+            isCurrentItemAccessory = (item.Categorie && (item.Categorie.toLowerCase().includes('accessoire') || item.Categorie.toLowerCase().includes('composant')));
 
             document.getElementById('modal-title').textContent = item.Nom;
-            document.getElementById('modal-desc').textContent = item.Description || "";
+            document.getElementById('modal-desc').textContent = item.Description || "Sélectionnez vos options pour ajouter ce produit au panier.";
             document.getElementById('modal-hauteur').textContent = item.Hauteur || '-';
-            document.getElementById('modal-main-img').src = item.Image?.split(',')[0] || '';
-            
-            const isWheelConfig = !isCurrentItemAccessory && !item.Nom.toLowerCase().includes('bâton') && !item.Nom.toLowerCase().includes('lenticulaire');
-            document.getElementById('configurator-section').style.display = isWheelConfig ? 'block' : 'none';
-            document.getElementById('spec-jantes-box').style.display = isCurrentItemAccessory ? 'none' : 'block';
 
-            if (isWheelConfig) updateConfig();
-            else {
-                document.getElementById('calc-price').textContent = currentBasePrice;
-                document.getElementById('calc-weight').textContent = currentBaseWeight;
+            const badge = document.getElementById('modal-badge');
+            if (item.Statut) {
+                const statutLC = item.Statut.toLowerCase();
+                if (statutLC.includes('stock')) {
+                    badge.className = 'text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide w-max mb-3 bg-green-100 text-green-700';
+                    badge.innerHTML = '<i class="fa-solid fa-check mr-1"></i> En Stock Réunion';
+                } else if (statutLC.includes('arrivage')) {
+                    badge.className = 'text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide w-max mb-3 bg-blue-100 text-blue-700';
+                    badge.innerHTML = '<i class="fa-solid fa-truck-fast mr-1"></i> Arrivage en cours';
+                } else {
+                    badge.className = 'text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide w-max mb-3 bg-orange-100 text-orange-700';
+                    badge.innerHTML = `<i class="fa-solid fa-plane mr-1"></i> ${item.Statut}`;
+                }
+            } else {
+                badge.className = 'text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide w-max mb-3 bg-orange-100 text-orange-700';
+                badge.innerHTML = `<i class="fa-solid fa-plane mr-1"></i> Sur Commande`;
+            }
+
+            let images = item.Image ? item.Image.split(',') : ['https://images.unsplash.com/photo-1511994298241-608e28f14fde?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80'];
+            const mainImg = document.getElementById('modal-main-img');
+            mainImg.src = images[0].trim();
+            const thumbContainer = document.getElementById('modal-thumbnails');
+            thumbContainer.innerHTML = '';
+            
+            if (images.length > 1) {
+                images.forEach((imgUrl, i) => {
+                    const cleanUrl = imgUrl.trim();
+                    const thumb = document.createElement('img');
+                    thumb.src = cleanUrl;
+                    thumb.className = `w-16 h-16 object-cover rounded-lg cursor-pointer border-2 transition-all ${i === 0 ? 'border-brand-accent shadow-md scale-105' : 'border-transparent hover:border-gray-300 opacity-70 hover:opacity-100'}`;
+                    
+                    thumb.onclick = () => {
+                        mainImg.src = cleanUrl;
+                        Array.from(thumbContainer.children).forEach(c => {
+                            c.classList.remove('border-brand-accent', 'shadow-md', 'scale-105');
+                            c.classList.add('border-transparent', 'opacity-70');
+                        });
+                        thumb.classList.remove('border-transparent', 'opacity-70');
+                        thumb.classList.add('border-brand-accent', 'shadow-md', 'scale-105');
+                    };
+                    thumbContainer.appendChild(thumb);
+                });
+            }
+
+            const nomLC = item.Nom.toLowerCase();
+            const isWheelConfigurable = !isCurrentItemAccessory && !nomLC.includes('bâton') && !nomLC.includes('tri-spoke') && !nomLC.includes('lenticulaire') && !nomLC.includes('disc');
+            
+            let largeurInt = "24 mm";
+            let largeurExt = "32 mm";
+            
+            if (nomLC.includes('lenticulaire') || nomLC.includes('disc')) {
+                largeurInt = "18 mm";
+                largeurExt = "25 mm";
+            } else if (nomLC.includes('bâton') || nomLC.includes('tri-spoke')) {
+                largeurInt = "21 mm";
+                largeurExt = "28 mm";
+            }
+
+            document.getElementById('modal-largeur-int').textContent = largeurInt;
+            document.getElementById('modal-largeur-ext').textContent = largeurExt;
+
+            const specJantesBox = document.getElementById('spec-jantes-box');
+            
+            if (isCurrentItemAccessory) {
+                specJantesBox.style.display = 'none';
+                document.getElementById('configurator-section').style.display = 'none';
+                document.getElementById('calc-price').textContent = currentBasePrice > 0 ? currentBasePrice : '--';
+                document.getElementById('calc-weight').textContent = currentBaseWeight > 0 ? currentBaseWeight : '--';
+            } else if (isWheelConfigurable) {
+                specJantesBox.style.display = 'block';
+                document.getElementById('configurator-section').style.display = 'block';
+                updateConfig(); 
+            } else {
+                specJantesBox.style.display = 'block';
+                document.getElementById('configurator-section').style.display = 'none';
+                document.getElementById('calc-price').textContent = currentBasePrice > 0 ? currentBasePrice : '--';
+                document.getElementById('calc-weight').textContent = currentBaseWeight > 0 ? currentBaseWeight : '--';
             }
 
             document.getElementById('product-modal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
         }
 
-        function closeModal() { document.getElementById('product-modal').classList.add('hidden'); }
+        function closeModal() {
+            document.getElementById('product-modal').classList.add('hidden');
+            if (document.getElementById('cart-panel').classList.contains('cart-closed')) {
+                document.body.style.overflow = 'auto';
+            }
+        }
+
+        document.getElementById('product-modal').addEventListener('click', function(e) {
+            if (e.target === this) closeModal();
+        });
 
         function updateConfig() {
-            const m = document.getElementById('config-moyeu'), r = document.getElementById('config-rayons');
-            const p = currentBasePrice + parseInt(m.options[m.selectedIndex].dataset.price);
-            const w = Math.round(currentBaseWeight - 322 + (parseInt(m.options[m.selectedIndex].dataset.hub-weight) || 285) + (parseInt(m.options[m.selectedIndex].dataset.spokes) * parseFloat(r.options[r.selectedIndex].dataset.spoke-weight)));
-            document.getElementById('calc-price').textContent = p;
-            document.getElementById('calc-weight').textContent = w;
-        }
-
-        function addToCart() {
-            const item = {
-                id: Date.now(),
-                title: document.getElementById('modal-title').textContent,
-                price: parseInt(document.getElementById('calc-price').textContent),
-                weight: document.getElementById('calc-weight').textContent,
-                config: document.getElementById('configurator-section').style.display !== 'none' ? "Configuré" : "Standard",
-                image: document.getElementById('modal-main-img').src,
-                isAccessory: isCurrentItemAccessory
-            };
-            cart.push(item); updateCartUI(); closeModal(); toggleCart();
-        }
-
-        function removeFromCart(id) { cart = cart.filter(i => i.id !== id); updateCartUI(); }
-
-        function updateCartUI() {
-            const c = document.getElementById('cart-items-container');
-            const totalEl = document.getElementById('cart-total');
-            const badge = document.getElementById('cart-badge');
-            const checkout = document.getElementById('checkout-btn');
-
-            document.getElementById('empty-cart-msg').style.display = cart.length ? 'none' : 'block';
-            badge.textContent = cart.length; badge.classList.toggle('hidden', !cart.length);
-            checkout.disabled = !cart.length; checkout.classList.toggle('opacity-50', !cart.length); checkout.classList.toggle('cursor-not-allowed', !cart.length);
-
-            Array.from(c.children).forEach(i => { if(i.id !== 'empty-cart-msg') i.remove(); });
+            if (isCurrentItemAccessory) return;
             
-            let t = 0; discountAmount = 0;
-            cart.forEach(i => {
-                t += i.price;
-                if (appliedPromo === 'CCPIKARBON') {
-                    if (!i.isAccessory) discountAmount += 50;
-                    else discountAmount += Math.round(i.price * 0.05);
-                }
-                c.insertAdjacentHTML('beforeend', `<div class="bg-white p-3 rounded-xl border flex gap-3 relative"><button onclick="removeFromCart(${i.id})" class="absolute top-1 right-1 text-red-400"><i class="fa-solid fa-xmark"></i></button><img src="${i.image}" class="w-12 h-12 object-contain"><div class="flex-grow"><h5 class="text-xs font-bold">${i.title}</h5><div class="flex justify-between font-black text-brand-accent text-sm"><span>${i.price}€</span></div></div></div>`);
-            });
+            const moyeuSelect = document.getElementById('config-moyeu');
+            const rayonSelect = document.getElementById('config-rayons');
+            const finitionSelect = document.getElementById('config-finition');
+            
+            const optT32 = document.getElementById('opt-t32');
+            const msgRecoR2 = document.getElementById('msg-reco-r2');
 
-            if (appliedPromo) {
-                document.getElementById('promo-active-container').classList.remove('hidden');
-                document.getElementById('active-promo-name').textContent = `${appliedPromo} (-${discountAmount}€)`;
-                document.getElementById('cart-original-total').classList.remove('hidden');
-                document.getElementById('cart-original-total').textContent = `${t} €`;
+            const isR2 = moyeuSelect.value === 'R2';
+            if (isR2) {
+                optT32.disabled = true;
+                optT32.style.display = 'none';
+                msgRecoR2.style.display = 'flex';
+                if (rayonSelect.value === 'T32') rayonSelect.value = 'T33';
             } else {
-                document.getElementById('promo-active-container').classList.add('hidden');
-                document.getElementById('cart-original-total').classList.add('hidden');
+                optT32.disabled = false;
+                optT32.style.display = 'block';
+                msgRecoR2.style.display = 'none';
             }
-            totalEl.textContent = t - discountAmount;
-        }
+            
+            const moyeuPrice = parseInt(moyeuSelect.options[moyeuSelect.selectedIndex].getAttribute('data-price')) || 0;
+            const rayonPrice = parseInt(rayonSelect.options[rayonSelect.selectedIndex].getAttribute('data-price')) || 0;
+            const finitionPrice = parseInt(finitionSelect.options[finitionSelect.selectedIndex].getAttribute('data-price')) || 0;
+            
+            const hubWeight = parseInt(moyeuSelect.options[moyeuSelect.selectedIndex].getAttribute('data-hub-weight')) || 238;
+            const spokeCount = parseInt(moyeuSelect.options[moyeuSelect.selectedIndex].getAttribute('data-spokes')) || 40;
+            const rimDiff = parseInt(moyeuSelect.options[moyeuSelect.selectedIndex].getAttribute('data-rim-diff')) || 0;
+            const finitionWeight = parseInt(finitionSelect.options[finitionSelect.selectedIndex].getAttribute('data-weight')) || 0;
+            const spokeWeight = parseFloat(rayonSelect.options[rayonSelect.selectedIndex].getAttribute('data-spoke-weight')) || 2.1;
 
-        function applyPromoCode() {
-            if (document.getElementById('promo-code').value.trim().toUpperCase() === 'CCPIKARBON') {
-                appliedPromo = 'CCPIKARBON'; updateCartUI();
-            }
-        }
+            const finalPrice = currentBasePrice + moyeuPrice + rayonPrice + finitionPrice;
+            const baseComboWeight = 322; 
+            const newComboWeight = hubWeight + (spokeCount * spokeWeight) + rimDiff + finitionWeight;
+            const finalWeight = Math.round(currentBaseWeight - baseComboWeight + newComboWeight);
 
-        function removePromoCode() { appliedPromo = null; updateCartUI(); }
-
-        function checkoutWhatsApp() {
-            let m = "👋 Bonjour Karbòn Péi ! Ma commande :\n\n", t = 0;
-            cart.forEach((i, idx) => { m += `${idx+1}. ${i.title} (${i.price}€)\n`; t += i.price; });
-            if (appliedPromo) m += `\nCode : ${appliedPromo} (-${discountAmount}€)\nTotal : ${t - discountAmount}€`;
-            else m += `\nTotal : ${t}€`;
-            window.open(`https://wa.me/262692693870?text=${encodeURIComponent(m)}`, '_blank');
+            document.getElementById('calc-price').textContent = finalPrice > 0 ? finalPrice : '--';
+            document.getElementById('calc-weight').textContent = finalWeight > 0 ? finalWeight : '--';
         }
 
         loadCatalogue();
