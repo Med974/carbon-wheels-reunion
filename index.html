@@ -303,9 +303,18 @@
                         </select>
                     </div>
 
+                    <!-- Choix du Corps de Roue Libre -->
+                    <div class="mb-5">
+                        <label class="block text-xs font-bold text-gray-500 mb-2">3. Corps de roue libre (Freehub)</label>
+                        <select id="config-rouelibre" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-3 text-sm font-semibold text-gray-800 focus:outline-none focus:ring-2 focus:ring-brand-accent focus:border-transparent cursor-pointer shadow-sm">
+                            <option value="Shimano HG" selected>Shimano HG (11/12v)</option>
+                            <option value="SRAM XDR">SRAM XDR (12v)</option>
+                        </select>
+                    </div>
+
                     <!-- Choix de la Finition -->
                     <div>
-                        <label class="block text-xs font-bold text-gray-500 mb-2">3. Finition (Finish)</label>
+                        <label class="block text-xs font-bold text-gray-500 mb-2">4. Finition (Finish)</label>
                         <select id="config-finition" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-3 text-sm font-semibold text-gray-800 focus:outline-none focus:ring-2 focus:ring-brand-accent focus:border-transparent cursor-pointer shadow-sm" onchange="updateConfig()">
                             <option value="UD Matte" data-price="0" data-weight="0" selected>UD Matte Carbone (Classique)</option>
                             <option value="Glossy Black" data-price="0" data-weight="0">Paintless Glossy Black (Brillant brut)</option>
@@ -424,8 +433,9 @@
             if (document.getElementById('configurator-section').style.display !== 'none') {
                 const moyeu = document.getElementById('config-moyeu').options[document.getElementById('config-moyeu').selectedIndex].text.split('(')[0].trim();
                 const rayon = document.getElementById('config-rayons').options[document.getElementById('config-rayons').selectedIndex].text.split('(')[0].trim();
+                const rouelibre = document.getElementById('config-rouelibre').value;
                 const finition = document.getElementById('config-finition').options[document.getElementById('config-finition').selectedIndex].text.split('(')[0].trim();
-                configText = `${moyeu} | ${rayon} | ${finition}`;
+                configText = `${moyeu} | ${rayon} | ${rouelibre} | ${finition}`;
             } else {
                 configText = isCurrentItemAccessory ? "Accessoire" : "Modèle Standard";
             }
