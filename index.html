@@ -147,11 +147,11 @@
     <section id="contact" class="bg-white py-16">
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <h3 class="text-3xl font-black text-gray-900 mb-4">Besoin d'un conseil ?</h3>
-            <p class="text-gray-600 mb-10">Nous sommes basés à La Réunion. N'hésitez pas à nous contacter pour une question technique, une commande spéciale ou une vérification de stock.</p>
+            <p class="text-gray-600 mb-10">Nous sommes basés à La Réunion. N'hésitez pas à nous contacter pour une question technique, une vérification de stock, ou une commande spéciale (nous pouvons par exemple réaliser des combos avec des hauteurs de roues différentes à l'avant et à l'arrière !).</p>
             
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <!-- WhatsApp (Principal) -->
-                <a href="https://wa.me/262692000000" target="_blank" class="flex items-center justify-center gap-4 bg-[#25D366] hover:bg-[#1da851] text-white p-6 rounded-2xl shadow-md transition transform hover:-translate-y-1">
+                <a href="https://wa.me/262692693870" target="_blank" class="flex items-center justify-center gap-4 bg-[#25D366] hover:bg-[#1da851] text-white p-6 rounded-2xl shadow-md transition transform hover:-translate-y-1">
                     <i class="fa-brands fa-whatsapp text-4xl"></i>
                     <div class="text-left">
                         <span class="block font-black text-lg">Message WhatsApp</span>
@@ -279,6 +279,7 @@
                         <span id="buy-btn-text">Ajouter au panier</span>
                         <i class="fa-solid fa-cart-plus text-xl"></i>
                     </button>
+                    <p class="text-center text-xs text-gray-400 mt-3"><i class="fa-solid fa-building-columns mr-1"></i> Paiement par virement bancaire ou à la livraison</p>
                 </div>
             </div>
         </div>
@@ -319,7 +320,7 @@
                 <span>Commander via WhatsApp</span>
                 <i class="fa-brands fa-whatsapp text-xl"></i>
             </button>
-            <p class="text-center text-xs text-gray-400 mt-3"><i class="fa-solid fa-handshake mr-1"></i> Paiement à la remise en main propre / livraison</p>
+            <p class="text-center text-xs text-gray-400 mt-3"><i class="fa-solid fa-handshake mr-1"></i> Règlement par virement ou à la remise en main propre</p>
         </div>
     </div>
 
@@ -448,7 +449,7 @@
         function checkoutWhatsApp() {
             if (cart.length === 0) return;
             
-            let numTelephone = "262692000000"; // TON NUMÉRO ICI
+            let numTelephone = "262692693870"; // Numéro exact
             let msg = "👋 Bonjour Karbòn Péi ! Je souhaite passer commande :\n\n";
             let total = 0;
             
@@ -463,7 +464,7 @@
             });
             
             msg += `*TOTAL ESTIMÉ : ${total} €*\n\n`;
-            msg += `Comment pouvons-nous procéder pour le règlement et la remise en main propre ?`;
+            msg += `Comment pouvons-nous procéder pour le règlement (virement, espèces) et la remise en main propre ?`;
 
             const encodedMsg = encodeURIComponent(msg);
             window.open(`https://wa.me/${numTelephone}?text=${encodedMsg}`, '_blank');
