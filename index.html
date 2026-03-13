@@ -613,8 +613,16 @@
                 
                 count++;
 
+                const nomLC = item.Nom.toLowerCase();
+                const isFixedPriceWheel = nomLC.includes('bâton') || nomLC.includes('tri-spoke') || nomLC.includes('lenticulaire') || nomLC.includes('disc');
+                const isAccessory = cat.toLowerCase().includes('accessoire') || cat.toLowerCase().includes('composant');
+
                 let imageUrl = item.Image ? item.Image.split(',')[0].trim() : 'https://images.unsplash.com/photo-1511994298241-608e28f14fde?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80';
-                let prixAffiche = item.Prix ? `Dès ${item.Prix} €` : 'Sur devis';
+                
+                let prixAffiche = 'Sur devis';
+                if (item.Prix) {
+                    prixAffiche = (isAccessory || isFixedPriceWheel) ? `${item.Prix} €` : `Dès ${item.Prix} €`;
+                }
                 
                 let statutBadge = '';
                 if (item.Statut && item.Statut.toLowerCase().includes('stock')) {
@@ -625,12 +633,13 @@
 
                 // Affichage différentiel Roue vs Accessoire/Composant
                 let specLigne = '';
-                if (cat.toLowerCase().includes('accessoire') || cat.toLowerCase().includes('composant')) {
+                if (isAccessory) {
                     specLigne = `<span class="flex items-center"><i class="fa-solid fa-weight-scale text-brand-accent mr-1.5"></i> ${item.Poids || '-'} g</span>`;
                 } else {
+                    let weightPrefix = isFixedPriceWheel ? '' : 'Dès ';
                     specLigne = `
                         <span class="flex items-center"><i class="fa-solid fa-arrows-up-down text-brand-accent mr-1.5"></i> ${item.Hauteur || '-'}</span>
-                        ${item.Poids ? `<span class="text-gray-300">|</span><span class="flex items-center"><i class="fa-solid fa-weight-scale text-brand-accent mr-1.5"></i> Dès ${item.Poids} g</span>` : ''}
+                        ${item.Poids ? `<span class="text-gray-300">|</span><span class="flex items-center"><i class="fa-solid fa-weight-scale text-brand-accent mr-1.5"></i> ${weightPrefix}${item.Poids} g</span>` : ''}
                     `;
                 }
 
