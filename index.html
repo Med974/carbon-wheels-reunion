@@ -625,10 +625,15 @@
                 }
                 
                 let statutBadge = '';
-                if (item.Statut && item.Statut.toLowerCase().includes('stock')) {
-                    statutBadge = `<span class="absolute top-4 left-4 bg-green-500 text-white text-xs font-bold px-3 py-1 rounded shadow-md z-10"><i class="fa-solid fa-check mr-1"></i> En Stock</span>`;
-                } else if (item.Statut) {
-                    statutBadge = `<span class="absolute top-4 left-4 bg-orange-500 text-white text-xs font-bold px-3 py-1 rounded shadow-md z-10"><i class="fa-solid fa-plane mr-1"></i> ${item.Statut}</span>`;
+                if (item.Statut) {
+                    const statutLC = item.Statut.toLowerCase();
+                    if (statutLC.includes('stock')) {
+                        statutBadge = `<span class="absolute top-4 left-4 bg-green-500 text-white text-xs font-bold px-3 py-1 rounded shadow-md z-10"><i class="fa-solid fa-check mr-1"></i> En Stock</span>`;
+                    } else if (statutLC.includes('arrivage')) {
+                        statutBadge = `<span class="absolute top-4 left-4 bg-blue-500 text-white text-xs font-bold px-3 py-1 rounded shadow-md z-10"><i class="fa-solid fa-truck-fast mr-1"></i> Arrivage en cours</span>`;
+                    } else {
+                        statutBadge = `<span class="absolute top-4 left-4 bg-orange-500 text-white text-xs font-bold px-3 py-1 rounded shadow-md z-10"><i class="fa-solid fa-plane mr-1"></i> ${item.Statut}</span>`;
+                    }
                 }
 
                 // Affichage différentiel Roue vs Accessoire/Composant
@@ -690,12 +695,21 @@
 
             // Badge
             const badge = document.getElementById('modal-badge');
-            if (item.Statut && item.Statut.toLowerCase().includes('stock')) {
-                badge.className = 'text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide w-max mb-3 bg-green-100 text-green-700';
-                badge.innerHTML = '<i class="fa-solid fa-check mr-1"></i> En Stock Réunion';
+            if (item.Statut) {
+                const statutLC = item.Statut.toLowerCase();
+                if (statutLC.includes('stock')) {
+                    badge.className = 'text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide w-max mb-3 bg-green-100 text-green-700';
+                    badge.innerHTML = '<i class="fa-solid fa-check mr-1"></i> En Stock Réunion';
+                } else if (statutLC.includes('arrivage')) {
+                    badge.className = 'text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide w-max mb-3 bg-blue-100 text-blue-700';
+                    badge.innerHTML = '<i class="fa-solid fa-truck-fast mr-1"></i> Arrivage en cours';
+                } else {
+                    badge.className = 'text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide w-max mb-3 bg-orange-100 text-orange-700';
+                    badge.innerHTML = `<i class="fa-solid fa-plane mr-1"></i> ${item.Statut}`;
+                }
             } else {
                 badge.className = 'text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide w-max mb-3 bg-orange-100 text-orange-700';
-                badge.innerHTML = `<i class="fa-solid fa-plane mr-1"></i> ${item.Statut || 'Sur Commande'}`;
+                badge.innerHTML = `<i class="fa-solid fa-plane mr-1"></i> Sur Commande`;
             }
 
             // Galerie d'images
