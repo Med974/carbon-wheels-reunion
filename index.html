@@ -36,10 +36,6 @@
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         
-        #cart-panel { transition: transform 0.3s ease-in-out; }
-        .cart-open { transform: translateX(0); }
-        .cart-closed { transform: translateX(100%); }
-        
         .filter-btn.active { background-color: #0f172a; color: white; border-color: #0f172a; }
     </style>
 </head>
@@ -737,14 +733,20 @@
                 }
                 
                 let statutBadge = '';
+                
+                // Ajout automatique du badge Best-Seller pour la 50mm
+                if (nomLC.includes('50mm')) {
+                    statutBadge += `<span class="absolute top-4 right-4 bg-brand-accent text-brand-main text-xs font-black px-3 py-1 rounded shadow-md z-20 transform rotate-3">⭐ BEST-SELLER</span>`;
+                }
+
                 if (item.Statut) {
                     const statutLC = item.Statut.toLowerCase();
                     if (statutLC.includes('stock')) {
-                        statutBadge = `<span class="absolute top-4 left-4 bg-green-500 text-white text-xs font-bold px-3 py-1 rounded shadow-md z-10"><i class="fa-solid fa-check mr-1"></i> En Stock</span>`;
+                        statutBadge += `<span class="absolute top-4 left-4 bg-green-500 text-white text-xs font-bold px-3 py-1 rounded shadow-md z-10"><i class="fa-solid fa-check mr-1"></i> En Stock</span>`;
                     } else if (statutLC.includes('arrivage')) {
-                        statutBadge = `<span class="absolute top-4 left-4 bg-blue-500 text-white text-xs font-bold px-3 py-1 rounded shadow-md z-10"><i class="fa-solid fa-truck-fast mr-1"></i> Arrivage en cours</span>`;
+                        statutBadge += `<span class="absolute top-4 left-4 bg-blue-500 text-white text-xs font-bold px-3 py-1 rounded shadow-md z-10"><i class="fa-solid fa-truck-fast mr-1"></i> Arrivage en cours</span>`;
                     } else {
-                        statutBadge = `<span class="absolute top-4 left-4 bg-orange-500 text-white text-xs font-bold px-3 py-1 rounded shadow-md z-10"><i class="fa-solid fa-plane mr-1"></i> ${item.Statut}</span>`;
+                        statutBadge += `<span class="absolute top-4 left-4 bg-orange-500 text-white text-xs font-bold px-3 py-1 rounded shadow-md z-10"><i class="fa-solid fa-plane mr-1"></i> ${item.Statut}</span>`;
                     }
                 }
 
