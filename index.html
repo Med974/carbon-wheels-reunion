@@ -741,8 +741,8 @@
                 
                 let statutBadge = '';
                 
-                // Ajout automatique du badge Best-Seller (tolérant avec ou sans espace)
-                if (nomLC.includes('50mm') || nomLC.includes('50 mm')) {
+                // Ajout automatique du badge Best-Seller (tolérant pour capter "50 Pro")
+                if (nomLC.includes('50')) {
                     statutBadge += `<span class="absolute top-4 right-4 bg-brand-accent text-brand-main text-xs font-black px-3 py-1 rounded shadow-md z-20 transform rotate-3 border border-yellow-300">⭐ BEST-SELLER</span>`;
                 }
 
@@ -831,7 +831,7 @@
             // Gestion du badge Best-Seller dans la modale
             const bestsellerBadge = document.getElementById('modal-bestseller');
             const nomForBadge = item.Nom ? item.Nom.toLowerCase() : '';
-            if (nomForBadge.includes('50mm') || nomForBadge.includes('50 mm')) {
+            if (nomForBadge.includes('50')) {
                 bestsellerBadge.classList.remove('hidden');
                 bestsellerBadge.classList.add('inline-flex', 'items-center');
             } else {
