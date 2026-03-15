@@ -367,16 +367,12 @@
     <!-- MODALE CONFIGURATEUR -->
     <div id="product-modal" class="fixed inset-0 z-[100] hidden bg-black/80 flex items-center justify-center p-4 backdrop-blur-sm transition-opacity">
         <div class="bg-white rounded-2xl w-full max-w-5xl max-h-[95vh] overflow-y-auto flex flex-col md:flex-row relative shadow-2xl">
-            <button onclick="closeModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-900 z-10 bg-white rounded-full p-2 shadow"><i class="fa-solid fa-xmark text-2xl px-1"></i></button>
+            <button onclick="closeModal()" class="md:hidden absolute top-4 right-4 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-sm text-gray-500 z-10"><i class="fa-solid fa-xmark"></i></button>
+            <button onclick="closeModal()" class="hidden md:block absolute top-4 right-4 text-gray-400 hover:text-gray-900 z-10 bg-white rounded-full p-2 shadow"><i class="fa-solid fa-xmark text-2xl px-1"></i></button>
             
-            <div class="w-full md:w-1/2 bg-gray-50 p-6 flex flex-col items-center border-r border-gray-200">
-                <div class="h-64 md:h-80 w-full flex items-center justify-center mb-4">
-                    <img id="modal-main-img" src="" alt="Produit" class="max-w-full max-h-full object-contain drop-shadow-xl">
-            <!-- Fenêtre Modale (Produit) -->
-            <div class="w-full md:w-1/2 bg-gray-50/50 p-6 flex flex-col items-center justify-center relative">
-                <button onclick="closeModal()" class="md:hidden absolute top-4 right-4 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-sm text-gray-500"><i class="fa-solid fa-xmark"></i></button>
+            <div class="w-full md:w-1/2 bg-gray-50 p-6 flex flex-col items-center justify-center border-r border-gray-200 relative">
                 <div class="w-full aspect-square mb-4 relative flex items-center justify-center">
-                    <img id="modal-image" src="" alt="Produit" class="w-full h-full object-contain mix-blend-multiply transition-opacity duration-300">
+                    <img id="modal-image" src="" alt="Produit" class="max-w-full max-h-full object-contain mix-blend-multiply transition-opacity duration-300 drop-shadow-xl">
                     <video id="modal-video" src="" class="hidden w-full h-full object-contain mix-blend-multiply rounded-xl shadow-sm" autoplay loop muted playsinline></video>
                 </div>
                 <div id="modal-gallery" class="flex gap-2 w-full overflow-x-auto no-scrollbar py-2">
@@ -391,6 +387,23 @@
                 </div>
                 <h3 id="modal-title" class="text-3xl font-black text-gray-900 mb-2 leading-tight"></h3>
                 <p id="modal-desc" class="text-sm text-gray-500 mb-6"></p>
+
+                <div id="spec-jantes-box" class="bg-blue-50/50 p-4 rounded-xl border border-blue-100 mb-6 hidden">
+                    <div class="flex gap-6">
+                        <div>
+                            <span class="block text-[10px] uppercase font-bold text-blue-400 tracking-wider mb-1">Largeur Interne</span>
+                            <span id="modal-largeur-int" class="font-bold text-blue-900">24 mm</span>
+                        </div>
+                        <div>
+                            <span class="block text-[10px] uppercase font-bold text-blue-400 tracking-wider mb-1">Largeur Externe</span>
+                            <span id="modal-largeur-ext" class="font-bold text-blue-900">32 mm</span>
+                        </div>
+                        <div>
+                            <span class="block text-[10px] uppercase font-bold text-blue-400 tracking-wider mb-1">Hauteur</span>
+                            <span id="modal-hauteur" class="font-bold text-blue-900"></span>
+                        </div>
+                    </div>
+                </div>
 
                 <div id="configurator-section" class="bg-gray-50 p-5 rounded-xl border border-gray-200 mb-6">
                     <h4 class="text-sm font-bold text-gray-900 uppercase tracking-wider mb-4 flex items-center">
@@ -430,8 +443,8 @@
                     <div>
                         <label class="block text-xs font-bold text-gray-500 mb-2">4. Finition</label>
                         <select id="config-finition" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-3 text-sm font-semibold" onchange="updateConfig()">
-                            <option value="UD Matte" selected>UD Matte Carbone</option>
-                            <option value="Glossy Black">Paintless Glossy Black</option>
+                            <option value="UD Matte" data-weight="0" data-price="0" selected>UD Matte Carbone</option>
+                            <option value="Glossy Black" data-weight="20" data-price="0">Paintless Glossy Black</option>
                         </select>
                     </div>
                 </div>
@@ -466,7 +479,6 @@
         </div>
         <div class="p-6 bg-white border-t border-gray-200">
             
-            <!-- AJOUT : Formulaire de facturation -->
             <div id="billing-info-container" class="mb-5 bg-gray-50 p-3 rounded-lg border border-gray-200 hidden">
                 <label class="block text-xs font-bold text-gray-500 mb-2 uppercase tracking-wide"><i class="fa-solid fa-file-invoice mr-1"></i> Coordonnées de facturation</label>
                 <input type="text" id="client-name" placeholder="Nom et Prénom" class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm mb-2 focus:ring-1 focus:ring-brand-main outline-none">
@@ -502,7 +514,6 @@
         let currentBaseWeight = 0;
         let isCurrentItemAccessory = false;
         
-        // --- GESTION DU PANIER ---
         let cart = [];
         let appliedPromo = null;
         let discountAmount = 0;
@@ -536,7 +547,7 @@
             const finalWeight = document.getElementById('calc-weight').textContent;
             
             let configText = "";
-            let imgUrl = document.getElementById('modal-main-img').src;
+            let imgUrl = document.getElementById('modal-image').src; // Corrigé ici
 
             if (document.getElementById('configurator-section').style.display !== 'none') {
                 const moyeu = document.getElementById('config-moyeu').options[document.getElementById('config-moyeu').selectedIndex].text.split('(')[0].trim();
@@ -575,7 +586,7 @@
             const badge = document.getElementById('cart-badge');
             const totalEl = document.getElementById('cart-total');
             const checkoutBtn = document.getElementById('checkout-btn');
-            const billingContainer = document.getElementById('billing-info-container'); // AJOUT
+            const billingContainer = document.getElementById('billing-info-container');
 
             if (cart.length > 0) {
                 badge.textContent = cart.length;
@@ -583,13 +594,13 @@
                 emptyMsg.style.display = 'none';
                 checkoutBtn.disabled = false;
                 checkoutBtn.classList.remove('opacity-50', 'cursor-not-allowed');
-                billingContainer.classList.remove('hidden'); // Affiche le formulaire
+                billingContainer.classList.remove('hidden');
             } else {
                 badge.classList.add('hidden');
                 emptyMsg.style.display = 'block';
                 checkoutBtn.disabled = true;
                 checkoutBtn.classList.add('opacity-50', 'cursor-not-allowed');
-                billingContainer.classList.add('hidden'); // Cache le formulaire
+                billingContainer.classList.add('hidden');
             }
 
             Array.from(container.children).forEach(child => {
@@ -610,7 +621,7 @@
                 div.className = "bg-white p-4 rounded-xl border border-gray-100 shadow-sm flex gap-4 relative group";
                 div.innerHTML = `
                     <button onclick="removeFromCart(${item.id})" class="absolute -top-2 -right-2 bg-red-100 text-red-600 rounded-full w-6 h-6 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition shadow hover:bg-red-200"><i class="fa-solid fa-xmark"></i></button>
-                    <div class="w-16 h-16 bg-gray-50 rounded-lg flex-shrink-0 flex items-center justify-center p-1 border border-gray-100">
+                    <div class="w-16 h-16 bg-gray-50 rounded-lg flex-shrink-0 flex items-center justify-center p-1 border border-gray-100 overflow-hidden">
                         <img src="${item.image}" class="w-full h-full object-contain">
                     </div>
                     <div class="flex-grow">
@@ -670,13 +681,11 @@
         async function checkoutWhatsApp() {
             if (cart.length === 0) return;
             
-            // Animation du bouton pour faire patienter 1 seconde
             const btn = document.getElementById('checkout-btn');
             const originalBtnText = btn.innerHTML;
             btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin mr-2"></i> Préparation...';
             btn.disabled = true;
 
-            // Récupération des infos client
             const nomClient = document.getElementById('client-name').value.trim() || "Non renseigné";
             const adresseClient = document.getElementById('client-address').value.trim() || "Non renseignée";
 
@@ -688,7 +697,7 @@
             
             msg += `🛒 *MA COMMANDE :*\n`;
             let total = 0;
-            let produitsPourFichier = []; // Pour envoyer à Google Sheets
+            let produitsPourFichier = [];
             
             cart.forEach((item, index) => {
                 msg += `*${index + 1}. ${item.title}*\n`;
@@ -713,9 +722,6 @@
             
             msg += `Comment pouvons-nous procéder pour le règlement (virement, espèces) ?\n\n`;
 
-            // --- NOUVEAU : ENVOI SILENCIEUX VERS GOOGLE SHEETS ---
-            const API_URL = "https://script.google.com/macros/s/AKfycbwi5uRAIjQ2vjbL7h9_LWAUzArqb4oNDNzHWqfM4dIkINVlY6v1Qv4no9V5ScitexSq/exec";
-            
             const orderData = {
                 date: new Date().toLocaleString('fr-FR', { timeZone: 'Indian/Reunion' }),
                 nom: nomClient,
@@ -735,14 +741,11 @@
                 });
             } catch (error) {
                 console.error("Erreur d'enregistrement réseau :", error);
-                // Si erreur (ex: wifi coupé), on laisse quand même le client aller sur WhatsApp !
             }
 
-            // Ouverture de WhatsApp
             const encodedMsg = encodeURIComponent(msg);
             window.open(`https://wa.me/262692693870?text=${encodedMsg}`, '_blank');
 
-            // Réinitialisation du panier
             cart = [];
             appliedPromo = null;
             discountAmount = 0;
@@ -751,12 +754,10 @@
             updateCartUI();
             toggleCart();
             
-            // Remise à l'état initial du bouton
             btn.innerHTML = originalBtnText;
             btn.disabled = false;
         }
 
-        // --- GESTION DU CATALOGUE ET DES FILTRES ---
         async function loadCatalogue() {
             try {
                 const response = await fetch(API_URL);
@@ -812,7 +813,6 @@
                 
                 let statutBadge = '';
                 
-                // Ajout automatique du badge Best-Seller (tolérant pour capter "50 Pro")
                 if (nomLC.includes('50')) {
                     statutBadge += `<span class="absolute top-4 right-4 bg-brand-accent text-brand-main text-xs font-black px-3 py-1 rounded shadow-md z-20 transform rotate-3 border border-yellow-300">⭐ BEST-SELLER</span>`;
                 }
@@ -868,7 +868,6 @@
             }
         }
 
-        // --- MODALE ET CONFIGURATEUR ---
         function openModal(index) {
             const item = globalCatalogue[index];
             if(!item) return;
@@ -899,7 +898,6 @@
                 badge.innerHTML = `<i class="fa-solid fa-plane mr-1"></i> Sur Commande`;
             }
 
-            // Gestion du badge Best-Seller dans la modale
             const bestsellerBadge = document.getElementById('modal-bestseller');
             const nomForBadge = item.Nom ? item.Nom.toLowerCase() : '';
             if (nomForBadge.includes('50')) {
@@ -912,7 +910,6 @@
 
             let images = item.Image ? item.Image.split(',') : ['https://images.unsplash.com/photo-1511994298241-608e28f14fde?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80'];
             
-            // Afficher le premier média (Image ou Vidéo)
             changeModalMedia(images[0].trim());
 
             const gallery = document.getElementById('modal-gallery');
@@ -935,7 +932,6 @@
                 gallery.classList.add('hidden');
             }
 
-            // Gestion de l'affichage des specs spécifiques
             const nomLC = item.Nom.toLowerCase();
             const isWheelConfigurable = !isCurrentItemAccessory && !nomLC.includes('bâton') && !nomLC.includes('tri-spoke') && !nomLC.includes('lenticulaire') && !nomLC.includes('disc');
             
@@ -977,14 +973,12 @@
 
         function closeModal() {
             document.getElementById('product-modal').classList.add('hidden');
-            document.body.style.overflow = 'auto'; // Réactive le scroll
+            document.body.style.overflow = 'auto'; 
             
-            // Couper la vidéo quand on ferme la fenêtre pour éviter que le son tourne en fond !
             const vidEl = document.getElementById('modal-video');
             if(vidEl) vidEl.pause();
         }
 
-        // NOUVELLE FONCTION POUR GERER LA BASCULE IMAGE / VIDEO
         function changeModalMedia(url) {
             const imgEl = document.getElementById('modal-image');
             const vidEl = document.getElementById('modal-video');
@@ -993,7 +987,6 @@
                 imgEl.classList.add('hidden');
                 vidEl.classList.remove('hidden');
                 vidEl.src = url;
-                // On met le son à zéro par défaut pour ne pas effrayer le client, il pourra l'activer avec les contrôles standards si on ajoute "controls" plus tard.
                 vidEl.muted = true; 
                 vidEl.play();
             } else {
@@ -1004,7 +997,17 @@
             }
         }
 
-        function selectConfig(index, priceDifference) {
+        // --- FONCTION RÉPARÉE ---
+        function updateConfig() {
+            const moyeuSelect = document.getElementById('config-moyeu');
+            const rayonSelect = document.getElementById('config-rayons');
+            const finitionSelect = document.getElementById('config-finition');
+            const msgRecoR2 = document.getElementById('msg-reco-r2');
+
+            // Affichage du message R2
+            if (moyeuSelect.value === 'R2') {
+                msgRecoR2.style.display = 'flex';
+            } else {
                 msgRecoR2.style.display = 'none';
             }
             
@@ -1027,6 +1030,7 @@
             document.getElementById('calc-weight').textContent = finalWeight > 0 ? finalWeight : '--';
         }
 
+        // Lancement au démarrage
         loadCatalogue();
     </script>
 </body>
