@@ -372,15 +372,15 @@
             <div class="w-full md:w-1/2 bg-gray-50 p-6 flex flex-col items-center border-r border-gray-200">
                 <div class="h-64 md:h-80 w-full flex items-center justify-center mb-4">
                     <img id="modal-main-img" src="" alt="Produit" class="max-w-full max-h-full object-contain drop-shadow-xl">
+            <!-- Fenêtre Modale (Produit) -->
+            <div class="w-full md:w-1/2 bg-gray-50/50 p-6 flex flex-col items-center justify-center relative">
+                <button onclick="closeModal()" class="md:hidden absolute top-4 right-4 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-sm text-gray-500"><i class="fa-solid fa-xmark"></i></button>
+                <div class="w-full aspect-square mb-4 relative flex items-center justify-center">
+                    <img id="modal-image" src="" alt="Produit" class="w-full h-full object-contain mix-blend-multiply transition-opacity duration-300">
+                    <video id="modal-video" src="" class="hidden w-full h-full object-contain mix-blend-multiply rounded-xl shadow-sm" autoplay loop muted playsinline></video>
                 </div>
-                <div id="modal-thumbnails" class="flex gap-3 overflow-x-auto py-2 w-full no-scrollbar justify-center mb-4"></div>
-                
-                <div id="spec-jantes-box" class="w-full bg-white p-4 rounded-xl shadow-sm border border-gray-100 text-sm">
-                    <h4 class="font-bold text-gray-900 mb-2 border-b pb-1">Spécifications Jante</h4>
-                    <div class="flex justify-between mb-1"><span class="text-gray-500">Hauteur:</span> <span id="modal-hauteur" class="font-semibold text-gray-800"></span></div>
-                    <div class="flex justify-between mb-1"><span class="text-gray-500">Largeur interne:</span> <span id="modal-largeur-int" class="font-semibold text-gray-800">24 mm</span></div>
-                    <div class="flex justify-between mb-1"><span class="text-gray-500">Largeur externe:</span> <span id="modal-largeur-ext" class="font-semibold text-gray-800">32 mm</span></div>
-                    <div class="flex justify-between mt-2 pt-2 border-t border-gray-100"><span class="text-gray-500">Garantie:</span> <span class="font-bold text-brand-accent"><i class="fa-solid fa-shield-halved mr-1"></i> 3 Ans</span></div>
+                <div id="modal-gallery" class="flex gap-2 w-full overflow-x-auto no-scrollbar py-2">
+                    <!-- Miniatures injectées ici -->
                 </div>
             </div>
             
@@ -911,31 +911,31 @@
             }
 
             let images = item.Image ? item.Image.split(',') : ['https://images.unsplash.com/photo-1511994298241-608e28f14fde?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80'];
-            const mainImg = document.getElementById('modal-main-img');
-            mainImg.src = images[0].trim();
-            const thumbContainer = document.getElementById('modal-thumbnails');
-            thumbContainer.innerHTML = '';
             
+            // Afficher le premier média (Image ou Vidéo)
+            changeModalMedia(images[0].trim());
+
+            const gallery = document.getElementById('modal-gallery');
             if (images.length > 1) {
-                images.forEach((imgUrl, i) => {
-                    const cleanUrl = imgUrl.trim();
-                    const thumb = document.createElement('img');
-                    thumb.src = cleanUrl;
-                    thumb.className = `w-16 h-16 object-cover rounded-lg cursor-pointer border-2 transition-all ${i === 0 ? 'border-brand-accent shadow-md scale-105' : 'border-transparent hover:border-gray-300 opacity-70 hover:opacity-100'}`;
+                gallery.innerHTML = images.map(img => {
+                    const url = img.trim();
+                    const isVideo = url.toLowerCase().endsWith('.mp4') || url.toLowerCase().endsWith('.webm');
+                    const iconPlay = isVideo ? `<div class="absolute inset-0 flex items-center justify-center bg-black/20 group-hover:bg-black/40 transition"><i class="fa-solid fa-circle-play text-white text-2xl shadow-sm opacity-90"></i></div>` : '';
+                    const mediaTag = isVideo ? `<video src="${url}#t=0.1" class="w-full h-full object-cover"></video>` : `<img src="${url}" class="w-full h-full object-cover">`;
                     
-                    thumb.onclick = () => {
-                        mainImg.src = cleanUrl;
-                        Array.from(thumbContainer.children).forEach(c => {
-                            c.classList.remove('border-brand-accent', 'shadow-md', 'scale-105');
-                            c.classList.add('border-transparent', 'opacity-70');
-                        });
-                        thumb.classList.remove('border-transparent', 'opacity-70');
-                        thumb.classList.add('border-brand-accent', 'shadow-md', 'scale-105');
-                    };
-                    thumbContainer.appendChild(thumb);
-                });
+                    return `
+                    <div onclick="changeModalMedia('${url}')" class="group cursor-pointer border-2 border-transparent hover:border-brand-main rounded-lg overflow-hidden relative h-20 min-w-[5rem] bg-gray-100 flex-shrink-0 transition-all shadow-sm">
+                        ${mediaTag}
+                        ${iconPlay}
+                    </div>`;
+                }).join('');
+                gallery.classList.remove('hidden');
+            } else {
+                gallery.innerHTML = '';
+                gallery.classList.add('hidden');
             }
 
+            // Gestion de l'affichage des specs spécifiques
             const nomLC = item.Nom.toLowerCase();
             const isWheelConfigurable = !isCurrentItemAccessory && !nomLC.includes('bâton') && !nomLC.includes('tri-spoke') && !nomLC.includes('lenticulaire') && !nomLC.includes('disc');
             
@@ -977,34 +977,34 @@
 
         function closeModal() {
             document.getElementById('product-modal').classList.add('hidden');
-            if (document.getElementById('cart-panel').classList.contains('cart-closed')) {
-                document.body.style.overflow = 'auto';
+            document.body.style.overflow = 'auto'; // Réactive le scroll
+            
+            // Couper la vidéo quand on ferme la fenêtre pour éviter que le son tourne en fond !
+            const vidEl = document.getElementById('modal-video');
+            if(vidEl) vidEl.pause();
+        }
+
+        // NOUVELLE FONCTION POUR GERER LA BASCULE IMAGE / VIDEO
+        function changeModalMedia(url) {
+            const imgEl = document.getElementById('modal-image');
+            const vidEl = document.getElementById('modal-video');
+            
+            if (url.toLowerCase().endsWith('.mp4') || url.toLowerCase().endsWith('.webm')) {
+                imgEl.classList.add('hidden');
+                vidEl.classList.remove('hidden');
+                vidEl.src = url;
+                // On met le son à zéro par défaut pour ne pas effrayer le client, il pourra l'activer avec les contrôles standards si on ajoute "controls" plus tard.
+                vidEl.muted = true; 
+                vidEl.play();
+            } else {
+                vidEl.classList.add('hidden');
+                imgEl.classList.remove('hidden');
+                vidEl.pause();
+                imgEl.src = url;
             }
         }
 
-        document.getElementById('product-modal').addEventListener('click', function(e) {
-            if (e.target === this) closeModal();
-        });
-
-        function updateConfig() {
-            if (isCurrentItemAccessory) return;
-            
-            const moyeuSelect = document.getElementById('config-moyeu');
-            const rayonSelect = document.getElementById('config-rayons');
-            const finitionSelect = document.getElementById('config-finition');
-            
-            const optT32 = document.getElementById('opt-t32');
-            const msgRecoR2 = document.getElementById('msg-reco-r2');
-
-            const isR2 = moyeuSelect.value === 'R2';
-            if (isR2) {
-                optT32.disabled = true;
-                optT32.style.display = 'none';
-                msgRecoR2.style.display = 'flex';
-                if (rayonSelect.value === 'T32') rayonSelect.value = 'T33';
-            } else {
-                optT32.disabled = false;
-                optT32.style.display = 'block';
+        function selectConfig(index, priceDifference) {
                 msgRecoR2.style.display = 'none';
             }
             
