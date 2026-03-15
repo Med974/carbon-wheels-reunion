@@ -667,9 +667,15 @@
             updateCartUI();
         }
 
-        function checkoutWhatsApp() {
+        async function checkoutWhatsApp() {
             if (cart.length === 0) return;
             
+            // Animation du bouton pour faire patienter 1 seconde
+            const btn = document.getElementById('checkout-btn');
+            const originalBtnText = btn.innerHTML;
+            btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin mr-2"></i> Préparation...';
+            btn.disabled = true;
+
             // Récupération des infos client
             const nomClient = document.getElementById('client-name').value.trim() || "Non renseigné";
             const adresseClient = document.getElementById('client-address').value.trim() || "Non renseignée";
@@ -682,6 +688,7 @@
             
             msg += `🛒 *MA COMMANDE :*\n`;
             let total = 0;
+            let produitsPourFichier = []; // Pour envoyer à Google Sheets
             
             cart.forEach((item, index) => {
                 msg += `*${index + 1}. ${item.title}*\n`;
@@ -690,21 +697,61 @@
                 }
                 msg += `   - Prix : ${item.price} €\n\n`;
                 total += item.price;
+                produitsPourFichier.push(`${item.title} (${item.config})`);
             });
             
+            const finalTotal = appliedPromo ? (total - discountAmount) : total;
+
             if (appliedPromo) {
                 msg += `*TOTAL SANS REMISE : ${total} €*\n`;
                 msg += `*CODE PROMO : ${appliedPromo}*\n`;
                 msg += `*REMISE : -${discountAmount} €*\n`;
-                msg += `*TOTAL À PAYER : ${total - discountAmount} €*\n\n`;
+                msg += `*TOTAL À PAYER : ${finalTotal} €*\n\n`;
             } else {
-                msg += `*TOTAL À PAYER : ${total} €*\n\n`;
+                msg += `*TOTAL À PAYER : ${finalTotal} €*\n\n`;
             }
             
             msg += `Comment pouvons-nous procéder pour le règlement (virement, espèces) ?\n\n`;
 
+            // --- NOUVEAU : ENVOI SILENCIEUX VERS GOOGLE SHEETS ---
+            const orderData = {
+                date: new Date().toLocaleString('fr-FR', { timeZone: 'Indian/Reunion' }),
+                nom: nomClient,
+                adresse: adresseClient,
+                produits: produitsPourFichier.join(" + "),
+                total: finalTotal,
+                promo: appliedPromo || "Aucun",
+                statutPaiement: "En attente",
+                statutLivraison: "À traiter"
+            };
+
+            try {
+                await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify(orderData)
+                });
+            } catch (error) {
+                console.error("Erreur d'enregistrement réseau :", error);
+                // Si erreur (ex: wifi coupé), on laisse quand même le client aller sur WhatsApp !
+            }
+
+            // Ouverture de WhatsApp
             const encodedMsg = encodeURIComponent(msg);
             window.open(`https://wa.me/262692693870?text=${encodedMsg}`, '_blank');
+
+            // Réinitialisation du panier
+            cart = [];
+            appliedPromo = null;
+            discountAmount = 0;
+            document.getElementById('client-name').value = '';
+            document.getElementById('client-address').value = '';
+            updateCartUI();
+            toggleCart();
+            
+            // Remise à l'état initial du bouton
+            btn.innerHTML = originalBtnText;
+            btn.disabled = false;
         }
 
         // --- GESTION DU CATALOGUE ET DES FILTRES ---
