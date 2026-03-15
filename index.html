@@ -715,7 +715,9 @@
             
             msg += `🛒 *MA COMMANDE :*\n`;
             let total = 0;
-            let produitsPourFichier = [];
+            let produitsPourFichier = []; // Pour le tableau de suivi (Google Sheets)
+            let factureNoms = []; // NOUVEAU : Pour la colonne de gauche du PDF
+            let facturePrix = []; // NOUVEAU : Pour la colonne de droite du PDF
             
             cart.forEach((item, index) => {
                 msg += `*${index + 1}. ${item.title}*\n`;
@@ -725,6 +727,10 @@
                 msg += `   - Prix : ${item.price} €\n\n`;
                 total += item.price;
                 produitsPourFichier.push(`${item.title} (${item.config})`);
+                
+                // Préparation pour le PDF (Mise en page alignée sur 2 lignes)
+                factureNoms.push(`• ${item.title}\n  ${item.config}`);
+                facturePrix.push(`${item.price} €\n `); 
             });
             
             const finalTotal = appliedPromo ? (total - discountAmount) : total;
@@ -734,20 +740,24 @@
                 msg += `*CODE PROMO : ${appliedPromo}*\n`;
                 msg += `*REMISE : -${discountAmount} €*\n`;
                 msg += `*TOTAL À PAYER : ${finalTotal} €*\n\n`;
+                
+                // Ajout de la remise directement sur la facture PDF
+                factureNoms.push(`\nREMISE (Code : ${appliedPromo})`);
+                facturePrix.push(`\n-${discountAmount} €`);
             } else {
                 msg += `*TOTAL À PAYER : ${finalTotal} €*\n\n`;
             }
             
             msg += `Comment pouvons-nous procéder pour le règlement (virement, espèces) ?\n\n`;
 
-            // On fusionne le nom et l'e-mail pour que ça rentre dans la même colonne de ton Google Sheets sans rien casser
-            const nomCompletPourFichier = emailClient !== "Non renseigné" ? `${nomClient} (${emailClient})` : nomClient;
-
             const orderData = {
                 date: new Date().toLocaleString('fr-FR', { timeZone: 'Indian/Reunion' }),
-                nom: nomCompletPourFichier,
+                nom: nomClient,
+                email: emailClient, // NOUVEAU : On isole l'e-mail
                 adresse: adresseClient,
-                produits: produitsPourFichier.join(" + "),
+                produits: produitsPourFichier.join(" + "), // Pour le tableau
+                factureNoms: factureNoms.join("\n\n"), // Pour le PDF
+                facturePrix: facturePrix.join("\n\n"), // Pour le PDF
                 total: finalTotal,
                 promo: appliedPromo || "Aucun",
                 statutPaiement: "En attente",
