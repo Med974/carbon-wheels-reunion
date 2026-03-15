@@ -714,6 +714,8 @@
             msg += `Comment pouvons-nous procéder pour le règlement (virement, espèces) ?\n\n`;
 
             // --- NOUVEAU : ENVOI SILENCIEUX VERS GOOGLE SHEETS ---
+            const API_URL = "https://script.google.com/macros/s/AKfycbwi5uRAIjQ2vjbL7h9_LWAUzArqb4oNDNzHWqfM4dIkINVlY6v1Qv4no9V5ScitexSq/exec";
+            
             const orderData = {
                 date: new Date().toLocaleString('fr-FR', { timeZone: 'Indian/Reunion' }),
                 nom: nomClient,
