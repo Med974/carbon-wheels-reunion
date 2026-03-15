@@ -482,6 +482,7 @@
             <div id="billing-info-container" class="mb-5 bg-gray-50 p-3 rounded-lg border border-gray-200 hidden">
                 <label class="block text-xs font-bold text-gray-500 mb-2 uppercase tracking-wide"><i class="fa-solid fa-file-invoice mr-1"></i> Coordonnées de facturation</label>
                 <input type="text" id="client-name" placeholder="Nom et Prénom" class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm mb-2 focus:ring-1 focus:ring-brand-main outline-none">
+                <input type="email" id="client-email" placeholder="Adresse e-mail" class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm mb-2 focus:ring-1 focus:ring-brand-main outline-none">
                 <textarea id="client-address" placeholder="Adresse postale complète" class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm resize-none focus:ring-1 focus:ring-brand-main outline-none" rows="2"></textarea>
             </div>
 
@@ -687,12 +688,14 @@
             btn.disabled = true;
 
             const nomClient = document.getElementById('client-name').value.trim() || "Non renseigné";
+            const emailClient = document.getElementById('client-email').value.trim() || "Non renseigné";
             const adresseClient = document.getElementById('client-address').value.trim() || "Non renseignée";
 
             let msg = "👋 Bonjour Karbòn Péi ! Je souhaite passer commande :\n\n";
             
             msg += `👤 *CLIENT :*\n`;
             msg += `- Nom : ${nomClient}\n`;
+            msg += `- E-mail : ${emailClient}\n`;
             msg += `- Adresse : ${adresseClient}\n\n`;
             
             msg += `🛒 *MA COMMANDE :*\n`;
@@ -722,9 +725,12 @@
             
             msg += `Comment pouvons-nous procéder pour le règlement (virement, espèces) ?\n\n`;
 
+            // On fusionne le nom et l'e-mail pour que ça rentre dans la même colonne de ton Google Sheets sans rien casser
+            const nomCompletPourFichier = emailClient !== "Non renseigné" ? `${nomClient} (${emailClient})` : nomClient;
+
             const orderData = {
                 date: new Date().toLocaleString('fr-FR', { timeZone: 'Indian/Reunion' }),
-                nom: nomClient,
+                nom: nomCompletPourFichier,
                 adresse: adresseClient,
                 produits: produitsPourFichier.join(" + "),
                 total: finalTotal,
@@ -750,6 +756,7 @@
             appliedPromo = null;
             discountAmount = 0;
             document.getElementById('client-name').value = '';
+            document.getElementById('client-email').value = '';
             document.getElementById('client-address').value = '';
             updateCartUI();
             toggleCart();
