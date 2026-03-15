@@ -481,9 +481,9 @@
             
             <div id="billing-info-container" class="mb-5 bg-gray-50 p-3 rounded-lg border border-gray-200 hidden">
                 <label class="block text-xs font-bold text-gray-500 mb-2 uppercase tracking-wide"><i class="fa-solid fa-file-invoice mr-1"></i> Coordonnées de facturation</label>
-                <input type="text" id="client-name" placeholder="Nom et Prénom" class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm mb-2 focus:ring-1 focus:ring-brand-main outline-none">
-                <input type="email" id="client-email" placeholder="Adresse e-mail" class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm mb-2 focus:ring-1 focus:ring-brand-main outline-none">
-                <textarea id="client-address" placeholder="Adresse postale complète" class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm resize-none focus:ring-1 focus:ring-brand-main outline-none" rows="2"></textarea>
+                <input type="text" id="client-name" placeholder="Nom et Prénom *" class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm mb-2 focus:ring-1 focus:ring-brand-main outline-none">
+                <input type="email" id="client-email" placeholder="Adresse e-mail *" class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm mb-2 focus:ring-1 focus:ring-brand-main outline-none">
+                <textarea id="client-address" placeholder="Adresse postale complète *" class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm resize-none focus:ring-1 focus:ring-brand-main outline-none" rows="2"></textarea>
             </div>
 
             <div class="mb-4">
@@ -503,6 +503,9 @@
                     <span class="text-3xl font-black text-brand-main"><span id="cart-total">0</span> €</span>
                 </div>
             </div>
+            
+            <div id="checkout-error" class="hidden text-red-500 text-xs font-bold mb-3 text-center bg-red-50 p-2 rounded-lg border border-red-200"><i class="fa-solid fa-circle-exclamation mr-1"></i> Veuillez remplir vos coordonnées (Nom, E-mail, Adresse) pour la facture.</div>
+            
             <button onclick="checkoutWhatsApp()" id="checkout-btn" class="w-full bg-[#25D366] text-white font-bold py-4 rounded-xl opacity-50 cursor-not-allowed" disabled>Commander via WhatsApp</button>
         </div>
     </div>
@@ -588,6 +591,9 @@
             const totalEl = document.getElementById('cart-total');
             const checkoutBtn = document.getElementById('checkout-btn');
             const billingContainer = document.getElementById('billing-info-container');
+            const errorMsg = document.getElementById('checkout-error');
+            
+            if (errorMsg) errorMsg.classList.add('hidden');
 
             if (cart.length > 0) {
                 badge.textContent = cart.length;
@@ -682,14 +688,23 @@
         async function checkoutWhatsApp() {
             if (cart.length === 0) return;
             
+            const nomClient = document.getElementById('client-name').value.trim();
+            const emailClient = document.getElementById('client-email').value.trim();
+            const adresseClient = document.getElementById('client-address').value.trim();
+            const errorMsg = document.getElementById('checkout-error');
+
+            // --- VÉRIFICATION DES CHAMPS OBLIGATOIRES ---
+            if (!nomClient || !emailClient || !adresseClient) {
+                errorMsg.classList.remove('hidden');
+                return; // Bloque l'envoi de la commande
+            } else {
+                errorMsg.classList.add('hidden');
+            }
+            
             const btn = document.getElementById('checkout-btn');
             const originalBtnText = btn.innerHTML;
             btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin mr-2"></i> Préparation...';
             btn.disabled = true;
-
-            const nomClient = document.getElementById('client-name').value.trim() || "Non renseigné";
-            const emailClient = document.getElementById('client-email').value.trim() || "Non renseigné";
-            const adresseClient = document.getElementById('client-address').value.trim() || "Non renseignée";
 
             let msg = "👋 Bonjour Karbòn Péi ! Je souhaite passer commande :\n\n";
             
