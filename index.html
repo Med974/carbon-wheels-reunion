@@ -987,8 +987,18 @@
                 imgEl.classList.add('hidden');
                 vidEl.classList.remove('hidden');
                 vidEl.src = url;
-                vidEl.muted = true; 
-                vidEl.play();
+                vidEl.muted = false; // On active le son !
+                vidEl.volume = 0.5;  // Volume à 50% pour le confort
+                
+                // Sécurité anti-blocage du navigateur
+                let playPromise = vidEl.play();
+                if (playPromise !== undefined) {
+                    playPromise.catch(error => {
+                        console.log("Autoplay avec son bloqué, passage en muet.");
+                        vidEl.muted = true;
+                        vidEl.play();
+                    });
+                }
             } else {
                 vidEl.classList.add('hidden');
                 imgEl.classList.remove('hidden');
