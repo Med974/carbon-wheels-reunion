@@ -465,6 +465,14 @@
             <div id="empty-cart-msg" class="text-center text-gray-500 mt-10"><p>Votre panier est vide.</p></div>
         </div>
         <div class="p-6 bg-white border-t border-gray-200">
+            
+            <!-- AJOUT : Formulaire de facturation -->
+            <div id="billing-info-container" class="mb-5 bg-gray-50 p-3 rounded-lg border border-gray-200 hidden">
+                <label class="block text-xs font-bold text-gray-500 mb-2 uppercase tracking-wide"><i class="fa-solid fa-file-invoice mr-1"></i> Coordonnées de facturation</label>
+                <input type="text" id="client-name" placeholder="Nom et Prénom" class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm mb-2 focus:ring-1 focus:ring-brand-main outline-none">
+                <textarea id="client-address" placeholder="Adresse postale complète" class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm resize-none focus:ring-1 focus:ring-brand-main outline-none" rows="2"></textarea>
+            </div>
+
             <div class="mb-4">
                 <div id="promo-input-container" class="flex gap-2">
                     <input type="text" id="promo-code" placeholder="Code promo" class="w-full border rounded-lg px-3 py-2 uppercase">
@@ -567,6 +575,7 @@
             const badge = document.getElementById('cart-badge');
             const totalEl = document.getElementById('cart-total');
             const checkoutBtn = document.getElementById('checkout-btn');
+            const billingContainer = document.getElementById('billing-info-container'); // AJOUT
 
             if (cart.length > 0) {
                 badge.textContent = cart.length;
@@ -574,11 +583,13 @@
                 emptyMsg.style.display = 'none';
                 checkoutBtn.disabled = false;
                 checkoutBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                billingContainer.classList.remove('hidden'); // Affiche le formulaire
             } else {
                 badge.classList.add('hidden');
                 emptyMsg.style.display = 'block';
                 checkoutBtn.disabled = true;
                 checkoutBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                billingContainer.classList.add('hidden'); // Cache le formulaire
             }
 
             Array.from(container.children).forEach(child => {
@@ -658,7 +669,18 @@
 
         function checkoutWhatsApp() {
             if (cart.length === 0) return;
+            
+            // Récupération des infos client
+            const nomClient = document.getElementById('client-name').value.trim() || "Non renseigné";
+            const adresseClient = document.getElementById('client-address').value.trim() || "Non renseignée";
+
             let msg = "👋 Bonjour Karbòn Péi ! Je souhaite passer commande :\n\n";
+            
+            msg += `👤 *CLIENT (Pour facturation) :*\n`;
+            msg += `- Nom : ${nomClient}\n`;
+            msg += `- Adresse : ${adresseClient}\n\n`;
+            
+            msg += `🛒 *MA COMMANDE :*\n`;
             let total = 0;
             
             cart.forEach((item, index) => {
@@ -666,7 +688,6 @@
                 if(item.config !== "Accessoire" && item.config !== "Modèle Standard") {
                     msg += `   - Config : ${item.config}\n`;
                 }
-                msg += `   - Poids : ${item.weight}g\n`;
                 msg += `   - Prix : ${item.price} €\n\n`;
                 total += item.price;
             });
@@ -680,7 +701,8 @@
                 msg += `*TOTAL À PAYER : ${total} €*\n\n`;
             }
             
-            msg += `Comment pouvons-nous procéder pour le règlement (virement, espèces) et la remise en main propre ?`;
+            msg += `Comment pouvons-nous procéder pour le règlement (virement, espèces) ?\n\n`;
+
             const encodedMsg = encodeURIComponent(msg);
             window.open(`https://wa.me/262692693870?text=${encodedMsg}`, '_blank');
         }
