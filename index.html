@@ -507,19 +507,19 @@
                             <span class="block text-xs text-green-700 font-medium">100% Gratuit et sans frais.</span>
                         </div>
                     </label>
-                    <label class="flex items-start gap-3 cursor-pointer p-3 border border-gray-200 rounded-md bg-white hover:bg-gray-50 transition">
-                        <input type="radio" name="payment-method" value="card1x" class="mt-1 text-brand-accent focus:ring-brand-accent" onchange="updateCartUI()">
+                    <label class="flex items-start gap-3 p-3 border border-gray-200 rounded-md bg-gray-100 opacity-60 cursor-not-allowed transition">
+                        <input type="radio" name="payment-method" value="card1x" class="mt-1" disabled>
                         <div class="flex-grow">
-                            <span class="block text-sm font-bold text-gray-900">Carte Bancaire (1x)</span>
-                            <span class="block text-xs text-gray-500 font-medium">Lien Stripe sécurisé (+1.5% + 0.25€)</span>
+                            <span class="block text-sm font-bold text-gray-500 line-through">Carte Bancaire (1x)</span>
+                            <span class="block text-xs text-brand-accent font-bold mt-0.5">⏳ Bientôt dispo (Attente SIRET)</span>
                         </div>
-                        <i class="fa-brands fa-stripe text-2xl text-[#635BFF]"></i>
+                        <i class="fa-brands fa-stripe text-2xl text-gray-400"></i>
                     </label>
-                    <label class="flex items-start gap-3 cursor-pointer p-3 border border-gray-200 rounded-md bg-white hover:bg-gray-50 transition">
-                        <input type="radio" name="payment-method" value="card3x" class="mt-1 text-brand-accent focus:ring-brand-accent" onchange="updateCartUI()">
+                    <label class="flex items-start gap-3 p-3 border border-gray-200 rounded-md bg-gray-100 opacity-60 cursor-not-allowed transition">
+                        <input type="radio" name="payment-method" value="card3x" class="mt-1" disabled>
                         <div class="flex-grow">
-                            <span class="block text-sm font-bold text-gray-900">Paiement en 3x (Klarna)</span>
-                            <span class="block text-xs text-gray-500 font-medium">Frais de dossier applicables (+2.99% + 0.35€)</span>
+                            <span class="block text-sm font-bold text-gray-500 line-through">Paiement en 3x (Klarna)</span>
+                            <span class="block text-xs text-brand-accent font-bold mt-0.5">⏳ Bientôt dispo (Attente SIRET)</span>
                         </div>
                         <i class="fa-brands fa-cc-visa text-xl text-gray-400"></i>
                     </label>
