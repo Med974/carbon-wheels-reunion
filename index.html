@@ -1,80 +1,105 @@
 <!DOCTYPE html>
-<html lang="fr" class="scroll-smooth">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Karbòn Péi | Matériel Cycliste Haute Performance - La Réunion</title>
+    <title>Karbòn Péi - La Réunion | Roues & Composants</title>
+    
+    <!-- Icône de l'onglet du navigateur (Favicon) -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌋</text></svg>">
+
+    <!-- Tailwind CSS pour le style -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <!-- Font-Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    
     <script>
         tailwind.config = {
             theme: {
                 extend: {
-                    fontFamily: { sans: ['Montserrat', 'sans-serif'], },
                     colors: {
-                        brand: { main: '#1A202C', accent: '#D4AF37', light: '#F7FAFC' }
+                        'dfs-blue': '#1e40af', 
+                        'dfs-dark': '#0f172a',
+                        'dfs-accent': '#3b82f6',
+                        'brand-main': '#0f172a', 
+                        'brand-accent': '#eab308' 
                     }
                 }
             }
         }
     </script>
     <style>
-        .product-card { transition: transform 0.3s ease, box-shadow 0.3s ease; }
-        .product-card:hover { transform: translateY(-5px); box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); }
-        .cart-open { transform: translateX(0); }
+        html { scroll-behavior: smooth; }
+        .wheel-card { transition: all 0.3s ease; }
+        .wheel-card:hover { transform: translateY(-5px); box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        .filter-btn.active { background-color: #0f172a; color: white; border-color: #0f172a; }
+        
+        /* Animation du panier latéral */
         .cart-closed { transform: translateX(100%); transition: transform 0.3s ease-in-out; }
-        .modal-open { opacity: 1; pointer-events: auto; }
-        .modal-closed { opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
+        .cart-open { transform: translateX(0); transition: transform 0.3s ease-in-out; }
     </style>
 </head>
-<body class="bg-brand-light text-gray-800 font-sans antialiased">
+<body class="bg-gray-100 text-gray-800 font-sans selection:bg-brand-accent selection:text-white relative">
 
-    <!-- NAVIGATION -->
-    <nav class="bg-brand-main text-white sticky top-0 z-[100] shadow-lg">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between h-20 items-center">
-                <div class="flex items-center gap-3">
-                    <i class="fa-solid fa-volcano text-brand-accent text-3xl"></i>
-                    <div>
-                        <h1 class="text-2xl font-black tracking-tighter uppercase leading-none">Karbòn Péi</h1>
-                        <p class="text-[10px] text-gray-400 tracking-widest uppercase mt-1">Matériel Haute Performance - 974</p>
-                    </div>
-                </div>
-                <div class="hidden md:flex space-x-8 items-center text-sm font-bold">
-                    <a href="#catalogue" class="hover:text-brand-accent transition">Catalogue</a>
-                    <a href="#guides" class="hover:text-brand-accent transition text-brand-accent">Guide Performance</a>
-                    <a href="#moyeux" class="hover:text-brand-accent transition">Moyeu R2</a>
-                    <a href="#contact" class="hover:text-brand-accent transition">Contact</a>
-                    <button onclick="toggleCart()" class="relative bg-white/10 p-3 rounded-full hover:bg-white/20 transition group">
-                        <i class="fa-solid fa-cart-shopping text-xl group-hover:scale-110 transition-transform"></i>
-                        <span id="cart-badge" class="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full shadow-lg hidden">0</span>
-                    </button>
+    <!-- En-tête -->
+    <header class="bg-brand-main text-white sticky top-0 z-40 shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <i class="fa-solid fa-volcano text-brand-accent text-3xl"></i>
+                <div>
+                    <h1 class="text-2xl font-black tracking-widest cursor-pointer" onclick="window.scrollTo(0,0)">KARBÒN <span class="text-brand-accent">PÉI</span></h1>
+                    <p class="text-xs text-gray-400 font-medium tracking-wider uppercase hidden sm:block">Matériel Haute Performance - 974</p>
                 </div>
             </div>
-        </div>
-    </nav>
-
-    <!-- HEADER / HERO -->
-    <header class="relative bg-brand-main text-white py-24 overflow-hidden">
-        <div class="absolute inset-0 z-0 opacity-20 bg-[url('https://images.unsplash.com/photo-1511994298241-608e28f14fde?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80')] bg-cover bg-center mix-blend-overlay"></div>
-        <div class="absolute inset-0 bg-gradient-to-b from-transparent to-brand-main"></div>
-        <div class="max-w-4xl mx-auto px-4 relative z-10 text-center">
-            <h2 class="text-5xl md:text-7xl font-black mb-6 uppercase tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-white via-gray-200 to-gray-400">La Vitesse,<br><span class="text-brand-accent drop-shadow-[0_0_15px_rgba(212,175,55,0.3)]">Sans Intermédiaire.</span></h2>
-            <p class="text-xl text-gray-300 mb-10 max-w-2xl mx-auto font-medium leading-relaxed">Des composants ultra-performants testés sur nos routes. Configurez vos roues sur-mesure ou commandez vos accessoires ultra-légers.</p>
-            <a href="#catalogue" class="inline-block bg-white text-brand-main px-10 py-4 rounded-full font-black uppercase tracking-wider hover:bg-brand-accent hover:text-white transition-all duration-300 shadow-[0_0_20px_rgba(255,255,255,0.2)] hover:shadow-[0_0_30px_rgba(212,175,55,0.4)] transform hover:-translate-y-1">Voir la boutique</a>
+            <div class="flex items-center gap-4 sm:gap-6">
+                <a href="#catalogue" class="hidden md:inline-block text-sm text-gray-300 hover:text-white transition font-medium">Catalogue</a>
+                <a href="#guide-performance" class="hidden lg:inline-block text-sm text-brand-accent font-bold hover:text-yellow-300 transition">Guide Performance</a>
+                <a href="#technologie" class="hidden lg:inline-block text-sm text-gray-300 hover:text-white transition font-medium">Moyeu R2</a>
+                <a href="#contact" class="hidden md:inline-block text-sm text-gray-300 hover:text-white transition font-medium">Contact</a>
+                
+                <button onclick="toggleCart()" class="relative p-2 text-gray-300 hover:text-brand-accent transition">
+                    <i class="fa-solid fa-cart-shopping text-2xl"></i>
+                    <span id="cart-badge" class="absolute top-0 right-0 transform translate-x-1/4 -translate-y-1/4 bg-brand-accent text-brand-main text-xs font-black h-5 w-5 flex items-center justify-center rounded-full border-2 border-brand-main hidden">0</span>
+                </button>
+            </div>
         </div>
     </header>
 
-    <!-- SECTION EXPERTISE DFS -->
-    <section class="py-16 bg-white border-b border-gray-100">
-        <div class="max-w-7xl mx-auto px-4">
+    <!-- Hero Section -->
+    <div class="relative bg-brand-main py-24 md:py-32 overflow-hidden">
+        <div class="absolute inset-0">
+            <img src="./images/SL8.jpg" alt="Vélo Tarmac SL8" class="w-full h-full object-cover">
+        </div>
+        <div class="absolute inset-0 bg-gradient-to-t from-brand-main via-brand-main/80 to-brand-main/30"></div>
+        <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center z-10">
+            <span class="bg-brand-accent text-brand-main text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide mb-4 inline-block shadow-lg">Sélectionné pour La Réunion</span>
+            <h2 class="text-4xl md:text-6xl font-black text-white mb-6 tracking-tight">Le meilleur du carbone. <br/><span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-accent to-yellow-200">Sans intermédiaire.</span></h2>
+            <p class="text-lg md:text-xl text-gray-300 max-w-2xl mx-auto mb-10">
+                Des composants ultra-performants testés sur nos routes. Configurez vos roues sur-mesure ou commandez vos accessoires ultra-légers.
+            </p>
+            <div class="flex justify-center gap-4">
+                <a href="#catalogue" class="bg-white text-brand-main hover:bg-gray-100 font-bold py-3 px-8 rounded-full shadow-xl transition duration-300 transform hover:-translate-y-1">
+                    Voir la boutique
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section Marque DFS -->
+    <section id="dfs-story" class="bg-white py-20 border-b border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex flex-col md:flex-row items-center gap-12">
                 <div class="w-full md:w-1/2">
-                    <h3 class="text-brand-accent font-black text-sm uppercase tracking-widest mb-2">Transparence & Expertise</h3>
-                    <h2 class="text-4xl font-black text-gray-900 mb-6">L'exigence DFS Wheels</h2>
-                    <p class="text-gray-600 mb-6 text-lg">Chez Karbòn Péi, nous travaillons en direct avec <strong>DFS Wheels</strong>. Forts de 10 ans d'expérience, ils appliquent des standards de niveau OEM avec une transparence totale sur leur processus de contrôle qualité.</p>
-                    <ul class="space-y-4">
+                    <span class="text-brand-accent font-bold tracking-wider text-sm uppercase mb-2 block">Transparence & Expertise</span>
+                    <h3 class="text-3xl md:text-4xl font-black text-gray-900 mb-6">L'exigence <span class="text-brand-main">DFS Wheels</span></h3>
+                    <p class="text-gray-600 mb-4 leading-relaxed">
+                        Chez Karbòn Péi, nous travaillons en direct avec <strong>DFS Wheels</strong>. Forts de 10 ans d'expérience, ils appliquent des standards de niveau OEM avec une transparence totale sur leur processus de contrôle qualité.
+                    </p>
+                    <ul class="space-y-4 mb-8">
                         <li class="flex items-start">
                             <i class="fa-solid fa-layer-group text-green-500 mt-1 mr-3 text-lg"></i>
                             <div>
@@ -91,196 +116,310 @@
                         </li>
                     </ul>
                 </div>
-                
-                <!-- LOGO DFS + MESSAGE ANGLER -->
-                <div class="w-full md:w-1/2 flex flex-col items-center justify-center space-y-6">
-                    <img src="./images/logo-dfs.jpg" alt="Logo DFS Wheels" class="rounded-2xl shadow-xl w-full max-w-[300px] h-auto object-contain border border-gray-100">
-                    
-                    <div class="bg-gray-50 p-5 rounded-xl border border-gray-200 shadow-sm relative w-full max-w-[300px]">
-                        <i class="fa-solid fa-quote-left text-brand-accent text-2xl absolute -top-4 left-4 bg-gray-50 px-2 rounded-full"></i>
-                        <p class="text-sm text-gray-700 italic mb-4 mt-2">"We are committed to providing Karbòn Péi with our highest OEM quality standards. Every carbon rim undergoes strict quality control before shipping to Reunion Island."</p>
-                        <div class="flex items-center gap-3 border-t border-gray-200 pt-3">
-                            <div class="w-10 h-10 bg-brand-main text-white rounded-full flex items-center justify-center text-sm shadow-inner"><i class="fa-solid fa-user-tie"></i></div>
-                            <div>
-                                <p class="text-sm font-black text-gray-900 block leading-tight">Angler</p>
-                                <span class="text-[10px] text-gray-500 uppercase tracking-wide font-bold">DFS Wheels - Sales & Quality</span>
-                            </div>
-                        </div>
-                    </div>
+                <div class="w-full md:w-1/2">
+                    <img src="https://images.unsplash.com/photo-1576403290947-a160eb809494?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Atelier DFS" class="rounded-2xl shadow-xl w-full h-auto object-cover">
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- SECTION CATALOGUE -->
-    <main id="catalogue" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div class="flex flex-col md:flex-row justify-between items-end mb-10 gap-4">
-            <div>
-                <h2 class="text-4xl font-black text-gray-900 tracking-tight flex items-center gap-3">
-                    <i class="fa-solid fa-box-open text-brand-accent"></i> Notre Catalogue
-                </h2>
-                <p class="text-gray-500 mt-2 font-medium">Équipez votre machine avec ce qu'il se fait de mieux.</p>
-                <div class="mt-4 inline-flex items-center gap-2 bg-yellow-50 text-yellow-800 px-4 py-2 rounded-lg text-sm font-medium border border-yellow-200 shadow-sm">
-                    <i class="fa-solid fa-lightbulb text-brand-accent"></i> Astuce : Combos mixtes (ex: 50/60mm) possibles sur demande !
+    <!-- ARGUMENTS COMMERCIAUX -->
+    <section class="max-w-7xl mx-auto px-4 py-8 mb-8 border-b border-gray-100">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
+            <div class="p-4 rounded-2xl bg-gray-50 hover:bg-white hover:shadow-xl transition-all duration-300 border border-transparent hover:border-gray-100 group">
+                <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm group-hover:scale-110 transition-transform">
+                    <i class="fa-solid fa-truck-fast text-2xl text-brand-main"></i>
                 </div>
+                <h3 class="font-bold text-gray-900 mb-2 uppercase tracking-wide">Livraison Péi</h3>
+                <p class="text-sm text-gray-500">Remise en main propre sur toute l'île de La Réunion. Fini les taxes surprises à l'arrivée !</p>
             </div>
             
-            <div class="flex gap-2 bg-white p-1 rounded-lg shadow-sm border border-gray-200">
-                <button onclick="filterProducts('all')" id="btn-filter-all" class="px-4 py-2 text-sm font-bold rounded-md bg-brand-main text-white transition">Tout voir</button>
-                <button onclick="filterProducts('roues')" id="btn-filter-roues" class="px-4 py-2 text-sm font-bold rounded-md text-gray-600 hover:bg-gray-100 transition">Roues Carbone</button>
-                <button onclick="filterProducts('accessoires')" id="btn-filter-accessoires" class="px-4 py-2 text-sm font-bold rounded-md text-gray-600 hover:bg-gray-100 transition">Accessoires</button>
-            </div>
-        </div>
-
-        <div id="products-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <!-- Les produits seront injectés ici par le JS -->
-        </div>
-    </main>
-
-    <!-- ARGUMENTS COMMERCIAUX / GARANTIES (Descendus sous le catalogue) -->
-    <section class="max-w-7xl mx-auto px-4 py-12 mb-8 border-t border-b border-gray-100 bg-gray-50/50">
-        <div class="text-center mb-8">
-            <h2 class="text-2xl font-black text-gray-900 uppercase tracking-tight">Un SAV Local sans faille</h2>
-            <p class="text-gray-500 text-sm mt-1">Parce que votre sérénité n'a pas de prix.</p>
-        </div>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 text-center max-w-4xl mx-auto">
-            
-            <div class="p-6 rounded-2xl bg-brand-main text-white shadow-lg transform md:-translate-y-2 relative overflow-hidden group">
+            <div class="p-4 rounded-2xl bg-brand-main text-white shadow-lg transform md:-translate-y-2 relative overflow-hidden">
                 <div class="absolute top-0 right-0 bg-brand-accent text-white text-[10px] font-black px-3 py-1 rounded-bl-lg uppercase">Premium</div>
-                <div class="w-16 h-16 bg-white/10 rounded-full flex items-center justify-center mx-auto mb-4 backdrop-blur-sm group-hover:scale-110 transition-transform">
+                <div class="w-16 h-16 bg-white/10 rounded-full flex items-center justify-center mx-auto mb-4 backdrop-blur-sm">
                     <i class="fa-solid fa-shield-halved text-2xl text-brand-accent"></i>
                 </div>
                 <h3 class="font-bold mb-2 uppercase tracking-wide">Garantie 5 Ans</h3>
-                <p class="text-sm text-gray-100 font-medium">Nos jantes UXL & SUXL sont garanties 5 ans contre les défauts de fabrication avec un SAV géré à La Réunion.</p>
+                <p class="text-sm text-gray-100 font-medium">Nos jantes UXL & SUXL sont garanties 5 ans contre les défauts de fabrication.</p>
             </div>
             
-            <div class="p-6 rounded-2xl bg-white hover:shadow-xl transition-all duration-300 border border-gray-200 group transform md:-translate-y-2">
-                <div class="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm group-hover:scale-110 transition-transform">
+            <div class="p-4 rounded-2xl bg-gray-50 hover:bg-white hover:shadow-xl transition-all duration-300 border border-transparent hover:border-gray-100 group">
+                <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm group-hover:scale-110 transition-transform">
                     <i class="fa-solid fa-house-medical text-2xl text-brand-main"></i>
                 </div>
                 <h3 class="font-bold text-gray-900 mb-2 uppercase tracking-wide">Crash Replacement</h3>
-                <p class="text-sm text-gray-500">En cas de chute ou de casse accidentelle (non pris en charge par la garantie), bénéficiez d'une jante de remplacement à tarif préférentiel (-30%).</p>
+                <p class="text-sm text-gray-500">En cas de chute ou de casse accidentelle, bénéficiez d'une jante de remplacement à tarif préférentiel.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section Catalogue -->
+    <main id="catalogue" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 border-b border-gray-300 pb-4 gap-4">
+            <div>
+                <h3 class="text-3xl font-black text-gray-900">Notre Catalogue</h3>
+                <p class="text-gray-500 mt-1 mb-3">Équipez votre machine avec ce qu'il se fait de mieux.</p>
+                <div class="inline-flex items-center gap-2 bg-yellow-50 text-yellow-800 px-3 py-2 rounded-lg text-sm border border-yellow-200 shadow-sm">
+                    <i class="fa-solid fa-lightbulb text-brand-accent text-lg"></i>
+                    <span><strong>Astuce :</strong> Combos mixtes (ex: 50/60mm) possibles sur demande !</span>
+                </div>
             </div>
             
+            <div class="flex gap-2 overflow-x-auto no-scrollbar w-full md:w-auto pb-2">
+                <button onclick="filterCatalogue('Tout')" class="filter-btn active px-4 py-2 rounded-full border border-gray-300 text-sm font-bold whitespace-nowrap">Tout voir</button>
+                <button onclick="filterCatalogue('Roues')" class="filter-btn px-4 py-2 rounded-full border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 text-sm font-bold whitespace-nowrap">Roues Carbone</button>
+                <button onclick="filterCatalogue('Accessoires')" class="filter-btn px-4 py-2 rounded-full border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 text-sm font-bold whitespace-nowrap">Accessoires</button>
+                <button onclick="filterCatalogue('Composants')" class="filter-btn px-4 py-2 rounded-full border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 text-sm font-bold whitespace-nowrap">Composants</button>
+            </div>
+        </div>
+        
+        <div id="loading-message" class="text-center py-10">
+            <i class="fa-solid fa-circle-notch fa-spin text-4xl text-brand-accent mb-4"></i>
+            <p class="text-gray-500 font-medium">Chargement du catalogue...</p>
+        </div>
+        
+        <div id="product-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"></div>
+    </main>
+
+    <!-- SECTION GUIDE PERFORMANCE -->
+    <section id="guide-performance" class="bg-brand-main text-white py-20 border-t border-gray-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <span class="text-brand-accent font-bold tracking-wider text-sm uppercase mb-2 block">L'Anatomie de la vitesse</span>
+                <h3 class="text-3xl md:text-5xl font-black mb-6">Comment choisir ses roues haut de gamme ?</h3>
+                <p class="text-gray-400 max-w-3xl mx-auto text-lg">Changer de roues est la meilleure amélioration pour votre vélo. Mais le carbone ne fait pas tout. Voici les 5 critères qui séparent une roue standard d'une roue d'exception.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Point 1 -->
+                <div class="bg-gray-800/40 p-8 rounded-2xl border border-gray-700 hover:border-brand-accent transition duration-300">
+                    <i class="fa-solid fa-arrows-left-right text-brand-accent text-3xl mb-4"></i>
+                    <h4 class="text-xl font-bold mb-3">1. La Révolution de la Largeur</h4>
+                    <p class="text-sm text-gray-400 mb-2"><strong class="text-white">La Règle des 105% (Aéro) :</strong> Nos jantes en 24/32mm permettent de respecter cette règle d'or. Une fois gonflé, un pneu de 28 ou 30mm reste plus fin que la jante (32mm ext). L'air s'écoule parfaitement en profil "U" sans créer de turbulences (fini l'effet "ampoule").</p>
+                    <p class="text-sm text-gray-400"><strong class="text-white">Rendement :</strong> Le volume d'air supérieur permet des pressions plus basses pour absorber les vibrations et baisser drastiquement la résistance au roulement.</p>
+                </div>
+                
+                <!-- Point 2 -->
+                <div class="bg-gray-800/40 p-8 rounded-2xl border border-gray-700 hover:border-brand-accent transition duration-300">
+                    <i class="fa-solid fa-bolt text-brand-accent text-3xl mb-4"></i>
+                    <h4 class="text-xl font-bold mb-3">2. Rayons Carbone</h4>
+                    <p class="text-sm text-gray-400 mb-2"><strong class="text-white">Transfert absolu :</strong> Le carbone ne se déforme pas. 100% de votre force (les Watts) est transmise au sol lors des sprints.</p>
+                    <p class="text-sm text-gray-400"><strong class="text-white">Avantage Aéro :</strong> Deux fois plus légers que l'acier, ils sont profilés comme des lames pour réduire la traînée.</p>
+                </div>
+
+                <!-- Point 3 -->
+                <div class="bg-gray-800/40 p-8 rounded-2xl border border-gray-700 hover:border-brand-accent transition duration-300">
+                    <i class="fa-solid fa-wind text-brand-accent text-3xl mb-4"></i>
+                    <h4 class="text-xl font-bold mb-3">3. Moins, c'est mieux</h4>
+                    <p class="text-sm text-gray-400 mb-2"><strong class="text-white">Le secret de la vitesse :</strong> Chaque rayon affronte le vent. Moins de rayons = friction massivement réduite.</p>
+                    <p class="text-sm text-gray-400"><strong class="text-white">Faisabilité :</strong> Seules des jantes ultra-rigides couplées à nos rayons carbone permettent un montage à 21 trous.</p>
+                </div>
+
+                <!-- Point 4 -->
+                <div class="bg-gray-800/40 p-8 rounded-2xl border border-gray-700 hover:border-brand-accent transition duration-300 lg:col-span-1">
+                    <i class="fa-solid fa-circle-notch text-brand-accent text-3xl mb-4"></i>
+                    <h4 class="text-xl font-bold mb-3">4. La Masse en Rotation</h4>
+                    <p class="text-sm text-gray-400 mb-2"><strong class="text-white">Le vrai poids :</strong> Alléger le centre est bien, mais alléger la périphérie (la jante) change radicalement le vélo.</p>
+                    <p class="text-sm text-gray-400"><strong class="text-white">Le bénéfice :</strong> Des relances foudroyantes en côte et une sensation d'inertie nulle sous la pédale.</p>
+                </div>
+
+                <!-- Point 5 -->
+                <div class="bg-gray-800/40 p-8 rounded-2xl border border-gray-700 hover:border-brand-accent transition duration-300 lg:col-span-2">
+                    <div class="flex flex-col md:flex-row gap-6 items-center">
+                        <div class="flex-shrink-0 hidden md:block">
+                            <i class="fa-solid fa-gear text-brand-accent text-6xl opacity-80"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-xl font-bold mb-3">5. Le Cœur : Le Moyeu</h4>
+                            <p class="text-sm text-gray-400 mb-2"><strong class="text-white">Fluidité :</strong> L'utilisation de roulements céramiques réduit la friction mécanique. La vitesse se maintient beaucoup plus longtemps en roue libre.</p>
+                            <p class="text-sm text-gray-400"><strong class="text-white">Engagement :</strong> Mécanisme Ratchet SSF (5° à 8°). Au moment où vous appuyez, la roue réagit instantanément. C'est la signature de nos moyeux R2.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-12 bg-brand-accent/10 border border-brand-accent/20 p-8 rounded-2xl text-center relative overflow-hidden shadow-lg">
+                <div class="absolute top-0 right-0 bg-brand-accent text-brand-main text-xs font-black px-4 py-1 rounded-bl-lg uppercase tracking-widest">Le Juste Prix</div>
+                <p class="text-brand-accent font-bold text-xl mb-3"><i class="fa-solid fa-medal mr-2"></i>Chez Karbòn Péi, nous refusons les compromis.</p>
+                <p class="text-gray-300 max-w-4xl mx-auto leading-relaxed">
+                    Toutes nos configurations cochent l'intégralité de ces 5 critères pour des performances de niveau professionnel. Sur le circuit traditionnel (grandes marques occidentales), une paire de roues réunissant ces 5 exigences technologiques vous coûterait <strong class="text-white text-xl border-b-2 border-brand-accent px-1">3 fois plus cher</strong>. Notre modèle en direct usine rend l'ultra-performance enfin accessible à La Réunion.
+                </p>
+            </div>
         </div>
     </section>
 
-    <!-- GUIDES & TECH -->
-    <section id="guides" class="bg-gray-900 text-white py-16 mt-16 border-t-4 border-brand-accent">
-        <div class="max-w-7xl mx-auto px-4">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
-                <div class="bg-brand-main p-8 rounded-3xl border border-gray-800 shadow-2xl">
-                    <span class="text-brand-accent font-bold text-xs uppercase tracking-widest mb-2 block">L'anatomie de la vitesse</span>
-                    <h2 class="text-4xl font-black mb-6 leading-tight">Comment choisir ses roues haut de gamme ?</h2>
-                    <p class="text-gray-400 mb-8">Changer de roues est la meilleure amélioration pour votre vélo. Mais le carbone ne fait pas tout. Voici les 3 critères qui séparent une roue standard d'une roue d'exception.</p>
-                    <ul class="space-y-6">
-                        <li class="flex gap-4">
-                            <div class="w-12 h-12 rounded-full bg-gray-800 flex items-center justify-center flex-shrink-0 border border-gray-700 text-brand-accent"><i class="fa-solid fa-weight-scale"></i></div>
-                            <div><strong class="text-white block text-lg mb-1">1. L'inertie (Le poids de la jante)</strong><span class="text-gray-400 text-sm">Gagnez 100g sur les moyeux et vous ne sentirez rien. Gagnez 100g sur les jantes (la masse en rotation) et votre vélo deviendra explosif en relance. Nos jantes UXL font partie des plus légères du marché.</span></div>
-                        </li>
-                        <li class="flex gap-4">
-                            <div class="w-12 h-12 rounded-full bg-gray-800 flex items-center justify-center flex-shrink-0 border border-gray-700 text-brand-accent"><i class="fa-solid fa-bolt"></i></div>
-                            <div><strong class="text-white block text-lg mb-1">2. La Rigidité (Les Rayons Carbone)</strong><span class="text-gray-400 text-sm">Finis les rayons en acier qui s'étirent. Nos rayons Carbone (T33/T40) transfèrent 100% de votre puissance au sol, sans déformation.</span></div>
-                        </li>
-                        <li class="flex gap-4">
-                            <div class="w-12 h-12 rounded-full bg-gray-800 flex items-center justify-center flex-shrink-0 border border-gray-700 text-brand-accent"><i class="fa-solid fa-gear"></i></div>
-                            <div><strong class="text-white block text-lg mb-1">3. L'Engagement (Le système Ratchet)</strong><span class="text-gray-400 text-sm">Le moyeu arrière doit mordre instantanément quand vous pédalez. Oubliez les anciens systèmes à cliquets, nous utilisons des systèmes Ratchet crantés de haute précision.</span></div>
-                        </li>
-                    </ul>
+    <!-- SECTION FOCUS TECHNOLOGIE R2 -->
+    <section id="technologie" class="bg-gray-50 py-20 border-t border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <span class="text-brand-accent font-bold tracking-wider text-sm uppercase mb-2 block">L'ingénierie au service de la vitesse</span>
+                <h3 class="text-3xl md:text-5xl font-black text-gray-900 mb-4">Le Moyeu R2 : <span class="text-brand-main">L'Excellence Mécanique</span></h3>
+                <p class="text-gray-500 max-w-3xl mx-auto italic">"Le R2 n'est pas juste un moyeu, c'est une pièce de précision qui équilibre fluidité, réactivité et durabilité extrême."</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+                <!-- Grille des caractéristiques -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                        <i class="fa-solid fa-bolt-lightning text-brand-accent text-2xl mb-4"></i>
+                        <h4 class="font-bold text-gray-900 mb-2">Engagement Instantané</h4>
+                        <p class="text-sm text-gray-500 leading-relaxed">Système Ratchet SSF (45T/72T) avec un angle d'engagement de seulement 5° à 8°. Relances explosives et un son "supercar" unique.</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                        <i class="fa-solid fa-gem text-brand-accent text-2xl mb-4"></i>
+                        <h4 class="font-bold text-gray-900 mb-2">Fluidité Céramique</h4>
+                        <p class="text-sm text-gray-500 leading-relaxed">Équipé de roulements céramiques EZO ou TPI avec joints à faible friction. Moins de résistance, plus de glisse, plus longtemps.</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                        <i class="fa-solid fa-microchip text-brand-accent text-2xl mb-4"></i>
+                        <h4 class="font-bold text-gray-900 mb-2">Corps de roue libre Titane</h4>
+                        <p class="text-sm text-gray-500 leading-relaxed">Utilisation de l'alliage de Titane TC4. Ultra-résistant à la corrosion et aux marques de cassette (sprocket bites), tout en restant léger.</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                        <i class="fa-solid fa-shield-check text-brand-accent text-2xl mb-4"></i>
+                        <h4 class="font-bold text-gray-900 mb-2">Garantie à Vie</h4>
+                        <p class="text-sm text-gray-500 leading-relaxed">Le corps du moyeu R2 bénéficie d'une garantie à vie (hors roulements). Sa conception permet une maintenance sans outils.</p>
+                    </div>
                 </div>
 
-                <div id="moyeux" class="bg-white p-8 rounded-3xl shadow-xl text-gray-900 border border-gray-100 flex flex-col justify-center">
-                    <span class="text-brand-accent font-bold text-xs uppercase tracking-widest mb-2 block">L'ingénierie au service de la vitesse</span>
-                    <h2 class="text-4xl font-black mb-6 leading-tight">Le Moyeu R2 : L'Excellence Mécanique</h2>
-                    <p class="text-gray-600 mb-8 italic">"Le R2 n'est pas juste un moyeu, c'est une pièce de précision qui équilibre fluidité, réactivité et durabilité extrême."</p>
-                    
-                    <div class="grid grid-cols-2 gap-4 mb-8">
-                        <div class="bg-gray-50 p-4 rounded-xl border border-gray-100">
-                            <i class="fa-solid fa-bolt text-brand-accent text-xl mb-2"></i>
-                            <h4 class="font-bold text-sm">Engagement Instantané</h4>
-                            <p class="text-xs text-gray-500 mt-1">Système Ratchet SSF (36/60T) pour une relance fulgurante.</p>
-                        </div>
-                        <div class="bg-gray-50 p-4 rounded-xl border border-gray-100">
-                            <i class="fa-solid fa-droplet text-brand-accent text-xl mb-2"></i>
-                            <h4 class="font-bold text-sm">Fluidité Céramique</h4>
-                            <p class="text-xs text-gray-500 mt-1">Équipé de roulements céramiques S&S pour réduire les frictions.</p>
-                        </div>
-                        <div class="bg-gray-50 p-4 rounded-xl border border-gray-100">
-                            <i class="fa-solid fa-shield text-brand-accent text-xl mb-2"></i>
-                            <h4 class="font-bold text-sm">Durabilité Max</h4>
-                            <p class="text-xs text-gray-500 mt-1">Structure renforcée et joints d'étanchéité haut de gamme.</p>
-                        </div>
-                        <div class="bg-gray-50 p-4 rounded-xl border border-gray-100">
-                            <i class="fa-solid fa-screwdriver-wrench text-brand-accent text-xl mb-2"></i>
-                            <h4 class="font-bold text-sm">Entretien Facile</h4>
-                            <p class="text-xs text-gray-500 mt-1">Conception Tool-Free (sans outils) pour le corps de roue libre.</p>
+                <!-- Galerie Couleurs & Image Principale -->
+                <div class="relative">
+                    <div class="bg-white p-4 rounded-3xl shadow-xl border border-gray-100 overflow-hidden group">
+                        <img id="r2-main-view" src="./images/hubs/R2_rose.jpg" alt="Moyeu DFS R2" onerror="this.src='https://images.unsplash.com/photo-1593433551532-c94ca14926ca?auto=format&fit=crop&w=800&q=80'" class="w-full h-auto rounded-2xl transition-transform duration-700 group-hover:scale-105">
+                        
+                        <div class="mt-6">
+                            <p class="text-xs font-black text-gray-400 uppercase tracking-widest mb-4 text-center">Personnalisation : 5 coloris exclusifs</p>
+                            <div class="flex justify-center gap-3">
+                                <div class="text-center">
+                                    <button onclick="changeR2View('./images/hubs/R2_noir.jpg')" class="w-12 h-12 rounded-full border-2 border-brand-main bg-black shadow-inner focus:ring-2 focus:ring-brand-accent transition"></button>
+                                    <span class="block text-[8px] font-bold mt-1 uppercase">Noir</span>
+                                </div>
+                                <div class="text-center">
+                                    <button onclick="changeR2View('./images/hubs/R2_gris.jpg')" class="w-12 h-12 rounded-full border-2 border-gray-300 bg-gray-400 shadow-inner focus:ring-2 focus:ring-brand-accent transition"></button>
+                                    <span class="block text-[8px] font-bold mt-1 uppercase">Gris</span>
+                                </div>
+                                <div class="text-center">
+                                    <button onclick="changeR2View('./images/hubs/R2_bleu.jpg')" class="w-12 h-12 rounded-full border-2 border-blue-300 bg-blue-600 shadow-inner focus:ring-2 focus:ring-brand-accent transition"></button>
+                                    <span class="block text-[8px] font-bold mt-1 uppercase">Bleu</span>
+                                </div>
+                                <div class="text-center">
+                                    <button onclick="changeR2View('./images/hubs/R2_rose.jpg')" class="w-12 h-12 rounded-full border-2 border-pink-300 bg-pink-500 shadow-inner focus:ring-2 focus:ring-brand-accent transition"></button>
+                                    <span class="block text-[8px] font-bold mt-1 uppercase">Rose</span>
+                                </div>
+                                <div class="text-center">
+                                    <button onclick="changeR2View('./images/hubs/R2_vert.jpg')" class="w-12 h-12 rounded-full border-2 border-green-300 bg-green-500 shadow-inner focus:ring-2 focus:ring-brand-accent transition"></button>
+                                    <span class="block text-[8px] font-bold mt-1 uppercase">Vert</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    
-                    <div class="bg-blue-50 border border-blue-100 rounded-xl p-4 flex gap-4 items-start">
-                        <i class="fa-solid fa-circle-info text-blue-500 mt-1"></i>
-                        <p class="text-sm text-blue-800"><strong>Pourquoi nous le recommandons ?</strong> Bien que le RT240 soit 47g plus léger, le <strong>R2</strong> offre une robustesse supérieure et une fluidité céramique qui justifient largement son supplément tarifaire pour les coursiers exigeants.</p>
+                    <!-- Badge Flottant -->
+                    <div class="absolute -bottom-6 -left-6 bg-brand-main text-white p-6 rounded-2xl shadow-2xl hidden md:block border-l-4 border-brand-accent">
+                        <div class="text-3xl font-black text-brand-accent leading-none">74mm</div>
+                        <div class="text-[10px] uppercase font-bold tracking-widest text-gray-400 mt-1">Diamètre Flasque</div>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- CONTACT -->
-    <section id="contact" class="py-16 bg-white">
-        <div class="max-w-3xl mx-auto px-4 text-center">
-            <h2 class="text-3xl font-black mb-6 uppercase">Une question ?</h2>
-            <p class="text-gray-600 mb-8">Besoin d'un conseil technique ? D'un montage particulier ? Écrivez-nous directement sur WhatsApp pour une réponse rapide.</p>
-            <form onsubmit="sendContactMessage(event)" class="space-y-4 max-w-md mx-auto text-left">
-                <div class="grid grid-cols-2 gap-4">
+    <!-- Section Contact -->
+    <section id="contact" class="bg-white py-16 border-t border-gray-100">
+        <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-10">
+                <h2 class="text-3xl font-extrabold text-gray-900 mb-4">Une question ?</h2>
+                <p class="text-gray-500">Besoin d'un conseil ? Écrivez-nous directement.</p>
+            </div>
+            
+            <form action="https://formspree.io/f/xzdjgqlg" method="POST" class="space-y-6 bg-gray-50 p-8 rounded-2xl shadow-sm border border-gray-100">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                        <label class="block text-xs font-bold text-gray-500 mb-1">Votre nom</label>
-                        <input type="text" id="contact-name" required class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-brand-main outline-none">
+                        <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Votre nom</label>
+                        <input type="text" name="name" id="name" required class="w-full bg-white border border-gray-300 rounded-lg px-4 py-2.5">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-gray-500 mb-1">Votre adresse e-mail</label>
-                        <input type="email" id="contact-email" required class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-brand-main outline-none">
+                        <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Votre adresse e-mail</label>
+                        <input type="email" name="email" id="email" required class="w-full bg-white border border-gray-300 rounded-lg px-4 py-2.5">
                     </div>
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-gray-500 mb-1">Votre message</label>
-                    <textarea id="contact-msg" required rows="4" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-brand-main outline-none resize-none"></textarea>
+                    <label for="message" class="block text-sm font-medium text-gray-700 mb-1">Votre message</label>
+                    <textarea name="message" id="message" rows="4" required class="w-full bg-white border border-gray-300 rounded-lg px-4 py-2.5 resize-none"></textarea>
                 </div>
-                <button type="submit" class="w-full bg-brand-main text-white font-bold py-3 rounded-lg hover:bg-brand-accent transition flex justify-center items-center gap-2">
-                    <i class="fa-brands fa-whatsapp text-xl"></i> Envoyer le message
+                <button type="submit" class="w-full bg-brand-main text-white font-bold py-3 px-4 rounded-lg hover:bg-gray-800 transition-colors shadow-md">
+                    Envoyer le message
                 </button>
             </form>
+
+            <div class="mt-12 text-center">
+                <a href="https://wa.me/262692693870" target="_blank" class="inline-flex items-center justify-center gap-4 bg-[#25D366] hover:bg-[#1da851] text-white py-4 px-8 rounded-2xl shadow-md transition transform hover:-translate-y-1">
+                    <i class="fa-brands fa-whatsapp text-3xl"></i>
+                    <div class="text-left">
+                        <span class="block font-black text-lg">Message WhatsApp</span>
+                        <span class="block text-sm opacity-90">Réponse très rapide</span>
+                    </div>
+                </a>
+            </div>
         </div>
     </section>
 
-    <!-- FOOTER -->
-    <footer class="bg-gray-900 text-gray-400 py-8 border-t border-gray-800 text-center">
-        <p class="font-bold text-white mb-2 uppercase tracking-widest text-sm">Karbòn Péi - 974</p>
-        <p class="text-xs">Propulsez vos performances. Basé à La Réunion.</p>
+    <!-- Footer -->
+    <footer class="bg-brand-main text-gray-400 py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <div class="flex justify-center items-center gap-2 mb-4">
+                <i class="fa-solid fa-volcano text-brand-accent text-2xl"></i>
+                <h3 class="text-xl font-bold text-white">Karbòn Péi</h3>
+            </div>
+            <p class="text-sm mb-6">&copy; 2026 Karbòn Péi. Micro-entreprise en cours d'immatriculation. TVA non applicable.</p>
+        </div>
     </footer>
 
-    <!-- MODAL PRODUIT -->
-    <div id="product-modal" class="modal-closed fixed inset-0 z-[150] flex items-center justify-center p-4">
-        <div class="fixed inset-0 bg-black/60 backdrop-blur-sm" onclick="closeModal()"></div>
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto relative z-10 flex flex-col md:flex-row">
-            <button onclick="closeModal()" class="absolute top-4 right-4 text-gray-400 hover:text-brand-main bg-white rounded-full w-8 h-8 flex items-center justify-center shadow z-20"><i class="fa-solid fa-xmark text-xl"></i></button>
+    <!-- MODALE CONFIGURATEUR -->
+    <div id="product-modal" class="fixed inset-0 z-[100] hidden bg-black/80 flex items-center justify-center p-4 backdrop-blur-sm transition-opacity">
+        <div class="bg-white rounded-2xl w-full max-w-5xl max-h-[95vh] overflow-y-auto flex flex-col md:flex-row relative shadow-2xl">
+            <button onclick="closeModal()" class="md:hidden absolute top-4 right-4 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-sm text-gray-500 z-10"><i class="fa-solid fa-xmark"></i></button>
+            <button onclick="closeModal()" class="hidden md:block absolute top-4 right-4 text-gray-400 hover:text-gray-900 z-10 bg-white rounded-full p-2 shadow"><i class="fa-solid fa-xmark text-2xl px-1"></i></button>
             
-            <div class="w-full md:w-1/2 bg-gray-50 p-8 flex items-center justify-center">
-                <img id="modal-img" src="" alt="Produit" class="max-w-full h-auto drop-shadow-2xl mix-blend-multiply">
+            <div class="w-full md:w-1/2 bg-gray-50 p-6 flex flex-col items-center justify-center border-r border-gray-200 relative">
+                <div class="w-full aspect-square mb-4 relative flex items-center justify-center">
+                    <img id="modal-image" src="" alt="Produit" class="max-w-full max-h-full object-contain mix-blend-multiply transition-opacity duration-300 drop-shadow-xl">
+                    <video id="modal-video" src="" class="hidden w-full h-full object-contain mix-blend-multiply rounded-xl shadow-sm" autoplay loop muted playsinline></video>
+                </div>
+                <div id="modal-gallery" class="flex gap-2 w-full overflow-x-auto no-scrollbar py-2">
+                    <!-- Miniatures injectées ici -->
+                </div>
             </div>
             
-            <div class="w-full md:w-1/2 p-8 flex flex-col">
-                <div class="mb-6">
-                    <span id="modal-badge" class="bg-brand-main text-white text-[10px] font-black uppercase px-2 py-1 rounded mb-2 inline-block tracking-widest"></span>
-                    <h2 id="modal-title" class="text-3xl font-black text-gray-900 mb-2 leading-tight"></h2>
-                    <p id="modal-desc" class="text-gray-500 text-sm leading-relaxed mb-4"></p>
-                    <div class="flex items-end gap-4">
-                        <span class="text-4xl font-black text-brand-accent"><span id="modal-price"></span> €</span>
-                        <span class="text-sm text-gray-400 font-bold mb-1"><i class="fa-solid fa-weight-scale mr-1"></i><span id="calc-weight">--</span>g</span>
+            <div class="w-full md:w-1/2 p-6 md:p-8 flex flex-col">
+                <div class="flex flex-wrap gap-2 mb-3">
+                    <span id="modal-badge" class="text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide w-max"></span>
+                    <span id="modal-bestseller" class="hidden text-xs font-black px-3 py-1 rounded-full uppercase tracking-wide w-max bg-brand-accent text-brand-main shadow-sm border border-yellow-300">⭐ BEST-SELLER</span>
+                </div>
+                <h3 id="modal-title" class="text-3xl font-black text-gray-900 mb-2 leading-tight"></h3>
+                <p id="modal-desc" class="text-sm text-gray-500 mb-6"></p>
+
+                <div id="spec-jantes-box" class="bg-blue-50/50 p-4 rounded-xl border border-blue-100 mb-6 hidden">
+                    <div class="flex gap-6">
+                        <div>
+                            <span class="block text-[10px] uppercase font-bold text-blue-400 tracking-wider mb-1">Largeur Interne</span>
+                            <span id="modal-largeur-int" class="font-bold text-blue-900">24 mm</span>
+                        </div>
+                        <div>
+                            <span class="block text-[10px] uppercase font-bold text-blue-400 tracking-wider mb-1">Largeur Externe</span>
+                            <span id="modal-largeur-ext" class="font-bold text-blue-900">32 mm</span>
+                        </div>
+                        <div>
+                            <span class="block text-[10px] uppercase font-bold text-blue-400 tracking-wider mb-1">Hauteur</span>
+                            <span id="modal-hauteur" class="font-bold text-blue-900"></span>
+                        </div>
                     </div>
                 </div>
 
-                <div id="configurator-section" class="flex-grow">
+                <div id="configurator-section" class="bg-gray-50 p-5 rounded-xl border border-gray-200 mb-6">
+                    <h4 class="text-sm font-bold text-gray-900 uppercase tracking-wider mb-4 flex items-center">
+                        <i class="fa-solid fa-sliders text-brand-accent mr-2"></i> Personnalisation
+                    </h4>
+                    
                     <div class="mb-5">
                         <label class="block text-xs font-bold text-gray-500 mb-2">1. Moyeu (Hub)</label>
                         <select id="config-moyeu" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-3 text-sm font-semibold" onchange="updateConfig()">
@@ -314,32 +453,37 @@
                         </select>
                     </div>
 
-                    <div id="spec-jantes-box" class="mb-5 bg-gray-50 p-3 rounded-lg border border-gray-200">
-                        <p class="text-xs text-gray-600 font-bold mb-1"><i class="fa-solid fa-circle-info text-blue-500 mr-1"></i> Spécifications de la jante :</p>
-                        <p id="spec-jantes-text" class="text-xs text-gray-500">Sélectionnez un moyeu pour voir les spécifications.</p>
+                    <div class="mb-5">
+                        <label class="block text-xs font-bold text-gray-500 mb-2">3. Corps de roue libre</label>
+                        <select id="config-rouelibre" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-3 text-sm font-semibold">
+                            <option value="Shimano HG" selected>Shimano HG (11/12v)</option>
+                            <option value="SRAM XDR">SRAM XDR (12v)</option>
+                        </select>
                     </div>
 
-                    <div class="grid grid-cols-2 gap-4 mb-6">
-                        <div>
-                            <label class="block text-xs font-bold text-gray-500 mb-2">3. Corps de roue libre</label>
-                            <select id="config-rouelibre" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm font-semibold">
-                                <option value="Shimano HG">Shimano HG (11/12v)</option>
-                                <option value="SRAM XDR">SRAM XDR (12v)</option>
-                                <option value="Shimano MicroSpline">MicroSpline (VTT)</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold text-gray-500 mb-2">4. Finition Carbone</label>
-                            <select id="config-finition" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm font-semibold">
-                                <option value="UD Matte">UD Matte (Standard)</option>
-                                <option value="UD Brillant">UD Brillant</option>
-                                <option value="3K Matte">3K Matte</option>
-                            </select>
-                        </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 mb-2">4. Finition</label>
+                        <select id="config-finition" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-3 text-sm font-semibold" onchange="updateConfig()">
+                            <option value="UD Matte" data-weight="0" data-price="0" selected>UD Matte Carbone</option>
+                            <option value="Glossy Black" data-weight="20" data-price="0">Paintless Glossy Black</option>
+                        </select>
                     </div>
                 </div>
-
-                <button onclick="addToCart()" class="w-full bg-brand-main text-white font-black uppercase tracking-wider py-4 rounded-xl hover:bg-brand-accent transition shadow-lg mt-auto">Ajouter au panier</button>
+                
+                <div class="flex justify-between items-end mb-6 bg-brand-main text-white p-4 rounded-xl shadow-md">
+                    <div>
+                        <span class="block text-xs text-gray-400 font-bold uppercase tracking-wider mb-1">Poids</span>
+                        <div class="text-xl font-bold"><span id="calc-weight">--</span> g <span class="text-xs text-gray-400">+/- 30g</span></div>
+                    </div>
+                    <div class="text-right">
+                        <span class="block text-xs text-gray-400 font-bold uppercase tracking-wider mb-1">Prix</span>
+                        <div class="text-3xl font-black text-brand-accent"><span id="calc-price">--</span> €</div>
+                    </div>
+                </div>
+                
+                <button onclick="addToCart()" class="w-full bg-brand-accent hover:bg-yellow-400 text-brand-main font-bold py-4 rounded-xl flex justify-center items-center gap-3 transition shadow-lg">
+                    Ajouter au panier <i class="fa-solid fa-cart-plus text-xl"></i>
+                </button>
             </div>
         </div>
     </div>
@@ -431,245 +575,77 @@
 
     <script>
         const API_URL = 'https://script.google.com/macros/s/AKfycbwi5uRAIjQ2vjbL7h9_LWAUzArqb4oNDNzHWqfM4dIkINVlY6v1Qv4no9V5ScitexSq/exec';
-
-        const catalog = [
-            { id: 1, name: "DFS Ghost 50", type: "roues", badge: "Best-Seller", price: 1399, weight: 1262, img: "https://images.unsplash.com/photo-1485965120184-e220f721d03e?auto=format&fit=crop&w=600&q=80", desc: "Le choix parfait pour La Réunion. Assez profilée pour rouler vite sur le littoral, assez légère pour grimper le Maïdo. Jante UXL ultra-légère." },
-            { id: 2, name: "DFS Ghost 30", type: "roues", badge: "Sur commande", price: 1399, weight: 1113, img: "https://images.unsplash.com/photo-1485965120184-e220f721d03e?auto=format&fit=crop&w=600&q=80", desc: "La roue des grimpeurs. Une inertie minimale pour des relances explosives en montagne." },
-            { id: 3, name: "DFS Ghost 35", type: "roues", badge: "Sur commande", price: 1399, weight: 1137, img: "https://images.unsplash.com/photo-1485965120184-e220f721d03e?auto=format&fit=crop&w=600&q=80", desc: "Le compromis idéal pour ceux qui trouvent la 30mm trop basse et la 40mm trop lourde." },
-            { id: 4, name: "DFS Ghost 40", type: "roues", badge: "Polyvalence", price: 1399, weight: 1157, img: "https://images.unsplash.com/photo-1485965120184-e220f721d03e?auto=format&fit=crop&w=600&q=80", desc: "L'alternative à la 50mm. Un profil polyvalent qui passe partout avec une excellente rigidité." },
-            { id: 5, name: "DFS Ghost 60", type: "roues", badge: "Aéro", price: 1449, weight: 1352, img: "https://images.unsplash.com/photo-1485965120184-e220f721d03e?auto=format&fit=crop&w=600&q=80", desc: "Conçue pour fendre le vent. Idéale pour les triathlètes ou les rouleurs puissants sur le plat." },
-            { id: 6, name: "DFS Bâtons Av/Ar", type: "roues", badge: "Chrono", price: 1890, weight: 1650, img: "https://images.unsplash.com/photo-1485965120184-e220f721d03e?auto=format&fit=crop&w=600&q=80", desc: "Paire de roues à bâtons tout carbone. L'arme absolue contre le chrono." },
-            { id: 7, name: "DFS Lenticulaire Ar", type: "roues", badge: "Triathlon", price: 1450, weight: 1200, img: "https://images.unsplash.com/photo-1485965120184-e220f721d03e?auto=format&fit=crop&w=600&q=80", desc: "Roue arrière pleine. Aérodynamisme extrême pour le triathlon roulant." },
-            { id: 8, name: "Axes Titane Ultralight", type: "accessoires", badge: "Stock", price: 189, weight: 45, img: "https://images.unsplash.com/photo-1593005510329-8a4aaf7aaae0?auto=format&fit=crop&w=600&q=80", desc: "Paire d'axes traversants en Titane Grade 5. Gain de poids et rigidité absolue." },
-            { id: 9, name: "Manivelles Carbone DFS", type: "accessoires", badge: "Stock", price: 449, weight: 320, img: "https://images.unsplash.com/photo-1593005510329-8a4aaf7aaae0?auto=format&fit=crop&w=600&q=80", desc: "Manivelles 100% carbone, rigidité maximale pour le transfert de puissance." }
-        ];
-
-        let cart = [];
-        let currentItem = null;
-        let appliedPromo = null;
-        let discountAmount = 0;
-
-        function initCatalog() {
-            const grid = document.getElementById('products-grid');
-            grid.innerHTML = '';
-            
-            catalog.forEach(product => {
-                const div = document.createElement('div');
-                div.className = "product-card bg-white rounded-2xl overflow-hidden border border-gray-100 flex flex-col h-full";
-                div.setAttribute('data-type', product.type);
-                
-                div.innerHTML = `
-                    <div class="relative h-48 bg-gray-50 flex items-center justify-center p-6">
-                        <span class="absolute top-4 left-4 bg-brand-main text-white text-[10px] font-black uppercase px-2 py-1 rounded tracking-widest z-10">${product.badge}</span>
-                        <img src="${product.img}" alt="${product.name}" class="max-h-full object-contain drop-shadow-xl mix-blend-multiply">
-                    </div>
-                    <div class="p-6 flex flex-col flex-grow">
-                        <div class="flex justify-between items-start mb-2">
-                            <h3 class="text-xl font-black text-gray-900 leading-none">${product.name}</h3>
-                            <span class="text-xs text-gray-400 font-bold bg-gray-100 px-2 py-1 rounded"><i class="fa-solid fa-weight-scale mr-1"></i>Dès ${product.weight}g</span>
-                        </div>
-                        <p class="text-gray-500 text-sm mb-6 flex-grow">${product.desc}</p>
-                        <div class="flex justify-between items-center border-t border-gray-100 pt-4 mt-auto">
-                            <div>
-                                <span class="text-[10px] text-gray-400 font-bold uppercase block mb-1">Prix Unitaire</span>
-                                <span class="text-2xl font-black text-brand-accent">${product.price} €</span>
-                            </div>
-                            <button onclick="openModal(${product.id})" class="w-12 h-12 rounded-full bg-brand-main text-white flex items-center justify-center hover:bg-brand-accent transition shadow-md">
-                                <i class="fa-solid fa-plus text-xl"></i>
-                            </button>
-                        </div>
-                    </div>
-                `;
-                grid.appendChild(div);
-            });
-        }
-
-        function filterProducts(type) {
-            const btns = ['all', 'roues', 'accessoires'];
-            btns.forEach(b => {
-                const el = document.getElementById(`btn-filter-${b}`);
-                if(b === type) {
-                    el.classList.add('bg-brand-main', 'text-white');
-                    el.classList.remove('text-gray-600', 'hover:bg-gray-100');
-                } else {
-                    el.classList.remove('bg-brand-main', 'text-white');
-                    el.classList.add('text-gray-600', 'hover:bg-gray-100');
-                }
-            });
-
-            const cards = document.querySelectorAll('.product-card');
-            cards.forEach(card => {
-                if (type === 'all' || card.getAttribute('data-type') === type) {
-                    card.style.display = 'flex';
-                } else {
-                    card.style.display = 'none';
-                }
-            });
-        }
-
+        
+        let globalCatalogue = [];
         let currentBasePrice = 0;
         let currentBaseWeight = 0;
         let isCurrentItemAccessory = false;
+        
+        let cart = [];
+        let appliedPromo = null;
+        let discountAmount = 0;
 
-        function openModal(id) {
-            currentItem = catalog.find(p => p.id === id);
-            isCurrentItemAccessory = currentItem.type === 'accessoires';
+        function toggleCart() {
+            const panel = document.getElementById('cart-panel');
+            const overlay = document.getElementById('cart-overlay');
             
-            document.getElementById('modal-img').src = currentItem.img;
-            document.getElementById('modal-badge').textContent = currentItem.badge;
-            document.getElementById('modal-title').textContent = currentItem.name;
-            document.getElementById('modal-desc').textContent = currentItem.desc;
-            
-            currentBasePrice = currentItem.price;
-            currentBaseWeight = currentItem.weight;
-            
-            const specJantesBox = document.getElementById('spec-jantes-box');
-            const nomLC = currentItem.name.toLowerCase();
-            const isWheelConfigurable = !isCurrentItemAccessory && !nomLC.includes('bâton') && !nomLC.includes('tri-spoke') && !nomLC.includes('lenticulaire') && !nomLC.includes('disc');
-            
-            if (isCurrentItemAccessory) {
-                specJantesBox.style.display = 'none';
-                document.getElementById('configurator-section').style.display = 'none';
-                document.getElementById('calc-price').textContent = currentBasePrice > 0 ? currentBasePrice : '--';
-                document.getElementById('calc-weight').textContent = currentBaseWeight > 0 ? currentBaseWeight : '--';
-            } else if (isWheelConfigurable) {
-                specJantesBox.style.display = 'block';
-                document.getElementById('configurator-section').style.display = 'block';
-                
-                document.getElementById('config-moyeu').value = 'R2';
-                document.getElementById('config-rayons').value = 'T33';
-                document.getElementById('config-finition').value = 'UD Matte';
-                document.getElementById('config-rouelibre').value = 'Shimano HG';
-                document.getElementById('config-couleur-r2').value = 'Gris';
-                
-                updateConfig(); 
+            if (panel.classList.contains('cart-closed')) {
+                panel.classList.remove('cart-closed');
+                panel.classList.add('cart-open');
+                overlay.classList.remove('hidden');
+                document.body.style.overflow = 'hidden';
             } else {
-                specJantesBox.style.display = 'none';
-                document.getElementById('configurator-section').style.display = 'none';
-                document.getElementById('calc-price').textContent = currentBasePrice;
-                document.getElementById('calc-weight').textContent = currentBaseWeight;
+                panel.classList.remove('cart-open');
+                panel.classList.add('cart-closed');
+                overlay.classList.add('hidden');
+                document.body.style.overflow = 'auto';
             }
-            
-            document.getElementById('product-modal').classList.remove('modal-closed');
-            document.getElementById('product-modal').classList.add('modal-open');
         }
 
-        function closeModal() {
-            document.getElementById('product-modal').classList.remove('modal-open');
-            document.getElementById('product-modal').classList.add('modal-closed');
-        }
-
-        function updateConfig() {
-            if (isCurrentItemAccessory) return;
-
-            const moyeuSelect = document.getElementById('config-moyeu');
-            const rayonSelect = document.getElementById('config-rayons');
-            
-            const moyeuOpt = moyeuSelect.options[moyeuSelect.selectedIndex];
-            const rayonOpt = rayonSelect.options[rayonSelect.selectedIndex];
-
-            const hubPrice = parseInt(moyeuOpt.getAttribute('data-price'));
-            const hubWeight = parseInt(moyeuOpt.getAttribute('data-hub-weight'));
-            const hubSpokes = parseInt(moyeuOpt.getAttribute('data-spokes'));
-            const rimWeightDiff = parseInt(moyeuOpt.getAttribute('data-rim-diff'));
-            
-            const spokeWeightUnit = parseFloat(rayonOpt.getAttribute('data-spoke-weight'));
-            
-            const optT32 = document.getElementById('opt-t32');
-            const msgRecoR2 = document.getElementById('msg-reco-r2');
-            const colorR2Container = document.getElementById('color-r2-container');
-            const specJantesText = document.getElementById('spec-jantes-text');
-
-            if (moyeuSelect.value === 'R2') {
-                optT32.style.display = 'none';
-                if (rayonSelect.value === 'T32') {
-                    rayonSelect.value = 'T33';
-                }
-                msgRecoR2.style.display = 'flex';
-                colorR2Container.style.display = 'block';
-                specJantesText.innerHTML = `<strong>Jantes UXL (Premium)</strong> - Marge d'épaisseur de 3.0mm, adaptées à la très haute tension des rayons carbone massifs et aux gros roulements du moyeu R2.`;
-            } else {
-                optT32.style.display = 'block';
-                msgRecoR2.style.display = 'none';
-                colorR2Container.style.display = 'none';
-                specJantesText.innerHTML = `<strong>Jantes SUXL (Ultra-Light)</strong> - Marge d'épaisseur de 2.5mm, allégées au maximum. Optmales avec le moyeu léger RT240.`;
-            }
-
-            const totalSpokeWeight = hubSpokes * spokeWeightUnit;
-            
-            const finalPrice = currentBasePrice + hubPrice;
-            const finalWeight = Math.round((currentBaseWeight - 238 - (40*3.2)) + hubWeight + totalSpokeWeight + rimWeightDiff);
-
-            document.getElementById('calc-price').textContent = finalPrice;
-            document.getElementById('calc-weight').textContent = finalWeight;
+        function changeR2View(src) {
+            const img = document.getElementById('r2-main-view');
+            img.onerror = null;
+            img.src = src;
         }
 
         function addToCart() {
-            let configStr = "";
-            let finalPrice = currentBasePrice;
-            let finalWeight = currentBaseWeight;
+            const title = document.getElementById('modal-title').textContent;
+            const finalPrice = parseInt(document.getElementById('calc-price').textContent) || 0;
+            const finalWeight = document.getElementById('calc-weight').textContent;
+            
+            let configText = "";
+            let imgUrl = document.getElementById('modal-image').src; 
 
-            const nomLC = currentItem.name.toLowerCase();
-            const isWheelConfigurable = !isCurrentItemAccessory && !nomLC.includes('bâton') && !nomLC.includes('tri-spoke') && !nomLC.includes('lenticulaire') && !nomLC.includes('disc');
-
-            if (isCurrentItemAccessory) {
-                configStr = "Accessoire";
-            } else if (isWheelConfigurable) {
-                const moyeu = document.getElementById('config-moyeu');
-                const moyeuText = moyeu.options[moyeu.selectedIndex].text.split(' ')[1];
-                let moyeuFinalText = moyeuText;
+            if (document.getElementById('configurator-section').style.display !== 'none') {
+                const moyeu = document.getElementById('config-moyeu').options[document.getElementById('config-moyeu').selectedIndex].text.split('(')[0].trim();
+                const rayon = document.getElementById('config-rayons').options[document.getElementById('config-rayons').selectedIndex].text.split('(')[0].trim();
+                const rouelibre = document.getElementById('config-rouelibre').value;
+                const finition = document.getElementById('config-finition').options[document.getElementById('config-finition').selectedIndex].text.split('(')[0].trim();
                 
-                if (moyeu.value === 'R2') {
-                    const couleurR2 = document.getElementById('config-couleur-r2').value;
-                    moyeuFinalText = `R2 Céramique (${couleurR2})`;
+                let couleurMoyeu = "";
+                if (document.getElementById('config-moyeu').value === 'R2') {
+                    couleurMoyeu = " (" + document.getElementById('config-couleur-r2').value + ")";
                 }
 
-                const rayon = document.getElementById('config-rayons');
-                const rayonText = rayon.options[rayon.selectedIndex].text.split(' ')[1];
-                
-                const rL = document.getElementById('config-rouelibre').value;
-                const finition = document.getElementById('config-finition').value;
-
-                configStr = `DFS ${moyeuFinalText} | Carbone ${rayonText} | ${rL} | ${finition}`;
-                
-                finalPrice = parseInt(document.getElementById('calc-price').textContent);
-                finalWeight = parseInt(document.getElementById('calc-weight').textContent);
+                configText = `${moyeu}${couleurMoyeu} | ${rayon} | ${rouelibre} | ${finition}`;
             } else {
-                configStr = "Modèle Standard";
+                configText = isCurrentItemAccessory ? "Accessoire" : "Modèle Standard";
             }
 
-            cart.push({
+            const item = {
                 id: Date.now(),
-                baseId: currentItem.id,
-                title: currentItem.name,
+                title: title,
                 price: finalPrice,
                 weight: finalWeight,
-                config: configStr,
-                image: currentItem.img,
+                config: configText,
+                image: imgUrl,
                 isAccessory: isCurrentItemAccessory
-            });
+            };
 
-            closeModal();
+            cart.push(item);
             updateCartUI();
-            
-            document.getElementById('cart-overlay').classList.remove('hidden');
-            document.getElementById('cart-panel').classList.remove('cart-closed');
-            document.getElementById('cart-panel').classList.add('cart-open');
-        }
-
-        function toggleCart() {
-            const overlay = document.getElementById('cart-overlay');
-            const panel = document.getElementById('cart-panel');
-            
-            if (panel.classList.contains('cart-closed')) {
-                overlay.classList.remove('hidden');
-                panel.classList.remove('cart-closed');
-                panel.classList.add('cart-open');
-            } else {
-                overlay.classList.add('hidden');
-                panel.classList.remove('cart-open');
-                panel.classList.add('cart-closed');
-            }
+            closeModal();
+            toggleCart();
         }
 
         function removeFromCart(id) {
@@ -767,9 +743,11 @@
                 originalTotalEl.classList.add('hidden');
             }
 
+            // Calcul du sous-total (après promo)
             let currentSubtotal = subtotal - discountAmount;
             subtotalEl.textContent = currentSubtotal;
 
+            // Calcul des frais selon le mode de paiement choisi
             const paymentMethod = document.querySelector('input[name="payment-method"]:checked')?.value || 'virement';
             let transactionFees = 0;
 
@@ -781,6 +759,7 @@
                 }
             }
             
+            // Arrondir les frais à 2 décimales
             transactionFees = Math.round(transactionFees * 100) / 100;
 
             if (transactionFees > 0) {
@@ -792,29 +771,30 @@
                 feeRow.classList.remove('flex');
             }
 
+            // Calcul du total final
             const finalTotal = currentSubtotal + transactionFees;
             finalTotalEl.textContent = finalTotal % 1 === 0 ? finalTotal : finalTotal.toFixed(2);
         }
 
         function applyPromoCode() {
-            const input = document.getElementById('promo-code').value.trim().toUpperCase();
-            if (input === 'CCPIKARBON') {
-                appliedPromo = input;
+            const input = document.getElementById('promo-code');
+            const code = input.value.trim().toUpperCase();
+            if (code === 'CCPIKARBON') {
+                appliedPromo = code;
+                input.value = '';
                 updateCartUI();
-            } else {
-                alert("Code promo invalide ou expiré.");
             }
         }
 
         function removePromoCode() {
             appliedPromo = null;
-            document.getElementById('promo-code').value = '';
+            discountAmount = 0;
             updateCartUI();
         }
 
         async function checkoutWhatsApp() {
             if (cart.length === 0) return;
-
+            
             const nomClient = document.getElementById('client-name').value.trim();
             const emailClient = document.getElementById('client-email').value.trim();
             const adresseClient = document.getElementById('client-address').value.trim();
@@ -822,22 +802,28 @@
 
             if (!nomClient || !emailClient || !adresseClient) {
                 errorMsg.classList.remove('hidden');
-                return;
+                return; 
+            } else {
+                errorMsg.classList.add('hidden');
             }
-            errorMsg.classList.add('hidden');
-
+            
             const btn = document.getElementById('checkout-btn');
-            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Traitement...';
+            const originalBtnText = btn.innerHTML;
+            btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin mr-2"></i> Préparation...';
             btn.disabled = true;
 
-            let msg = `👋 *Nouvelle Commande Karbòn Péi*\n\n`;
-            msg += `👤 *Client :*\n- Nom : ${nomClient}\n- Email : ${emailClient}\n- Adresse : ${adresseClient}\n\n`;
-            msg += `🛒 *Détail :*\n`;
+            let msg = "👋 Bonjour Karbòn Péi ! Je souhaite passer commande :\n\n";
             
+            msg += `👤 *CLIENT :*\n`;
+            msg += `- Nom : ${nomClient}\n`;
+            msg += `- E-mail : ${emailClient}\n`;
+            msg += `- Adresse : ${adresseClient}\n\n`;
+            
+            msg += `🛒 *MA COMMANDE :*\n`;
             let total = 0;
-            let produitsPourFichier = [];
-            let factureNoms = [];
-            let facturePrix = [];
+            let produitsPourFichier = []; 
+            let factureNoms = []; 
+            let facturePrix = []; 
             
             cart.forEach((item, index) => {
                 msg += `*${index + 1}. ${item.title}*\n`;
@@ -854,6 +840,7 @@
             
             const currentSubtotal = appliedPromo ? (total - discountAmount) : total;
 
+            // Calcul des frais pour la facture et le message
             const paymentMethodVal = document.querySelector('input[name="payment-method"]:checked')?.value || 'virement';
             let transactionFees = 0;
             let paymentMethodName = "Virement / Paylib / Espèces";
@@ -912,39 +899,331 @@
             try {
                 await fetch(API_URL, {
                     method: 'POST',
-                    mode: 'no-cors',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
                     body: JSON.stringify(orderData)
                 });
-            } catch (e) {
-                console.log("Erreur lors de l'envoi au sheet:", e);
+            } catch (error) {
+                console.error("Erreur d'enregistrement réseau :", error);
             }
 
-            const whatsappUrl = `https://wa.me/262692693870?text=${encodeURIComponent(msg)}`;
-            window.location.href = whatsappUrl;
+            const encodedMsg = encodeURIComponent(msg);
+            window.open(`https://wa.me/262692693870?text=${encodedMsg}`, '_blank');
+
+            cart = [];
+            appliedPromo = null;
+            discountAmount = 0;
+            document.getElementById('client-name').value = '';
+            document.getElementById('client-email').value = '';
+            document.getElementById('client-address').value = '';
+            updateCartUI();
+            toggleCart();
             
-            setTimeout(() => {
-                btn.innerHTML = 'Commander via WhatsApp';
-                btn.disabled = false;
-            }, 2000);
+            btn.innerHTML = originalBtnText;
+            btn.disabled = false;
         }
 
-        function sendContactMessage(e) {
-            e.preventDefault();
-            const name = document.getElementById('contact-name').value;
-            const email = document.getElementById('contact-email').value;
-            const text = document.getElementById('contact-msg').value;
-            
-            let msg = `💬 *Nouveau Message Site Web*\n\n`;
-            msg += `👤 *De :* ${name} (${email})\n\n`;
-            msg += `*Message :*\n${text}`;
-
-            const whatsappUrl = `https://wa.me/262692693870?text=${encodeURIComponent(msg)}`;
-            window.open(whatsappUrl, '_blank');
+        async function loadCatalogue() {
+            try {
+                const response = await fetch(API_URL);
+                globalCatalogue = await response.json();
+                document.getElementById('loading-message').style.display = 'none';
+                renderGrid('Tout');
+            } catch (error) {
+                console.error('Erreur:', error);
+                document.getElementById('loading-message').innerHTML = `
+                    <div class="bg-red-50 text-red-600 p-4 rounded-lg text-center border border-red-200">
+                        <i class="fa-solid fa-triangle-exclamation text-2xl mb-2"></i>
+                        <p class="font-bold">Erreur de connexion au catalogue.</p>
+                    </div>`;
+            }
         }
 
-        // Init
-        initCatalog();
+        function filterCatalogue(category) {
+            const btns = document.querySelectorAll('.filter-btn');
+            btns.forEach(btn => {
+                if (btn.textContent.includes(category) || (category === 'Tout' && btn.textContent === 'Tout voir')) {
+                    btn.classList.add('active', 'bg-brand-main', 'text-white');
+                    btn.classList.remove('bg-white', 'text-gray-700');
+                } else {
+                    btn.classList.remove('active', 'bg-brand-main', 'text-white');
+                    btn.classList.add('bg-white', 'text-gray-700');
+                }
+            });
+            renderGrid(category);
+        }
+
+        function renderGrid(filterCategory) {
+            const grid = document.getElementById('product-grid');
+            if (!grid) return;
+            grid.innerHTML = '';
+            let count = 0;
+
+            globalCatalogue.forEach((item, index) => {
+                if(!item.Nom) return;
+                
+                const cat = (item.Categorie && item.Categorie.trim() !== "") ? item.Categorie.trim() : "Roues";
+                if (filterCategory !== 'Tout' && !cat.toLowerCase().includes(filterCategory.toLowerCase())) return;
+                count++;
+
+                const nomLC = item.Nom.toLowerCase();
+                const isFixedPriceWheel = nomLC.includes('bâton') || nomLC.includes('tri-spoke') || nomLC.includes('lenticulaire') || nomLC.includes('disc');
+                const isAccessory = cat.toLowerCase().includes('accessoire') || cat.toLowerCase().includes('composant');
+
+                let imageUrl = item.Image ? item.Image.split(',')[0].trim() : 'https://images.unsplash.com/photo-1511994298241-608e28f14fde?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80';
+                let prixAffiche = 'Sur devis';
+                if (item.Prix) {
+                    prixAffiche = (isAccessory || isFixedPriceWheel) ? `${item.Prix} €` : `Dès ${item.Prix} €`;
+                }
+                
+                let statutBadge = '';
+                
+                if (nomLC.includes('50')) {
+                    statutBadge += `<span class="absolute top-4 right-4 bg-brand-accent text-brand-main text-xs font-black px-3 py-1 rounded shadow-md z-20 transform rotate-3 border border-yellow-300">⭐ BEST-SELLER</span>`;
+                }
+
+                if (item.Statut) {
+                    const statutLC = item.Statut.toLowerCase();
+                    if (statutLC.includes('stock')) {
+                        statutBadge += `<span class="absolute top-4 left-4 bg-green-500 text-white text-xs font-bold px-3 py-1 rounded shadow-md z-10"><i class="fa-solid fa-check mr-1"></i> En Stock</span>`;
+                    } else if (statutLC.includes('arrivage')) {
+                        statutBadge += `<span class="absolute top-4 left-4 bg-blue-500 text-white text-xs font-bold px-3 py-1 rounded shadow-md z-10"><i class="fa-solid fa-truck-fast mr-1"></i> Arrivage en cours</span>`;
+                    } else {
+                        statutBadge += `<span class="absolute top-4 left-4 bg-orange-500 text-white text-xs font-bold px-3 py-1 rounded shadow-md z-10"><i class="fa-solid fa-plane mr-1"></i> ${item.Statut}</span>`;
+                    }
+                }
+
+                let specLigne = '';
+                if (isAccessory) {
+                    specLigne = `<span class="flex items-center"><i class="fa-solid fa-weight-scale text-brand-accent mr-1.5"></i> ${item.Poids || '-'} g</span>`;
+                } else {
+                    let weightPrefix = isFixedPriceWheel ? '' : 'Dès ';
+                    specLigne = `
+                        <span class="flex items-center"><i class="fa-solid fa-arrows-up-down text-brand-accent mr-1.5"></i> ${item.Hauteur || '-'}</span>
+                        ${item.Poids ? `<span class="text-gray-300">|</span><span class="flex items-center"><i class="fa-solid fa-weight-scale text-brand-accent mr-1.5"></i> ${weightPrefix}${item.Poids} g</span>` : ''}
+                    `;
+                }
+
+                const cardHtml = `
+                    <div onclick="openModal(${index})" class="wheel-card bg-white rounded-xl shadow-md overflow-hidden border border-gray-100 flex flex-col relative group cursor-pointer">
+                        ${statutBadge}
+                        <div class="overflow-hidden h-64 bg-gray-50 flex items-center justify-center p-4 relative">
+                            <img src="${imageUrl}" alt="${item.Nom}" class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500">
+                            <div class="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition flex items-center justify-center">
+                                <span class="bg-brand-main text-white text-sm font-bold px-5 py-2 rounded-full shadow-lg transform translate-y-4 group-hover:translate-y-0 transition"><i class="fa-solid fa-eye mr-2"></i>Voir le produit</span>
+                            </div>
+                        </div>
+                        <div class="p-6 flex flex-col flex-grow text-center">
+                            <h4 class="text-xl font-black text-gray-900 mb-2">${item.Nom}</h4>
+                            <div class="flex justify-center items-center gap-3 text-sm text-gray-600 mb-4 font-medium">
+                                ${specLigne}
+                            </div>
+                            <div class="mt-auto border-t border-gray-100 pt-4">
+                                <span class="block text-xs uppercase tracking-wider text-gray-400 font-bold mb-1">Prix unitaire</span>
+                                <span class="text-2xl font-black text-brand-accent">${prixAffiche}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                grid.insertAdjacentHTML('beforeend', cardHtml);
+            });
+            
+            if (count === 0) {
+                grid.innerHTML = `<p class="col-span-full text-center text-gray-500 py-10">Aucun produit dans cette catégorie pour le moment.</p>`;
+            }
+        }
+
+        function openModal(index) {
+            const item = globalCatalogue[index];
+            if(!item) return;
+
+            currentBasePrice = parseInt(item.Prix) || 0;
+            currentBaseWeight = parseInt(item.Poids) || 0;
+            isCurrentItemAccessory = (item.Categorie && (item.Categorie.toLowerCase().includes('accessoire') || item.Categorie.toLowerCase().includes('composant')));
+
+            document.getElementById('modal-title').textContent = item.Nom;
+            document.getElementById('modal-desc').textContent = item.Description || "Sélectionnez vos options pour ajouter ce produit au panier.";
+            document.getElementById('modal-hauteur').textContent = item.Hauteur || '-';
+
+            const badge = document.getElementById('modal-badge');
+            if (item.Statut) {
+                const statutLC = item.Statut.toLowerCase();
+                if (statutLC.includes('stock')) {
+                    badge.className = 'text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide w-max bg-green-100 text-green-700';
+                    badge.innerHTML = '<i class="fa-solid fa-check mr-1"></i> En Stock Réunion';
+                } else if (statutLC.includes('arrivage')) {
+                    badge.className = 'text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide w-max bg-blue-100 text-blue-700';
+                    badge.innerHTML = '<i class="fa-solid fa-truck-fast mr-1"></i> Arrivage en cours';
+                } else {
+                    badge.className = 'text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide w-max bg-orange-100 text-orange-700';
+                    badge.innerHTML = `<i class="fa-solid fa-plane mr-1"></i> ${item.Statut}`;
+                }
+            } else {
+                badge.className = 'text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide w-max bg-orange-100 text-orange-700';
+                badge.innerHTML = `<i class="fa-solid fa-plane mr-1"></i> Sur Commande`;
+            }
+
+            const bestsellerBadge = document.getElementById('modal-bestseller');
+            const nomForBadge = item.Nom ? item.Nom.toLowerCase() : '';
+            if (nomForBadge.includes('50')) {
+                bestsellerBadge.classList.remove('hidden');
+                bestsellerBadge.classList.add('inline-flex', 'items-center');
+            } else {
+                bestsellerBadge.classList.add('hidden');
+                bestsellerBadge.classList.remove('inline-flex', 'items-center');
+            }
+
+            let images = item.Image ? item.Image.split(',') : ['https://images.unsplash.com/photo-1511994298241-608e28f14fde?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80'];
+            
+            changeModalMedia(images[0].trim());
+
+            const gallery = document.getElementById('modal-gallery');
+            if (images.length > 1) {
+                gallery.innerHTML = images.map(img => {
+                    const url = img.trim();
+                    const isVideo = url.toLowerCase().endsWith('.mp4') || url.toLowerCase().endsWith('.webm');
+                    const iconPlay = isVideo ? `<div class="absolute inset-0 flex items-center justify-center bg-black/20 group-hover:bg-black/40 transition"><i class="fa-solid fa-circle-play text-white text-2xl shadow-sm opacity-90"></i></div>` : '';
+                    const mediaTag = isVideo ? `<video src="${url}#t=0.1" class="w-full h-full object-cover"></video>` : `<img src="${url}" class="w-full h-full object-cover">`;
+                    
+                    return `
+                    <div onclick="changeModalMedia('${url}')" class="group cursor-pointer border-2 border-transparent hover:border-brand-main rounded-lg overflow-hidden relative h-20 min-w-[5rem] bg-gray-100 flex-shrink-0 transition-all shadow-sm">
+                        ${mediaTag}
+                        ${iconPlay}
+                    </div>`;
+                }).join('');
+                gallery.classList.remove('hidden');
+            } else {
+                gallery.innerHTML = '';
+                gallery.classList.add('hidden');
+            }
+
+            const nomLC = item.Nom.toLowerCase();
+            const isWheelConfigurable = !isCurrentItemAccessory && !nomLC.includes('bâton') && !nomLC.includes('tri-spoke') && !nomLC.includes('lenticulaire') && !nomLC.includes('disc');
+            
+            let largeurInt = "24 mm";
+            let largeurExt = "32 mm";
+            
+            if (nomLC.includes('lenticulaire') || nomLC.includes('disc')) {
+                largeurInt = "18 mm";
+                largeurExt = "25 mm";
+            } else if (nomLC.includes('bâton') || nomLC.includes('tri-spoke')) {
+                largeurInt = "21 mm";
+                largeurExt = "28 mm";
+            }
+
+            document.getElementById('modal-largeur-int').textContent = largeurInt;
+            document.getElementById('modal-largeur-ext').textContent = largeurExt;
+
+            const specJantesBox = document.getElementById('spec-jantes-box');
+            
+            if (isCurrentItemAccessory) {
+                specJantesBox.style.display = 'none';
+                document.getElementById('configurator-section').style.display = 'none';
+                document.getElementById('calc-price').textContent = currentBasePrice > 0 ? currentBasePrice : '--';
+                document.getElementById('calc-weight').textContent = currentBaseWeight > 0 ? currentBaseWeight : '--';
+            } else if (isWheelConfigurable) {
+                specJantesBox.style.display = 'block';
+                document.getElementById('configurator-section').style.display = 'block';
+                
+                // On initialise sur la configuration recommandée (R2 + T33 + Gris)
+                document.getElementById('config-moyeu').value = 'R2';
+                document.getElementById('config-rayons').value = 'T33';
+                document.getElementById('config-finition').value = 'UD Matte';
+                document.getElementById('config-rouelibre').value = 'Shimano HG';
+                document.getElementById('config-couleur-r2').value = 'Gris';
+                
+                updateConfig(); 
+            } else {
+                specJantesBox.style.display = 'block';
+                document.getElementById('configurator-section').style.display = 'none';
+                document.getElementById('calc-price').textContent = currentBasePrice > 0 ? currentBasePrice : '--';
+                document.getElementById('calc-weight').textContent = currentBaseWeight > 0 ? currentBaseWeight : '--';
+            }
+
+            document.getElementById('product-modal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            document.getElementById('product-modal').classList.add('hidden');
+            document.body.style.overflow = 'auto'; 
+            
+            const vidEl = document.getElementById('modal-video');
+            if(vidEl) vidEl.pause();
+        }
+
+        function changeModalMedia(url) {
+            const imgEl = document.getElementById('modal-image');
+            const vidEl = document.getElementById('modal-video');
+            
+            if (url.toLowerCase().endsWith('.mp4') || url.toLowerCase().endsWith('.webm')) {
+                imgEl.classList.add('hidden');
+                vidEl.classList.remove('hidden');
+                vidEl.src = url;
+                vidEl.muted = false; 
+                vidEl.volume = 0.5;  
+                
+                let playPromise = vidEl.play();
+                if (playPromise !== undefined) {
+                    playPromise.catch(error => {
+                        console.log("Autoplay bloqué, passage en muet.");
+                        vidEl.muted = true;
+                        vidEl.play();
+                    });
+                }
+            } else {
+                vidEl.classList.add('hidden');
+                imgEl.classList.remove('hidden');
+                vidEl.pause();
+                imgEl.src = url;
+            }
+        }
+
+        function updateConfig() {
+            const moyeuSelect = document.getElementById('config-moyeu');
+            const rayonSelect = document.getElementById('config-rayons');
+            const finitionSelect = document.getElementById('config-finition');
+            const msgRecoR2 = document.getElementById('msg-reco-r2');
+            const t32Option = document.getElementById('opt-t32');
+            const colorR2Container = document.getElementById('color-r2-container');
+
+            // --- CORRECTION DU BUG : RESTRICION R2 + T32 ---
+            if (moyeuSelect.value === 'R2') {
+                msgRecoR2.style.display = 'flex';
+                colorR2Container.classList.remove('hidden'); // Affiche le choix de couleur
+                t32Option.style.display = 'none'; // Masque complètement l'option
+                if (rayonSelect.value === 'T32') {
+                    rayonSelect.value = 'T33'; // Force le passage sur T33 si T32 était actif
+                }
+            } else {
+                msgRecoR2.style.display = 'none';
+                colorR2Container.classList.add('hidden'); // Masque le choix de couleur
+                t32Option.style.display = ''; // Réaffiche l'option pour les autres moyeux
+            }
+            
+            const moyeuPrice = parseInt(moyeuSelect.options[moyeuSelect.selectedIndex].getAttribute('data-price')) || 0;
+            const rayonPrice = parseInt(rayonSelect.options[rayonSelect.selectedIndex].getAttribute('data-price')) || 0;
+            const finitionPrice = parseInt(finitionSelect.options[finitionSelect.selectedIndex].getAttribute('data-price')) || 0;
+            
+            const hubWeight = parseInt(moyeuSelect.options[moyeuSelect.selectedIndex].getAttribute('data-hub-weight')) || 238;
+            const spokeCount = parseInt(moyeuSelect.options[moyeuSelect.selectedIndex].getAttribute('data-spokes')) || 40;
+            const rimDiff = parseInt(moyeuSelect.options[moyeuSelect.selectedIndex].getAttribute('data-rim-diff')) || 0;
+            const finitionWeight = parseInt(finitionSelect.options[finitionSelect.selectedIndex].getAttribute('data-weight')) || 0;
+            const spokeWeight = parseFloat(rayonSelect.options[rayonSelect.selectedIndex].getAttribute('data-spoke-weight')) || 2.1;
+
+            const finalPrice = currentBasePrice + moyeuPrice + rayonPrice + finitionPrice;
+            
+            // Le "baseComboWeight" (322g) correspond exactement à la configuration de base de ton Google Sheet :
+            // Moyeu RT240 (238g) + 40 Rayons T32 (40 * 2.1g = 84g) = 322g.
+            // Le calcul retire ce poids de base et ajoute le poids de la configuration sélectionnée.
+            const baseComboWeight = 322; 
+            const newComboWeight = hubWeight + (spokeCount * spokeWeight) + rimDiff + finitionWeight;
+            const finalWeight = Math.round(currentBaseWeight - baseComboWeight + newComboWeight);
+
+            document.getElementById('calc-price').textContent = finalPrice > 0 ? finalPrice : '--';
+            document.getElementById('calc-weight').textContent = finalWeight > 0 ? finalWeight : '--';
+        }
+
+        loadCatalogue();
     </script>
 </body>
 </html>
