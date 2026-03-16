@@ -45,21 +45,23 @@
 </head>
 <body class="bg-gray-100 text-gray-800 font-sans selection:bg-brand-accent selection:text-white relative">
 
-    <!-- En-tête -->
+    <!-- En-tête (Toujours visible) -->
     <header class="bg-brand-main text-white sticky top-0 z-40 shadow-lg">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
             <div class="flex items-center gap-3">
                 <i class="fa-solid fa-volcano text-brand-accent text-3xl"></i>
                 <div>
-                    <h1 class="text-2xl font-black tracking-widest cursor-pointer" onclick="window.scrollTo(0,0)">KARBÒN <span class="text-brand-accent">PÉI</span></h1>
+                    <h1 class="text-2xl font-black tracking-widest cursor-pointer" onclick="navigateTo('top')">KARBÒN <span class="text-brand-accent">PÉI</span></h1>
                     <p class="text-xs text-gray-400 font-medium tracking-wider uppercase hidden sm:block">Matériel Haute Performance - 974</p>
                 </div>
             </div>
             <div class="flex items-center gap-4 sm:gap-6">
-                <a href="#catalogue" class="hidden md:inline-block text-sm text-gray-300 hover:text-white transition font-medium">Catalogue</a>
-                <a href="#guide-performance" class="hidden lg:inline-block text-sm text-brand-accent font-bold hover:text-yellow-300 transition">Guide Performance</a>
-                <a href="#technologie" class="hidden lg:inline-block text-sm text-gray-300 hover:text-white transition font-medium">Moyeu R2</a>
-                <a href="#contact" class="hidden md:inline-block text-sm text-gray-300 hover:text-white transition font-medium">Contact</a>
+                <a href="javascript:void(0)" onclick="navigateTo('catalogue')" class="hidden md:inline-block text-sm text-gray-300 hover:text-white transition font-medium">Catalogue</a>
+                <a href="javascript:void(0)" onclick="navigateTo('guide-performance')" class="hidden lg:inline-block text-sm text-brand-accent font-bold hover:text-yellow-300 transition">Guide Performance</a>
+                <a href="javascript:void(0)" onclick="navigateTo('technologie')" class="hidden lg:inline-block text-sm text-gray-300 hover:text-white transition font-medium">Moyeu R2</a>
+                
+                <!-- NOUVEAU LIEN GARANTIE -->
+                <a href="javascript:void(0)" onclick="showWarranty()" class="hidden md:inline-block text-sm text-gray-300 hover:text-white transition font-medium">Garanties & SAV</a>
                 
                 <button onclick="toggleCart()" class="relative p-2 text-gray-300 hover:text-brand-accent transition">
                     <i class="fa-solid fa-cart-shopping text-2xl"></i>
@@ -69,326 +71,449 @@
         </div>
     </header>
 
-    <!-- Hero Section -->
-    <div class="relative bg-brand-main py-24 md:py-32 overflow-hidden">
-        <div class="absolute inset-0">
-            <img src="./images/SL8.jpg" alt="Vélo Tarmac SL8" class="w-full h-full object-cover">
-        </div>
-        <div class="absolute inset-0 bg-gradient-to-t from-brand-main via-brand-main/80 to-brand-main/30"></div>
-        <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center z-10">
-            <span class="bg-brand-accent text-brand-main text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide mb-4 inline-block shadow-lg">Sélectionné pour La Réunion</span>
-            <h2 class="text-4xl md:text-6xl font-black text-white mb-6 tracking-tight">Le meilleur du carbone. <br/><span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-accent to-yellow-200">Sans intermédiaire.</span></h2>
-            <p class="text-lg md:text-xl text-gray-300 max-w-2xl mx-auto mb-10">
-                Des composants ultra-performants testés sur nos routes. Configurez vos roues sur-mesure ou commandez vos accessoires ultra-légers.
-            </p>
-            <div class="flex justify-center gap-4">
-                <a href="#catalogue" class="bg-white text-brand-main hover:bg-gray-100 font-bold py-3 px-8 rounded-full shadow-xl transition duration-300 transform hover:-translate-y-1">
-                    Voir la boutique
-                </a>
-            </div>
-        </div>
-    </div>
-
-    <!-- Section Marque DFS -->
-    <section id="dfs-story" class="bg-white py-20 border-b border-gray-200">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex flex-col md:flex-row items-center gap-12">
-                <div class="w-full md:w-1/2">
-                    <span class="text-brand-accent font-bold tracking-wider text-sm uppercase mb-2 block">Transparence & Expertise</span>
-                    <h3 class="text-3xl md:text-4xl font-black text-gray-900 mb-6">L'exigence <span class="text-brand-main">DFS Wheels</span></h3>
-                    <p class="text-gray-600 mb-4 leading-relaxed">
-                        Chez Karbòn Péi, nous travaillons en direct avec <strong>DFS Wheels</strong>. Forts de 10 ans d'expérience, ils appliquent des standards de niveau OEM avec une transparence totale sur leur processus de contrôle qualité.
-                    </p>
-                    <ul class="space-y-4 mb-8">
-                        <li class="flex items-start">
-                            <i class="fa-solid fa-layer-group text-green-500 mt-1 mr-3 text-lg"></i>
-                            <div>
-                                <strong class="text-gray-900 block">Drapage manuel Toray</strong>
-                                <span class="text-gray-600 text-sm">Chaque jante est assemblée à la main (10 à 30 couches) avec un contrôle strict du ratio résine/carbone.</span>
-                            </div>
-                        </li>
-                        <li class="flex items-start">
-                            <i class="fa-solid fa-microscope text-green-500 mt-1 mr-3 text-lg"></i>
-                            <div>
-                                <strong class="text-gray-900 block">Perçage 3D & Finition chirurgicale</strong>
-                                <span class="text-gray-600 text-sm">Perçage 3D des trous de rayons pour un alignement parfait de la tension, et polissage manuel des surfaces.</span>
-                            </div>
-                        </li>
-                        <li class="flex items-start">
-                            <i class="fa-solid fa-ruler-combined text-green-500 mt-1 mr-3 text-lg"></i>
-                            <div>
-                                <strong class="text-gray-900 block">Contrôle Qualité (QC) extrême</strong>
-                                <span class="text-gray-600 text-sm">Tests de circularité validés à <strong>0.1 mm</strong> pour les jantes, et ajustement final à moins de <strong>0.2 mm</strong> pour la roue.</span>
-                            </div>
-                        </li>
-                        <li class="flex items-start">
-                            <i class="fa-solid fa-shield-halved text-brand-accent mt-1 mr-3 text-lg"></i>
-                            <div>
-                                <strong class="text-gray-900 block">Garantie de 5 ans</strong>
-                                <span class="text-gray-600 text-sm">La qualité de nos processus nous permet de vous offrir une garantie constructeur de 5 ans sur nos jantes carbone (détails du SAV plus bas).</span>
-                            </div>
-                        </li>
-                    </ul>
-                </div>
-                <div class="w-full md:w-1/2 bg-gray-50 rounded-3xl p-8 flex flex-col items-center justify-center border border-gray-100 shadow-inner">
-                    <div class="bg-white p-6 rounded-2xl shadow-md mb-6 w-48 h-48 flex items-center justify-center">
-                        <img src="./images/logo-dfs.jpg" alt="Logo DFS Wheels" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2250%22>⚙️</text></svg>';" class="max-w-full max-h-full object-contain">
-                    </div>
-                    <div class="text-center">
-                        <p class="text-sm text-gray-600 italic font-medium">"Nous utilisons un véritable processus de QC et des matériaux premium pour assurer consistance et sécurité."</p>
-                        <span class="text-xs font-black text-gray-900 uppercase tracking-widest mt-3 block">— Angler Wang, Fondateur de DFS</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Section Catalogue -->
-    <main id="catalogue" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 border-b border-gray-300 pb-4 gap-4">
-            <div>
-                <h3 class="text-3xl font-black text-gray-900">Notre Catalogue</h3>
-                <p class="text-gray-500 mt-1 mb-3">Équipez votre machine avec ce qu'il se fait de mieux.</p>
-                <div class="inline-flex items-center gap-2 bg-yellow-50 text-yellow-800 px-3 py-2 rounded-lg text-sm border border-yellow-200 shadow-sm">
-                    <i class="fa-solid fa-lightbulb text-brand-accent text-lg"></i>
-                    <span><strong>Astuce :</strong> Combos mixtes (ex: 50/60mm) possibles sur demande !</span>
-                </div>
-            </div>
-            
-            <div class="flex gap-2 overflow-x-auto no-scrollbar w-full md:w-auto pb-2">
-                <button onclick="filterCatalogue('Tout')" class="filter-btn active px-4 py-2 rounded-full border border-gray-300 text-sm font-bold whitespace-nowrap">Tout voir</button>
-                <button onclick="filterCatalogue('Roues')" class="filter-btn px-4 py-2 rounded-full border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 text-sm font-bold whitespace-nowrap">Roues Carbone</button>
-                <button onclick="filterCatalogue('Accessoires')" class="filter-btn px-4 py-2 rounded-full border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 text-sm font-bold whitespace-nowrap">Accessoires</button>
-                <button onclick="filterCatalogue('Composants')" class="filter-btn px-4 py-2 rounded-full border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 text-sm font-bold whitespace-nowrap">Composants</button>
-            </div>
-        </div>
+    <!-- ========================================== -->
+    <!-- VUE 1 : ACCUEIL & CATALOGUE (Par défaut)   -->
+    <!-- ========================================== -->
+    <div id="view-home">
         
-        <div id="loading-message" class="text-center py-10">
-            <i class="fa-solid fa-circle-notch fa-spin text-4xl text-brand-accent mb-4"></i>
-            <p class="text-gray-500 font-medium">Chargement du catalogue...</p>
-        </div>
-        
-        <div id="product-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"></div>
-    </main>
-
-    <!-- NOUVELLE SECTION GARANTIES -->
-    <section class="max-w-7xl mx-auto px-4 pb-16 pt-4 mb-8 border-b border-gray-200">
-        <div class="text-center mb-8">
-            <h2 class="text-2xl font-black text-gray-900 uppercase tracking-tight">Un SAV Local sans faille</h2>
-            <p class="text-gray-500 text-sm mt-1">Parce que votre sérénité n'a pas de prix.</p>
-        </div>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 text-center max-w-4xl mx-auto">
-            
-            <div class="p-6 rounded-2xl bg-brand-main text-white shadow-lg transform md:-translate-y-2 relative overflow-hidden group">
-                <div class="absolute top-0 right-0 bg-brand-accent text-brand-main text-[10px] font-black px-3 py-1 rounded-bl-lg uppercase tracking-widest">Premium</div>
-                <div class="w-16 h-16 bg-white/10 rounded-full flex items-center justify-center mx-auto mb-4 backdrop-blur-sm group-hover:scale-110 transition-transform">
-                    <i class="fa-solid fa-shield-halved text-2xl text-brand-accent"></i>
+        <!-- Hero Section -->
+        <div class="relative bg-brand-main py-24 md:py-32 overflow-hidden">
+            <div class="absolute inset-0">
+                <img src="./images/SL8.jpg" alt="Vélo Tarmac SL8" class="w-full h-full object-cover">
+            </div>
+            <div class="absolute inset-0 bg-gradient-to-t from-brand-main via-brand-main/80 to-brand-main/30"></div>
+            <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center z-10">
+                <span class="bg-brand-accent text-brand-main text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide mb-4 inline-block shadow-lg">Sélectionné pour La Réunion</span>
+                <h2 class="text-4xl md:text-6xl font-black text-white mb-6 tracking-tight">Le meilleur du carbone. <br/><span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-accent to-yellow-200">Sans intermédiaire.</span></h2>
+                <p class="text-lg md:text-xl text-gray-300 max-w-2xl mx-auto mb-10">
+                    Des composants ultra-performants testés sur nos routes. Configurez vos roues sur-mesure ou commandez vos accessoires ultra-légers.
+                </p>
+                <div class="flex justify-center gap-4">
+                    <button onclick="navigateTo('catalogue')" class="bg-white text-brand-main hover:bg-gray-100 font-bold py-3 px-8 rounded-full shadow-xl transition duration-300 transform hover:-translate-y-1">
+                        Voir la boutique
+                    </button>
                 </div>
-                <h3 class="font-bold mb-2 uppercase tracking-wide">Garantie 5 Ans</h3>
-                <p class="text-sm text-gray-300 font-medium">Nos jantes UXL & SUXL sont garanties 5 ans contre les défauts de fabrication avec un SAV géré à La Réunion.</p>
             </div>
-            
-            <div class="p-6 rounded-2xl bg-white hover:shadow-xl transition-all duration-300 border border-gray-200 group transform md:-translate-y-2">
-                <div class="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm group-hover:scale-110 transition-transform">
-                    <i class="fa-solid fa-house-medical text-2xl text-brand-main"></i>
-                </div>
-                <h3 class="font-bold text-gray-900 mb-2 uppercase tracking-wide">Crash Replacement</h3>
-                <p class="text-sm text-gray-500">En cas de chute ou de casse accidentelle, bénéficiez d'une jante de remplacement à tarif préférentiel (-30%).</p>
-            </div>
-            
         </div>
-    </section>
 
-    <!-- SECTION GUIDE PERFORMANCE -->
-    <section id="guide-performance" class="bg-brand-main text-white py-20 border-t border-gray-800">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-16">
-                <span class="text-brand-accent font-bold tracking-wider text-sm uppercase mb-2 block">L'Anatomie de la vitesse</span>
-                <h3 class="text-3xl md:text-5xl font-black mb-6">Comment choisir ses roues haut de gamme ?</h3>
-                <p class="text-gray-400 max-w-3xl mx-auto text-lg">Changer de roues est la meilleure amélioration pour votre vélo. Mais le carbone ne fait pas tout. Voici les 5 critères qui séparent une roue standard d'une roue d'exception.</p>
+        <!-- Section Marque DFS -->
+        <section id="dfs-story" class="bg-white py-20 border-b border-gray-200">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex flex-col md:flex-row items-center gap-12">
+                    <div class="w-full md:w-1/2">
+                        <span class="text-brand-accent font-bold tracking-wider text-sm uppercase mb-2 block">Transparence & Expertise</span>
+                        <h3 class="text-3xl md:text-4xl font-black text-gray-900 mb-6">L'exigence <span class="text-brand-main">DFS Wheels</span></h3>
+                        <p class="text-gray-600 mb-4 leading-relaxed">
+                            Chez Karbòn Péi, nous travaillons en direct avec <strong>DFS Wheels</strong>. Forts de 10 ans d'expérience, ils appliquent des standards de niveau OEM avec une transparence totale sur leur processus de contrôle qualité.
+                        </p>
+                        <ul class="space-y-4 mb-8">
+                            <li class="flex items-start">
+                                <i class="fa-solid fa-layer-group text-green-500 mt-1 mr-3 text-lg"></i>
+                                <div>
+                                    <strong class="text-gray-900 block">Drapage manuel Toray</strong>
+                                    <span class="text-gray-600 text-sm">Chaque jante est assemblée à la main (10 à 30 couches) avec un contrôle strict du ratio résine/carbone.</span>
+                                </div>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fa-solid fa-microscope text-green-500 mt-1 mr-3 text-lg"></i>
+                                <div>
+                                    <strong class="text-gray-900 block">Perçage 3D & Finition chirurgicale</strong>
+                                    <span class="text-gray-600 text-sm">Perçage 3D des trous de rayons pour un alignement parfait de la tension, et polissage manuel des surfaces.</span>
+                                </div>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fa-solid fa-ruler-combined text-green-500 mt-1 mr-3 text-lg"></i>
+                                <div>
+                                    <strong class="text-gray-900 block">Contrôle Qualité (QC) extrême</strong>
+                                    <span class="text-gray-600 text-sm">Tests de circularité validés à <strong>0.1 mm</strong> pour les jantes, et ajustement final à moins de <strong>0.2 mm</strong> pour la roue.</span>
+                                </div>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fa-solid fa-shield-halved text-brand-accent mt-1 mr-3 text-lg"></i>
+                                <div>
+                                    <strong class="text-gray-900 block">Garantie de 5 ans</strong>
+                                    <span class="text-gray-600 text-sm">La qualité de nos processus nous permet de vous offrir une garantie constructeur de 5 ans sur nos jantes carbone <a href="javascript:void(0)" onclick="showWarranty()" class="text-brand-accent hover:underline font-medium">(voir détails)</a>.</span>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="w-full md:w-1/2 bg-gray-50 rounded-3xl p-8 flex flex-col items-center justify-center border border-gray-100 shadow-inner">
+                        <div class="bg-white p-6 rounded-2xl shadow-md mb-6 w-48 h-48 flex items-center justify-center">
+                            <img src="./images/logo-dfs.jpg" alt="Logo DFS Wheels" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2250%22>⚙️</text></svg>';" class="max-w-full max-h-full object-contain">
+                        </div>
+                        <div class="text-center">
+                            <p class="text-sm text-gray-600 italic font-medium">"Nous utilisons un véritable processus de QC et des matériaux premium pour assurer consistance et sécurité."</p>
+                            <span class="text-xs font-black text-gray-900 uppercase tracking-widest mt-3 block">— Angler Wang, Fondateur de DFS</span>
+                        </div>
+                    </div>
+                </div>
             </div>
+        </section>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                <!-- Point 1 -->
-                <div class="bg-gray-800/40 p-8 rounded-2xl border border-gray-700 hover:border-brand-accent transition duration-300">
-                    <i class="fa-solid fa-arrows-left-right text-brand-accent text-3xl mb-4"></i>
-                    <h4 class="text-xl font-bold mb-3">1. La Révolution de la Largeur</h4>
-                    <p class="text-sm text-gray-400 mb-2"><strong class="text-white">La Règle des 105% (Aéro) :</strong> Nos jantes en 24/32mm permettent de respecter cette règle d'or. Une fois gonflé, un pneu de 28 ou 30mm reste plus fin que la jante (32mm ext). L'air s'écoule parfaitement en profil "U" sans créer de turbulences (fini l'effet "ampoule").</p>
-                    <p class="text-sm text-gray-400"><strong class="text-white">Rendement :</strong> Le volume d'air supérieur permet des pressions plus basses pour absorber les vibrations et baisser drastiquement la résistance au roulement.</p>
+        <!-- Section Catalogue -->
+        <main id="catalogue" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 border-b border-gray-300 pb-4 gap-4">
+                <div>
+                    <h3 class="text-3xl font-black text-gray-900">Notre Catalogue</h3>
+                    <p class="text-gray-500 mt-1 mb-3">Équipez votre machine avec ce qu'il se fait de mieux.</p>
+                    <div class="inline-flex items-center gap-2 bg-yellow-50 text-yellow-800 px-3 py-2 rounded-lg text-sm border border-yellow-200 shadow-sm">
+                        <i class="fa-solid fa-lightbulb text-brand-accent text-lg"></i>
+                        <span><strong>Astuce :</strong> Combos mixtes (ex: 50/60mm) possibles sur demande !</span>
+                    </div>
                 </div>
                 
-                <!-- Point 2 -->
-                <div class="bg-gray-800/40 p-8 rounded-2xl border border-gray-700 hover:border-brand-accent transition duration-300">
-                    <i class="fa-solid fa-bolt text-brand-accent text-3xl mb-4"></i>
-                    <h4 class="text-xl font-bold mb-3">2. Rayons Carbone</h4>
-                    <p class="text-sm text-gray-400 mb-2"><strong class="text-white">Transfert absolu :</strong> Le carbone ne se déforme pas. 100% de votre force (les Watts) est transmise au sol lors des sprints.</p>
-                    <p class="text-sm text-gray-400"><strong class="text-white">Avantage Aéro :</strong> Deux fois plus légers que l'acier, ils sont profilés comme des lames pour réduire la traînée.</p>
-                </div>
-
-                <!-- Point 3 -->
-                <div class="bg-gray-800/40 p-8 rounded-2xl border border-gray-700 hover:border-brand-accent transition duration-300">
-                    <i class="fa-solid fa-wind text-brand-accent text-3xl mb-4"></i>
-                    <h4 class="text-xl font-bold mb-3">3. Moins, c'est mieux</h4>
-                    <p class="text-sm text-gray-400 mb-2"><strong class="text-white">Le secret de la vitesse :</strong> Chaque rayon affronte le vent. Moins de rayons = friction massivement réduite.</p>
-                    <p class="text-sm text-gray-400"><strong class="text-white">Faisabilité :</strong> Seules des jantes ultra-rigides couplées à nos rayons carbone permettent un montage à 21 trous.</p>
-                </div>
-
-                <!-- Point 4 -->
-                <div class="bg-gray-800/40 p-8 rounded-2xl border border-gray-700 hover:border-brand-accent transition duration-300 lg:col-span-1">
-                    <i class="fa-solid fa-circle-notch text-brand-accent text-3xl mb-4"></i>
-                    <h4 class="text-xl font-bold mb-3">4. La Masse en Rotation</h4>
-                    <p class="text-sm text-gray-400 mb-2"><strong class="text-white">Le vrai poids :</strong> Alléger le centre est bien, mais alléger la périphérie (la jante) change radicalement le vélo.</p>
-                    <p class="text-sm text-gray-400"><strong class="text-white">Le bénéfice :</strong> Des relances foudroyantes en côte et une sensation d'inertie nulle sous la pédale.</p>
-                </div>
-
-                <!-- Point 5 -->
-                <div class="bg-gray-800/40 p-8 rounded-2xl border border-gray-700 hover:border-brand-accent transition duration-300 lg:col-span-2">
-                    <div class="flex flex-col md:flex-row gap-6 items-center">
-                        <div class="flex-shrink-0 hidden md:block">
-                            <i class="fa-solid fa-gear text-brand-accent text-6xl opacity-80"></i>
-                        </div>
-                        <div>
-                            <h4 class="text-xl font-bold mb-3">5. Le Cœur : Le Moyeu</h4>
-                            <p class="text-sm text-gray-400 mb-2"><strong class="text-white">Fluidité :</strong> L'utilisation de roulements céramiques réduit la friction mécanique. La vitesse se maintient beaucoup plus longtemps en roue libre.</p>
-                            <p class="text-sm text-gray-400"><strong class="text-white">Engagement :</strong> Mécanisme Ratchet SSF (5° à 8°). Au moment où vous appuyez, la roue réagit instantanément. C'est la signature de nos moyeux R2.</p>
-                        </div>
-                    </div>
+                <div class="flex gap-2 overflow-x-auto no-scrollbar w-full md:w-auto pb-2">
+                    <button onclick="filterCatalogue('Tout')" class="filter-btn active px-4 py-2 rounded-full border border-gray-300 text-sm font-bold whitespace-nowrap">Tout voir</button>
+                    <button onclick="filterCatalogue('Roues')" class="filter-btn px-4 py-2 rounded-full border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 text-sm font-bold whitespace-nowrap">Roues Carbone</button>
+                    <button onclick="filterCatalogue('Accessoires')" class="filter-btn px-4 py-2 rounded-full border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 text-sm font-bold whitespace-nowrap">Accessoires</button>
+                    <button onclick="filterCatalogue('Composants')" class="filter-btn px-4 py-2 rounded-full border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 text-sm font-bold whitespace-nowrap">Composants</button>
                 </div>
             </div>
             
-            <div class="mt-12 bg-brand-accent/10 border border-brand-accent/20 p-8 rounded-2xl text-center relative overflow-hidden shadow-lg">
-                <div class="absolute top-0 right-0 bg-brand-accent text-brand-main text-xs font-black px-4 py-1 rounded-bl-lg uppercase tracking-widest">Le Juste Prix</div>
-                <p class="text-brand-accent font-bold text-xl mb-3"><i class="fa-solid fa-medal mr-2"></i>Chez Karbòn Péi, nous refusons les compromis.</p>
-                <p class="text-gray-300 max-w-4xl mx-auto leading-relaxed">
-                    Toutes nos configurations cochent l'intégralité de ces 5 critères pour des performances de niveau professionnel. Sur le circuit traditionnel (grandes marques occidentales), une paire de roues réunissant ces 5 exigences technologiques vous coûterait <strong class="text-white text-xl border-b-2 border-brand-accent px-1">3 fois plus cher</strong>. Notre modèle en direct usine rend l'ultra-performance enfin accessible à La Réunion.
-                </p>
+            <div id="loading-message" class="text-center py-10">
+                <i class="fa-solid fa-circle-notch fa-spin text-4xl text-brand-accent mb-4"></i>
+                <p class="text-gray-500 font-medium">Chargement du catalogue...</p>
             </div>
-        </div>
-    </section>
+            
+            <div id="product-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"></div>
+        </main>
 
-    <!-- SECTION FOCUS TECHNOLOGIE R2 -->
-    <section id="technologie" class="bg-gray-50 py-20 border-t border-gray-200">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-16">
-                <span class="text-brand-accent font-bold tracking-wider text-sm uppercase mb-2 block">L'ingénierie au service de la vitesse</span>
-                <h3 class="text-3xl md:text-5xl font-black text-gray-900 mb-4">Le Moyeu R2 : <span class="text-brand-main">L'Excellence Mécanique</span></h3>
-                <p class="text-gray-500 max-w-3xl mx-auto italic">"Le R2 n'est pas juste un moyeu, c'est une pièce de précision qui équilibre fluidité, réactivité et durabilité extrême."</p>
+        <!-- SECTION GARANTIES -->
+        <section class="max-w-7xl mx-auto px-4 pb-16 pt-4 mb-8 border-b border-gray-200">
+            <div class="text-center mb-8">
+                <h2 class="text-2xl font-black text-gray-900 uppercase tracking-tight">Un SAV Local sans faille</h2>
+                <p class="text-gray-500 text-sm mt-1">Parce que votre sérénité n'a pas de prix.</p>
             </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 text-center max-w-4xl mx-auto">
+                
+                <div class="p-6 rounded-2xl bg-brand-main text-white shadow-lg transform md:-translate-y-2 relative overflow-hidden group">
+                    <div class="absolute top-0 right-0 bg-brand-accent text-brand-main text-[10px] font-black px-3 py-1 rounded-bl-lg uppercase tracking-widest">Premium</div>
+                    <div class="w-16 h-16 bg-white/10 rounded-full flex items-center justify-center mx-auto mb-4 backdrop-blur-sm group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-shield-halved text-2xl text-brand-accent"></i>
+                    </div>
+                    <h3 class="font-bold mb-2 uppercase tracking-wide">Garantie 5 Ans</h3>
+                    <p class="text-sm text-gray-300 font-medium mb-3">Nos jantes UXL & SUXL sont garanties 5 ans contre les défauts de fabrication avec un SAV géré à La Réunion.</p>
+                    <button onclick="showWarranty()" class="text-xs uppercase font-bold text-brand-accent hover:text-white transition-colors border-b border-brand-accent hover:border-white pb-0.5"><i class="fa-solid fa-file-contract mr-1"></i>Lire les conditions</button>
+                </div>
+                
+                <div class="p-6 rounded-2xl bg-white hover:shadow-xl transition-all duration-300 border border-gray-200 group transform md:-translate-y-2">
+                    <div class="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-house-medical text-2xl text-brand-main"></i>
+                    </div>
+                    <h3 class="font-bold text-gray-900 mb-2 uppercase tracking-wide">Crash Replacement</h3>
+                    <p class="text-sm text-gray-500 mb-3">En cas de chute ou de casse accidentelle, bénéficiez d'une jante de remplacement à tarif préférentiel (-30%).</p>
+                    <button onclick="showWarranty()" class="text-xs uppercase font-bold text-brand-main hover:text-brand-accent transition-colors border-b border-brand-main hover:border-brand-accent pb-0.5"><i class="fa-solid fa-file-contract mr-1"></i>En savoir plus</button>
+                </div>
+                
+            </div>
+        </section>
 
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-                <!-- Grille des caractéristiques -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-                        <i class="fa-solid fa-bolt-lightning text-brand-accent text-2xl mb-4"></i>
-                        <h4 class="font-bold text-gray-900 mb-2">Engagement Instantané</h4>
-                        <p class="text-sm text-gray-500 leading-relaxed">Système Ratchet SSF (45T/72T) avec un angle d'engagement de seulement 5° à 8°. Relances explosives et un son "supercar" unique.</p>
-                    </div>
-                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-                        <i class="fa-solid fa-gem text-brand-accent text-2xl mb-4"></i>
-                        <h4 class="font-bold text-gray-900 mb-2">Fluidité Céramique</h4>
-                        <p class="text-sm text-gray-500 leading-relaxed">Équipé de roulements céramiques EZO ou TPI avec joints à faible friction. Moins de résistance, plus de glisse, plus longtemps.</p>
-                    </div>
-                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-                        <i class="fa-solid fa-microchip text-brand-accent text-2xl mb-4"></i>
-                        <h4 class="font-bold text-gray-900 mb-2">Corps de roue libre Titane</h4>
-                        <p class="text-sm text-gray-500 leading-relaxed">Utilisation de l'alliage de Titane TC4. Ultra-résistant à la corrosion et aux marques de cassette (sprocket bites), tout en restant léger.</p>
-                    </div>
-                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-                        <i class="fa-solid fa-shield-check text-brand-accent text-2xl mb-4"></i>
-                        <h4 class="font-bold text-gray-900 mb-2">Garantie à Vie</h4>
-                        <p class="text-sm text-gray-500 leading-relaxed">Le corps du moyeu R2 bénéficie d'une garantie à vie (hors roulements). Sa conception permet une maintenance sans outils.</p>
-                    </div>
+        <!-- SECTION GUIDE PERFORMANCE -->
+        <section id="guide-performance" class="bg-brand-main text-white py-20 border-t border-gray-800">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-16">
+                    <span class="text-brand-accent font-bold tracking-wider text-sm uppercase mb-2 block">L'Anatomie de la vitesse</span>
+                    <h3 class="text-3xl md:text-5xl font-black mb-6">Comment choisir ses roues haut de gamme ?</h3>
+                    <p class="text-gray-400 max-w-3xl mx-auto text-lg">Changer de roues est la meilleure amélioration pour votre vélo. Mais le carbone ne fait pas tout. Voici les 5 critères qui séparent une roue standard d'une roue d'exception.</p>
                 </div>
 
-                <!-- Galerie Couleurs & Image Principale -->
-                <div class="relative">
-                    <div class="bg-white p-4 rounded-3xl shadow-xl border border-gray-100 overflow-hidden group">
-                        <img id="r2-main-view" src="./images/hubs/R2_rose.jpg" alt="Moyeu DFS R2" onerror="this.src='https://images.unsplash.com/photo-1593433551532-c94ca14926ca?auto=format&fit=crop&w=800&q=80'" class="w-full h-auto rounded-2xl transition-transform duration-700 group-hover:scale-105">
-                        
-                        <div class="mt-6">
-                            <p class="text-xs font-black text-gray-400 uppercase tracking-widest mb-4 text-center">Personnalisation : 5 coloris exclusifs</p>
-                            <div class="flex justify-center gap-3">
-                                <div class="text-center">
-                                    <button onclick="changeR2View('./images/hubs/R2_noir.jpg')" class="w-12 h-12 rounded-full border-2 border-brand-main bg-black shadow-inner focus:ring-2 focus:ring-brand-accent transition"></button>
-                                    <span class="block text-[8px] font-bold mt-1 uppercase">Noir</span>
-                                </div>
-                                <div class="text-center">
-                                    <button onclick="changeR2View('./images/hubs/R2_gris.jpg')" class="w-12 h-12 rounded-full border-2 border-gray-300 bg-gray-400 shadow-inner focus:ring-2 focus:ring-brand-accent transition"></button>
-                                    <span class="block text-[8px] font-bold mt-1 uppercase">Gris</span>
-                                </div>
-                                <div class="text-center">
-                                    <button onclick="changeR2View('./images/hubs/R2_bleu.jpg')" class="w-12 h-12 rounded-full border-2 border-blue-300 bg-blue-600 shadow-inner focus:ring-2 focus:ring-brand-accent transition"></button>
-                                    <span class="block text-[8px] font-bold mt-1 uppercase">Bleu</span>
-                                </div>
-                                <div class="text-center">
-                                    <button onclick="changeR2View('./images/hubs/R2_rose.jpg')" class="w-12 h-12 rounded-full border-2 border-pink-300 bg-pink-500 shadow-inner focus:ring-2 focus:ring-brand-accent transition"></button>
-                                    <span class="block text-[8px] font-bold mt-1 uppercase">Rose</span>
-                                </div>
-                                <div class="text-center">
-                                    <button onclick="changeR2View('./images/hubs/R2_vert.jpg')" class="w-12 h-12 rounded-full border-2 border-green-300 bg-green-500 shadow-inner focus:ring-2 focus:ring-brand-accent transition"></button>
-                                    <span class="block text-[8px] font-bold mt-1 uppercase">Vert</span>
-                                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <!-- Point 1 -->
+                    <div class="bg-gray-800/40 p-8 rounded-2xl border border-gray-700 hover:border-brand-accent transition duration-300">
+                        <i class="fa-solid fa-arrows-left-right text-brand-accent text-3xl mb-4"></i>
+                        <h4 class="text-xl font-bold mb-3">1. La Révolution de la Largeur</h4>
+                        <p class="text-sm text-gray-400 mb-2"><strong class="text-white">La Règle des 105% (Aéro) :</strong> Nos jantes en 24/32mm permettent de respecter cette règle d'or. Une fois gonflé, un pneu de 28 ou 30mm reste plus fin que la jante (32mm ext). L'air s'écoule parfaitement en profil "U" sans créer de turbulences (fini l'effet "ampoule").</p>
+                        <p class="text-sm text-gray-400"><strong class="text-white">Rendement :</strong> Le volume d'air supérieur permet des pressions plus basses pour absorber les vibrations et baisser drastiquement la résistance au roulement.</p>
+                    </div>
+                    
+                    <!-- Point 2 -->
+                    <div class="bg-gray-800/40 p-8 rounded-2xl border border-gray-700 hover:border-brand-accent transition duration-300">
+                        <i class="fa-solid fa-bolt text-brand-accent text-3xl mb-4"></i>
+                        <h4 class="text-xl font-bold mb-3">2. Rayons Carbone</h4>
+                        <p class="text-sm text-gray-400 mb-2"><strong class="text-white">Transfert absolu :</strong> Le carbone ne se déforme pas. 100% de votre force (les Watts) est transmise au sol lors des sprints.</p>
+                        <p class="text-sm text-gray-400"><strong class="text-white">Avantage Aéro :</strong> Deux fois plus légers que l'acier, ils sont profilés comme des lames pour réduire la traînée.</p>
+                    </div>
+
+                    <!-- Point 3 -->
+                    <div class="bg-gray-800/40 p-8 rounded-2xl border border-gray-700 hover:border-brand-accent transition duration-300">
+                        <i class="fa-solid fa-wind text-brand-accent text-3xl mb-4"></i>
+                        <h4 class="text-xl font-bold mb-3">3. Moins, c'est mieux</h4>
+                        <p class="text-sm text-gray-400 mb-2"><strong class="text-white">Le secret de la vitesse :</strong> Chaque rayon affronte le vent. Moins de rayons = friction massivement réduite.</p>
+                        <p class="text-sm text-gray-400"><strong class="text-white">Faisabilité :</strong> Seules des jantes ultra-rigides couplées à nos rayons carbone permettent un montage à 21 trous.</p>
+                    </div>
+
+                    <!-- Point 4 -->
+                    <div class="bg-gray-800/40 p-8 rounded-2xl border border-gray-700 hover:border-brand-accent transition duration-300 lg:col-span-1">
+                        <i class="fa-solid fa-circle-notch text-brand-accent text-3xl mb-4"></i>
+                        <h4 class="text-xl font-bold mb-3">4. La Masse en Rotation</h4>
+                        <p class="text-sm text-gray-400 mb-2"><strong class="text-white">Le vrai poids :</strong> Alléger le centre est bien, mais alléger la périphérie (la jante) change radicalement le vélo.</p>
+                        <p class="text-sm text-gray-400"><strong class="text-white">Le bénéfice :</strong> Des relances foudroyantes en côte et une sensation d'inertie nulle sous la pédale.</p>
+                    </div>
+
+                    <!-- Point 5 -->
+                    <div class="bg-gray-800/40 p-8 rounded-2xl border border-gray-700 hover:border-brand-accent transition duration-300 lg:col-span-2">
+                        <div class="flex flex-col md:flex-row gap-6 items-center">
+                            <div class="flex-shrink-0 hidden md:block">
+                                <i class="fa-solid fa-gear text-brand-accent text-6xl opacity-80"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-xl font-bold mb-3">5. Le Cœur : Le Moyeu</h4>
+                                <p class="text-sm text-gray-400 mb-2"><strong class="text-white">Fluidité :</strong> L'utilisation de roulements céramiques réduit la friction mécanique. La vitesse se maintient beaucoup plus longtemps en roue libre.</p>
+                                <p class="text-sm text-gray-400"><strong class="text-white">Engagement :</strong> Mécanisme Ratchet SSF (5° à 8°). Au moment où vous appuyez, la roue réagit instantanément. C'est la signature de nos moyeux R2.</p>
                             </div>
                         </div>
                     </div>
-                    <!-- Badge Flottant -->
-                    <div class="absolute -bottom-6 -left-6 bg-brand-main text-white p-6 rounded-2xl shadow-2xl hidden md:block border-l-4 border-brand-accent">
-                        <div class="text-3xl font-black text-brand-accent leading-none">74mm</div>
-                        <div class="text-[10px] uppercase font-bold tracking-widest text-gray-400 mt-1">Diamètre Flasque</div>
+                </div>
+                
+                <div class="mt-12 bg-brand-accent/10 border border-brand-accent/20 p-8 rounded-2xl text-center relative overflow-hidden shadow-lg">
+                    <div class="absolute top-0 right-0 bg-brand-accent text-brand-main text-xs font-black px-4 py-1 rounded-bl-lg uppercase tracking-widest">Le Juste Prix</div>
+                    <p class="text-brand-accent font-bold text-xl mb-3"><i class="fa-solid fa-medal mr-2"></i>Chez Karbòn Péi, nous refusons les compromis.</p>
+                    <p class="text-gray-300 max-w-4xl mx-auto leading-relaxed">
+                        Toutes nos configurations cochent l'intégralité de ces 5 critères pour des performances de niveau professionnel. Sur le circuit traditionnel (grandes marques occidentales), une paire de roues réunissant ces 5 exigences technologiques vous coûterait <strong class="text-white text-xl border-b-2 border-brand-accent px-1">3 fois plus cher</strong>. Notre modèle en direct usine rend l'ultra-performance enfin accessible à La Réunion.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION FOCUS TECHNOLOGIE R2 -->
+        <section id="technologie" class="bg-gray-50 py-20 border-t border-gray-200">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-16">
+                    <span class="text-brand-accent font-bold tracking-wider text-sm uppercase mb-2 block">L'ingénierie au service de la vitesse</span>
+                    <h3 class="text-3xl md:text-5xl font-black text-gray-900 mb-4">Le Moyeu R2 : <span class="text-brand-main">L'Excellence Mécanique</span></h3>
+                    <p class="text-gray-500 max-w-3xl mx-auto italic">"Le R2 n'est pas juste un moyeu, c'est une pièce de précision qui équilibre fluidité, réactivité et durabilité extrême."</p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+                    <!-- Grille des caractéristiques -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                            <i class="fa-solid fa-bolt-lightning text-brand-accent text-2xl mb-4"></i>
+                            <h4 class="font-bold text-gray-900 mb-2">Engagement Instantané</h4>
+                            <p class="text-sm text-gray-500 leading-relaxed">Système Ratchet SSF (45T/72T) avec un angle d'engagement de seulement 5° à 8°. Relances explosives et un son "supercar" unique.</p>
+                        </div>
+                        <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                            <i class="fa-solid fa-gem text-brand-accent text-2xl mb-4"></i>
+                            <h4 class="font-bold text-gray-900 mb-2">Fluidité Céramique</h4>
+                            <p class="text-sm text-gray-500 leading-relaxed">Équipé de roulements céramiques EZO ou TPI avec joints à faible friction. Moins de résistance, plus de glisse, plus longtemps.</p>
+                        </div>
+                        <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                            <i class="fa-solid fa-microchip text-brand-accent text-2xl mb-4"></i>
+                            <h4 class="font-bold text-gray-900 mb-2">Corps de roue libre Titane</h4>
+                            <p class="text-sm text-gray-500 leading-relaxed">Utilisation de l'alliage de Titane TC4. Ultra-résistant à la corrosion et aux marques de cassette (sprocket bites), tout en restant léger.</p>
+                        </div>
+                        <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                            <i class="fa-solid fa-shield-check text-brand-accent text-2xl mb-4"></i>
+                            <h4 class="font-bold text-gray-900 mb-2">Garantie à Vie</h4>
+                            <p class="text-sm text-gray-500 leading-relaxed">Le corps du moyeu R2 bénéficie d'une garantie à vie (hors roulements). Sa conception permet une maintenance sans outils.</p>
+                        </div>
+                    </div>
+
+                    <!-- Galerie Couleurs & Image Principale -->
+                    <div class="relative">
+                        <div class="bg-white p-4 rounded-3xl shadow-xl border border-gray-100 overflow-hidden group">
+                            <img id="r2-main-view" src="./images/hubs/R2_rose.jpg" alt="Moyeu DFS R2" onerror="this.src='https://images.unsplash.com/photo-1593433551532-c94ca14926ca?auto=format&fit=crop&w=800&q=80'" class="w-full h-auto rounded-2xl transition-transform duration-700 group-hover:scale-105">
+                            
+                            <div class="mt-6">
+                                <p class="text-xs font-black text-gray-400 uppercase tracking-widest mb-4 text-center">Personnalisation : 5 coloris exclusifs</p>
+                                <div class="flex justify-center gap-3">
+                                    <div class="text-center">
+                                        <button onclick="changeR2View('./images/hubs/R2_noir.jpg')" class="w-12 h-12 rounded-full border-2 border-brand-main bg-black shadow-inner focus:ring-2 focus:ring-brand-accent transition"></button>
+                                        <span class="block text-[8px] font-bold mt-1 uppercase">Noir</span>
+                                    </div>
+                                    <div class="text-center">
+                                        <button onclick="changeR2View('./images/hubs/R2_gris.jpg')" class="w-12 h-12 rounded-full border-2 border-gray-300 bg-gray-400 shadow-inner focus:ring-2 focus:ring-brand-accent transition"></button>
+                                        <span class="block text-[8px] font-bold mt-1 uppercase">Gris</span>
+                                    </div>
+                                    <div class="text-center">
+                                        <button onclick="changeR2View('./images/hubs/R2_bleu.jpg')" class="w-12 h-12 rounded-full border-2 border-blue-300 bg-blue-600 shadow-inner focus:ring-2 focus:ring-brand-accent transition"></button>
+                                        <span class="block text-[8px] font-bold mt-1 uppercase">Bleu</span>
+                                    </div>
+                                    <div class="text-center">
+                                        <button onclick="changeR2View('./images/hubs/R2_rose.jpg')" class="w-12 h-12 rounded-full border-2 border-pink-300 bg-pink-500 shadow-inner focus:ring-2 focus:ring-brand-accent transition"></button>
+                                        <span class="block text-[8px] font-bold mt-1 uppercase">Rose</span>
+                                    </div>
+                                    <div class="text-center">
+                                        <button onclick="changeR2View('./images/hubs/R2_vert.jpg')" class="w-12 h-12 rounded-full border-2 border-green-300 bg-green-500 shadow-inner focus:ring-2 focus:ring-brand-accent transition"></button>
+                                        <span class="block text-[8px] font-bold mt-1 uppercase">Vert</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Badge Flottant -->
+                        <div class="absolute -bottom-6 -left-6 bg-brand-main text-white p-6 rounded-2xl shadow-2xl hidden md:block border-l-4 border-brand-accent">
+                            <div class="text-3xl font-black text-brand-accent leading-none">74mm</div>
+                            <div class="text-[10px] uppercase font-bold tracking-widest text-gray-400 mt-1">Diamètre Flasque</div>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- Section Contact -->
-    <section id="contact" class="bg-white py-16 border-t border-gray-100">
-        <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-10">
-                <h2 class="text-3xl font-extrabold text-gray-900 mb-4">Une question ?</h2>
-                <p class="text-gray-500">Besoin d'un conseil ? Écrivez-nous directement.</p>
+        <!-- Section Contact -->
+        <section id="contact" class="bg-white py-16 border-t border-gray-100">
+            <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-10">
+                    <h2 class="text-3xl font-extrabold text-gray-900 mb-4">Une question ?</h2>
+                    <p class="text-gray-500">Besoin d'un conseil ? Écrivez-nous directement.</p>
+                </div>
+                
+                <form action="https://formspree.io/f/xzdjgqlg" method="POST" class="space-y-6 bg-gray-50 p-8 rounded-2xl shadow-sm border border-gray-100">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Votre nom</label>
+                            <input type="text" name="name" id="name" required class="w-full bg-white border border-gray-300 rounded-lg px-4 py-2.5">
+                        </div>
+                        <div>
+                            <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Votre adresse e-mail</label>
+                            <input type="email" name="email" id="email" required class="w-full bg-white border border-gray-300 rounded-lg px-4 py-2.5">
+                        </div>
+                    </div>
+                    <div>
+                        <label for="message" class="block text-sm font-medium text-gray-700 mb-1">Votre message</label>
+                        <textarea name="message" id="message" rows="4" required class="w-full bg-white border border-gray-300 rounded-lg px-4 py-2.5 resize-none"></textarea>
+                    </div>
+                    <button type="submit" class="w-full bg-brand-main text-white font-bold py-3 px-4 rounded-lg hover:bg-gray-800 transition-colors shadow-md">
+                        Envoyer le message
+                    </button>
+                </form>
+
+                <div class="mt-12 text-center">
+                    <a href="https://wa.me/262692693870" target="_blank" class="inline-flex items-center justify-center gap-4 bg-[#25D366] hover:bg-[#1da851] text-white py-4 px-8 rounded-2xl shadow-md transition transform hover:-translate-y-1">
+                        <i class="fa-brands fa-whatsapp text-3xl"></i>
+                        <div class="text-left">
+                            <span class="block font-black text-lg">Message WhatsApp</span>
+                            <span class="block text-sm opacity-90">Réponse très rapide</span>
+                        </div>
+                    </a>
+                </div>
             </div>
+        </section>
+
+    </div>
+    <!-- ========================================== -->
+    <!-- FIN VUE 1 -->
+    <!-- ========================================== -->
+
+
+    <!-- ========================================== -->
+    <!-- VUE 2 : PAGE DES GARANTIES & SAV (Cachée)  -->
+    <!-- ========================================== -->
+    <div id="view-warranty" class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 hidden">
+        
+        <button onclick="navigateTo('top')" class="text-brand-accent font-bold hover:text-brand-main transition-colors mb-8 flex items-center gap-2 bg-white px-4 py-2 rounded-lg border border-gray-200 shadow-sm">
+            <i class="fa-solid fa-arrow-left"></i> Retour à la boutique
+        </button>
+
+        <h1 class="text-4xl font-black text-gray-900 mb-2">Conditions de Garantie & SAV</h1>
+        <p class="text-gray-500 mb-10 text-lg border-b border-gray-200 pb-6">Le document de référence pour rouler l'esprit tranquille avec Karbòn Péi et DFS Wheels.</p>
+
+        <div class="space-y-8">
             
-            <form action="https://formspree.io/f/xzdjgqlg" method="POST" class="space-y-6 bg-gray-50 p-8 rounded-2xl shadow-sm border border-gray-100">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                        <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Votre nom</label>
-                        <input type="text" name="name" id="name" required class="w-full bg-white border border-gray-300 rounded-lg px-4 py-2.5">
-                    </div>
-                    <div>
-                        <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Votre adresse e-mail</label>
-                        <input type="email" name="email" id="email" required class="w-full bg-white border border-gray-300 rounded-lg px-4 py-2.5">
-                    </div>
+            <!-- SECTION 1 : GARANTIE STANDARD -->
+            <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-200 relative overflow-hidden">
+                <div class="absolute top-0 left-0 w-2 h-full bg-green-500"></div>
+                <h2 class="text-2xl font-black text-gray-900 mb-6 flex items-center gap-3">
+                    <i class="fa-solid fa-shield-halved text-green-500"></i> Garantie Standard (Défauts de fabrication)
+                </h2>
+                
+                <div class="mb-6">
+                    <h3 class="font-bold text-gray-800 mb-2 text-lg">Période de couverture :</h3>
+                    <ul class="space-y-2 text-gray-600">
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-check text-green-500"></i> Jantes Séries UXL & SUXL : <strong>5 ans</strong> (à partir de la date d'achat).</li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-check text-green-500"></i> Jantes Séries STD & XL : <strong>3 ans</strong> (à partir de la date d'achat).</li>
+                    </ul>
                 </div>
-                <div>
-                    <label for="message" class="block text-sm font-medium text-gray-700 mb-1">Votre message</label>
-                    <textarea name="message" id="message" rows="4" required class="w-full bg-white border border-gray-300 rounded-lg px-4 py-2.5 resize-none"></textarea>
-                </div>
-                <button type="submit" class="w-full bg-brand-main text-white font-bold py-3 px-4 rounded-lg hover:bg-gray-800 transition-colors shadow-md">
-                    Envoyer le message
-                </button>
-            </form>
 
-            <div class="mt-12 text-center">
-                <a href="https://wa.me/262692693870" target="_blank" class="inline-flex items-center justify-center gap-4 bg-[#25D366] hover:bg-[#1da851] text-white py-4 px-8 rounded-2xl shadow-md transition transform hover:-translate-y-1">
-                    <i class="fa-brands fa-whatsapp text-3xl"></i>
-                    <div class="text-left">
-                        <span class="block font-black text-lg">Message WhatsApp</span>
-                        <span class="block text-sm opacity-90">Réponse très rapide</span>
-                    </div>
-                </a>
+                <div class="bg-gray-50 p-5 rounded-xl border border-gray-200">
+                    <h3 class="font-bold text-gray-800 mb-3"><i class="fa-solid fa-toolbox text-brand-main mr-2"></i> Prise en charge locale par Karbòn Péi :</h3>
+                    <p class="text-sm text-gray-600 mb-4 leading-relaxed">
+                        La garantie couvre tout défaut de fabrication avéré de la structure en carbone (ex: délaminage interne, fissure spontanée sans choc). Si un défaut est confirmé par l'usine :
+                    </p>
+                    <ul class="space-y-3 text-sm text-gray-700">
+                        <li class="flex items-start gap-2">
+                            <span class="text-brand-accent mt-0.5"><i class="fa-solid fa-circle-arrow-right"></i></span>
+                            <span><strong>Les 30 premiers jours :</strong> L'usine DFS remplace la jante et couvre l'intégralité des frais de port. Karbòn Péi s'occupe du rayonnage. Vous ne payez rien.</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="text-brand-accent mt-0.5"><i class="fa-solid fa-circle-arrow-right"></i></span>
+                            <span><strong>Du 31ème jour à la fin de la garantie :</strong> L'usine DFS fournit la jante de remplacement. <em>Avantage exclusif :</em> Karbòn Péi prend à sa charge les frais de port internationaux (normalement dus par le client) et vous offre la main-d'œuvre locale pour remonter votre roue. <strong>Coût pour vous : 0€.</strong></span>
+                        </li>
+                    </ul>
+                    <p class="text-xs text-gray-500 mt-4 italic">*Si le modèle original n'est plus fabriqué, DFS procédera à une mise à niveau vers le dernier modèle équivalent sans frais supplémentaires.</p>
+                </div>
             </div>
-        </div>
-    </section>
 
-    <!-- Footer -->
-    <footer class="bg-brand-main text-gray-400 py-12">
+            <!-- SECTION 2 : CRASH REPLACEMENT -->
+            <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-200 relative overflow-hidden">
+                <div class="absolute top-0 left-0 w-2 h-full bg-brand-accent"></div>
+                <h2 class="text-2xl font-black text-gray-900 mb-4 flex items-center gap-3">
+                    <i class="fa-solid fa-house-medical text-brand-accent"></i> Programme "Crash Replacement"
+                </h2>
+                <p class="text-gray-600 mb-4 leading-relaxed">
+                    La garantie ne couvre pas les accidents, mais nous ne vous laissons pas tomber. En cas de dommage dû à une chute, un accident grave ou un impact (nid de poule sévère), vous bénéficiez du programme de remplacement.
+                </p>
+                <div class="bg-yellow-50 p-4 rounded-xl border border-yellow-200 text-sm text-yellow-800 mb-4">
+                    <ul class="space-y-2">
+                        <li><strong>1. Remise :</strong> DFS vous accorde une réduction unique ("one-time") de <strong>-30%</strong> sur l'achat d'une jante de remplacement neuve.</li>
+                        <li><strong>2. Frais annexes :</strong> Les frais d'expédition depuis l'usine, les taxes éventuelles, ainsi que la main d'œuvre locale pour le rayonnage restent à la charge du client.</li>
+                        <li><strong>3. Simplicité :</strong> L'envoi de photos détaillées des dommages suffit dans la majorité des cas. Vous n'avez pas à renvoyer la jante cassée en Asie.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- SECTION 3 : EXCLUSIONS -->
+            <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-200 relative overflow-hidden">
+                <div class="absolute top-0 left-0 w-2 h-full bg-red-500"></div>
+                <h2 class="text-2xl font-black text-gray-900 mb-6 flex items-center gap-3">
+                    <i class="fa-solid fa-triangle-exclamation text-red-500"></i> Exclusions et Annulation
+                </h2>
+                
+                <h3 class="font-bold text-gray-800 mb-3 text-sm uppercase tracking-wide">Ce qui n'est pas couvert :</h3>
+                <ul class="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm text-gray-600 mb-8">
+                    <li class="flex items-center gap-2"><i class="fa-solid fa-xmark text-red-400"></i> Dommages de chute (voir Crash Replacement).</li>
+                    <li class="flex items-center gap-2"><i class="fa-solid fa-xmark text-red-400"></i> Modifications non autorisées.</li>
+                    <li class="flex items-center gap-2"><i class="fa-solid fa-xmark text-red-400"></i> Usure normale (peinture, roulements, rayons).</li>
+                    <li class="flex items-center gap-2"><i class="fa-solid fa-xmark text-red-400"></i> Mauvais assemblage externe.</li>
+                    <li class="flex items-center gap-2"><i class="fa-solid fa-xmark text-red-400"></i> Utilisation de pièces incompatibles.</li>
+                    <li class="flex items-center gap-2"><i class="fa-solid fa-xmark text-red-400"></i> Négligence ou usage abusif.</li>
+                </ul>
+
+                <div class="bg-red-50 p-5 rounded-xl border border-red-200">
+                    <h3 class="font-bold text-red-800 mb-2"><i class="fa-solid fa-ban mr-1"></i> Règles d'or (Annulation de garantie)</h3>
+                    <p class="text-sm text-red-700 mb-3">Le non-respect des consignes suivantes annule immédiatement la garantie constructeur :</p>
+                    <ul class="space-y-2 text-sm text-red-900 font-medium">
+                        <li><strong>1. Pression des pneus :</strong> Ne dépassez <u>jamais</u> la pression maximale autorisée de <strong>120 PSI (8.2 Bars)</strong>.</li>
+                        <li><strong>2. Freinage sur jante :</strong> Pour les modèles à patins, utilisez <u>exclusivement</u> des patins de freins conçus pour les jantes en carbone.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="text-center pt-8 border-t border-gray-200">
+                <button onclick="navigateTo('contact')" class="bg-brand-main text-white font-bold py-3 px-8 rounded-full shadow-md hover:bg-gray-800 transition">
+                    Une question sur la garantie ? Contactez-nous
+                </button>
+            </div>
+
+        </div>
+    </div>
+    <!-- ========================================== -->
+    <!-- FIN VUE 2 -->
+    <!-- ========================================== -->
+
+
+    <!-- Footer (Toujours visible) -->
+    <footer class="bg-brand-main text-gray-400 py-12 border-t-4 border-brand-accent">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <div class="flex justify-center items-center gap-2 mb-4">
                 <i class="fa-solid fa-volcano text-brand-accent text-2xl"></i>
                 <h3 class="text-xl font-bold text-white">Karbòn Péi</h3>
             </div>
-            <p class="text-sm mb-6">&copy; 2026 Karbòn Péi. Micro-entreprise en cours d'immatriculation. TVA non applicable.</p>
+            <div class="flex justify-center gap-6 mb-6 text-sm">
+                <a href="javascript:void(0)" onclick="showWarranty()" class="hover:text-brand-accent transition">Conditions de Garantie</a>
+                <a href="javascript:void(0)" onclick="navigateTo('contact')" class="hover:text-brand-accent transition">Contact</a>
+            </div>
+            <p class="text-xs">&copy; 2026 Karbòn Péi. Micro-entreprise en cours d'immatriculation. TVA non applicable.</p>
         </div>
     </footer>
 
@@ -603,6 +728,30 @@
         let appliedPromo = null;
         let discountAmount = 0;
 
+        // NAVIGATION SINGLE PAGE (SPA)
+        function navigateTo(sectionId) {
+            document.getElementById('view-warranty').classList.add('hidden');
+            document.getElementById('view-home').classList.remove('hidden');
+            
+            if(sectionId && sectionId !== 'top') {
+                setTimeout(() => {
+                    const el = document.getElementById(sectionId);
+                    if(el) {
+                        const y = el.getBoundingClientRect().top + window.scrollY - 80;
+                        window.scrollTo({top: y, behavior: 'smooth'});
+                    }
+                }, 50);
+            } else {
+                window.scrollTo({top: 0, behavior: 'smooth'});
+            }
+        }
+
+        function showWarranty() {
+            document.getElementById('view-home').classList.add('hidden');
+            document.getElementById('view-warranty').classList.remove('hidden');
+            window.scrollTo({top: 0, behavior: 'smooth'});
+        }
+
         function toggleCart() {
             const panel = document.getElementById('cart-panel');
             const overlay = document.getElementById('cart-overlay');
@@ -761,11 +910,9 @@
                 originalTotalEl.classList.add('hidden');
             }
 
-            // Calcul du sous-total (après promo)
             let currentSubtotal = subtotal - discountAmount;
             subtotalEl.textContent = currentSubtotal;
 
-            // Calcul des frais selon le mode de paiement choisi
             const paymentMethod = document.querySelector('input[name="payment-method"]:checked')?.value || 'virement';
             let transactionFees = 0;
 
@@ -777,7 +924,6 @@
                 }
             }
             
-            // Arrondir les frais à 2 décimales
             transactionFees = Math.round(transactionFees * 100) / 100;
 
             if (transactionFees > 0) {
@@ -789,7 +935,6 @@
                 feeRow.classList.remove('flex');
             }
 
-            // Calcul du total final
             const finalTotal = currentSubtotal + transactionFees;
             finalTotalEl.textContent = finalTotal % 1 === 0 ? finalTotal : finalTotal.toFixed(2);
         }
@@ -858,7 +1003,6 @@
             
             const currentSubtotal = appliedPromo ? (total - discountAmount) : total;
 
-            // Calcul des frais pour la facture et le message
             const paymentMethodVal = document.querySelector('input[name="payment-method"]:checked')?.value || 'virement';
             let transactionFees = 0;
             let paymentMethodName = "Virement / Paylib / Espèces";
@@ -1204,18 +1348,17 @@
             const t32Option = document.getElementById('opt-t32');
             const colorR2Container = document.getElementById('color-r2-container');
 
-            // --- CORRECTION DU BUG : RESTRICION R2 + T32 ---
             if (moyeuSelect.value === 'R2') {
                 msgRecoR2.style.display = 'flex';
-                colorR2Container.classList.remove('hidden'); // Affiche le choix de couleur
-                t32Option.style.display = 'none'; // Masque complètement l'option
+                colorR2Container.classList.remove('hidden');
+                t32Option.style.display = 'none';
                 if (rayonSelect.value === 'T32') {
-                    rayonSelect.value = 'T33'; // Force le passage sur T33 si T32 était actif
+                    rayonSelect.value = 'T33';
                 }
             } else {
                 msgRecoR2.style.display = 'none';
-                colorR2Container.classList.add('hidden'); // Masque le choix de couleur
-                t32Option.style.display = ''; // Réaffiche l'option pour les autres moyeux
+                colorR2Container.classList.add('hidden');
+                t32Option.style.display = '';
             }
             
             const moyeuPrice = parseInt(moyeuSelect.options[moyeuSelect.selectedIndex].getAttribute('data-price')) || 0;
@@ -1230,9 +1373,6 @@
 
             const finalPrice = currentBasePrice + moyeuPrice + rayonPrice + finitionPrice;
             
-            // Le "baseComboWeight" (322g) correspond exactement à la configuration de base de ton Google Sheet :
-            // Moyeu RT240 (238g) + 40 Rayons T32 (40 * 2.1g = 84g) = 322g.
-            // Le calcul retire ce poids de base et ajoute le poids de la configuration sélectionnée.
             const baseComboWeight = 322; 
             const newComboWeight = hubWeight + (spokeCount * spokeWeight) + rimDiff + finitionWeight;
             const finalWeight = Math.round(currentBaseWeight - baseComboWeight + newComboWeight);
