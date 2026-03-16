@@ -413,10 +413,10 @@
                     <div class="mb-5">
                         <label class="block text-xs font-bold text-gray-500 mb-2">1. Moyeu (Hub)</label>
                         <select id="config-moyeu" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-3 text-sm font-semibold" onchange="updateConfig()">
-                            <option value="RT240" data-price="0" data-hub-weight="238" data-spokes="40" data-rim-diff="0">DFS RT240 (Jantes SUXL, 40 rayons)</option>
-                            <option value="R2" data-price="50" data-hub-weight="285" data-spokes="45" data-rim-diff="60" selected>DFS R2 Céramique (Jantes UXL, 45 rayons) [+50€]</option>
+                            <option value="RT240" data-price="0" data-hub-weight="238" data-spokes="40" data-rim-diff="0" selected>DFS RT240 (Jantes SUXL, 40 rayons)</option>
+                            <option value="R2" data-price="50" data-hub-weight="285" data-spokes="45" data-rim-diff="60">DFS R2 Céramique (Jantes UXL, 45 rayons) [+50€]</option>
                         </select>
-                        <div id="msg-reco-r2" class="mt-3 bg-yellow-50 border border-yellow-200 rounded-lg p-3 flex gap-3 text-sm text-yellow-800 transition-all duration-300">
+                        <div id="msg-reco-r2" class="mt-3 bg-yellow-50 border border-yellow-200 rounded-lg p-3 flex gap-3 text-sm text-yellow-800 transition-all duration-300 hidden">
                             <i class="fa-solid fa-medal text-brand-accent text-lg mt-0.5"></i>
                             <p><strong>Recommandé :</strong> Le moyeu R2 est plus robuste, possède de plus gros roulements et nécessite moins d'entretien.</p>
                         </div>
@@ -425,8 +425,8 @@
                     <div class="mb-5">
                         <label class="block text-xs font-bold text-gray-500 mb-2">2. Rayons (Spokes)</label>
                         <select id="config-rayons" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-3 text-sm font-semibold" onchange="updateConfig()">
-                            <option id="opt-t32" value="T32" data-price="0" data-spoke-weight="2.1">Carbone T32 (Aéro pur, 3.2 x 0.98mm - 2.1g)</option>
-                            <option value="T33" data-price="0" data-spoke-weight="3.2" selected>Carbone T33 (Rigidité brutale, 3.3 x 0.98mm - 3.2g)</option>
+                            <option id="opt-t32" value="T32" data-price="0" data-spoke-weight="2.1" selected>Carbone T32 (Aéro pur, 3.2 x 0.98mm - 2.1g)</option>
+                            <option value="T33" data-price="0" data-spoke-weight="3.2">Carbone T33 (Rigidité brutale, 3.3 x 0.98mm - 3.2g)</option>
                             <option value="T40" data-price="0" data-spoke-weight="3.3">Carbone T40 (Sprint massif, 4.0 x 0.95mm - 3.3g)</option>
                             <option value="T52" data-price="0" data-spoke-weight="5.2">Carbone T52 (Rigidité ultime, 5.2 x 0.95mm - 5.2g)</option>
                         </select>
@@ -988,6 +988,13 @@
             } else if (isWheelConfigurable) {
                 specJantesBox.style.display = 'block';
                 document.getElementById('configurator-section').style.display = 'block';
+                
+                // On réinitialise les sélecteurs sur la configuration de base pour que le poids/prix initial affiché corresponde au Google Sheet
+                document.getElementById('config-moyeu').value = 'RT240';
+                document.getElementById('config-rayons').value = 'T32';
+                document.getElementById('config-finition').value = 'UD Matte';
+                document.getElementById('config-rouelibre').value = 'Shimano HG';
+                
                 updateConfig(); 
             } else {
                 specJantesBox.style.display = 'block';
@@ -1065,6 +1072,10 @@
             const spokeWeight = parseFloat(rayonSelect.options[rayonSelect.selectedIndex].getAttribute('data-spoke-weight')) || 2.1;
 
             const finalPrice = currentBasePrice + moyeuPrice + rayonPrice + finitionPrice;
+            
+            // Le "baseComboWeight" (322g) correspond exactement à la configuration de base de ton Google Sheet :
+            // Moyeu RT240 (238g) + 40 Rayons T32 (40 * 2.1g = 84g) = 322g.
+            // Le calcul retire ce poids de base et ajoute le poids de la configuration sélectionnée.
             const baseComboWeight = 322; 
             const newComboWeight = hubWeight + (spokeCount * spokeWeight) + rimDiff + finitionWeight;
             const finalWeight = Math.round(currentBaseWeight - baseComboWeight + newComboWeight);
