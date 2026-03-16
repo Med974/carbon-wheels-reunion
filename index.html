@@ -511,7 +511,7 @@
                         <input type="radio" name="payment-method" value="card1x" class="mt-1 text-brand-accent focus:ring-brand-accent" onchange="updateCartUI()">
                         <div class="flex-grow">
                             <span class="block text-sm font-bold text-gray-900">Carte Bancaire (1x)</span>
-                            <span class="block text-xs text-gray-500 font-medium">Lien Stripe sécurisé (Frais de plateforme : +1.5% + 0.25€)</span>
+                            <span class="block text-xs text-gray-500 font-medium">Lien Stripe sécurisé (+1.5% + 0.25€)</span>
                         </div>
                         <i class="fa-brands fa-stripe text-2xl text-[#635BFF]"></i>
                     </label>
@@ -528,6 +528,15 @@
 
             <div class="mb-4">
                 <div id="promo-input-container" class="flex gap-2">
+                    <input type="text" id="promo-code" placeholder="Code promo" class="w-full border rounded-lg px-3 py-2 uppercase">
+                    <button onclick="applyPromoCode()" class="bg-brand-main text-white px-4 py-2 rounded-lg text-sm font-bold">Appliquer</button>
+                </div>
+                <div id="promo-active-container" class="hidden justify-between items-center bg-green-50 text-green-700 px-3 py-2 rounded-lg border border-green-200 mt-2">
+                    <span id="active-promo-name" class="text-sm font-bold"></span>
+                    <button onclick="removePromoCode()"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+            </div>
+
             <div class="flex justify-between items-end mb-2">
                 <span class="text-gray-500 font-bold uppercase text-xs">Sous-total</span>
                 <div class="text-right">
@@ -754,7 +763,6 @@
 
             // Calcul du total final
             const finalTotal = currentSubtotal + transactionFees;
-            // On affiche le total avec 2 décimales si ce n'est pas un nombre rond
             finalTotalEl.textContent = finalTotal % 1 === 0 ? finalTotal : finalTotal.toFixed(2);
         }
 
