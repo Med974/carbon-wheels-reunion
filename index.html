@@ -497,21 +497,54 @@
                 <textarea id="client-address" placeholder="Adresse postale complète *" class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm resize-none focus:ring-1 focus:ring-brand-main outline-none" rows="2"></textarea>
             </div>
 
-            <div class="mb-4">
-                <div id="promo-input-container" class="flex gap-2">
-                    <input type="text" id="promo-code" placeholder="Code promo" class="w-full border rounded-lg px-3 py-2 uppercase">
-                    <button onclick="applyPromoCode()" class="bg-brand-main text-white px-4 py-2 rounded-lg text-sm font-bold">Appliquer</button>
-                </div>
-                <div id="promo-active-container" class="hidden justify-between items-center bg-green-50 text-green-700 px-3 py-2 rounded-lg border border-green-200 mt-2">
-                    <span id="active-promo-name" class="text-sm font-bold"></span>
-                    <button onclick="removePromoCode()"><i class="fa-solid fa-xmark"></i></button>
+            <div id="payment-method-container" class="mb-5 bg-gray-50 p-3 rounded-lg border border-gray-200 hidden">
+                <label class="block text-xs font-bold text-gray-500 mb-3 uppercase tracking-wide"><i class="fa-solid fa-credit-card mr-1"></i> Mode de règlement</label>
+                <div class="space-y-2">
+                    <label class="flex items-start gap-3 cursor-pointer p-3 border border-green-200 rounded-md bg-green-50 hover:bg-green-100 transition">
+                        <input type="radio" name="payment-method" value="virement" class="mt-1 text-green-600 focus:ring-green-500" checked onchange="updateCartUI()">
+                        <div class="flex-grow">
+                            <span class="block text-sm font-bold text-gray-900">Virement / Paylib / Espèces</span>
+                            <span class="block text-xs text-green-700 font-medium">100% Gratuit et sans frais.</span>
+                        </div>
+                    </label>
+                    <label class="flex items-start gap-3 cursor-pointer p-3 border border-gray-200 rounded-md bg-white hover:bg-gray-50 transition">
+                        <input type="radio" name="payment-method" value="card1x" class="mt-1 text-brand-accent focus:ring-brand-accent" onchange="updateCartUI()">
+                        <div class="flex-grow">
+                            <span class="block text-sm font-bold text-gray-900">Carte Bancaire (1x)</span>
+                            <span class="block text-xs text-gray-500 font-medium">Lien Stripe sécurisé (Frais de plateforme : +1.5% + 0.25€)</span>
+                        </div>
+                        <i class="fa-brands fa-stripe text-2xl text-[#635BFF]"></i>
+                    </label>
+                    <label class="flex items-start gap-3 cursor-pointer p-3 border border-gray-200 rounded-md bg-white hover:bg-gray-50 transition">
+                        <input type="radio" name="payment-method" value="card3x" class="mt-1 text-brand-accent focus:ring-brand-accent" onchange="updateCartUI()">
+                        <div class="flex-grow">
+                            <span class="block text-sm font-bold text-gray-900">Paiement en 3x (Klarna)</span>
+                            <span class="block text-xs text-gray-500 font-medium">Frais de dossier applicables (+2.99% + 0.35€)</span>
+                        </div>
+                        <i class="fa-brands fa-cc-visa text-xl text-gray-400"></i>
+                    </label>
                 </div>
             </div>
-            <div class="flex justify-between items-end mb-6">
-                <span class="text-gray-500 font-bold uppercase text-xs">Total</span>
+
+            <div class="mb-4">
+                <div id="promo-input-container" class="flex gap-2">
+            <div class="flex justify-between items-end mb-2">
+                <span class="text-gray-500 font-bold uppercase text-xs">Sous-total</span>
                 <div class="text-right">
                     <span id="cart-original-total" class="text-sm text-gray-400 line-through hidden block">0 €</span>
-                    <span class="text-3xl font-black text-brand-main"><span id="cart-total">0</span> €</span>
+                    <span class="text-xl font-bold text-gray-700"><span id="cart-subtotal">0</span> €</span>
+                </div>
+            </div>
+            
+            <div id="fee-row" class="flex justify-between items-center mb-4 hidden border-b border-gray-100 pb-4">
+                <span class="text-orange-500 font-bold uppercase text-xs"><i class="fa-solid fa-triangle-exclamation mr-1"></i> Frais de transaction</span>
+                <span class="text-sm font-bold text-orange-500">+ <span id="cart-fees">0</span> €</span>
+            </div>
+
+            <div class="flex justify-between items-end mb-6">
+                <span class="text-gray-900 font-black uppercase text-sm">Total À Payer</span>
+                <div class="text-right">
+                    <span class="text-3xl font-black text-brand-main"><span id="cart-final-total">0</span> €</span>
                 </div>
             </div>
             
@@ -605,9 +638,15 @@
             const container = document.getElementById('cart-items-container');
             const emptyMsg = document.getElementById('empty-cart-msg');
             const badge = document.getElementById('cart-badge');
-            const totalEl = document.getElementById('cart-total');
+            
+            const subtotalEl = document.getElementById('cart-subtotal');
+            const finalTotalEl = document.getElementById('cart-final-total');
+            const feesEl = document.getElementById('cart-fees');
+            const feeRow = document.getElementById('fee-row');
+            
             const checkoutBtn = document.getElementById('checkout-btn');
             const billingContainer = document.getElementById('billing-info-container');
+            const paymentMethodContainer = document.getElementById('payment-method-container');
             const errorMsg = document.getElementById('checkout-error');
             
             if (errorMsg) errorMsg.classList.add('hidden');
@@ -619,23 +658,25 @@
                 checkoutBtn.disabled = false;
                 checkoutBtn.classList.remove('opacity-50', 'cursor-not-allowed');
                 billingContainer.classList.remove('hidden');
+                paymentMethodContainer.classList.remove('hidden');
             } else {
                 badge.classList.add('hidden');
                 emptyMsg.style.display = 'block';
                 checkoutBtn.disabled = true;
                 checkoutBtn.classList.add('opacity-50', 'cursor-not-allowed');
                 billingContainer.classList.add('hidden');
+                paymentMethodContainer.classList.add('hidden');
             }
 
             Array.from(container.children).forEach(child => {
                 if(child.id !== 'empty-cart-msg') child.remove();
             });
 
-            let total = 0;
+            let subtotal = 0;
             discountAmount = 0;
             
             cart.forEach(item => {
-                total += item.price;
+                subtotal += item.price;
                 if (appliedPromo === 'CCPIKARBON') {
                     if (!item.isAccessory) discountAmount += 50;
                     else discountAmount += Math.round(item.price * 0.05);
@@ -671,7 +712,7 @@
                 document.getElementById('active-promo-name').textContent = `${appliedPromo} (-${discountAmount}€)`;
                 
                 if (discountAmount > 0) {
-                    originalTotalEl.textContent = `${total} €`;
+                    originalTotalEl.textContent = `${subtotal} €`;
                     originalTotalEl.classList.remove('hidden');
                 } else {
                     originalTotalEl.classList.add('hidden');
@@ -683,7 +724,38 @@
                 originalTotalEl.classList.add('hidden');
             }
 
-            totalEl.textContent = total - discountAmount;
+            // Calcul du sous-total (après promo)
+            let currentSubtotal = subtotal - discountAmount;
+            subtotalEl.textContent = currentSubtotal;
+
+            // Calcul des frais selon le mode de paiement choisi
+            const paymentMethod = document.querySelector('input[name="payment-method"]:checked')?.value || 'virement';
+            let transactionFees = 0;
+
+            if (currentSubtotal > 0) {
+                if (paymentMethod === 'card1x') {
+                    transactionFees = (currentSubtotal * 0.015) + 0.25;
+                } else if (paymentMethod === 'card3x') {
+                    transactionFees = (currentSubtotal * 0.0299) + 0.35;
+                }
+            }
+            
+            // Arrondir les frais à 2 décimales
+            transactionFees = Math.round(transactionFees * 100) / 100;
+
+            if (transactionFees > 0) {
+                feesEl.textContent = transactionFees.toFixed(2);
+                feeRow.classList.remove('hidden');
+                feeRow.classList.add('flex');
+            } else {
+                feeRow.classList.add('hidden');
+                feeRow.classList.remove('flex');
+            }
+
+            // Calcul du total final
+            const finalTotal = currentSubtotal + transactionFees;
+            // On affiche le total avec 2 décimales si ce n'est pas un nombre rond
+            finalTotalEl.textContent = finalTotal % 1 === 0 ? finalTotal : finalTotal.toFixed(2);
         }
 
         function applyPromoCode() {
@@ -748,21 +820,49 @@
                 facturePrix.push(`${item.price} €\n `); 
             });
             
-            const finalTotal = appliedPromo ? (total - discountAmount) : total;
+            const currentSubtotal = appliedPromo ? (total - discountAmount) : total;
+
+            // Calcul des frais pour la facture et le message
+            const paymentMethodVal = document.querySelector('input[name="payment-method"]:checked')?.value || 'virement';
+            let transactionFees = 0;
+            let paymentMethodName = "Virement / Paylib / Espèces";
+
+            if (paymentMethodVal === 'card1x') {
+                transactionFees = (currentSubtotal * 0.015) + 0.25;
+                paymentMethodName = "Carte Bancaire (1x)";
+            } else if (paymentMethodVal === 'card3x') {
+                transactionFees = (currentSubtotal * 0.0299) + 0.35;
+                paymentMethodName = "Paiement en 3x (Klarna)";
+            }
+            transactionFees = Math.round(transactionFees * 100) / 100;
+            const finalTotal = currentSubtotal + transactionFees;
 
             if (appliedPromo) {
-                msg += `*TOTAL SANS REMISE : ${total} €*\n`;
+                msg += `*SOUS-TOTAL : ${total} €*\n`;
                 msg += `*CODE PROMO : ${appliedPromo}*\n`;
                 msg += `*REMISE : -${discountAmount} €*\n`;
-                msg += `*TOTAL À PAYER : ${finalTotal} €*\n\n`;
                 
                 factureNoms.push(`\nREMISE (Code : ${appliedPromo})`);
                 facturePrix.push(`\n-${discountAmount} €`);
             } else {
-                msg += `*TOTAL À PAYER : ${finalTotal} €*\n\n`;
+                msg += `*SOUS-TOTAL : ${currentSubtotal} €*\n`;
+            }
+
+            msg += `\n💳 *MODE DE RÈGLEMENT :*\n`;
+            msg += `- ${paymentMethodName}\n`;
+            if (transactionFees > 0) {
+                msg += `- Frais de transaction : +${transactionFees.toFixed(2)} €\n`;
+                factureNoms.push(`\nFrais de transaction (${paymentMethodName})`);
+                facturePrix.push(`\n+${transactionFees.toFixed(2)} €`);
             }
             
-            msg += `Comment pouvons-nous procéder pour le règlement (virement, espèces) ?\n\n`;
+            msg += `\n*TOTAL À PAYER : ${finalTotal % 1 === 0 ? finalTotal : finalTotal.toFixed(2)} €*\n\n`;
+            
+            if (paymentMethodVal === 'virement') {
+                msg += `Merci de m'envoyer le RIB/IBAN pour le règlement. 🙏\n\n`;
+            } else {
+                msg += `Merci de m'envoyer le lien Stripe sécurisé pour le paiement par carte. 🙏\n\n`;
+            }
 
             const orderData = {
                 date: new Date().toLocaleString('fr-FR', { timeZone: 'Indian/Reunion' }),
@@ -772,9 +872,9 @@
                 produits: produitsPourFichier.join(" + "), 
                 factureNoms: factureNoms.join("\n\n"), 
                 facturePrix: facturePrix.join("\n\n"), 
-                total: finalTotal,
+                total: finalTotal % 1 === 0 ? finalTotal : finalTotal.toFixed(2),
                 promo: appliedPromo || "Aucun",
-                statutPaiement: "En attente",
+                statutPaiement: "En attente via " + paymentMethodName,
                 statutLivraison: "À traiter"
             };
 
