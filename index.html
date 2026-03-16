@@ -421,6 +421,17 @@
                             <p><strong>Recommandé :</strong> Le moyeu R2 est plus robuste, possède de plus gros roulements et nécessite moins d'entretien.</p>
                         </div>
                     </div>
+
+                    <div id="color-r2-container" class="mb-5 hidden bg-gray-100 p-3 rounded-lg border border-gray-200">
+                        <label class="block text-xs font-bold text-gray-600 mb-2"><i class="fa-solid fa-palette text-brand-accent mr-1"></i> Couleur du Moyeu R2</label>
+                        <select id="config-couleur-r2" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm font-semibold">
+                            <option value="Gris" selected>Gris (Discret & Élégant)</option>
+                            <option value="Noir">Noir (Classique)</option>
+                            <option value="Bleu">Bleu (Anodisé)</option>
+                            <option value="Rose">Rose (Anodisé)</option>
+                            <option value="Vert">Vert (Anodisé)</option>
+                        </select>
+                    </div>
                     
                     <div class="mb-5">
                         <label class="block text-xs font-bold text-gray-500 mb-2">2. Rayons (Spokes)</label>
@@ -558,7 +569,13 @@
                 const rayon = document.getElementById('config-rayons').options[document.getElementById('config-rayons').selectedIndex].text.split('(')[0].trim();
                 const rouelibre = document.getElementById('config-rouelibre').value;
                 const finition = document.getElementById('config-finition').options[document.getElementById('config-finition').selectedIndex].text.split('(')[0].trim();
-                configText = `${moyeu} | ${rayon} | ${rouelibre} | ${finition}`;
+                
+                let couleurMoyeu = "";
+                if (document.getElementById('config-moyeu').value === 'R2') {
+                    couleurMoyeu = " (" + document.getElementById('config-couleur-r2').value + ")";
+                }
+
+                configText = `${moyeu}${couleurMoyeu} | ${rayon} | ${rouelibre} | ${finition}`;
             } else {
                 configText = isCurrentItemAccessory ? "Accessoire" : "Modèle Standard";
             }
@@ -994,6 +1011,7 @@
                 document.getElementById('config-rayons').value = 'T32';
                 document.getElementById('config-finition').value = 'UD Matte';
                 document.getElementById('config-rouelibre').value = 'Shimano HG';
+                document.getElementById('config-couleur-r2').value = 'Gris';
                 
                 updateConfig(); 
             } else {
@@ -1048,17 +1066,20 @@
             const finitionSelect = document.getElementById('config-finition');
             const msgRecoR2 = document.getElementById('msg-reco-r2');
             const t32Option = document.getElementById('opt-t32');
+            const colorR2Container = document.getElementById('color-r2-container');
 
             // --- CORRECTION DU BUG : RESTRICION R2 + T32 ---
             if (moyeuSelect.value === 'R2') {
                 msgRecoR2.style.display = 'flex';
-                t32Option.disabled = true; // Empêche la sélection
+                colorR2Container.classList.remove('hidden'); // Affiche le choix de couleur
+                t32Option.style.display = 'none'; // Masque complètement l'option
                 if (rayonSelect.value === 'T32') {
                     rayonSelect.value = 'T33'; // Force le passage sur T33 si T32 était actif
                 }
             } else {
                 msgRecoR2.style.display = 'none';
-                t32Option.disabled = false; // Réactive T32 pour les autres moyeux
+                colorR2Container.classList.add('hidden'); // Masque le choix de couleur
+                t32Option.style.display = ''; // Réaffiche l'option pour les autres moyeux
             }
             
             const moyeuPrice = parseInt(moyeuSelect.options[moyeuSelect.selectedIndex].getAttribute('data-price')) || 0;
