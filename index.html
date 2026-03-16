@@ -542,7 +542,7 @@
                 <p id="modal-desc" class="text-sm text-gray-500 mb-6"></p>
 
                 <div id="spec-jantes-box" class="bg-blue-50/50 p-4 rounded-xl border border-blue-100 mb-6 hidden">
-                    <div class="flex gap-6">
+                    <div class="flex flex-wrap gap-4 sm:gap-6">
                         <div>
                             <span class="block text-[10px] uppercase font-bold text-blue-400 tracking-wider mb-1">Largeur Interne</span>
                             <span id="modal-largeur-int" class="font-bold text-blue-900">24 mm</span>
@@ -554,6 +554,10 @@
                         <div>
                             <span class="block text-[10px] uppercase font-bold text-blue-400 tracking-wider mb-1">Hauteur</span>
                             <span id="modal-hauteur" class="font-bold text-blue-900"></span>
+                        </div>
+                        <div id="modal-poids-max-container">
+                            <span class="block text-[10px] uppercase font-bold text-blue-400 tracking-wider mb-1"><i class="fa-solid fa-triangle-exclamation text-orange-400 mr-1"></i>Poids Max</span>
+                            <span class="font-bold text-blue-900">90 kg (Cycliste)</span>
                         </div>
                     </div>
                 </div>
@@ -1276,6 +1280,7 @@
             document.getElementById('modal-largeur-ext').textContent = largeurExt;
 
             const specJantesBox = document.getElementById('spec-jantes-box');
+            const poidsMaxContainer = document.getElementById('modal-poids-max-container');
             
             if (isCurrentItemAccessory) {
                 specJantesBox.style.display = 'none';
@@ -1285,6 +1290,7 @@
             } else if (isWheelConfigurable) {
                 specJantesBox.style.display = 'block';
                 document.getElementById('configurator-section').style.display = 'block';
+                if(poidsMaxContainer) poidsMaxContainer.style.display = 'block';
                 
                 // On initialise sur la configuration recommandée (R2 + T33 + Gris)
                 document.getElementById('config-moyeu').value = 'R2';
@@ -1297,6 +1303,7 @@
             } else {
                 specJantesBox.style.display = 'block';
                 document.getElementById('configurator-section').style.display = 'none';
+                if(poidsMaxContainer) poidsMaxContainer.style.display = 'none';
                 document.getElementById('calc-price').textContent = currentBasePrice > 0 ? currentBasePrice : '--';
                 document.getElementById('calc-weight').textContent = currentBaseWeight > 0 ? currentBaseWeight : '--';
             }
