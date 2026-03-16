@@ -551,7 +551,7 @@
             const finalWeight = document.getElementById('calc-weight').textContent;
             
             let configText = "";
-            let imgUrl = document.getElementById('modal-image').src; // Corrigé ici
+            let imgUrl = document.getElementById('modal-image').src; 
 
             if (document.getElementById('configurator-section').style.display !== 'none') {
                 const moyeu = document.getElementById('config-moyeu').options[document.getElementById('config-moyeu').selectedIndex].text.split('(')[0].trim();
@@ -693,10 +693,9 @@
             const adresseClient = document.getElementById('client-address').value.trim();
             const errorMsg = document.getElementById('checkout-error');
 
-            // --- VÉRIFICATION DES CHAMPS OBLIGATOIRES ---
             if (!nomClient || !emailClient || !adresseClient) {
                 errorMsg.classList.remove('hidden');
-                return; // Bloque l'envoi de la commande
+                return; 
             } else {
                 errorMsg.classList.add('hidden');
             }
@@ -715,9 +714,9 @@
             
             msg += `🛒 *MA COMMANDE :*\n`;
             let total = 0;
-            let produitsPourFichier = []; // Pour le tableau de suivi (Google Sheets)
-            let factureNoms = []; // NOUVEAU : Pour la colonne de gauche du PDF
-            let facturePrix = []; // NOUVEAU : Pour la colonne de droite du PDF
+            let produitsPourFichier = []; 
+            let factureNoms = []; 
+            let facturePrix = []; 
             
             cart.forEach((item, index) => {
                 msg += `*${index + 1}. ${item.title}*\n`;
@@ -728,7 +727,6 @@
                 total += item.price;
                 produitsPourFichier.push(`${item.title} (${item.config})`);
                 
-                // Préparation pour le PDF (Mise en page alignée sur 2 lignes)
                 factureNoms.push(`• ${item.title}\n  ${item.config}`);
                 facturePrix.push(`${item.price} €\n `); 
             });
@@ -741,7 +739,6 @@
                 msg += `*REMISE : -${discountAmount} €*\n`;
                 msg += `*TOTAL À PAYER : ${finalTotal} €*\n\n`;
                 
-                // Ajout de la remise directement sur la facture PDF
                 factureNoms.push(`\nREMISE (Code : ${appliedPromo})`);
                 facturePrix.push(`\n-${discountAmount} €`);
             } else {
@@ -753,11 +750,11 @@
             const orderData = {
                 date: new Date().toLocaleString('fr-FR', { timeZone: 'Indian/Reunion' }),
                 nom: nomClient,
-                email: emailClient, // NOUVEAU : On isole l'e-mail
+                email: emailClient, 
                 adresse: adresseClient,
-                produits: produitsPourFichier.join(" + "), // Pour le tableau
-                factureNoms: factureNoms.join("\n\n"), // Pour le PDF
-                facturePrix: facturePrix.join("\n\n"), // Pour le PDF
+                produits: produitsPourFichier.join(" + "), 
+                factureNoms: factureNoms.join("\n\n"), 
+                facturePrix: facturePrix.join("\n\n"), 
                 total: finalTotal,
                 promo: appliedPromo || "Aucun",
                 statutPaiement: "En attente",
@@ -1019,14 +1016,13 @@
                 imgEl.classList.add('hidden');
                 vidEl.classList.remove('hidden');
                 vidEl.src = url;
-                vidEl.muted = false; // On active le son !
-                vidEl.volume = 0.5;  // Volume à 50% pour le confort
+                vidEl.muted = false; 
+                vidEl.volume = 0.5;  
                 
-                // Sécurité anti-blocage du navigateur
                 let playPromise = vidEl.play();
                 if (playPromise !== undefined) {
                     playPromise.catch(error => {
-                        console.log("Autoplay avec son bloqué, passage en muet.");
+                        console.log("Autoplay bloqué, passage en muet.");
                         vidEl.muted = true;
                         vidEl.play();
                     });
@@ -1039,18 +1035,23 @@
             }
         }
 
-        // --- FONCTION RÉPARÉE ---
         function updateConfig() {
             const moyeuSelect = document.getElementById('config-moyeu');
             const rayonSelect = document.getElementById('config-rayons');
             const finitionSelect = document.getElementById('config-finition');
             const msgRecoR2 = document.getElementById('msg-reco-r2');
+            const t32Option = document.getElementById('opt-t32');
 
-            // Affichage du message R2
+            // --- CORRECTION DU BUG : RESTRICION R2 + T32 ---
             if (moyeuSelect.value === 'R2') {
                 msgRecoR2.style.display = 'flex';
+                t32Option.disabled = true; // Empêche la sélection
+                if (rayonSelect.value === 'T32') {
+                    rayonSelect.value = 'T33'; // Force le passage sur T33 si T32 était actif
+                }
             } else {
                 msgRecoR2.style.display = 'none';
+                t32Option.disabled = false; // Réactive T32 pour les autres moyeux
             }
             
             const moyeuPrice = parseInt(moyeuSelect.options[moyeuSelect.selectedIndex].getAttribute('data-price')) || 0;
@@ -1072,7 +1073,6 @@
             document.getElementById('calc-weight').textContent = finalWeight > 0 ? finalWeight : '--';
         }
 
-        // Lancement au démarrage
         loadCatalogue();
     </script>
 </body>
