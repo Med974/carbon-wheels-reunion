@@ -581,7 +581,7 @@
                     <div id="wheel-config-options">
                         <div class="mb-5">
                             <label class="block text-xs font-bold text-gray-500 mb-2">1. Moyeu (Hub)</label>
-                            <select id="config-moyeu" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-3 text-sm font-semibold">
+                            <select id="config-moyeu" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-3 text-sm font-semibold" onchange="updateHubOptions(); updateConfig()">
                                 <option value="RT240" data-price="0" data-hub-weight="238" data-spokes="40">DFS RT240 (Ultra-léger)</option>
                                 <option value="R2" data-price="50" data-hub-weight="285" data-spokes="45" selected>DFS R2 Céramique [+50€]</option>
                             </select>
@@ -778,12 +778,6 @@
         let appliedPromo = null;
         let discountAmount = 0;
 
-        // Listener pour réagir au changement de moyeu
-        document.getElementById('config-moyeu').addEventListener('change', function() {
-            updateHubOptions();
-            updateConfig();
-        });
-
         // NAVIGATION SINGLE PAGE (SPA)
         function navigateTo(sectionId) {
             document.getElementById('view-warranty').classList.add('hidden');
@@ -929,9 +923,20 @@
             
             cart.forEach(item => {
                 subtotal += item.price;
+                
+                // LOGIQUE DU CODE PROMO MISE À JOUR
                 if (appliedPromo === 'CCPIKARBON') {
-                    if (!item.isAccessory) discountAmount += 50;
-                    else discountAmount += Math.round(item.price * 0.05);
+                    const titleLC = item.title.toLowerCase();
+                    // On identifie si c'est une roue à prix fixe (Bâtons ou Lenticulaire)
+                    const isSpecialWheel = titleLC.includes('bâton') || titleLC.includes('tri-spoke') || titleLC.includes('lenticulaire') || titleLC.includes('disc');
+                    
+                    if (!item.isAccessory && !isSpecialWheel) {
+                        // -50€ fixes UNIQUEMENT pour les paires de roues standards (Ghost)
+                        discountAmount += 50;
+                    } else {
+                        // -5% pour les Accessoires, Composants ET les Roues Spéciales
+                        discountAmount += Math.round(item.price * 0.05);
+                    }
                 }
                 
                 const div = document.createElement('div');
