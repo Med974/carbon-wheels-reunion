@@ -36,6 +36,12 @@
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         
+        /* Barre de défilement personnalisée pour la galerie d'images du modal */
+        .custom-scrollbar::-webkit-scrollbar { height: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        
         .filter-btn.active { background-color: #0f172a; color: white; border-color: #0f172a; }
         
         /* Animation du panier latéral */
@@ -528,7 +534,8 @@
                     <img id="modal-image" src="" alt="Produit" class="max-w-full max-h-full object-contain mix-blend-multiply transition-opacity duration-300 drop-shadow-xl">
                     <video id="modal-video" src="" class="hidden w-full h-full object-contain mix-blend-multiply rounded-xl shadow-sm" autoplay loop muted playsinline></video>
                 </div>
-                <div id="modal-gallery" class="flex gap-2 w-full overflow-x-auto no-scrollbar py-2">
+                <!-- Correction du défilement : Ajout de la custom-scrollbar et retrait du no-scrollbar -->
+                <div id="modal-gallery" class="flex gap-2 w-full overflow-x-auto custom-scrollbar py-3">
                     <!-- Miniatures injectées ici -->
                 </div>
             </div>
@@ -591,14 +598,11 @@
                             </div>
                         </div>
 
-                        <div id="color-r2-container" class="mb-5 bg-gray-100 p-3 rounded-lg border border-gray-200">
-                            <label class="block text-xs font-bold text-gray-600 mb-2"><i class="fa-solid fa-palette text-brand-accent mr-1"></i> Couleur du Moyeu R2</label>
-                            <select id="config-couleur-r2" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm font-semibold" onchange="updateConfig()">
-                                <option value="Gris" data-price="0" selected>Gris (Discret & Élégant)</option>
-                                <option value="Noir" data-price="50">Noir (Classique) [+50€]</option>
-                                <option value="Bleu" data-price="50">Bleu (Anodisé) [+50€]</option>
-                                <option value="Rose" data-price="50">Rose (Anodisé) [+50€]</option>
-                                <option value="Vert" data-price="50">Vert (Anodisé) [+50€]</option>
+                        <!-- Menu des couleurs dynamique selon le moyeu choisi -->
+                        <div id="color-hub-container" class="mb-5 bg-gray-100 p-3 rounded-lg border border-gray-200">
+                            <label class="block text-xs font-bold text-gray-600 mb-2"><i class="fa-solid fa-palette text-brand-accent mr-1"></i> Couleur du Moyeu</label>
+                            <select id="config-couleur-moyeu" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm font-semibold" onchange="updateConfig()">
+                                <!-- Rempli dynamiquement -->
                             </select>
                         </div>
 
@@ -646,8 +650,8 @@
                         <div>
                             <label class="block text-xs font-bold text-gray-500 mb-2">7. Finition</label>
                             <select id="config-finition" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-3 text-sm font-semibold" onchange="updateConfig()">
-                                <option value="UD Matte" data-weight="0" data-price="0" selected>UD Matte Carbone</option>
-                                <option value="Glossy Black" data-weight="0" data-price="0">Paintless Glossy Black</option>
+                                <option value="UD Matte" data-weight="0" data-price="0">UD Matte Carbone</option>
+                                <option value="Glossy Black" data-weight="0" data-price="0" selected>Paintless Glossy Black</option>
                             </select>
                         </div>
                     </div>
@@ -848,10 +852,8 @@
                     const rouelibre = document.getElementById('config-rouelibre').value;
                     const finition = document.getElementById('config-finition').options[document.getElementById('config-finition').selectedIndex].text.split('(')[0].trim();
                     
-                    let couleurMoyeu = "";
-                    if (document.getElementById('config-moyeu').value === 'R2') {
-                        couleurMoyeu = " (" + document.getElementById('config-couleur-r2').value + ")";
-                    }
+                    // Récupération de la couleur du moyeu
+                    let couleurMoyeu = " (" + document.getElementById('config-couleur-moyeu').value + ")";
 
                     configText = `${moyeu}${couleurMoyeu} | Jantes ${jante} | ${rayon} | Ratchet ${ratchet} | Roulements ${roulements} | ${rouelibre} | ${finition}`;
                 }
@@ -924,17 +926,13 @@
             cart.forEach(item => {
                 subtotal += item.price;
                 
-                // LOGIQUE DU CODE PROMO MISE À JOUR
                 if (appliedPromo === 'CCPIKARBON') {
                     const titleLC = item.title.toLowerCase();
-                    // On identifie si c'est une roue à prix fixe (Bâtons ou Lenticulaire)
                     const isSpecialWheel = titleLC.includes('bâton') || titleLC.includes('tri-spoke') || titleLC.includes('lenticulaire') || titleLC.includes('disc');
                     
                     if (!item.isAccessory && !isSpecialWheel) {
-                        // -50€ fixes UNIQUEMENT pour les paires de roues standards (Ghost)
                         discountAmount += 50;
                     } else {
-                        // -5% pour les Accessoires, Composants ET les Roues Spéciales
                         discountAmount += Math.round(item.price * 0.05);
                     }
                 }
@@ -1265,17 +1263,27 @@
             }
         }
 
-        // Fonction pour mettre à jour les choix de Ratchet et Roulements selon le moyeu
+        // Fonction pour mettre à jour les choix de Ratchet et Couleurs selon le moyeu
         function updateHubOptions() {
             const moyeuSelect = document.getElementById('config-moyeu');
+            const colorSelect = document.getElementById('config-couleur-moyeu');
             const ratchetSelect = document.getElementById('config-ratchet');
             const roulementsSelect = document.getElementById('config-roulements');
             
-            // On sauvegarde le choix actuel pour ne pas embêter le client
+            const currentColor = colorSelect.value;
             const currentRatchet = ratchetSelect.value;
             const currentRoulements = roulementsSelect.value;
 
             if (moyeuSelect.value === 'R2') {
+                // Couleurs R2
+                colorSelect.innerHTML = `
+                    <option value="Noir" data-price="0">Noir (Standard R2)</option>
+                    <option value="Gris" data-price="50">Gris [+50€]</option>
+                    <option value="Bleu" data-price="50">Bleu (Anodisé) [+50€]</option>
+                    <option value="Rose" data-price="50">Rose (Anodisé) [+50€]</option>
+                    <option value="Vert" data-price="50">Vert (Anodisé) [+50€]</option>
+                `;
+                // Options mécaniques R2
                 ratchetSelect.innerHTML = `
                     <option value="45T" data-price="0">45T (Standard R2)</option>
                     <option value="72T" data-price="50">72T (Haute réactivité) [+50€]</option>
@@ -1285,6 +1293,12 @@
                     <option value="Céramique TPI" data-price="80">Céramique TPI (Ultra-fluide) [+80€]</option>
                 `;
             } else { // RT240
+                // Couleurs RT240
+                colorSelect.innerHTML = `
+                    <option value="Argent" data-price="0">Argent (Standard RT240)</option>
+                    <option value="Noir" data-price="0">Noir</option>
+                `;
+                // Options mécaniques RT240
                 ratchetSelect.innerHTML = `
                     <option value="54T" data-price="0">54T (Inclus avec RT240)</option>
                 `;
@@ -1294,6 +1308,11 @@
             }
 
             // On restaure le choix si l'option existe toujours
+            if(Array.from(colorSelect.options).some(opt => opt.value === currentColor)) {
+                colorSelect.value = currentColor;
+            } else {
+                colorSelect.selectedIndex = 0; // Revient au Standard par défaut
+            }
             if(Array.from(ratchetSelect.options).some(opt => opt.value === currentRatchet)) {
                 ratchetSelect.value = currentRatchet;
             }
@@ -1418,15 +1437,16 @@
                     optUxl.textContent = 'UXL (Ultra-Light) - Renforcée [+30g]';
                 }
                 
-                // On initialise sur la configuration recommandée
+                // Initialisation des valeurs par défaut demandées !
                 document.getElementById('config-moyeu').value = 'R2';
                 document.getElementById('config-jante').value = 'SUXL';
                 document.getElementById('config-rayons').value = 'T33';
-                document.getElementById('config-finition').value = 'UD Matte';
+                document.getElementById('config-finition').value = 'Glossy Black'; 
                 document.getElementById('config-rouelibre').value = 'Shimano HG';
-                document.getElementById('config-couleur-r2').value = 'Gris';
                 
-                updateHubOptions(); // Initialise Ratchet et Roulements
+                updateHubOptions(); // Ça va initialiser les menus de couleur, de ratchet et de roulements
+                document.getElementById('config-couleur-moyeu').value = 'Noir'; // Standard R2 Noir
+                
                 updateConfig(); 
             } else {
                 specJantesBox.style.display = 'block';
@@ -1482,29 +1502,25 @@
             const ratchetSelect = document.getElementById('config-ratchet');
             const roulementsSelect = document.getElementById('config-roulements');
             const finitionSelect = document.getElementById('config-finition');
+            const colorSelect = document.getElementById('config-couleur-moyeu');
+            
             const msgRecoR2 = document.getElementById('msg-reco-r2');
             const t32Option = document.getElementById('opt-t32');
-            const colorR2Select = document.getElementById('config-couleur-r2');
-            const colorR2Container = document.getElementById('color-r2-container');
-
-            let colorPrice = 0;
 
             if (moyeuSelect.value === 'R2') {
                 msgRecoR2.style.display = 'flex';
-                colorR2Container.classList.remove('hidden');
                 t32Option.style.display = 'none';
                 if (rayonSelect.value === 'T32') {
                     rayonSelect.value = 'T33';
                 }
-                colorPrice = parseInt(colorR2Select.options[colorR2Select.selectedIndex].getAttribute('data-price')) || 0;
             } else {
                 msgRecoR2.style.display = 'none';
-                colorR2Container.classList.add('hidden');
                 t32Option.style.display = '';
             }
             
             const moyeuPrice = parseInt(moyeuSelect.options[moyeuSelect.selectedIndex].getAttribute('data-price')) || 0;
             const rayonPrice = parseInt(rayonSelect.options[rayonSelect.selectedIndex].getAttribute('data-price')) || 0;
+            const colorPrice = colorSelect.options[colorSelect.selectedIndex] ? (parseInt(colorSelect.options[colorSelect.selectedIndex].getAttribute('data-price')) || 0) : 0;
             const ratchetPrice = ratchetSelect.options[ratchetSelect.selectedIndex] ? (parseInt(ratchetSelect.options[ratchetSelect.selectedIndex].getAttribute('data-price')) || 0) : 0;
             const roulementsPrice = roulementsSelect.options[roulementsSelect.selectedIndex] ? (parseInt(roulementsSelect.options[roulementsSelect.selectedIndex].getAttribute('data-price')) || 0) : 0;
             const finitionPrice = parseInt(finitionSelect.options[finitionSelect.selectedIndex].getAttribute('data-price')) || 0;
