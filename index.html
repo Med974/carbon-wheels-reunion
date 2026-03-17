@@ -534,7 +534,6 @@
                     <img id="modal-image" src="" alt="Produit" class="max-w-full max-h-full object-contain mix-blend-multiply transition-opacity duration-300 drop-shadow-xl">
                     <video id="modal-video" src="" class="hidden w-full h-full object-contain mix-blend-multiply rounded-xl shadow-sm" autoplay loop muted playsinline></video>
                 </div>
-                <!-- Correction du défilement : Ajout de la custom-scrollbar et retrait du no-scrollbar -->
                 <div id="modal-gallery" class="flex gap-2 w-full overflow-x-auto custom-scrollbar py-3">
                     <!-- Miniatures injectées ici -->
                 </div>
@@ -542,7 +541,7 @@
             
             <div class="w-full md:w-1/2 p-6 md:p-8 flex flex-col">
                 <div class="flex flex-wrap gap-2 mb-3">
-                    <span id="modal-badge" class="text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide w-max"></span>
+                    <span id="modal-badge" class="text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide w-max transition-colors duration-300"></span>
                     <span id="modal-bestseller" class="hidden text-xs font-black px-3 py-1 rounded-full uppercase tracking-wide w-max bg-brand-accent text-brand-main shadow-sm border border-yellow-300">⭐ BEST-SELLER</span>
                 </div>
                 <h3 id="modal-title" class="text-3xl font-black text-gray-900 mb-2 leading-tight"></h3>
@@ -576,7 +575,7 @@
                     
                     <div id="config-manivelles-container" class="mb-5 hidden">
                         <label class="block text-xs font-bold text-gray-500 mb-2"><i class="fa-solid fa-ruler text-brand-accent mr-1"></i> Longueur des Manivelles</label>
-                        <select id="config-longueur-manivelle" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-3 text-sm font-semibold">
+                        <select id="config-longueur-manivelle" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-3 text-sm font-semibold" onchange="updateConfig()">
                             <option value="160mm">160 mm</option>
                             <option value="165mm">165 mm</option>
                             <option value="170mm" selected>170 mm</option>
@@ -624,7 +623,6 @@
                             </select>
                         </div>
 
-                        <!-- NOUVELLES OPTIONS : RATCHET & ROULEMENTS -->
                         <div class="mb-5">
                             <label class="block text-xs font-bold text-gray-500 mb-2">4. Système Ratchet (Engagement)</label>
                             <select id="config-ratchet" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-3 text-sm font-semibold" onchange="updateConfig()">
@@ -641,7 +639,7 @@
 
                         <div class="mb-5">
                             <label class="block text-xs font-bold text-gray-500 mb-2">6. Corps de roue libre</label>
-                            <select id="config-rouelibre" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-3 text-sm font-semibold">
+                            <select id="config-rouelibre" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-3 text-sm font-semibold" onchange="updateConfig()">
                                 <option value="Shimano HG" selected>Shimano HG (11/12v)</option>
                                 <option value="SRAM XDR">SRAM XDR (12v)</option>
                             </select>
@@ -776,7 +774,11 @@
         let globalCatalogue = [];
         let currentBasePrice = 0;
         let currentBaseWeight = 0;
+        
+        // Variables globales pour le suivi du statut dynamique
         let isCurrentItemAccessory = false;
+        let isCurrentItemWheelConfigurable = false;
+        let currentItemStatut = "";
         
         let cart = [];
         let appliedPromo = null;
@@ -852,7 +854,6 @@
                     const rouelibre = document.getElementById('config-rouelibre').value;
                     const finition = document.getElementById('config-finition').options[document.getElementById('config-finition').selectedIndex].text.split('(')[0].trim();
                     
-                    // Récupération de la couleur du moyeu
                     let couleurMoyeu = " (" + document.getElementById('config-couleur-moyeu').value + ")";
 
                     configText = `${moyeu}${couleurMoyeu} | Jantes ${jante} | ${rayon} | Ratchet ${ratchet} | Roulements ${roulements} | ${rouelibre} | ${finition}`;
@@ -1275,7 +1276,6 @@
             const currentRoulements = roulementsSelect.value;
 
             if (moyeuSelect.value === 'R2') {
-                // Couleurs R2
                 colorSelect.innerHTML = `
                     <option value="Noir" data-price="0">Noir (Standard R2)</option>
                     <option value="Gris" data-price="50">Gris [+50€]</option>
@@ -1283,7 +1283,6 @@
                     <option value="Rose" data-price="50">Rose (Anodisé) [+50€]</option>
                     <option value="Vert" data-price="50">Vert (Anodisé) [+50€]</option>
                 `;
-                // Options mécaniques R2
                 ratchetSelect.innerHTML = `
                     <option value="45T" data-price="0">45T (Standard R2)</option>
                     <option value="72T" data-price="50">72T (Haute réactivité) [+50€]</option>
@@ -1292,13 +1291,11 @@
                     <option value="Acier EZO" data-price="0">Acier EZO (Standard R2)</option>
                     <option value="Céramique TPI" data-price="80">Céramique TPI (Ultra-fluide) [+80€]</option>
                 `;
-            } else { // RT240
-                // Couleurs RT240
+            } else { 
                 colorSelect.innerHTML = `
                     <option value="Argent" data-price="0">Argent (Standard RT240)</option>
                     <option value="Noir" data-price="0">Noir</option>
                 `;
-                // Options mécaniques RT240
                 ratchetSelect.innerHTML = `
                     <option value="54T" data-price="0">54T (Inclus avec RT240)</option>
                 `;
@@ -1307,11 +1304,10 @@
                 `;
             }
 
-            // On restaure le choix si l'option existe toujours
             if(Array.from(colorSelect.options).some(opt => opt.value === currentColor)) {
                 colorSelect.value = currentColor;
             } else {
-                colorSelect.selectedIndex = 0; // Revient au Standard par défaut
+                colorSelect.selectedIndex = 0; 
             }
             if(Array.from(ratchetSelect.options).some(opt => opt.value === currentRatchet)) {
                 ratchetSelect.value = currentRatchet;
@@ -1321,39 +1317,48 @@
             }
         }
 
+        // Fonction pour mettre à jour l'affichage visuel du badge dynamique
+        function updateBadgeUI(isOriginalStatus) {
+            const badge = document.getElementById('modal-badge');
+            
+            // Si le produit n'a pas de statut dans le sheet, c'est forcément "Sur Commande"
+            let statusToDisplay = (isOriginalStatus && currentItemStatut !== "") ? currentItemStatut : "Sur Commande";
+            
+            const statutLC = statusToDisplay.toLowerCase();
+            
+            if (statutLC.includes('stock')) {
+                badge.className = 'text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide w-max bg-green-100 text-green-700 transition-colors duration-300';
+                badge.innerHTML = '<i class="fa-solid fa-check mr-1"></i> En Stock Réunion';
+            } else if (statutLC.includes('arrivage')) {
+                badge.className = 'text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide w-max bg-blue-100 text-blue-700 transition-colors duration-300';
+                badge.innerHTML = '<i class="fa-solid fa-truck-fast mr-1"></i> Arrivage en cours';
+            } else if (statutLC.includes('commande')) {
+                badge.className = 'text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide w-max bg-orange-100 text-orange-700 transition-colors duration-300';
+                badge.innerHTML = `<i class="fa-solid fa-plane mr-1"></i> Sur Commande`;
+            } else {
+                badge.className = 'text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide w-max bg-orange-100 text-orange-700 transition-colors duration-300';
+                badge.innerHTML = `<i class="fa-solid fa-plane mr-1"></i> ${statusToDisplay}`;
+            }
+        }
+
         function openModal(index) {
             const item = globalCatalogue[index];
             if(!item) return;
 
             currentBasePrice = parseInt(item.Prix) || 0;
             currentBaseWeight = parseInt(item.Poids) || 0;
+            currentItemStatut = item.Statut || "";
+            
+            const nomLC = item.Nom ? item.Nom.toLowerCase() : "";
             isCurrentItemAccessory = (item.Categorie && (item.Categorie.toLowerCase().includes('accessoire') || item.Categorie.toLowerCase().includes('composant')));
+            isCurrentItemWheelConfigurable = !isCurrentItemAccessory && !nomLC.includes('bâton') && !nomLC.includes('tri-spoke') && !nomLC.includes('lenticulaire') && !nomLC.includes('disc') && !nomLC.includes('manivelle');
 
             document.getElementById('modal-title').textContent = item.Nom;
             document.getElementById('modal-desc').textContent = item.Description || "Sélectionnez vos options pour ajouter ce produit au panier.";
             document.getElementById('modal-hauteur').textContent = item.Hauteur || '-';
 
-            const badge = document.getElementById('modal-badge');
-            if (item.Statut) {
-                const statutLC = item.Statut.toLowerCase();
-                if (statutLC.includes('stock')) {
-                    badge.className = 'text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide w-max bg-green-100 text-green-700';
-                    badge.innerHTML = '<i class="fa-solid fa-check mr-1"></i> En Stock Réunion';
-                } else if (statutLC.includes('arrivage')) {
-                    badge.className = 'text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide w-max bg-blue-100 text-blue-700';
-                    badge.innerHTML = '<i class="fa-solid fa-truck-fast mr-1"></i> Arrivage en cours';
-                } else {
-                    badge.className = 'text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide w-max bg-orange-100 text-orange-700';
-                    badge.innerHTML = `<i class="fa-solid fa-plane mr-1"></i> ${item.Statut}`;
-                }
-            } else {
-                badge.className = 'text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide w-max bg-orange-100 text-orange-700';
-                badge.innerHTML = `<i class="fa-solid fa-plane mr-1"></i> Sur Commande`;
-            }
-
             const bestsellerBadge = document.getElementById('modal-bestseller');
-            const nomForBadge = item.Nom ? item.Nom.toLowerCase() : '';
-            if (nomForBadge.includes('50')) {
+            if (nomLC.includes('50')) {
                 bestsellerBadge.classList.remove('hidden');
                 bestsellerBadge.classList.add('inline-flex', 'items-center');
             } else {
@@ -1384,9 +1389,6 @@
                 gallery.innerHTML = '';
                 gallery.classList.add('hidden');
             }
-
-            const nomLC = item.Nom.toLowerCase();
-            const isWheelConfigurable = !isCurrentItemAccessory && !nomLC.includes('bâton') && !nomLC.includes('tri-spoke') && !nomLC.includes('lenticulaire') && !nomLC.includes('disc');
             
             let largeurInt = "24 mm";
             let largeurExt = "32 mm";
@@ -1416,12 +1418,14 @@
                 
                 document.getElementById('calc-price').textContent = currentBasePrice > 0 ? currentBasePrice : '--';
                 document.getElementById('calc-weight').textContent = currentBaseWeight > 0 ? currentBaseWeight : '--';
+                updateBadgeUI(true);
             } else if (isCurrentItemAccessory) {
                 specJantesBox.style.display = 'none';
                 configuratorSection.style.display = 'none';
                 document.getElementById('calc-price').textContent = currentBasePrice > 0 ? currentBasePrice : '--';
                 document.getElementById('calc-weight').textContent = currentBaseWeight > 0 ? currentBaseWeight : '--';
-            } else if (isWheelConfigurable) {
+                updateBadgeUI(true);
+            } else if (isCurrentItemWheelConfigurable) {
                 specJantesBox.style.display = 'block';
                 configuratorSection.style.display = 'block';
                 if(wheelConfigOptions) wheelConfigOptions.style.display = 'block';
@@ -1437,15 +1441,15 @@
                     optUxl.textContent = 'UXL (Ultra-Light) - Renforcée [+30g]';
                 }
                 
-                // Initialisation des valeurs par défaut demandées !
+                // Initialisation de ta configuration par défaut (Celle qui est en arrivage)
                 document.getElementById('config-moyeu').value = 'R2';
                 document.getElementById('config-jante').value = 'SUXL';
                 document.getElementById('config-rayons').value = 'T33';
                 document.getElementById('config-finition').value = 'Glossy Black'; 
                 document.getElementById('config-rouelibre').value = 'Shimano HG';
                 
-                updateHubOptions(); // Ça va initialiser les menus de couleur, de ratchet et de roulements
-                document.getElementById('config-couleur-moyeu').value = 'Noir'; // Standard R2 Noir
+                updateHubOptions(); 
+                document.getElementById('config-couleur-moyeu').value = 'Noir'; 
                 
                 updateConfig(); 
             } else {
@@ -1454,6 +1458,7 @@
                 if(poidsMaxContainer) poidsMaxContainer.style.display = 'none';
                 document.getElementById('calc-price').textContent = currentBasePrice > 0 ? currentBasePrice : '--';
                 document.getElementById('calc-weight').textContent = currentBaseWeight > 0 ? currentBaseWeight : '--';
+                updateBadgeUI(true);
             }
 
             document.getElementById('product-modal').classList.remove('hidden');
@@ -1496,6 +1501,8 @@
         }
 
         function updateConfig() {
+            if (!isCurrentItemWheelConfigurable) return; // Ne pas exécuter pour les accessoires
+
             const moyeuSelect = document.getElementById('config-moyeu');
             const janteSelect = document.getElementById('config-jante');
             const rayonSelect = document.getElementById('config-rayons');
@@ -1503,6 +1510,7 @@
             const roulementsSelect = document.getElementById('config-roulements');
             const finitionSelect = document.getElementById('config-finition');
             const colorSelect = document.getElementById('config-couleur-moyeu');
+            const rouelibreSelect = document.getElementById('config-rouelibre');
             
             const msgRecoR2 = document.getElementById('msg-reco-r2');
             const t32Option = document.getElementById('opt-t32');
@@ -1540,11 +1548,25 @@
             document.getElementById('calc-price').textContent = finalPrice > 0 ? finalPrice : '--';
             document.getElementById('calc-weight').textContent = finalWeight > 0 ? finalWeight : '--';
             
-            // Mise à jour du poids limite selon la jante
             const poidsMaxSpan = document.getElementById('modal-poids-max');
             if (poidsMaxSpan) {
                 poidsMaxSpan.textContent = janteSelect.value === 'UXL' ? '120 kg' : '90 kg';
             }
+
+            // --- NOUVELLE LOGIQUE : DÉTECTION DE STOCK DYNAMIQUE ---
+            // On vérifie si les options sélectionnées correspondent EXACTEMENT à ton arrivage actuel
+            let isStockConfig = true;
+            if (moyeuSelect.value !== 'R2') isStockConfig = false;
+            if (colorSelect.value !== 'Noir') isStockConfig = false;
+            if (janteSelect.value !== 'SUXL') isStockConfig = false;
+            if (rayonSelect.value !== 'T33') isStockConfig = false;
+            if (ratchetSelect.value !== '45T') isStockConfig = false;
+            if (roulementsSelect.value !== 'Acier EZO') isStockConfig = false;
+            if (rouelibreSelect.value !== 'Shimano HG') isStockConfig = false;
+            if (finitionSelect.value !== 'Glossy Black') isStockConfig = false;
+
+            // On met à jour l'affichage du badge en fonction (Vrai = Affiche le statut du sheet, Faux = "Sur Commande")
+            updateBadgeUI(isStockConfig);
         }
 
         loadCatalogue();
