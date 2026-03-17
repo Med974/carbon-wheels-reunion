@@ -47,13 +47,13 @@
 
     <!-- En-tête (Toujours visible) -->
     <header class="bg-brand-main text-white sticky top-0 z-40 shadow-lg">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
-            <div class="flex items-center gap-3">
-                <!-- Nouveau Logo intégré ici -->
-                <img src="./images/logo_karbonpei.png" alt="Logo Karbòn Péi" class="w-10 h-10 object-contain rounded-full shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex justify-between items-center">
+            <div class="flex items-center gap-3 sm:gap-4">
+                <!-- Nouveau Logo agrandi ici -->
+                <img src="./images/logo_karbonpei.png" alt="Logo Karbòn Péi" class="w-14 h-14 sm:w-20 sm:h-20 object-contain rounded-full shadow-md border-2 border-brand-accent/20">
                 <div>
-                    <h1 class="text-2xl font-black tracking-widest cursor-pointer" onclick="navigateTo('top')">KARBÒN <span class="text-brand-accent">PÉI</span></h1>
-                    <p class="text-xs text-gray-400 font-medium tracking-wider uppercase hidden sm:block">Matériel Haute Performance - 974</p>
+                    <h1 class="text-2xl sm:text-3xl font-black tracking-widest cursor-pointer" onclick="navigateTo('top')">KARBÒN <span class="text-brand-accent">PÉI</span></h1>
+                    <p class="text-[10px] sm:text-xs text-gray-400 font-medium tracking-wider uppercase">Matériel Haute Performance - 974</p>
                 </div>
             </div>
             <div class="flex items-center gap-4 sm:gap-6">
@@ -64,7 +64,7 @@
                 <a href="javascript:void(0)" onclick="showWarranty()" class="hidden md:inline-block text-sm text-gray-300 hover:text-white transition font-medium">Garanties & SAV</a>
                 
                 <button onclick="toggleCart()" class="relative p-2 text-gray-300 hover:text-brand-accent transition">
-                    <i class="fa-solid fa-cart-shopping text-2xl"></i>
+                    <i class="fa-solid fa-cart-shopping text-2xl sm:text-3xl"></i>
                     <span id="cart-badge" class="absolute top-0 right-0 transform translate-x-1/4 -translate-y-1/4 bg-brand-accent text-brand-main text-xs font-black h-5 w-5 flex items-center justify-center rounded-full border-2 border-brand-main hidden">0</span>
                 </button>
             </div>
@@ -581,7 +581,7 @@
                     <div id="wheel-config-options">
                         <div class="mb-5">
                             <label class="block text-xs font-bold text-gray-500 mb-2">1. Moyeu (Hub)</label>
-                            <select id="config-moyeu" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-3 text-sm font-semibold" onchange="updateConfig()">
+                            <select id="config-moyeu" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-3 text-sm font-semibold">
                                 <option value="RT240" data-price="0" data-hub-weight="238" data-spokes="40">DFS RT240 (Ultra-léger)</option>
                                 <option value="R2" data-price="50" data-hub-weight="285" data-spokes="45" selected>DFS R2 Céramique [+50€]</option>
                             </select>
@@ -620,8 +620,23 @@
                             </select>
                         </div>
 
+                        <!-- NOUVELLES OPTIONS : RATCHET & ROULEMENTS -->
                         <div class="mb-5">
-                            <label class="block text-xs font-bold text-gray-500 mb-2">4. Corps de roue libre</label>
+                            <label class="block text-xs font-bold text-gray-500 mb-2">4. Système Ratchet (Engagement)</label>
+                            <select id="config-ratchet" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-3 text-sm font-semibold" onchange="updateConfig()">
+                                <!-- Rempli automatiquement par Javascript -->
+                            </select>
+                        </div>
+
+                        <div class="mb-5">
+                            <label class="block text-xs font-bold text-gray-500 mb-2">5. Roulements (Bearings)</label>
+                            <select id="config-roulements" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-3 text-sm font-semibold" onchange="updateConfig()">
+                                <!-- Rempli automatiquement par Javascript -->
+                            </select>
+                        </div>
+
+                        <div class="mb-5">
+                            <label class="block text-xs font-bold text-gray-500 mb-2">6. Corps de roue libre</label>
                             <select id="config-rouelibre" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-3 text-sm font-semibold">
                                 <option value="Shimano HG" selected>Shimano HG (11/12v)</option>
                                 <option value="SRAM XDR">SRAM XDR (12v)</option>
@@ -629,7 +644,7 @@
                         </div>
 
                         <div>
-                            <label class="block text-xs font-bold text-gray-500 mb-2">5. Finition</label>
+                            <label class="block text-xs font-bold text-gray-500 mb-2">7. Finition</label>
                             <select id="config-finition" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-3 text-sm font-semibold" onchange="updateConfig()">
                                 <option value="UD Matte" data-weight="0" data-price="0" selected>UD Matte Carbone</option>
                                 <option value="Glossy Black" data-weight="0" data-price="0">Paintless Glossy Black</option>
@@ -763,6 +778,12 @@
         let appliedPromo = null;
         let discountAmount = 0;
 
+        // Listener pour réagir au changement de moyeu
+        document.getElementById('config-moyeu').addEventListener('change', function() {
+            updateHubOptions();
+            updateConfig();
+        });
+
         // NAVIGATION SINGLE PAGE (SPA)
         function navigateTo(sectionId) {
             document.getElementById('view-warranty').classList.add('hidden');
@@ -828,6 +849,8 @@
                     const moyeu = document.getElementById('config-moyeu').options[document.getElementById('config-moyeu').selectedIndex].text.split('(')[0].trim();
                     const jante = document.getElementById('config-jante').value;
                     const rayon = document.getElementById('config-rayons').options[document.getElementById('config-rayons').selectedIndex].text.split('(')[0].trim();
+                    const ratchet = document.getElementById('config-ratchet').options[document.getElementById('config-ratchet').selectedIndex].text.split('(')[0].trim();
+                    const roulements = document.getElementById('config-roulements').options[document.getElementById('config-roulements').selectedIndex].text.split('(')[0].trim();
                     const rouelibre = document.getElementById('config-rouelibre').value;
                     const finition = document.getElementById('config-finition').options[document.getElementById('config-finition').selectedIndex].text.split('(')[0].trim();
                     
@@ -836,7 +859,7 @@
                         couleurMoyeu = " (" + document.getElementById('config-couleur-r2').value + ")";
                     }
 
-                    configText = `${moyeu}${couleurMoyeu} | Jantes ${jante} | ${rayon} | ${rouelibre} | ${finition}`;
+                    configText = `${moyeu}${couleurMoyeu} | Jantes ${jante} | ${rayon} | Ratchet ${ratchet} | Roulements ${roulements} | ${rouelibre} | ${finition}`;
                 }
             } else {
                 configText = isCurrentItemAccessory ? "Accessoire" : "Modèle Standard";
@@ -1237,6 +1260,43 @@
             }
         }
 
+        // Fonction pour mettre à jour les choix de Ratchet et Roulements selon le moyeu
+        function updateHubOptions() {
+            const moyeuSelect = document.getElementById('config-moyeu');
+            const ratchetSelect = document.getElementById('config-ratchet');
+            const roulementsSelect = document.getElementById('config-roulements');
+            
+            // On sauvegarde le choix actuel pour ne pas embêter le client
+            const currentRatchet = ratchetSelect.value;
+            const currentRoulements = roulementsSelect.value;
+
+            if (moyeuSelect.value === 'R2') {
+                ratchetSelect.innerHTML = `
+                    <option value="45T" data-price="0">45T (Standard R2)</option>
+                    <option value="72T" data-price="50">72T (Haute réactivité) [+50€]</option>
+                `;
+                roulementsSelect.innerHTML = `
+                    <option value="Acier EZO" data-price="0">Acier EZO (Standard R2)</option>
+                    <option value="Céramique TPI" data-price="80">Céramique TPI (Ultra-fluide) [+80€]</option>
+                `;
+            } else { // RT240
+                ratchetSelect.innerHTML = `
+                    <option value="54T" data-price="0">54T (Inclus avec RT240)</option>
+                `;
+                roulementsSelect.innerHTML = `
+                    <option value="Céramique SS" data-price="0">Céramique SS (Inclus avec RT240)</option>
+                `;
+            }
+
+            // On restaure le choix si l'option existe toujours
+            if(Array.from(ratchetSelect.options).some(opt => opt.value === currentRatchet)) {
+                ratchetSelect.value = currentRatchet;
+            }
+            if(Array.from(roulementsSelect.options).some(opt => opt.value === currentRoulements)) {
+                roulementsSelect.value = currentRoulements;
+            }
+        }
+
         function openModal(index) {
             const item = globalCatalogue[index];
             if(!item) return;
@@ -1361,6 +1421,7 @@
                 document.getElementById('config-rouelibre').value = 'Shimano HG';
                 document.getElementById('config-couleur-r2').value = 'Gris';
                 
+                updateHubOptions(); // Initialise Ratchet et Roulements
                 updateConfig(); 
             } else {
                 specJantesBox.style.display = 'block';
@@ -1413,6 +1474,8 @@
             const moyeuSelect = document.getElementById('config-moyeu');
             const janteSelect = document.getElementById('config-jante');
             const rayonSelect = document.getElementById('config-rayons');
+            const ratchetSelect = document.getElementById('config-ratchet');
+            const roulementsSelect = document.getElementById('config-roulements');
             const finitionSelect = document.getElementById('config-finition');
             const msgRecoR2 = document.getElementById('msg-reco-r2');
             const t32Option = document.getElementById('opt-t32');
@@ -1437,6 +1500,8 @@
             
             const moyeuPrice = parseInt(moyeuSelect.options[moyeuSelect.selectedIndex].getAttribute('data-price')) || 0;
             const rayonPrice = parseInt(rayonSelect.options[rayonSelect.selectedIndex].getAttribute('data-price')) || 0;
+            const ratchetPrice = ratchetSelect.options[ratchetSelect.selectedIndex] ? (parseInt(ratchetSelect.options[ratchetSelect.selectedIndex].getAttribute('data-price')) || 0) : 0;
+            const roulementsPrice = roulementsSelect.options[roulementsSelect.selectedIndex] ? (parseInt(roulementsSelect.options[roulementsSelect.selectedIndex].getAttribute('data-price')) || 0) : 0;
             const finitionPrice = parseInt(finitionSelect.options[finitionSelect.selectedIndex].getAttribute('data-price')) || 0;
             
             const hubWeight = parseInt(moyeuSelect.options[moyeuSelect.selectedIndex].getAttribute('data-hub-weight')) || 238;
@@ -1445,7 +1510,7 @@
             const finitionWeight = parseInt(finitionSelect.options[finitionSelect.selectedIndex].getAttribute('data-weight')) || 0;
             const spokeWeight = parseFloat(rayonSelect.options[rayonSelect.selectedIndex].getAttribute('data-spoke-weight')) || 2.1;
 
-            const finalPrice = currentBasePrice + moyeuPrice + rayonPrice + finitionPrice + colorPrice;
+            const finalPrice = currentBasePrice + moyeuPrice + rayonPrice + finitionPrice + colorPrice + ratchetPrice + roulementsPrice;
             
             const baseComboWeight = 322; 
             const newComboWeight = hubWeight + (spokeCount * spokeWeight) + rimDiff + finitionWeight;
