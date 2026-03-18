@@ -229,7 +229,7 @@
                         <i class="fa-solid fa-arrows-left-right text-brand-accent text-3xl mb-4"></i>
                         <h4 class="text-xl font-bold mb-3">1. La Révolution de la Largeur</h4>
                         <p class="text-sm text-gray-400 mb-2"><strong class="text-white">La Règle des 105% (Aéro) :</strong> Nos jantes en 24/32mm permettent de respecter cette règle d'or. Une fois gonflé, un pneu de 28 ou 30mm reste plus fin que la jante (32mm ext). L'air s'écoule parfaitement en profil "U" sans créer de turbulences (fini l'effet "ampoule").</p>
-                        <p class="text-sm text-gray-400"><strong class="text-white">Rendement :</strong> Le volume d'air supérieur permet des pressions plus basses pour absorber les vibrations et baisser drastiquement la résistance au roulement.</p>
+                        <p class="text-sm text-gray-400"><strong class="text-white">Rendement :</strong> Le volume d'air supérieur permet des pressions plus basses pour absorber vibrations et baisser drastiquement la résistance au roulement.</p>
                     </div>
                     
                     <!-- Point 2 -->
@@ -645,11 +645,19 @@
                             </select>
                         </div>
 
-                        <div>
+                        <div class="mb-5">
                             <label class="block text-xs font-bold text-gray-500 mb-2">7. Finition</label>
                             <select id="config-finition" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-3 text-sm font-semibold" onchange="updateConfig()">
                                 <option value="UD Matte" data-weight="0" data-price="0">UD Matte Carbone</option>
                                 <option value="Glossy Black" data-weight="0" data-price="0" selected>Paintless Glossy Black</option>
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 mb-2">8. Type de Freinage</label>
+                            <select id="config-freinage" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-3 text-sm font-semibold border-brand-accent shadow-sm" onchange="updateConfig()">
+                                <option value="Disques" selected>Freins à Disques (Centerlock)</option>
+                                <option value="Patins">Freins à Patins (Bande Haute Température)</option>
                             </select>
                         </div>
                     </div>
@@ -853,10 +861,11 @@
                     const roulements = document.getElementById('config-roulements').options[document.getElementById('config-roulements').selectedIndex].text.split('(')[0].trim();
                     const rouelibre = document.getElementById('config-rouelibre').value;
                     const finition = document.getElementById('config-finition').options[document.getElementById('config-finition').selectedIndex].text.split('(')[0].trim();
+                    const freinage = document.getElementById('config-freinage').options[document.getElementById('config-freinage').selectedIndex].text.split('(')[0].trim();
                     
                     let couleurMoyeu = " (" + document.getElementById('config-couleur-moyeu').value + ")";
 
-                    configText = `${moyeu}${couleurMoyeu} | Jantes ${jante} | ${rayon} | Ratchet ${ratchet} | Roulements ${roulements} | ${rouelibre} | ${finition}`;
+                    configText = `${moyeu}${couleurMoyeu} | Jantes ${jante} | ${rayon} | Ratchet ${ratchet} | Roulements ${roulements} | ${rouelibre} | ${finition} | ${freinage}`;
                 }
             } else {
                 configText = isCurrentItemAccessory ? "Accessoire" : "Modèle Standard";
@@ -1447,6 +1456,7 @@
                 document.getElementById('config-rayons').value = 'T33';
                 document.getElementById('config-finition').value = 'Glossy Black'; 
                 document.getElementById('config-rouelibre').value = 'Shimano HG';
+                document.getElementById('config-freinage').value = 'Disques';
                 
                 updateHubOptions(); 
                 document.getElementById('config-couleur-moyeu').value = 'Noir'; 
@@ -1511,6 +1521,7 @@
             const finitionSelect = document.getElementById('config-finition');
             const colorSelect = document.getElementById('config-couleur-moyeu');
             const rouelibreSelect = document.getElementById('config-rouelibre');
+            const freinageSelect = document.getElementById('config-freinage');
             
             const msgRecoR2 = document.getElementById('msg-reco-r2');
             const t32Option = document.getElementById('opt-t32');
@@ -1564,6 +1575,7 @@
             if (roulementsSelect.value !== 'Acier EZO') isStockConfig = false;
             if (rouelibreSelect.value !== 'Shimano HG') isStockConfig = false;
             if (finitionSelect.value !== 'Glossy Black') isStockConfig = false;
+            if (freinageSelect.value !== 'Disques') isStockConfig = false; 
 
             // On met à jour l'affichage du badge en fonction (Vrai = Affiche le statut du sheet, Faux = "Sur Commande")
             updateBadgeUI(isStockConfig);
