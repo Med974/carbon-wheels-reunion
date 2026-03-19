@@ -1276,7 +1276,7 @@
                     `;
                 }
 
-                let labelPrix = isAccessory ? 'Prix unitaire' : 'Prix (la paire)';
+                let labelPrix = (isAccessory || isFixedPriceWheel) ? 'Prix unitaire' : 'Prix (la paire)';
 
                 const cardHtml = `
                     <div onclick="openModal(${index})" class="wheel-card bg-white rounded-xl shadow-md overflow-hidden border border-gray-100 flex flex-col relative group cursor-pointer">
@@ -1396,7 +1396,8 @@
             isCurrentItemAccessory = (item.Categorie && (item.Categorie.toLowerCase().includes('accessoire') || item.Categorie.toLowerCase().includes('composant')));
             isCurrentItemWheelConfigurable = !isCurrentItemAccessory && !nomLC.includes('bâton') && !nomLC.includes('tri-spoke') && !nomLC.includes('lenticulaire') && !nomLC.includes('disc') && !nomLC.includes('manivelle');
 
-            document.getElementById('modal-price-label').textContent = isCurrentItemAccessory ? 'Prix unitaire' : 'Prix (la paire)';
+            const isSpecialWheel = nomLC.includes('bâton') || nomLC.includes('tri-spoke') || nomLC.includes('lenticulaire') || nomLC.includes('disc');
+            document.getElementById('modal-price-label').textContent = (isCurrentItemAccessory || isSpecialWheel) ? 'Prix unitaire' : 'Prix (la paire)';
 
             document.getElementById('modal-title').textContent = item.Nom;
             document.getElementById('modal-desc').textContent = item.Description || "Sélectionnez vos options pour ajouter ce produit au panier.";
