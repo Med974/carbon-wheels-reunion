@@ -51,6 +51,11 @@
 </head>
 <body class="bg-gray-100 text-gray-800 font-sans selection:bg-brand-accent selection:text-white relative">
 
+    <!-- Bannière d'urgence (LANCEMENT5) -->
+    <div class="bg-brand-accent text-brand-main font-bold text-center py-2 px-4 text-sm z-50 relative">
+        🚨 OFFRE DE LANCEMENT : Jusqu'à -80€ sur votre montage avec le code LANCEMENT5 (Limité aux 5 premières commandes !) 🚨
+    </div>
+
     <!-- En-tête (Toujours visible) -->
     <header class="bg-brand-main text-white sticky top-0 z-40 shadow-lg">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex justify-between items-center">
@@ -91,9 +96,23 @@
             <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center z-10">
                 <span class="bg-brand-accent text-brand-main text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide mb-4 inline-block shadow-lg">Expédition Réunion & France Métropolitaine</span>
                 <h2 class="text-4xl md:text-6xl font-black text-white mb-6 tracking-tight">Le meilleur du carbone. <br/><span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-accent to-yellow-200">Sans intermédiaire.</span></h2>
-                <p class="text-lg md:text-xl text-gray-300 max-w-2xl mx-auto mb-10">
+                <p class="text-lg md:text-xl text-gray-300 max-w-2xl mx-auto mb-6">
                     Des composants ultra-performants testés sur nos routes. Configurez vos roues sur-mesure avec une livraison garantie Zéro Frais de Douane.
                 </p>
+
+                <!-- L'argument massue du poids -->
+                <div class="bg-white/10 backdrop-blur-sm border border-brand-accent/30 rounded-xl p-4 mb-8 inline-block shadow-lg text-left">
+                    <div class="flex items-center gap-4">
+                        <div class="bg-brand-accent/20 p-3 rounded-full">
+                            <i class="fa-solid fa-feather-pointed text-brand-accent text-xl"></i>
+                        </div>
+                        <div>
+                            <p class="text-xs text-gray-300 uppercase tracking-wider font-bold">Le Tabou du Poids</p>
+                            <p class="font-black text-lg text-white">Série Ghost 50mm : <span class="text-brand-accent">&lt; 1000g la paire</span></p>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="flex justify-center gap-4">
                     <button onclick="navigateTo('catalogue')" class="bg-white text-brand-main hover:bg-gray-100 font-bold py-3 px-8 rounded-full shadow-xl transition duration-300 transform hover:-translate-y-1">
                         Voir la boutique
@@ -244,7 +263,7 @@
                     <div class="bg-gray-800/40 p-8 rounded-2xl border border-gray-700 hover:border-brand-accent transition duration-300">
                         <i class="fa-solid fa-wind text-brand-accent text-3xl mb-4"></i>
                         <h4 class="text-xl font-bold mb-3">3. Moins, c'est mieux</h4>
-                        <p class="text-sm text-gray-400 mb-2"><strong class="text-white">Le secret de la vitesse :</strong> Chaque rayon affronte le vent. Moins de rayons = friction massivement réduite.</p>
+                        <p class="text-sm text-gray-400 mb-2"><strong class="text-white">Le secret de la vitesse :</strong> Chaque rayon affronte le wind. Moins de rayons = friction massivement réduite.</p>
                         <p class="text-sm text-gray-400"><strong class="text-white">Faisabilité :</strong> Seules des jantes ultra-rigides couplées à nos rayons carbone permettent un montage à 21 trous.</p>
                     </div>
 
@@ -1021,7 +1040,7 @@
         function applyPromoCode() {
             const input = document.getElementById('promo-code');
             const code = input.value.trim().toUpperCase();
-            if (code === 'CCPIKARBON') {
+            if (code === 'CCPIKARBON' || code === 'LANCEMENT5') { // Code d'exemple rajouté
                 appliedPromo = code;
                 input.value = '';
                 updateCartUI();
