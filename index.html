@@ -51,11 +51,6 @@
 </head>
 <body class="bg-gray-100 text-gray-800 font-sans selection:bg-brand-accent selection:text-white relative">
 
-    <!-- Bannière d'urgence (LANCEMENT5) -->
-    <div class="bg-brand-accent text-brand-main font-bold text-center py-2 px-4 text-sm z-50 relative">
-        🚨 OFFRE DE LANCEMENT : Jusqu'à -80€ sur votre montage avec le code LANCEMENT5 (Limité aux 5 premières commandes !) 🚨
-    </div>
-
     <!-- En-tête (Toujours visible) -->
     <header class="bg-brand-main text-white sticky top-0 z-40 shadow-lg">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex justify-between items-center">
@@ -74,11 +69,7 @@
                 
                 <a href="javascript:void(0)" onclick="showWarranty()" class="hidden md:inline-block text-sm text-gray-300 hover:text-white transition font-medium">Garanties & SAV</a>
                 
-                <!-- Liens Réseaux Sociaux Navbar -->
-                <a href="https://www.instagram.com/karbonpei?igsh=d2MzMXhibHp2dWJq" target="_blank" class="hidden sm:inline-block text-gray-300 hover:text-brand-accent transition text-lg ml-2"><i class="fa-brands fa-instagram"></i></a>
-                <a href="https://www.facebook.com/share/1ArtcYroeF/" target="_blank" class="hidden sm:inline-block text-gray-300 hover:text-brand-accent transition text-lg"><i class="fa-brands fa-facebook"></i></a>
-
-                <button onclick="toggleCart()" class="relative p-2 text-gray-300 hover:text-brand-accent transition ml-2">
+                <button onclick="toggleCart()" class="relative p-2 text-gray-300 hover:text-brand-accent transition">
                     <i class="fa-solid fa-cart-shopping text-2xl sm:text-3xl"></i>
                     <span id="cart-badge" class="absolute top-0 right-0 transform translate-x-1/4 -translate-y-1/4 bg-brand-accent text-brand-main text-xs font-black h-5 w-5 flex items-center justify-center rounded-full border-2 border-brand-main hidden">0</span>
                 </button>
@@ -92,31 +83,17 @@
     <div id="view-home">
         
         <!-- Hero Section -->
-        <div class="relative bg-brand-main py-12 md:py-20 overflow-hidden">
+        <div class="relative bg-brand-main py-24 md:py-32 overflow-hidden">
             <div class="absolute inset-0">
                 <img src="./images/SL8.jpg" alt="Vélo Tarmac SL8" class="w-full h-full object-cover">
             </div>
             <div class="absolute inset-0 bg-gradient-to-t from-brand-main via-brand-main/80 to-brand-main/30"></div>
             <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center z-10">
                 <span class="bg-brand-accent text-brand-main text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide mb-4 inline-block shadow-lg">Expédition Réunion & France Métropolitaine</span>
-                <h2 class="text-4xl md:text-6xl font-black text-white mb-4 tracking-tight">Le meilleur du carbone. <br/><span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-accent to-yellow-200">Sans intermédiaire.</span></h2>
-                <p class="text-lg md:text-xl text-gray-300 max-w-2xl mx-auto mb-6">
+                <h2 class="text-4xl md:text-6xl font-black text-white mb-6 tracking-tight">Le meilleur du carbone. <br/><span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-accent to-yellow-200">Sans intermédiaire.</span></h2>
+                <p class="text-lg md:text-xl text-gray-300 max-w-2xl mx-auto mb-10">
                     Des composants ultra-performants testés sur nos routes. Configurez vos roues sur-mesure avec une livraison garantie Zéro Frais de Douane.
                 </p>
-
-                <!-- L'argument massue du poids -->
-                <div class="bg-white/10 backdrop-blur-sm border border-brand-accent/30 rounded-xl p-4 mb-6 inline-block shadow-lg text-left">
-                    <div class="flex items-center gap-4">
-                        <div class="bg-brand-accent/20 p-3 rounded-full">
-                            <i class="fa-solid fa-feather-pointed text-brand-accent text-xl"></i>
-                        </div>
-                        <div>
-                            <p class="text-xs text-gray-300 uppercase tracking-wider font-bold">Le Tabou du Poids</p>
-                            <p class="font-black text-lg text-white">Série Ghost 50mm : <span class="text-brand-accent">&lt; 1000g la paire</span></p>
-                        </div>
-                    </div>
-                </div>
-
                 <div class="flex justify-center gap-4">
                     <button onclick="navigateTo('catalogue')" class="bg-white text-brand-main hover:bg-gray-100 font-bold py-3 px-8 rounded-full shadow-xl transition duration-300 transform hover:-translate-y-1">
                         Voir la boutique
@@ -252,7 +229,7 @@
                         <i class="fa-solid fa-arrows-left-right text-brand-accent text-3xl mb-4"></i>
                         <h4 class="text-xl font-bold mb-3">1. La Révolution de la Largeur</h4>
                         <p class="text-sm text-gray-400 mb-2"><strong class="text-white">La Règle des 105% (Aéro) :</strong> Nos jantes en 24/32mm permettent de respecter cette règle d'or. Une fois gonflé, un pneu de 28 ou 30mm reste plus fin que la jante (32mm ext). L'air s'écoule parfaitement en profil "U" sans créer de turbulences (fini l'effet "ampoule").</p>
-                        <p class="text-sm text-gray-400"><strong class="text-white">Rendement :</strong> Le volume d'air supérieur permet des pressions plus basses pour absorber vibrations et baisser drastiquement la résistance au roulement.</p>
+                        <p class="text-sm text-gray-400"><strong class="text-white">Rendement :</strong> Le volume d'air supérieur permet des pressions plus basses pour absorber les vibrations et baisser drastiquement la résistance au roulement.</p>
                     </div>
                     
                     <!-- Point 2 -->
@@ -267,7 +244,7 @@
                     <div class="bg-gray-800/40 p-8 rounded-2xl border border-gray-700 hover:border-brand-accent transition duration-300">
                         <i class="fa-solid fa-wind text-brand-accent text-3xl mb-4"></i>
                         <h4 class="text-xl font-bold mb-3">3. Moins, c'est mieux</h4>
-                        <p class="text-sm text-gray-400 mb-2"><strong class="text-white">Le secret de la vitesse :</strong> Chaque rayon affronte le wind. Moins de rayons = friction massivement réduite.</p>
+                        <p class="text-sm text-gray-400 mb-2"><strong class="text-white">Le secret de la vitesse :</strong> Chaque rayon affronte le vent. Moins de rayons = friction massivement réduite.</p>
                         <p class="text-sm text-gray-400"><strong class="text-white">Faisabilité :</strong> Seules des jantes ultra-rigides couplées à nos rayons carbone permettent un montage à 21 trous.</p>
                     </div>
 
@@ -542,11 +519,6 @@
                 <a href="javascript:void(0)" onclick="showWarranty()" class="hover:text-brand-accent transition">Conditions de Garantie</a>
                 <a href="javascript:void(0)" onclick="navigateTo('contact')" class="hover:text-brand-accent transition">Contact</a>
             </div>
-            <div class="flex justify-center gap-6 text-xl mb-6">
-                <a href="https://www.instagram.com/karbonpei?igsh=d2MzMXhibHp2dWJq" target="_blank" class="text-gray-500 hover:text-brand-accent transition"><i class="fa-brands fa-instagram"></i></a>
-                <a href="https://www.facebook.com/share/1ArtcYroeF/" target="_blank" class="text-gray-500 hover:text-brand-accent transition"><i class="fa-brands fa-facebook"></i></a>
-                <a href="https://www.strava.com/clubs/2018327" target="_blank" class="text-gray-500 hover:text-brand-accent transition" title="Club Strava"><i class="fa-brands fa-strava"></i></a>
-            </div>
             <p class="text-xs">&copy; 2026 Karbòn Péi. Micro-entreprise en cours d'immatriculation. TVA non applicable.</p>
         </div>
     </footer>
@@ -673,19 +645,11 @@
                             </select>
                         </div>
 
-                        <div class="mb-5">
+                        <div>
                             <label class="block text-xs font-bold text-gray-500 mb-2">7. Finition</label>
                             <select id="config-finition" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-3 text-sm font-semibold" onchange="updateConfig()">
                                 <option value="UD Matte" data-weight="0" data-price="0">UD Matte Carbone</option>
                                 <option value="Glossy Black" data-weight="0" data-price="0" selected>Paintless Glossy Black</option>
-                            </select>
-                        </div>
-                        
-                        <div>
-                            <label class="block text-xs font-bold text-gray-500 mb-2">8. Type de Freinage</label>
-                            <select id="config-freinage" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-3 text-sm font-semibold border-brand-accent shadow-sm" onchange="updateConfig()">
-                                <option value="Disques" selected>Freins à Disques (Centerlock)</option>
-                                <option value="Patins">Freins à Patins (Bande Haute Température)</option>
                             </select>
                         </div>
                     </div>
@@ -889,11 +853,10 @@
                     const roulements = document.getElementById('config-roulements').options[document.getElementById('config-roulements').selectedIndex].text.split('(')[0].trim();
                     const rouelibre = document.getElementById('config-rouelibre').value;
                     const finition = document.getElementById('config-finition').options[document.getElementById('config-finition').selectedIndex].text.split('(')[0].trim();
-                    const freinage = document.getElementById('config-freinage').options[document.getElementById('config-freinage').selectedIndex].text.split('(')[0].trim();
                     
                     let couleurMoyeu = " (" + document.getElementById('config-couleur-moyeu').value + ")";
 
-                    configText = `${moyeu}${couleurMoyeu} | Jantes ${jante} | ${rayon} | Ratchet ${ratchet} | Roulements ${roulements} | ${rouelibre} | ${finition} | ${freinage}`;
+                    configText = `${moyeu}${couleurMoyeu} | Jantes ${jante} | ${rayon} | Ratchet ${ratchet} | Roulements ${roulements} | ${rouelibre} | ${finition}`;
                 }
             } else {
                 configText = isCurrentItemAccessory ? "Accessoire" : "Modèle Standard";
@@ -1049,7 +1012,7 @@
         function applyPromoCode() {
             const input = document.getElementById('promo-code');
             const code = input.value.trim().toUpperCase();
-            if (code === 'CCPIKARBON' || code === 'LANCEMENT5') { // Code d'exemple rajouté
+            if (code === 'CCPIKARBON') {
                 appliedPromo = code;
                 input.value = '';
                 updateCartUI();
@@ -1484,7 +1447,6 @@
                 document.getElementById('config-rayons').value = 'T33';
                 document.getElementById('config-finition').value = 'Glossy Black'; 
                 document.getElementById('config-rouelibre').value = 'Shimano HG';
-                document.getElementById('config-freinage').value = 'Disques';
                 
                 updateHubOptions(); 
                 document.getElementById('config-couleur-moyeu').value = 'Noir'; 
@@ -1549,7 +1511,6 @@
             const finitionSelect = document.getElementById('config-finition');
             const colorSelect = document.getElementById('config-couleur-moyeu');
             const rouelibreSelect = document.getElementById('config-rouelibre');
-            const freinageSelect = document.getElementById('config-freinage');
             
             const msgRecoR2 = document.getElementById('msg-reco-r2');
             const t32Option = document.getElementById('opt-t32');
@@ -1603,7 +1564,6 @@
             if (roulementsSelect.value !== 'Acier EZO') isStockConfig = false;
             if (rouelibreSelect.value !== 'Shimano HG') isStockConfig = false;
             if (finitionSelect.value !== 'Glossy Black') isStockConfig = false;
-            if (freinageSelect.value !== 'Disques') isStockConfig = false; 
 
             // On met à jour l'affichage du badge en fonction (Vrai = Affiche le statut du sheet, Faux = "Sur Commande")
             updateBadgeUI(isStockConfig);
