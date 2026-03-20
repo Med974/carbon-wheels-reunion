@@ -534,7 +534,6 @@
     <footer class="bg-brand-main text-gray-400 py-12 border-t-4 border-brand-accent">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <div class="flex justify-center items-center gap-2 mb-4">
-                <!-- Nouveau logo intégré ici dans le footer -->
                 <img src="./images/logo_karbonpei.png" alt="Logo Karbòn Péi" class="w-8 h-8 object-contain rounded-full shadow-sm">
                 <h3 class="text-xl font-bold text-white">Karbòn Péi</h3>
             </div>
@@ -713,27 +712,27 @@
     <div id="cart-overlay" class="fixed inset-0 bg-black/50 z-[110] hidden backdrop-blur-sm" onclick="toggleCart()"></div>
     <div id="cart-panel" class="cart-closed fixed inset-y-0 right-0 z-[120] w-full max-w-md bg-white shadow-2xl flex flex-col">
         
-        <!-- HEADER (Fixe en haut) -->
+        <!-- HEADER -->
         <div class="p-4 sm:p-6 bg-brand-main text-white flex justify-between items-center shrink-0">
             <h2 class="text-xl font-black flex items-center gap-2"><i class="fa-solid fa-cart-shopping text-brand-accent"></i> Mon Panier</h2>
             <button onclick="toggleCart()" class="text-gray-300 hover:text-white"><i class="fa-solid fa-xmark text-2xl px-2"></i></button>
         </div>
 
-        <!-- ZONE DÉFILANTE (Articles + Formulaire) -->
+        <!-- ZONE DÉFILANTE -->
         <div class="flex-grow overflow-y-auto bg-gray-50 flex flex-col">
             
-            <!-- Liste des articles -->
             <div id="cart-items-container" class="p-4 sm:p-6 flex flex-col gap-4 shrink-0">
                 <div id="empty-cart-msg" class="text-center text-gray-500 mt-10"><p>Votre panier est vide.</p></div>
             </div>
             
-            <!-- Zone Facturation & Paiement -->
             <div class="p-4 sm:p-6 bg-white border-t border-gray-200 mt-auto shrink-0">
                 
+                <!-- Ajout du champ Téléphone ici -->
                 <div id="billing-info-container" class="mb-5 bg-gray-50 p-3 rounded-lg border border-gray-200 hidden">
                     <label class="block text-xs font-bold text-gray-500 mb-2 uppercase tracking-wide"><i class="fa-solid fa-file-invoice mr-1"></i> Coordonnées de facturation</label>
                     <input type="text" id="client-name" placeholder="Nom et Prénom *" class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm mb-2 focus:ring-1 focus:ring-brand-main outline-none">
                     <input type="email" id="client-email" placeholder="Adresse e-mail *" class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm mb-2 focus:ring-1 focus:ring-brand-main outline-none">
+                    <input type="tel" id="client-phone" placeholder="Numéro de téléphone *" class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm mb-2 focus:ring-1 focus:ring-brand-main outline-none">
                     <textarea id="client-address" placeholder="Adresse postale complète *" class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm resize-none focus:ring-1 focus:ring-brand-main outline-none" rows="2"></textarea>
                 </div>
 
@@ -748,18 +747,18 @@
                             </div>
                         </label>
                         <label class="flex items-start gap-3 p-3 border border-gray-200 rounded-md bg-gray-100 opacity-60 cursor-not-allowed transition">
-                            <input type="radio" name="payment-method" value="card1x" class="mt-1" disabled>
+                            <input type="radio" name="payment-method" value="card1x" class="mt-1" disabled onchange="updateCartUI()">
                             <div class="flex-grow">
                                 <span class="block text-sm font-bold text-gray-500 line-through">Carte Bancaire (1x)</span>
-                                <span class="block text-xs text-brand-accent font-bold mt-0.5">⏳ Bientôt dispo (Attente SIRET)</span>
+                                <span class="block text-xs text-brand-accent font-bold mt-0.5">⏳ Bientôt dispo</span>
                             </div>
                             <i class="fa-brands fa-stripe text-2xl text-gray-400"></i>
                         </label>
                         <label class="flex items-start gap-3 p-3 border border-gray-200 rounded-md bg-gray-100 opacity-60 cursor-not-allowed transition">
-                            <input type="radio" name="payment-method" value="card3x" class="mt-1" disabled>
+                            <input type="radio" name="payment-method" value="card3x" class="mt-1" disabled onchange="updateCartUI()">
                             <div class="flex-grow">
                                 <span class="block text-sm font-bold text-gray-500 line-through">Paiement en 3x (Klarna)</span>
-                                <span class="block text-xs text-brand-accent font-bold mt-0.5">⏳ Bientôt dispo (Attente SIRET)</span>
+                                <span class="block text-xs text-brand-accent font-bold mt-0.5">⏳ Bientôt dispo</span>
                             </div>
                             <i class="fa-brands fa-cc-visa text-xl text-gray-400"></i>
                         </label>
@@ -797,25 +796,22 @@
                     </div>
                 </div>
                 
-                <div id="checkout-error" class="hidden text-red-500 text-xs font-bold mb-3 text-center bg-red-50 p-2 rounded-lg border border-red-200"><i class="fa-solid fa-circle-exclamation mr-1"></i> Veuillez remplir vos coordonnées (Nom, E-mail, Adresse) pour la facture.</div>
+                <div id="checkout-error" class="hidden text-red-500 text-xs font-bold mb-3 text-center bg-red-50 p-2 rounded-lg border border-red-200"><i class="fa-solid fa-circle-exclamation mr-1"></i> Veuillez remplir vos coordonnées (Nom, E-mail, Tél, Adresse).</div>
                 
-                <button onclick="checkoutWhatsApp()" id="checkout-btn" class="w-full bg-[#25D366] hover:bg-[#1da851] transition-colors text-white font-bold py-4 rounded-xl opacity-50 cursor-not-allowed shadow-md" disabled>Commander via WhatsApp</button>
+                <!-- Bouton dont le texte change dynamiquement -->
+                <button onclick="checkoutWhatsApp()" id="checkout-btn" class="w-full bg-[#25D366] hover:bg-[#1da851] transition-colors text-white font-bold py-4 rounded-xl opacity-50 cursor-not-allowed shadow-md" disabled>
+                    Transmettre ma réservation <i class="fa-brands fa-whatsapp ml-2 text-xl"></i>
+                </button>
             </div>
         </div>
     </div>
 
     <script>
-        // 🔴 ATTENTION SI LE CATALOGUE CHARGE DANS LE VIDE :
-        // C'est que tu as modifié ou mis à jour ton code sur Google Apps Script
-        // et que tu n'as pas généré de "Nouvelle version". 
-        // L'URL ci-dessous doit être celle d'un déploiement ACTIF.
         const API_URL = 'https://script.google.com/macros/s/AKfycbwi5uRAIjQ2vjbL7h9_LWAUzArqb4oNDNzHWqfM4dIkINVlY6v1Qv4no9V5ScitexSq/exec';
         
         let globalCatalogue = [];
         let currentBasePrice = 0;
         let currentBaseWeight = 0;
-        
-        // Variables globales pour le suivi du statut dynamique
         let isCurrentItemAccessory = false;
         let isCurrentItemWheelConfigurable = false;
         let currentItemStatut = "";
@@ -824,7 +820,6 @@
         let appliedPromo = null;
         let discountAmount = 0;
 
-        // NAVIGATION SINGLE PAGE (SPA)
         function navigateTo(sectionId) {
             document.getElementById('view-warranty').classList.add('hidden');
             document.getElementById('view-home').classList.remove('hidden');
@@ -941,6 +936,16 @@
             
             if (errorMsg) errorMsg.classList.add('hidden');
 
+            // --- NOUVEAUTÉ : Mise à jour du texte du bouton selon la méthode de paiement ---
+            const paymentMethod = document.querySelector('input[name="payment-method"]:checked')?.value || 'virement';
+            if (paymentMethod === 'virement') {
+                checkoutBtn.className = "w-full bg-[#25D366] hover:bg-[#1da851] transition-colors text-white font-bold py-4 rounded-xl shadow-md";
+                checkoutBtn.innerHTML = 'Transmettre ma réservation <i class="fa-brands fa-whatsapp ml-2 text-xl"></i>';
+            } else {
+                checkoutBtn.className = "w-full bg-brand-main hover:bg-gray-800 transition-colors text-white font-bold py-4 rounded-xl shadow-md";
+                checkoutBtn.innerHTML = 'Payer la commande <i class="fa-solid fa-lock ml-2 text-xl"></i>';
+            }
+
             if (cart.length > 0) {
                 badge.textContent = cart.length;
                 badge.classList.remove('hidden');
@@ -1024,7 +1029,6 @@
             let currentSubtotal = subtotal - discountAmount;
             subtotalEl.textContent = currentSubtotal;
 
-            const paymentMethod = document.querySelector('input[name="payment-method"]:checked')?.value || 'virement';
             let transactionFees = 0;
 
             if (currentSubtotal > 0) {
@@ -1066,34 +1070,31 @@
             updateCartUI();
         }
 
-        async function checkoutWhatsApp() {
+        function checkoutWhatsApp() {
             if (cart.length === 0) return;
             
             const nomClient = document.getElementById('client-name').value.trim();
             const emailClient = document.getElementById('client-email').value.trim();
+            const telClient = document.getElementById('client-phone').value.trim(); // Nouveau champ
             const adresseClient = document.getElementById('client-address').value.trim();
             const errorMsg = document.getElementById('checkout-error');
 
-            if (!nomClient || !emailClient || !adresseClient) {
+            if (!nomClient || !emailClient || !telClient || !adresseClient) {
                 errorMsg.classList.remove('hidden');
                 return; 
             } else {
                 errorMsg.classList.add('hidden');
             }
             
-            const btn = document.getElementById('checkout-btn');
-            const originalBtnText = btn.innerHTML;
-            btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin mr-2"></i> Préparation...';
-            btn.disabled = true;
-
-            let msg = "👋 Bonjour Karbòn Péi ! Je souhaite passer commande :\n\n";
+            let msg = "👋 Bonjour Karbòn Péi ! Je souhaite réserver le montage suivant :\n\n";
             
             msg += `👤 *CLIENT :*\n`;
             msg += `- Nom : ${nomClient}\n`;
             msg += `- E-mail : ${emailClient}\n`;
+            msg += `- Tél : ${telClient}\n`;
             msg += `- Adresse : ${adresseClient}\n\n`;
             
-            msg += `🛒 *MA COMMANDE :*\n`;
+            msg += `🛒 *MA CONFIGURATION :*\n`;
             let total = 0;
             let produitsPourFichier = []; 
             let factureNoms = []; 
@@ -1139,7 +1140,7 @@
                 msg += `*SOUS-TOTAL : ${currentSubtotal} €*\n`;
             }
 
-            msg += `\n💳 *MODE DE RÈGLEMENT :*\n`;
+            msg += `\n💳 *MODE DE RÈGLEMENT CHOISI :*\n`;
             msg += `- ${paymentMethodName}\n`;
             if (transactionFees > 0) {
                 msg += `- Frais de transaction : +${transactionFees.toFixed(2)} €\n`;
@@ -1147,10 +1148,10 @@
                 facturePrix.push(`\n+${transactionFees.toFixed(2)} €`);
             }
             
-            msg += `\n*TOTAL À PAYER : ${finalTotal % 1 === 0 ? finalTotal : finalTotal.toFixed(2)} €*\n\n`;
+            msg += `\n*TOTAL : ${finalTotal % 1 === 0 ? finalTotal : finalTotal.toFixed(2)} €*\n\n`;
             
             if (paymentMethodVal === 'virement') {
-                msg += `Merci de m'envoyer le RIB/IBAN pour le règlement. 🙏\n\n`;
+                msg += `Merci de m'envoyer le RIB/IBAN pour bloquer ma commande. 🙏\n\n`;
             } else {
                 msg += `Merci de m'envoyer le lien Stripe sécurisé pour le paiement par carte. 🙏\n\n`;
             }
@@ -1159,6 +1160,7 @@
                 date: new Date().toLocaleString('fr-FR', { timeZone: 'Indian/Reunion' }),
                 nom: nomClient,
                 email: emailClient, 
+                telephone: telClient, // Ajout du téléphone pour Apps Script
                 adresse: adresseClient,
                 produits: produitsPourFichier.join(" + "), 
                 factureNoms: factureNoms.join("\n\n"), 
@@ -1169,30 +1171,28 @@
                 statutLivraison: "À traiter"
             };
 
-            try {
-                await fetch(API_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                    body: JSON.stringify(orderData)
-                });
-            } catch (error) {
-                console.error("Erreur d'enregistrement réseau :", error);
-            }
+            // --- LA MAGIE EST ICI : "Fire and Forget" ---
+            // On envoie les données à Google mais on n'attend PAS sa réponse !
+            fetch(API_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: JSON.stringify(orderData)
+            }).catch(error => console.error("Erreur d'enregistrement Google :", error));
 
+            // On ouvre WhatsApp instantanément sans attendre !
             const encodedMsg = encodeURIComponent(msg);
             window.open(`https://wa.me/262692693870?text=${encodedMsg}`, '_blank');
 
+            // On nettoie le panier
             cart = [];
             appliedPromo = null;
             discountAmount = 0;
             document.getElementById('client-name').value = '';
             document.getElementById('client-email').value = '';
+            document.getElementById('client-phone').value = '';
             document.getElementById('client-address').value = '';
             updateCartUI();
             toggleCart();
-            
-            btn.innerHTML = originalBtnText;
-            btn.disabled = false;
         }
 
         async function loadCatalogue() {
@@ -1307,7 +1307,6 @@
             }
         }
 
-        // Fonction pour mettre à jour les choix de Ratchet et Couleurs selon le moyeu
         function updateHubOptions() {
             const moyeuSelect = document.getElementById('config-moyeu');
             const colorSelect = document.getElementById('config-couleur-moyeu');
@@ -1360,13 +1359,9 @@
             }
         }
 
-        // Fonction pour mettre à jour l'affichage visuel du badge dynamique
         function updateBadgeUI(isOriginalStatus) {
             const badge = document.getElementById('modal-badge');
-            
-            // Si le produit n'a pas de statut dans le sheet, c'est forcément "Sur Commande"
             let statusToDisplay = (isOriginalStatus && currentItemStatut !== "") ? currentItemStatut : "Sur Commande";
-            
             const statutLC = statusToDisplay.toLowerCase();
             
             if (statutLC.includes('stock')) {
@@ -1487,7 +1482,6 @@
                     optUxl.textContent = 'UXL (Ultra-Light) - Renforcée [+30g]';
                 }
                 
-                // Initialisation de ta configuration par défaut (Celle qui est en arrivage)
                 document.getElementById('config-moyeu').value = 'R2';
                 document.getElementById('config-jante').value = 'SUXL';
                 document.getElementById('config-rayons').value = 'T33';
@@ -1548,7 +1542,7 @@
         }
 
         function updateConfig() {
-            if (!isCurrentItemWheelConfigurable) return; // Ne pas exécuter pour les accessoires
+            if (!isCurrentItemWheelConfigurable) return; 
 
             const moyeuSelect = document.getElementById('config-moyeu');
             const janteSelect = document.getElementById('config-jante');
@@ -1601,8 +1595,6 @@
                 poidsMaxSpan.textContent = janteSelect.value === 'UXL' ? '120 kg' : '90 kg';
             }
 
-            // --- NOUVELLE LOGIQUE : DÉTECTION DE STOCK DYNAMIQUE ---
-            // On vérifie si les options sélectionnées correspondent EXACTEMENT à ton arrivage actuel
             let isStockConfig = true;
             if (moyeuSelect.value !== 'R2') isStockConfig = false;
             if (colorSelect.value !== 'Noir') isStockConfig = false;
@@ -1614,7 +1606,6 @@
             if (finitionSelect.value !== 'Glossy Black') isStockConfig = false;
             if (freinageSelect.value !== 'Disques') isStockConfig = false; 
 
-            // On met à jour l'affichage du badge en fonction (Vrai = Affiche le statut du sheet, Faux = "Sur Commande")
             updateBadgeUI(isStockConfig);
         }
 
