@@ -72,6 +72,7 @@
                 <a href="javascript:void(0)" onclick="navigateTo('guide-performance')" class="hidden lg:inline-block text-sm text-brand-accent font-bold hover:text-yellow-300 transition">Guide Performance</a>
                 <a href="javascript:void(0)" onclick="navigateTo('technologie')" class="hidden lg:inline-block text-sm text-gray-300 hover:text-white transition font-medium">Moyeu R2</a>
                 
+                <a href="javascript:void(0)" onclick="navigateTo('faq')" class="hidden xl:inline-block text-sm text-gray-300 hover:text-white transition font-medium">F.A.Q</a>
                 <a href="javascript:void(0)" onclick="showWarranty()" class="hidden md:inline-block text-sm text-gray-300 hover:text-white transition font-medium">Garanties & SAV</a>
                 
                 <!-- Liens Réseaux Sociaux Navbar -->
@@ -379,8 +380,167 @@
             </div>
         </section>
 
+        <!-- Section F.A.Q -->
+        <section id="faq" class="bg-white py-20 border-t border-gray-200">
+            <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-12">
+                    <span class="text-brand-accent font-bold tracking-wider text-sm uppercase mb-2 block">Transparence Totale</span>
+                    <h2 class="text-3xl md:text-4xl font-black text-gray-900 mb-4">Foire Aux Questions</h2>
+                    <p class="text-gray-500">Toutes les réponses pour configurer et commander l'esprit tranquille.</p>
+                </div>
+
+                <div class="space-y-10">
+                    
+                    <!-- Catégorie 1 -->
+                    <div>
+                        <h3 class="text-xl font-black text-gray-900 mb-4 flex items-center gap-2 border-b border-gray-100 pb-2"><i class="fa-solid fa-box text-brand-accent"></i> Expédition & Douane</h3>
+                        <div class="space-y-3">
+                            <details class="group bg-gray-50 rounded-xl shadow-sm border border-gray-100 overflow-hidden [&_summary::-webkit-details-marker]:hidden">
+                                <summary class="flex justify-between items-center font-bold cursor-pointer list-none p-5 text-gray-900 hover:text-brand-accent transition-colors">
+                                    <span class="pr-4">Vais-je devoir payer l'Octroi de Mer ou la Douane à l'arrivée (La Réunion) ?</span>
+                                    <span class="transition group-open:rotate-180 flex-shrink-0"><i class="fa-solid fa-chevron-down text-brand-accent"></i></span>
+                                </summary>
+                                <div class="text-gray-600 p-5 pt-0 text-sm leading-relaxed bg-gray-50">
+                                    Non, absolument aucune taxe surprise ! Le prix affiché sur la boutique est le prix final livré chez vous. Nous prenons en charge toutes les formalités douanières et l'Octroi de Mer.
+                                </div>
+                            </details>
+                            
+                            <details class="group bg-gray-50 rounded-xl shadow-sm border border-gray-100 overflow-hidden [&_summary::-webkit-details-marker]:hidden">
+                                <summary class="flex justify-between items-center font-bold cursor-pointer list-none p-5 text-gray-900 hover:text-brand-accent transition-colors">
+                                    <span class="pr-4">Livrez-vous en France Métropolitaine ? Y a-t-il des frais de douane ?</span>
+                                    <span class="transition group-open:rotate-180 flex-shrink-0"><i class="fa-solid fa-chevron-down text-brand-accent"></i></span>
+                                </summary>
+                                <div class="text-gray-600 p-5 pt-0 text-sm leading-relaxed bg-gray-50">
+                                    Oui, nous livrons partout en France Métropolitaine ! Nous utilisons une méthode d'expédition premium "DDP" (Rendu Droits Acquittés). Le colis transite par un hub européen où les taxes sont réglées par notre transporteur avant de vous être livré par DPD/Chronopost. Résultat : zéro douane, zéro TVA surprise à la réception.
+                                </div>
+                            </details>
+
+                            <details class="group bg-gray-50 rounded-xl shadow-sm border border-gray-100 overflow-hidden [&_summary::-webkit-details-marker]:hidden">
+                                <summary class="flex justify-between items-center font-bold cursor-pointer list-none p-5 text-gray-900 hover:text-brand-accent transition-colors">
+                                    <span class="pr-4">Quels sont les délais de livraison ?</span>
+                                    <span class="transition group-open:rotate-180 flex-shrink-0"><i class="fa-solid fa-chevron-down text-brand-accent"></i></span>
+                                </summary>
+                                <div class="text-gray-600 p-5 pt-0 text-sm leading-relaxed bg-gray-50">
+                                    Chez Karbòn Péi, nous ne faisons pas de "prêt-à-porter". Chaque paire est assemblée à la main et sur-mesure selon votre configuration. Il faut compter environ <strong>2 à 3 semaines</strong> pour la fabrication manuelle et le contrôle qualité strict en usine, puis <strong>3 à 4 semaines</strong> pour l'expédition sécurisée jusqu'à chez vous. Prévoyez donc un délai total de <strong>5 à 7 semaines</strong> pour recevoir votre arme absolue. La patience est le prix de l'excellence sur-mesure !
+                                </div>
+                            </details>
+                        </div>
+                    </div>
+
+                    <!-- Catégorie 2 -->
+                    <div>
+                        <h3 class="text-xl font-black text-gray-900 mb-4 flex items-center gap-2 border-b border-gray-100 pb-2"><i class="fa-solid fa-sliders text-brand-accent"></i> Le Configurateur Sur-Mesure</h3>
+                        <div class="space-y-3">
+                            <details class="group bg-gray-50 rounded-xl shadow-sm border border-gray-100 overflow-hidden [&_summary::-webkit-details-marker]:hidden">
+                                <summary class="flex justify-between items-center font-bold cursor-pointer list-none p-5 text-gray-900 hover:text-brand-accent transition-colors">
+                                    <span class="pr-4">Le configurateur propose 8 options, j'ai peur de me tromper dans mes choix !</span>
+                                    <span class="transition group-open:rotate-180 flex-shrink-0"><i class="fa-solid fa-chevron-down text-brand-accent"></i></span>
+                                </summary>
+                                <div class="text-gray-600 p-5 pt-0 text-sm leading-relaxed bg-gray-50">
+                                    <p class="mb-3">Pas de panique ! C'est justement la force de Karbòn Péi : vous ne subissez plus un modèle standard, vous créez l'arme parfaite pour <strong>votre</strong> vélo. Voici l'essentiel à retenir :</p>
+                                    <ul class="space-y-2 mb-4">
+                                        <li><strong>1. Le comportement (Profil & Jante) :</strong> Choisissez la hauteur selon votre terrain (ex: 40mm pour la bosse, 50mm pour la polyvalence absolue). La jante standard (SUXL) est ultra-légère, mais nous recommandons la version renforcée (UXL) si vous pesez plus de 90kg.</li>
+                                        <li><strong>2. Le cœur de la roue (Moyeux & Roulements) :</strong> Le moyeu <strong>R2</strong> est notre recommandation absolue pour sa robustesse. Côté roulements, la version <strong>Acier EZO</strong> est excellente et durable, mais l'option <strong>Céramique TPI</strong> est le choix ultime pour réduire la friction.</li>
+                                        <li><strong>3. Le transfert de puissance (Rayons & Ratchet) :</strong> Pour les rayons, le profil carbone <strong>T33</strong> est notre best-seller offrant une rigidité brutale. Le "Ratchet" gère l'engagement quand vous pédalez : le <strong>45T</strong> est le standard haute performance, le <strong>72T</strong> offre une réactivité quasi-instantanée.</li>
+                                        <li><strong>4. La compatibilité de votre vélo :</strong> Vérifiez la marque de votre cassette actuelle (Shimano ou SRAM) pour choisir le bon corps de roue libre, et sélectionnez votre type de freinage (Disques ou Patins).</li>
+                                    </ul>
+                                    <div class="bg-yellow-50 text-yellow-800 p-3 rounded-lg border border-yellow-200">
+                                        💡 <strong>Notre conseil :</strong> Si vous hésitez, cliquez sur la bulle WhatsApp en bas à droite de l'écran ! Mehdi, le fondateur, vous répondra en direct pour valider techniquement votre configuration.
+                                    </div>
+                                </div>
+                            </details>
+                        </div>
+                    </div>
+
+                    <!-- Catégorie 3 -->
+                    <div>
+                        <h3 class="text-xl font-black text-gray-900 mb-4 flex items-center gap-2 border-b border-gray-100 pb-2"><i class="fa-solid fa-shield-halved text-brand-accent"></i> Garanties & SAV</h3>
+                        <div class="space-y-3">
+                            <details class="group bg-gray-50 rounded-xl shadow-sm border border-gray-100 overflow-hidden [&_summary::-webkit-details-marker]:hidden">
+                                <summary class="flex justify-between items-center font-bold cursor-pointer list-none p-5 text-gray-900 hover:text-brand-accent transition-colors">
+                                    <span class="pr-4">Comment fonctionne le SAV si j'ai un problème ? Dois-je renvoyer la roue en Asie ?</span>
+                                    <span class="transition group-open:rotate-180 flex-shrink-0"><i class="fa-solid fa-chevron-down text-brand-accent"></i></span>
+                                </summary>
+                                <div class="text-gray-600 p-5 pt-0 text-sm leading-relaxed bg-gray-50">
+                                    C'est le grand avantage de Karbòn Péi. Nos jantes carbone sont garanties 5 ans contre tout défaut de fabrication. En cas de souci structurel validé par l'usine, je m'occupe de tout : je commande la jante de remplacement, je prends en charge les frais de port, et je gère le SAV directement depuis La Réunion. Vous n'avez rien à renvoyer à l'autre bout du monde à vos frais.
+                                </div>
+                            </details>
+
+                            <details class="group bg-gray-50 rounded-xl shadow-sm border border-gray-100 overflow-hidden [&_summary::-webkit-details-marker]:hidden">
+                                <summary class="flex justify-between items-center font-bold cursor-pointer list-none p-5 text-gray-900 hover:text-brand-accent transition-colors">
+                                    <span class="pr-4">Que se passe-t-il si je casse ma roue lors d'une chute ?</span>
+                                    <span class="transition group-open:rotate-180 flex-shrink-0"><i class="fa-solid fa-chevron-down text-brand-accent"></i></span>
+                                </summary>
+                                <div class="text-gray-600 p-5 pt-0 text-sm leading-relaxed bg-gray-50">
+                                    La garantie de 5 ans ne couvre pas les accidents. Cependant, nous proposons un programme "Crash Replacement". En cas de casse due à une lourde chute ou un gros nid-de-poule, vous bénéficiez d'une réduction de -30% sur l'achat d'une jante de remplacement neuve. Nous ne vous laissons pas tomber.
+                                </div>
+                            </details>
+                        </div>
+                    </div>
+
+                    <!-- Catégorie 4 -->
+                    <div>
+                        <h3 class="text-xl font-black text-gray-900 mb-4 flex items-center gap-2 border-b border-gray-100 pb-2"><i class="fa-solid fa-gear text-brand-accent"></i> Technique & Compatibilité</h3>
+                        <div class="space-y-3">
+                            <details class="group bg-gray-50 rounded-xl shadow-sm border border-gray-100 overflow-hidden [&_summary::-webkit-details-marker]:hidden">
+                                <summary class="flex justify-between items-center font-bold cursor-pointer list-none p-5 text-gray-900 hover:text-brand-accent transition-colors">
+                                    <span class="pr-4">Y a-t-il une limite de poids pour le cycliste ?</span>
+                                    <span class="transition group-open:rotate-180 flex-shrink-0"><i class="fa-solid fa-chevron-down text-brand-accent"></i></span>
+                                </summary>
+                                <div class="text-gray-600 p-5 pt-0 text-sm leading-relaxed bg-gray-50">
+                                    <p class="mb-2">Oui, pour garantir votre sécurité. C'est pourquoi nous proposons deux types de jantes dans le configurateur :</p>
+                                    <ul class="space-y-1 list-disc pl-5">
+                                        <li><strong>Série SUXL (Super Ultra-Light) :</strong> Conçue pour les grimpeurs, limite de poids fixée à 90 kg.</li>
+                                        <li><strong>Série UXL (Renforcée) :</strong> Drapage carbone renforcé pour les coursiers puissants ou les gabarits plus lourds, limite de poids fixée à 120 kg (pour seulement ~30g de plus par jante).</li>
+                                    </ul>
+                                </div>
+                            </details>
+
+                            <details class="group bg-gray-50 rounded-xl shadow-sm border border-gray-100 overflow-hidden [&_summary::-webkit-details-marker]:hidden">
+                                <summary class="flex justify-between items-center font-bold cursor-pointer list-none p-5 text-gray-900 hover:text-brand-accent transition-colors">
+                                    <span class="pr-4">Vos jantes sont-elles compatibles Tubeless ?</span>
+                                    <span class="transition group-open:rotate-180 flex-shrink-0"><i class="fa-solid fa-chevron-down text-brand-accent"></i></span>
+                                </summary>
+                                <div class="text-gray-600 p-5 pt-0 text-sm leading-relaxed bg-gray-50">
+                                    Oui, toutes nos jantes carbone (profils 30mm à 80mm) sont "Tubeless Ready". Vous pouvez tout à fait les monter en Tubeless (avec préventif) ou avec des pneus classiques et des chambres à air (butyl, latex ou TPU), selon votre préférence.
+                                </div>
+                            </details>
+
+                            <details class="group bg-gray-50 rounded-xl shadow-sm border border-gray-100 overflow-hidden [&_summary::-webkit-details-marker]:hidden">
+                                <summary class="flex justify-between items-center font-bold cursor-pointer list-none p-5 text-gray-900 hover:text-brand-accent transition-colors">
+                                    <span class="pr-4">Quelle est la différence entre le moyeu RT240 et le moyeu R2 ?</span>
+                                    <span class="transition group-open:rotate-180 flex-shrink-0"><i class="fa-solid fa-chevron-down text-brand-accent"></i></span>
+                                </summary>
+                                <div class="text-gray-600 p-5 pt-0 text-sm leading-relaxed bg-gray-50">
+                                    Le moyeu <strong>RT240</strong> est notre option ultra-légère, conçue pour les chasseurs de poids extrêmes.<br>
+                                    Le moyeu <strong>R2</strong> (fortement recommandé) est une pièce d'horlogerie : il possède de plus gros roulements (disponibles en 100% céramique) pour une fluidité extrême et une plus grande longévité, un corps de roue libre en Titane, un système d'engagement Ratchet ultra-rapide, et il est personnalisable en 5 couleurs !
+                                </div>
+                            </details>
+                        </div>
+                    </div>
+
+                    <!-- Catégorie 5 -->
+                    <div>
+                        <h3 class="text-xl font-black text-gray-900 mb-4 flex items-center gap-2 border-b border-gray-100 pb-2"><i class="fa-solid fa-credit-card text-brand-accent"></i> Paiement</h3>
+                        <div class="space-y-3">
+                            <details class="group bg-gray-50 rounded-xl shadow-sm border border-gray-100 overflow-hidden [&_summary::-webkit-details-marker]:hidden">
+                                <summary class="flex justify-between items-center font-bold cursor-pointer list-none p-5 text-gray-900 hover:text-brand-accent transition-colors">
+                                    <span class="pr-4">Proposez-vous le paiement en plusieurs fois ?</span>
+                                    <span class="transition group-open:rotate-180 flex-shrink-0"><i class="fa-solid fa-chevron-down text-brand-accent"></i></span>
+                                </summary>
+                                <div class="text-gray-600 p-5 pt-0 text-sm leading-relaxed bg-gray-50">
+                                    Oui ! Nous proposons le paiement en 3 fois sécurisé par carte bancaire. Il vous suffira de sélectionner l'option via le lien de paiement que nous vous enverrons lors de la validation de votre configuration.
+                                </div>
+                            </details>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
         <!-- Section Contact -->
-        <section id="contact" class="bg-white py-16 border-t border-gray-100">
+        <section id="contact" class="bg-gray-50 py-16 border-t border-gray-200">
             <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="text-center mb-10">
                     <h2 class="text-3xl font-extrabold text-gray-900 mb-4">Une question ?</h2>
@@ -538,6 +698,7 @@
                 <h3 class="text-xl font-bold text-white">Karbòn Péi</h3>
             </div>
             <div class="flex justify-center gap-6 mb-6 text-sm">
+                <a href="javascript:void(0)" onclick="navigateTo('faq')" class="hover:text-brand-accent transition">F.A.Q</a>
                 <a href="javascript:void(0)" onclick="showWarranty()" class="hover:text-brand-accent transition">Conditions de Garantie</a>
                 <a href="javascript:void(0)" onclick="navigateTo('contact')" class="hover:text-brand-accent transition">Contact</a>
             </div>
