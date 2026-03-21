@@ -79,6 +79,11 @@
                 <a href="https://www.instagram.com/karbonpei?igsh=d2MzMXhibHp2dWJq" target="_blank" class="hidden sm:inline-block text-gray-300 hover:text-brand-accent transition text-lg ml-2"><i class="fa-brands fa-instagram"></i></a>
                 <a href="https://www.facebook.com/share/1ArtcYroeF/" target="_blank" class="hidden sm:inline-block text-gray-300 hover:text-brand-accent transition text-lg"><i class="fa-brands fa-facebook"></i></a>
 
+                <!-- Bouton Menu Mobile (Hamburger) -->
+                <button id="mobile-menu-btn" class="md:hidden text-gray-300 hover:text-white focus:outline-none ml-2 sm:ml-4">
+                    <i class="fa-solid fa-bars text-2xl"></i>
+                </button>
+
                 <button onclick="toggleCart()" class="relative p-2 text-gray-300 hover:text-brand-accent transition ml-2">
                     <i class="fa-solid fa-cart-shopping text-2xl sm:text-3xl"></i>
                     <span id="cart-badge" class="absolute top-0 right-0 transform translate-x-1/4 -translate-y-1/4 bg-brand-accent text-brand-main text-xs font-black h-5 w-5 flex items-center justify-center rounded-full border-2 border-brand-main hidden">0</span>
@@ -86,6 +91,17 @@
             </div>
         </div>
     </header>
+
+    <!-- Menu Mobile Déroulant (Caché par défaut) -->
+    <div id="mobile-menu" class="hidden fixed top-[72px] left-0 w-full bg-slate-900 border-b border-gray-800 z-40 md:hidden shadow-xl">
+        <div class="flex flex-col px-6 pt-4 pb-8 space-y-5">
+            <a href="javascript:void(0)" onclick="navigateTo('catalogue'); closeMobileMenu()" class="text-gray-300 hover:text-white font-medium text-lg border-b border-gray-800 pb-3 flex items-center justify-between">Catalogue <i class="fa-solid fa-chevron-right text-sm text-gray-600"></i></a>
+            <a href="javascript:void(0)" onclick="navigateTo('guide-performance'); closeMobileMenu()" class="text-brand-accent font-bold hover:text-yellow-300 text-lg border-b border-gray-800 pb-3 flex items-center justify-between">Guide Performance <i class="fa-solid fa-chevron-right text-sm text-yellow-800"></i></a>
+            <a href="javascript:void(0)" onclick="navigateTo('technologie'); closeMobileMenu()" class="text-gray-300 hover:text-white font-medium text-lg border-b border-gray-800 pb-3 flex items-center justify-between">Technologie (Moyeu R2) <i class="fa-solid fa-chevron-right text-sm text-gray-600"></i></a>
+            <a href="javascript:void(0)" onclick="navigateTo('faq'); closeMobileMenu()" class="text-gray-300 hover:text-white font-medium text-lg border-b border-gray-800 pb-3 flex items-center justify-between">Foire Aux Questions <i class="fa-solid fa-chevron-right text-sm text-gray-600"></i></a>
+            <a href="javascript:void(0)" onclick="showWarranty(); closeMobileMenu()" class="text-gray-300 hover:text-white font-medium text-lg flex items-center justify-between">Garanties & SAV <i class="fa-solid fa-chevron-right text-sm text-gray-600"></i></a>
+        </div>
+    </div>
 
     <!-- ========================================== -->
     <!-- VUE 1 : ACCUEIL & CATALOGUE (Par défaut)   -->
@@ -1782,6 +1798,33 @@
             if (freinageSelect.value !== 'Disques') isStockConfig = false; 
 
             updateBadgeUI(isStockConfig);
+        }
+
+        // --- Logique du Menu Mobile ---
+        const btnMenu = document.getElementById('mobile-menu-btn');
+        const menuMobile = document.getElementById('mobile-menu');
+
+        if(btnMenu) {
+            btnMenu.addEventListener('click', () => {
+                menuMobile.classList.toggle('hidden');
+                const icon = btnMenu.querySelector('i');
+                if(menuMobile.classList.contains('hidden')) {
+                    icon.classList.remove('fa-xmark');
+                    icon.classList.add('fa-bars');
+                } else {
+                    icon.classList.remove('fa-bars');
+                    icon.classList.add('fa-xmark');
+                }
+            });
+        }
+
+        function closeMobileMenu() {
+            if(menuMobile) {
+                menuMobile.classList.add('hidden');
+                const icon = btnMenu.querySelector('i');
+                icon.classList.remove('fa-xmark');
+                icon.classList.add('fa-bars');
+            }
         }
 
         loadCatalogue();
