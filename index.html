@@ -871,8 +871,17 @@
                             </select>
                         </div>
                         
+                        <div class="mb-5">
+                            <label class="block text-xs font-bold text-gray-500 mb-2">8. Design des Logos (Stickers)</label>
+                            <select id="config-logos" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-3 text-sm font-semibold" onchange="updateConfig()">
+                                <option value="Petit logo noir" selected>Petit logo Noir (Furtif)</option>
+                                <option value="Petit logo blanc">Petit logo Blanc</option>
+                                <option value="Gros logo blanc">Gros logo Blanc (Racing)</option>
+                            </select>
+                        </div>
+
                         <div>
-                            <label class="block text-xs font-bold text-gray-500 mb-2">8. Type de Freinage</label>
+                            <label class="block text-xs font-bold text-gray-500 mb-2">9. Type de Freinage</label>
                             <select id="config-freinage" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-3 text-sm font-semibold border-brand-accent shadow-sm" onchange="updateConfig()">
                                 <option value="Disques" selected>Freins à Disques (Centerlock)</option>
                                 <option value="Patins">Freins à Patins (Bande Haute Température)</option>
@@ -1079,11 +1088,12 @@
                     const roulements = document.getElementById('config-roulements').options[document.getElementById('config-roulements').selectedIndex].text.split('(')[0].trim();
                     const rouelibre = document.getElementById('config-rouelibre').value;
                     const finition = document.getElementById('config-finition').options[document.getElementById('config-finition').selectedIndex].text.split('(')[0].trim();
+                    const logos = document.getElementById('config-logos').options[document.getElementById('config-logos').selectedIndex].text.split('(')[0].trim();
                     const freinage = document.getElementById('config-freinage').options[document.getElementById('config-freinage').selectedIndex].text.split('(')[0].trim();
                     
                     let couleurMoyeu = " (" + document.getElementById('config-couleur-moyeu').value + ")";
 
-                    configText = `${moyeu}${couleurMoyeu} | Jantes ${jante} | ${rayon} | Ratchet ${ratchet} | Roulements ${roulements} | ${rouelibre} | ${finition} | ${freinage}`;
+                    configText = `${moyeu}${couleurMoyeu} | Jantes ${jante} | ${rayon} | Ratchet ${ratchet} | Roulements ${roulements} | ${rouelibre} | ${finition} | Logos : ${logos} | ${freinage}`;
                 }
             } else {
                 configText = isCurrentItemAccessory ? "Accessoire" : "Modèle Standard";
@@ -1672,6 +1682,7 @@
                 document.getElementById('config-jante').value = 'SUXL';
                 document.getElementById('config-rayons').value = 'T33';
                 document.getElementById('config-finition').value = 'Glossy Black'; 
+                document.getElementById('config-logos').value = 'Petit logo noir';
                 document.getElementById('config-rouelibre').value = 'Shimano HG';
                 document.getElementById('config-freinage').value = 'Disques';
                 
@@ -1736,6 +1747,7 @@
             const ratchetSelect = document.getElementById('config-ratchet');
             const roulementsSelect = document.getElementById('config-roulements');
             const finitionSelect = document.getElementById('config-finition');
+            const logoSelect = document.getElementById('config-logos');
             const colorSelect = document.getElementById('config-couleur-moyeu');
             const rouelibreSelect = document.getElementById('config-rouelibre');
             const freinageSelect = document.getElementById('config-freinage');
@@ -1790,6 +1802,7 @@
             if (roulementsSelect.value !== 'Acier EZO') isStockConfig = false;
             if (rouelibreSelect.value !== 'Shimano HG') isStockConfig = false;
             if (finitionSelect.value !== 'Glossy Black') isStockConfig = false;
+            if (logoSelect.value !== 'Petit logo noir') isStockConfig = false;
             if (freinageSelect.value !== 'Disques') isStockConfig = false; 
 
             updateBadgeUI(isStockConfig);
