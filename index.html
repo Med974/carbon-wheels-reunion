@@ -956,14 +956,14 @@
                             </div>
                             <i class="fa-brands fa-stripe text-2xl text-[#635BFF]"></i>
                         </label>
-                        <!-- PAIEMENT 3X (MASQUÉ TEMPORAIREMENT) -->
-                        <label class="hidden items-start gap-3 cursor-pointer p-3 border border-gray-200 rounded-md bg-white hover:bg-gray-50 transition">
-                            <input type="radio" name="payment-method" value="card3x" class="mt-1 text-brand-main focus:ring-brand-main" onchange="updateCartUI()">
+                        <!-- PAIEMENT 3X (GRISÉ EN ATTENTE ACTIVATION) -->
+                        <label class="flex items-start gap-3 p-3 border border-gray-200 rounded-md bg-gray-100 opacity-60 cursor-not-allowed transition">
+                            <input type="radio" name="payment-method" value="card3x" class="mt-1" disabled onchange="updateCartUI()">
                             <div class="flex-grow">
-                                <span class="block text-sm font-bold text-gray-900">Paiement en 3x (Klarna)</span>
-                                <span class="block text-xs text-gray-500 font-medium">Lien sécurisé envoyé par message.</span>
+                                <span class="block text-sm font-bold text-gray-400 line-through">Paiement en 3x (Klarna)</span>
+                                <span class="block text-xs text-brand-accent font-bold mt-0.5">⏳ Bientôt disponible</span>
                             </div>
-                            <i class="fa-brands fa-cc-visa text-xl text-blue-800"></i>
+                            <i class="fa-brands fa-cc-visa text-xl text-gray-400"></i>
                         </label>
                     </div>
                 </div>
