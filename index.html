@@ -939,6 +939,7 @@
                 <div id="payment-method-container" class="mb-5 bg-gray-50 p-3 rounded-lg border border-gray-200 hidden">
                     <label class="block text-xs font-bold text-gray-500 mb-3 uppercase tracking-wide"><i class="fa-solid fa-credit-card mr-1"></i> Mode de règlement</label>
                     <div class="space-y-2">
+                        <!-- VIREMENT -->
                         <label class="flex items-start gap-3 cursor-pointer p-3 border border-green-200 rounded-md bg-green-50 hover:bg-green-100 transition">
                             <input type="radio" name="payment-method" value="virement" class="mt-1 text-green-600 focus:ring-green-500" checked onchange="updateCartUI()">
                             <div class="flex-grow">
@@ -946,6 +947,7 @@
                                 <span class="block text-xs text-green-700 font-medium">100% Gratuit et sans frais.</span>
                             </div>
                         </label>
+                        <!-- CB 1X (ACTIF) -->
                         <label class="flex items-start gap-3 cursor-pointer p-3 border border-gray-200 rounded-md bg-white hover:bg-gray-50 transition">
                             <input type="radio" name="payment-method" value="card1x" class="mt-1 text-brand-main focus:ring-brand-main" onchange="updateCartUI()">
                             <div class="flex-grow">
@@ -954,7 +956,8 @@
                             </div>
                             <i class="fa-brands fa-stripe text-2xl text-[#635BFF]"></i>
                         </label>
-                        <label class="flex items-start gap-3 cursor-pointer p-3 border border-gray-200 rounded-md bg-white hover:bg-gray-50 transition">
+                        <!-- PAIEMENT 3X (MASQUÉ TEMPORAIREMENT) -->
+                        <label class="hidden items-start gap-3 cursor-pointer p-3 border border-gray-200 rounded-md bg-white hover:bg-gray-50 transition">
                             <input type="radio" name="payment-method" value="card3x" class="mt-1 text-brand-main focus:ring-brand-main" onchange="updateCartUI()">
                             <div class="flex-grow">
                                 <span class="block text-sm font-bold text-gray-900">Paiement en 3x (Klarna)</span>
