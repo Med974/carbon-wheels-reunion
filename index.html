@@ -284,7 +284,7 @@
                     <div class="bg-gray-800/40 p-8 rounded-2xl border border-gray-700 hover:border-brand-accent transition duration-300">
                         <i class="fa-solid fa-wind text-brand-accent text-3xl mb-4"></i>
                         <h4 class="text-xl font-bold mb-3">3. Moins, c'est mieux</h4>
-                        <p class="text-sm text-gray-400 mb-2"><strong class="text-white">Le secret de la vitesse :</strong> Chaque rayon affronte le vent. Moins de rayons = friction massivement réduite.</p>
+                        <p class="text-sm text-gray-400 mb-2"><strong class="text-white">Le double avantage :</strong> Moins de rayons, c'est une friction aéro massivement réduite dans le vent, ET de précieux grammes gagnés sur la balance (moins d'écrous sur la jante).</p>
                         <p class="text-sm text-gray-400"><strong class="text-white">Faisabilité :</strong> Seules des jantes ultra-rigides couplées à nos rayons carbone permettent des rayonnages épurés : <strong class="text-white">2x20 rayons</strong> avec le moyeu RT240, et <strong class="text-white">21 (avant) / 24 (arrière)</strong> avec le moyeu R2.</p>
                     </div>
 
@@ -946,21 +946,21 @@
                                 <span class="block text-xs text-green-700 font-medium">100% Gratuit et sans frais.</span>
                             </div>
                         </label>
-                        <label class="flex items-start gap-3 p-3 border border-gray-200 rounded-md bg-gray-100 opacity-60 cursor-not-allowed transition">
-                            <input type="radio" name="payment-method" value="card1x" class="mt-1" disabled onchange="updateCartUI()">
+                        <label class="flex items-start gap-3 cursor-pointer p-3 border border-gray-200 rounded-md bg-white hover:bg-gray-50 transition">
+                            <input type="radio" name="payment-method" value="card1x" class="mt-1 text-brand-main focus:ring-brand-main" onchange="updateCartUI()">
                             <div class="flex-grow">
-                                <span class="block text-sm font-bold text-gray-500 line-through">Carte Bancaire (1x)</span>
-                                <span class="block text-xs text-brand-accent font-bold mt-0.5">⏳ Bientôt dispo</span>
+                                <span class="block text-sm font-bold text-gray-900">Carte Bancaire (1x)</span>
+                                <span class="block text-xs text-gray-500 font-medium">Lien sécurisé envoyé par message.</span>
                             </div>
-                            <i class="fa-brands fa-stripe text-2xl text-gray-400"></i>
+                            <i class="fa-brands fa-stripe text-2xl text-[#635BFF]"></i>
                         </label>
-                        <label class="flex items-start gap-3 p-3 border border-gray-200 rounded-md bg-gray-100 opacity-60 cursor-not-allowed transition">
-                            <input type="radio" name="payment-method" value="card3x" class="mt-1" disabled onchange="updateCartUI()">
+                        <label class="flex items-start gap-3 cursor-pointer p-3 border border-gray-200 rounded-md bg-white hover:bg-gray-50 transition">
+                            <input type="radio" name="payment-method" value="card3x" class="mt-1 text-brand-main focus:ring-brand-main" onchange="updateCartUI()">
                             <div class="flex-grow">
-                                <span class="block text-sm font-bold text-gray-500 line-through">Paiement en 3x (Klarna)</span>
-                                <span class="block text-xs text-brand-accent font-bold mt-0.5">⏳ Bientôt dispo</span>
+                                <span class="block text-sm font-bold text-gray-900">Paiement en 3x (Klarna)</span>
+                                <span class="block text-xs text-gray-500 font-medium">Lien sécurisé envoyé par message.</span>
                             </div>
-                            <i class="fa-brands fa-cc-visa text-xl text-gray-400"></i>
+                            <i class="fa-brands fa-cc-visa text-xl text-blue-800"></i>
                         </label>
                     </div>
                 </div>
@@ -999,9 +999,10 @@
                 <div id="checkout-error" class="hidden text-red-500 text-xs font-bold mb-3 text-center bg-red-50 p-2 rounded-lg border border-red-200"><i class="fa-solid fa-circle-exclamation mr-1"></i> Veuillez remplir vos coordonnées (Nom, E-mail, Tél, Adresse).</div>
                 
                 <!-- Bouton dont le texte change dynamiquement -->
-                <button onclick="checkoutWhatsApp()" id="checkout-btn" class="w-full bg-[#25D366] hover:bg-[#1da851] transition-colors text-white font-bold py-4 rounded-xl opacity-50 cursor-not-allowed shadow-md" disabled>
-                    Transmettre ma réservation <i class="fa-brands fa-whatsapp ml-2 text-xl"></i>
+                <button onclick="checkoutWhatsApp()" id="checkout-btn" class="w-full bg-brand-main hover:bg-gray-800 transition-colors text-white font-bold py-4 rounded-xl opacity-50 cursor-not-allowed shadow-md" disabled>
+                    Valider ma commande <i class="fa-solid fa-paper-plane ml-2 text-xl"></i>
                 </button>
+                <p class="text-center text-[10px] text-gray-400 mt-3"><i class="fa-solid fa-shield-halved mr-1"></i> Commande sécurisée. Nous vous contacterons directement par e-mail ou WhatsApp.</p>
             </div>
         </div>
     </div>
@@ -1139,11 +1140,11 @@
 
             const paymentMethod = document.querySelector('input[name="payment-method"]:checked')?.value || 'virement';
             if (paymentMethod === 'virement') {
-                checkoutBtn.className = "w-full bg-[#25D366] hover:bg-[#1da851] transition-colors text-white font-bold py-4 rounded-xl shadow-md";
-                checkoutBtn.innerHTML = 'Transmettre ma réservation <i class="fa-brands fa-whatsapp ml-2 text-xl"></i>';
+                checkoutBtn.className = "w-full bg-brand-main hover:bg-gray-800 transition-colors text-white font-bold py-4 rounded-xl shadow-md";
+                checkoutBtn.innerHTML = 'Valider ma réservation <i class="fa-solid fa-paper-plane ml-2 text-xl"></i>';
             } else {
                 checkoutBtn.className = "w-full bg-brand-main hover:bg-gray-800 transition-colors text-white font-bold py-4 rounded-xl shadow-md";
-                checkoutBtn.innerHTML = 'Payer la commande <i class="fa-solid fa-lock ml-2 text-xl"></i>';
+                checkoutBtn.innerHTML = 'Recevoir le lien de paiement <i class="fa-solid fa-lock ml-2 text-xl"></i>';
             }
 
             if (cart.length > 0) {
