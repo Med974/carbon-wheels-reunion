@@ -545,7 +545,7 @@
                                     <span class="transition group-open:rotate-180 flex-shrink-0"><i class="fa-solid fa-chevron-down text-brand-accent"></i></span>
                                 </summary>
                                 <div class="text-gray-600 p-5 pt-0 text-sm leading-relaxed bg-gray-50">
-                                    Oui ! Nous proposons le paiement en 3 fois sécurisé par carte bancaire. Il vous suffira de sélectionner l'option via le lien de paiement que nous vous enverrons lors de la validation de votre configuration.
+                                    Oui ! Nous proposons le paiement en 3 ou 4 fois sécurisé par carte bancaire. Il vous suffira de sélectionner l'option via le lien de paiement que nous vous enverrons lors de la validation de votre configuration.
                                 </div>
                             </details>
                         </div>
@@ -723,7 +723,8 @@
                 <a href="https://www.facebook.com/share/1ArtcYroeF/" target="_blank" class="text-gray-500 hover:text-brand-accent transition"><i class="fa-brands fa-facebook"></i></a>
                 <a href="https://www.strava.com/clubs/2018327" target="_blank" class="text-gray-500 hover:text-brand-accent transition" title="Club Strava"><i class="fa-brands fa-strava"></i></a>
             </div>
-            <p class="text-xs">&copy; 2026 Karbòn Péi. Micro-entreprise en cours d'immatriculation. TVA non applicable.</p>
+            <!-- AJOUT DU SIRET COMPLET ICI -->
+            <p class="text-xs">&copy; 2026 Karbòn Péi - Mehdi CEUSTERMANS EI. SIRET : 102 582 095 00018. TVA non applicable, art. 293 B du CGI.</p>
         </div>
     </footer>
 
@@ -927,7 +928,6 @@
             
             <div class="p-4 sm:p-6 bg-white border-t border-gray-200 mt-auto shrink-0">
                 
-                <!-- Ajout du champ Téléphone ici -->
                 <div id="billing-info-container" class="mb-5 bg-gray-50 p-3 rounded-lg border border-gray-200 hidden">
                     <label class="block text-xs font-bold text-gray-500 mb-2 uppercase tracking-wide"><i class="fa-solid fa-file-invoice mr-1"></i> Coordonnées de facturation</label>
                     <input type="text" id="client-name" placeholder="Nom et Prénom *" class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm mb-2 focus:ring-1 focus:ring-brand-main outline-none">
@@ -952,18 +952,18 @@
                             <input type="radio" name="payment-method" value="card1x" class="mt-1 text-brand-main focus:ring-brand-main" onchange="updateCartUI()">
                             <div class="flex-grow">
                                 <span class="block text-sm font-bold text-gray-900">Carte Bancaire (1x)</span>
-                                <span class="block text-xs text-gray-500 font-medium">Lien sécurisé envoyé par message.</span>
+                                <span class="block text-xs text-gray-500 font-medium">Lien Stripe sécurisé envoyé par message.</span>
                             </div>
                             <i class="fa-brands fa-stripe text-2xl text-[#635BFF]"></i>
                         </label>
-                        <!-- PAIEMENT 3X (GRISÉ EN ATTENTE ACTIVATION) -->
+                        <!-- PAIEMENT 3X OU 4X ALMA (GRISÉ EN ATTENTE ACTIVATION) -->
                         <label class="flex items-start gap-3 p-3 border border-gray-200 rounded-md bg-gray-100 opacity-60 cursor-not-allowed transition">
-                            <input type="radio" name="payment-method" value="card3x" class="mt-1" disabled onchange="updateCartUI()">
+                            <input type="radio" name="payment-method" value="alma3x" class="mt-1" disabled onchange="updateCartUI()">
                             <div class="flex-grow">
-                                <span class="block text-sm font-bold text-gray-400 line-through">Paiement en 3x (Klarna)</span>
-                                <span class="block text-xs text-brand-accent font-bold mt-0.5">⏳ Bientôt disponible</span>
+                                <span class="block text-sm font-bold text-gray-400 line-through">Paiement en 3x ou 4x</span>
+                                <span class="block text-xs text-brand-accent font-bold mt-0.5">⏳ En cours d'activation bancaire</span>
                             </div>
-                            <i class="fa-brands fa-cc-visa text-xl text-gray-400"></i>
+                            <div class="text-gray-400 font-black text-lg italic tracking-tighter">alma</div>
                         </label>
                     </div>
                 </div>
@@ -1145,9 +1145,12 @@
             if (paymentMethod === 'virement') {
                 checkoutBtn.className = "w-full bg-brand-main hover:bg-gray-800 transition-colors text-white font-bold py-4 rounded-xl shadow-md";
                 checkoutBtn.innerHTML = 'Valider ma réservation <i class="fa-solid fa-paper-plane ml-2 text-xl"></i>';
+            } else if (paymentMethod === 'card1x') {
+                checkoutBtn.className = "w-full bg-[#635BFF] hover:bg-[#524be0] transition-colors text-white font-bold py-4 rounded-xl shadow-md";
+                checkoutBtn.innerHTML = 'Recevoir le lien Stripe <i class="fa-solid fa-lock ml-2 text-xl"></i>';
             } else {
-                checkoutBtn.className = "w-full bg-brand-main hover:bg-gray-800 transition-colors text-white font-bold py-4 rounded-xl shadow-md";
-                checkoutBtn.innerHTML = 'Recevoir le lien de paiement <i class="fa-solid fa-lock ml-2 text-xl"></i>';
+                checkoutBtn.className = "w-full bg-blue-600 hover:bg-blue-700 transition-colors text-white font-bold py-4 rounded-xl shadow-md";
+                checkoutBtn.innerHTML = 'Recevoir le lien Alma <i class="fa-solid fa-lock ml-2 text-xl"></i>';
             }
 
             if (cart.length > 0) {
@@ -1238,8 +1241,8 @@
             if (currentSubtotal > 0) {
                 if (paymentMethod === 'card1x') {
                     transactionFees = (currentSubtotal * 0.015) + 0.25;
-                } else if (paymentMethod === 'card3x') {
-                    transactionFees = (currentSubtotal * 0.0299) + 0.35;
+                } else if (paymentMethod === 'card3x' || paymentMethod === 'alma3x') {
+                    transactionFees = currentSubtotal * 0.038;
                 }
             }
             
@@ -1325,10 +1328,10 @@
 
             if (paymentMethodVal === 'card1x') {
                 transactionFees = (currentSubtotal * 0.015) + 0.25;
-                paymentMethodName = "Carte Bancaire (1x)";
-            } else if (paymentMethodVal === 'card3x') {
-                transactionFees = (currentSubtotal * 0.0299) + 0.35;
-                paymentMethodName = "Paiement en 3x (Klarna)";
+                paymentMethodName = "Carte Bancaire (1x via Stripe)";
+            } else if (paymentMethodVal === 'card3x' || paymentMethodVal === 'alma3x') {
+                transactionFees = currentSubtotal * 0.038;
+                paymentMethodName = "Paiement en 3x ou 4x (via Alma)";
             }
             transactionFees = Math.round(transactionFees * 100) / 100;
             const finalTotal = currentSubtotal + transactionFees;
@@ -1356,8 +1359,10 @@
             
             if (paymentMethodVal === 'virement') {
                 msg += `Merci de m'envoyer le RIB/IBAN pour bloquer ma commande. 🙏\n\n`;
-            } else {
+            } else if (paymentMethodVal === 'card1x') {
                 msg += `Merci de m'envoyer le lien Stripe sécurisé pour le paiement par carte. 🙏\n\n`;
+            } else {
+                msg += `Merci de m'envoyer le lien Alma sécurisé pour le paiement en plusieurs fois. 🙏\n\n`;
             }
 
             const orderData = {
