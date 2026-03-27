@@ -961,6 +961,17 @@
                             <input type="radio" name="payment-method" value="alma3x" class="mt-1" disabled onchange="updateCartUI()">
                             <div class="flex-grow">
                                 <span class="block text-sm font-bold text-gray-400 line-through">Paiement en 3x ou 4x</span>
+                                <span class="block text-xs text-gray-400 font-medium">Frais de crédit calculés par Alma.</span>
+                                <span class="block text-xs text-brand-accent font-bold mt-0.5">⏳ En cours d'activation bancaire</span>
+                            </div>
+                            <div class="text-gray-400 font-black text-lg italic tracking-tighter">alma</div>
+                        </label>
+                        <!-- PAIEMENT 10X ALMA (GRISÉ EN ATTENTE ACTIVATION) -->
+                        <label class="flex items-start gap-3 p-3 border border-gray-200 rounded-md bg-gray-100 opacity-60 cursor-not-allowed transition">
+                            <input type="radio" name="payment-method" value="alma10x" class="mt-1" disabled onchange="updateCartUI()">
+                            <div class="flex-grow">
+                                <span class="block text-sm font-bold text-gray-400 line-through">Paiement en 10x</span>
+                                <span class="block text-xs text-gray-400 font-medium">Frais de crédit calculés par Alma.</span>
                                 <span class="block text-xs text-brand-accent font-bold mt-0.5">⏳ En cours d'activation bancaire</span>
                             </div>
                             <div class="text-gray-400 font-black text-lg italic tracking-tighter">alma</div>
@@ -1241,9 +1252,8 @@
             if (currentSubtotal > 0) {
                 if (paymentMethod === 'card1x') {
                     transactionFees = (currentSubtotal * 0.015) + 0.25;
-                } else if (paymentMethod === 'card3x' || paymentMethod === 'alma3x') {
-                    transactionFees = currentSubtotal * 0.038;
-                }
+                } 
+                // Les frais Alma sont désormais à la charge du client (gérés sur la page Alma)
             }
             
             transactionFees = Math.round(transactionFees * 100) / 100;
@@ -1330,8 +1340,11 @@
                 transactionFees = (currentSubtotal * 0.015) + 0.25;
                 paymentMethodName = "Carte Bancaire (1x via Stripe)";
             } else if (paymentMethodVal === 'card3x' || paymentMethodVal === 'alma3x') {
-                transactionFees = currentSubtotal * 0.038;
+                transactionFees = 0;
                 paymentMethodName = "Paiement en 3x ou 4x (via Alma)";
+            } else if (paymentMethodVal === 'alma10x') {
+                transactionFees = 0;
+                paymentMethodName = "Paiement en 10x (via Alma)";
             }
             transactionFees = Math.round(transactionFees * 100) / 100;
             const finalTotal = currentSubtotal + transactionFees;
