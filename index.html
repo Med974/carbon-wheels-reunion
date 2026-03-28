@@ -961,7 +961,7 @@
                             <input type="radio" name="payment-method" value="alma" class="mt-1" disabled onchange="updateCartUI()">
                             <div class="flex-grow">
                                 <span class="block text-sm font-bold text-gray-400 line-through">Paiement en 3x, 4x, 10x ou 12x</span>
-                                <span class="block text-xs text-gray-400 font-medium">Frais de crédit calculés par Alma.</span>
+                                <span class="block text-xs text-gray-400 font-medium">Frais de gestion (+2,73%) ajoutés au panier.</span>
                                 <span class="block text-xs text-brand-accent font-bold mt-0.5">⏳ En cours d'activation bancaire</span>
                             </div>
                             <div class="text-gray-400 font-black text-lg italic tracking-tighter">alma</div>
@@ -1242,8 +1242,9 @@
             if (currentSubtotal > 0) {
                 if (paymentMethod === 'card1x') {
                     transactionFees = (currentSubtotal * 0.015) + 0.25;
-                } 
-                // Les frais Alma sont désormais à la charge du client (gérés sur la page Alma)
+                } else if (paymentMethod === 'alma') {
+                    transactionFees = currentSubtotal * 0.0273; // 2.73% refacturés au client
+                }
             }
             
             transactionFees = Math.round(transactionFees * 100) / 100;
@@ -1330,7 +1331,7 @@
                 transactionFees = (currentSubtotal * 0.015) + 0.25;
                 paymentMethodName = "Carte Bancaire (1x via Stripe)";
             } else if (paymentMethodVal === 'alma') {
-                transactionFees = 0;
+                transactionFees = currentSubtotal * 0.0273;
                 paymentMethodName = "Paiement en plusieurs fois (via Alma)";
             }
             transactionFees = Math.round(transactionFees * 100) / 100;
