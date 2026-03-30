@@ -956,15 +956,15 @@
                             </div>
                             <i class="fa-brands fa-stripe text-2xl text-[#635BFF]"></i>
                         </label>
-                        <!-- PAIEMENT EN PLUSIEURS FOIS ALMA (GRISÉ EN ATTENTE ACTIVATION) -->
+                        <!-- PAIEMENT EN PLUSIEURS FOIS (GRISÉ EN ATTENTE ACTIVATION) -->
                         <label class="flex items-start gap-3 p-3 border border-gray-200 rounded-md bg-gray-100 opacity-60 cursor-not-allowed transition">
-                            <input type="radio" name="payment-method" value="alma" class="mt-1" disabled onchange="updateCartUI()">
+                            <input type="radio" name="payment-method" value="fractionne" class="mt-1" disabled onchange="updateCartUI()">
                             <div class="flex-grow">
-                                <span class="block text-sm font-bold text-gray-400 line-through">Paiement en 3x, 4x, 10x ou 12x</span>
-                                <span class="block text-xs text-gray-400 font-medium">Frais de gestion (+2,73%) ajoutés au panier.</span>
-                                <span class="block text-xs text-brand-accent font-bold mt-0.5">⏳ En cours d'activation bancaire</span>
+                                <span class="block text-sm font-bold text-gray-400 line-through">Paiement en 3x ou 4x par CB</span>
+                                <span class="block text-xs text-gray-400 font-medium">Lien de paiement sécurisé.</span>
+                                <span class="block text-xs text-brand-accent font-bold mt-0.5">⏳ Validation bancaire en cours</span>
                             </div>
-                            <div class="text-gray-400 font-black text-lg italic tracking-tighter">alma</div>
+                            <div class="text-gray-400 text-xl"><i class="fa-solid fa-credit-card"></i></div>
                         </label>
                     </div>
                 </div>
@@ -1149,9 +1149,9 @@
             } else if (paymentMethod === 'card1x') {
                 checkoutBtn.className = "w-full bg-[#635BFF] hover:bg-[#524be0] transition-colors text-white font-bold py-4 rounded-xl shadow-md";
                 checkoutBtn.innerHTML = 'Recevoir le lien Stripe <i class="fa-solid fa-lock ml-2 text-xl"></i>';
-            } else if (paymentMethod === 'alma') {
+            } else if (paymentMethod === 'fractionne') {
                 checkoutBtn.className = "w-full bg-blue-600 hover:bg-blue-700 transition-colors text-white font-bold py-4 rounded-xl shadow-md";
-                checkoutBtn.innerHTML = 'Recevoir le lien Alma <i class="fa-solid fa-lock ml-2 text-xl"></i>';
+                checkoutBtn.innerHTML = 'Recevoir le lien 3x/4x <i class="fa-solid fa-lock ml-2 text-xl"></i>';
             }
 
             if (cart.length > 0) {
@@ -1242,8 +1242,8 @@
             if (currentSubtotal > 0) {
                 if (paymentMethod === 'card1x') {
                     transactionFees = (currentSubtotal * 0.015) + 0.25;
-                } else if (paymentMethod === 'alma') {
-                    transactionFees = currentSubtotal * 0.0273; // 2.73% refacturés au client
+                } else if (paymentMethod === 'fractionne') {
+                    transactionFees = currentSubtotal * 0.03; // ~3% générique
                 }
             }
             
@@ -1330,9 +1330,9 @@
             if (paymentMethodVal === 'card1x') {
                 transactionFees = (currentSubtotal * 0.015) + 0.25;
                 paymentMethodName = "Carte Bancaire (1x via Stripe)";
-            } else if (paymentMethodVal === 'alma') {
-                transactionFees = currentSubtotal * 0.0273;
-                paymentMethodName = "Paiement en plusieurs fois (via Alma)";
+            } else if (paymentMethodVal === 'fractionne') {
+                transactionFees = currentSubtotal * 0.03;
+                paymentMethodName = "Paiement en plusieurs fois (3x/4x)";
             }
             transactionFees = Math.round(transactionFees * 100) / 100;
             const finalTotal = currentSubtotal + transactionFees;
@@ -1362,8 +1362,8 @@
                 msg += `Merci de m'envoyer le RIB/IBAN pour bloquer ma commande. 🙏\n\n`;
             } else if (paymentMethodVal === 'card1x') {
                 msg += `Merci de m'envoyer le lien Stripe sécurisé pour le paiement par carte. 🙏\n\n`;
-            } else if (paymentMethodVal === 'alma') {
-                msg += `Merci de m'envoyer le lien Alma sécurisé pour le paiement en plusieurs fois. 🙏\n\n`;
+            } else if (paymentMethodVal === 'fractionne') {
+                msg += `Merci de m'envoyer le lien sécurisé pour le paiement en plusieurs fois. 🙏\n\n`;
             }
 
             const orderData = {
