@@ -1,0 +1,1020 @@
+const API_URL = '[https://script.google.com/macros/s/AKfycbwi5uRAIjQ2vjbL7h9_LWAUzArqb4oNDNzHWqfM4dIkINVlY6v1Qv4no9V5ScitexSq/exec](https://script.google.com/macros/s/AKfycbwi5uRAIjQ2vjbL7h9_LWAUzArqb4oNDNzHWqfM4dIkINVlY6v1Qv4no9V5ScitexSq/exec)';
+
+let globalCatalogue = [];
+let currentBasePrice = 0;
+let currentBaseWeight = 0;
+let isCurrentItemAccessory = false;
+let isCurrentItemWheelConfigurable = false;
+let currentItemStatut = "";
+
+let cart = [];
+let appliedPromo = null;
+let discountAmount = 0;
+
+let lastHubSelected = "";
+
+function navigateTo(sectionId) {
+    document.getElementById('view-warranty').classList.add('hidden');
+    document.getElementById('view-home').classList.remove('hidden');
+    
+    if(sectionId && sectionId !== 'top') {
+        setTimeout(() => {
+            const el = document.getElementById(sectionId);
+            if(el) {
+                const y = el.getBoundingClientRect().top + window.scrollY - 80;
+                window.scrollTo({top: y, behavior: 'smooth'});
+            }
+        }, 50);
+    } else {
+        window.scrollTo({top: 0, behavior: 'smooth'});
+    }
+}
+
+function showWarranty() {
+    document.getElementById('view-home').classList.add('hidden');
+    document.getElementById('view-warranty').classList.remove('hidden');
+    window.scrollTo({top: 0, behavior: 'smooth'});
+}
+
+function toggleCart() {
+    const panel = document.getElementById('cart-panel');
+    const overlay = document.getElementById('cart-overlay');
+    
+    if (panel.classList.contains('cart-closed')) {
+        panel.classList.remove('cart-closed');
+        panel.classList.add('cart-open');
+        overlay.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+    } else {
+        panel.classList.remove('cart-open');
+        panel.classList.add('cart-closed');
+        overlay.classList.add('hidden');
+        document.body.style.overflow = 'auto';
+        
+        setTimeout(() => {
+            const successView = document.getElementById('checkout-success');
+            const contentView = document.getElementById('checkout-content');
+            if(successView && contentView) {
+                successView.classList.add('hidden');
+                successView.classList.remove('flex');
+                contentView.classList.remove('hidden');
+                contentView.classList.add('flex');
+            }
+        }, 300);
+    }
+}
+
+function changeR2View(src) {
+    const img = document.getElementById('r2-main-view');
+    if(img) {
+        img.onerror = null;
+        img.src = src;
+    }
+}
+
+function addToCart() {
+    try {
+        const titleEl = document.getElementById('modal-title');
+        const title = titleEl ? titleEl.textContent : "Produit";
+        const priceEl = document.getElementById('calc-price');
+        const finalPrice = priceEl ? (parseInt(priceEl.textContent) || 0) : 0;
+        const weightEl = document.getElementById('calc-weight');
+        const finalWeight = weightEl ? weightEl.textContent : "--";
+        
+        let configText = "";
+        const imgEl = document.getElementById('modal-image');
+        let imgUrl = imgEl ? imgEl.src : ""; 
+
+        const configSection = document.getElementById('configurator-section');
+
+        if (isCurrentItemWheelConfigurable || (configSection && configSection.style.display !== 'none')) {
+            const titleLC = title.toLowerCase();
+            
+            if (titleLC.includes('manivelle')) {
+                const manivelleEl = document.getElementById('config-longueur-manivelle');
+                const longueur = manivelleEl ? manivelleEl.value : "";
+                configText = `Longueur : ${longueur}`;
+            } else {
+                const getSelectText = (id) => {
+                    const el = document.getElementById(id);
+                    if (!el || el.selectedIndex < 0) return "";
+                    return el.options[el.selectedIndex].text.split('(')[0].trim();
+                };
+                
+                const moyeu = getSelectText('config-moyeu') || "RT240";
+                const janteEl = document.getElementById('config-jante');
+                const jante = janteEl ? janteEl.value : "SUXL";
+                const rayon = getSelectText('config-rayons') || "T33";
+                const ratchet = getSelectText('config-ratchet') || "45T";
+                const roulements = getSelectText('config-roulements') || "Acier EZO";
+                
+                const rouelibreEl = document.getElementById('config-rouelibre');
+                const rouelibre = rouelibreEl ? rouelibreEl.value : "Shimano HG";
+                
+                const finition = getSelectText('config-finition') || "Glossy Black";
+                const logos = getSelectText('config-logos') || "Petit logo noir";
+                const freinage = getSelectText('config-freinage') || "Disques";
+                
+                const colorEl = document.getElementById('config-couleur-moyeu');
+                const couleurMoyeu = (colorEl && colorEl.value) ? " (" + colorEl.value + ")" : "";
+
+                configText = `${moyeu}${couleurMoyeu} | Jantes ${jante} | ${rayon} | Ratchet ${ratchet} | Roulements ${roulements} | ${rouelibre} | ${finition} | Logos : ${logos} | ${freinage}`;
+            }
+        } else {
+            configText = isCurrentItemAccessory ? "Accessoire" : "Modèle Standard";
+        }
+
+        const item = {
+            id: Date.now(),
+            title: title,
+            price: finalPrice,
+            weight: finalWeight,
+            config: configText,
+            image: imgUrl,
+            isAccessory: isCurrentItemAccessory
+        };
+
+        cart.push(item);
+        updateCartUI();
+        closeModal();
+        toggleCart();
+    } catch (e) {
+        console.error("Erreur lors de l'ajout au panier:", e);
+        alert("Une erreur technique s'est produite lors de l'ajout au panier. L'équipe est informée.");
+    }
+}
+
+function removeFromCart(id) {
+    cart = cart.filter(item => item.id !== id);
+    updateCartUI();
+}
+
+function updateCartUI() {
+    const container = document.getElementById('cart-items-container');
+    const emptyMsg = document.getElementById('empty-cart-msg');
+    const badge = document.getElementById('cart-badge');
+    
+    const subtotalEl = document.getElementById('cart-subtotal');
+    const finalTotalEl = document.getElementById('cart-final-total');
+    const feesEl = document.getElementById('cart-fees');
+    const feeRow = document.getElementById('fee-row');
+    
+    const checkoutBtn = document.getElementById('checkout-btn');
+    const billingContainer = document.getElementById('billing-info-container');
+    const paymentMethodContainer = document.getElementById('payment-method-container');
+    const errorMsg = document.getElementById('checkout-error');
+    
+    if (errorMsg) errorMsg.classList.add('hidden');
+
+    const paymentMethodInput = document.querySelector('input[name="payment-method"]:checked');
+    const paymentMethod = paymentMethodInput ? paymentMethodInput.value : 'virement';
+    
+    if (checkoutBtn) {
+        if (paymentMethod === 'virement') {
+            checkoutBtn.className = "w-full bg-brand-main hover:bg-gray-800 transition-colors text-white font-bold py-4 rounded-xl shadow-md";
+            checkoutBtn.innerHTML = 'Valider ma réservation <i class="fa-solid fa-paper-plane ml-2 text-xl"></i>';
+        } else if (paymentMethod === 'card1x') {
+            checkoutBtn.className = "w-full bg-[#635BFF] hover:bg-[#524be0] transition-colors text-white font-bold py-4 rounded-xl shadow-md";
+            checkoutBtn.innerHTML = 'Valider (Paiement Stripe) <i class="fa-solid fa-lock ml-2 text-xl"></i>';
+        } else if (paymentMethod === 'fractionne') {
+            checkoutBtn.className = "w-full bg-blue-600 hover:bg-blue-700 transition-colors text-white font-bold py-4 rounded-xl shadow-md";
+            checkoutBtn.innerHTML = 'Valider (Paiement en 3x/4x) <i class="fa-solid fa-lock ml-2 text-xl"></i>';
+        }
+    }
+
+    if (cart.length > 0) {
+        if (badge) {
+            badge.textContent = cart.length;
+            badge.classList.remove('hidden');
+        }
+        if (emptyMsg) emptyMsg.style.display = 'none';
+        if (checkoutBtn) {
+            checkoutBtn.disabled = false;
+            checkoutBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+        }
+        if (billingContainer) billingContainer.classList.remove('hidden');
+        if (paymentMethodContainer) paymentMethodContainer.classList.remove('hidden');
+    } else {
+        if (badge) badge.classList.add('hidden');
+        if (emptyMsg) emptyMsg.style.display = 'block';
+        if (checkoutBtn) {
+            checkoutBtn.disabled = true;
+            checkoutBtn.classList.add('opacity-50', 'cursor-not-allowed');
+        }
+        if (billingContainer) billingContainer.classList.add('hidden');
+        if (paymentMethodContainer) paymentMethodContainer.classList.add('hidden');
+    }
+
+    if (container) {
+        Array.from(container.children).forEach(child => {
+            if(child.id !== 'empty-cart-msg') child.remove();
+        });
+    }
+
+    let subtotal = 0;
+    discountAmount = 0;
+    
+    cart.forEach(item => {
+        subtotal += item.price;
+        
+        if (appliedPromo === 'CCPIKARBON') {
+            const titleLC = item.title.toLowerCase();
+            const isSpecialWheel = titleLC.includes('bâton') || titleLC.includes('tri-spoke') || titleLC.includes('lenticulaire') || titleLC.includes('disc');
+            
+            if (!item.isAccessory && !isSpecialWheel) {
+                discountAmount += 50;
+            } else {
+                discountAmount += Math.round(item.price * 0.05);
+            }
+        }
+        
+        if (container) {
+            const div = document.createElement('div');
+            div.className = "bg-white p-4 rounded-xl border border-gray-100 shadow-sm flex gap-4 relative group";
+            div.innerHTML = `
+                <button onclick="removeFromCart(${item.id})" class="absolute -top-2 -right-2 bg-red-100 text-red-600 rounded-full w-6 h-6 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition shadow hover:bg-red-200"><i class="fa-solid fa-xmark"></i></button>
+                <div class="w-16 h-16 bg-gray-50 rounded-lg flex-shrink-0 flex items-center justify-center p-1 border border-gray-100 overflow-hidden">
+                    <img src="${item.image}" class="w-full h-full object-contain">
+                </div>
+                <div class="flex-grow">
+                    <h5 class="font-bold text-gray-900 text-sm leading-tight mb-1">${item.title}</h5>
+                    <p class="text-[10px] text-gray-500 mb-2 font-medium bg-gray-50 p-1 rounded inline-block">${item.config}</p>
+                    <div class="flex justify-between items-center">
+                        <span class="text-xs text-gray-400 font-medium"><i class="fa-solid fa-weight-scale mr-1"></i>${item.weight}g</span>
+                        <span class="font-black text-brand-accent">${item.price} €</span>
+                    </div>
+                </div>
+            `;
+            container.appendChild(div);
+        }
+    });
+
+    const promoInputContainer = document.getElementById('promo-input-container');
+    const promoActiveContainer = document.getElementById('promo-active-container');
+    const originalTotalEl = document.getElementById('cart-original-total');
+
+    if (appliedPromo) {
+        if (promoInputContainer) promoInputContainer.classList.add('hidden');
+        if (promoActiveContainer) {
+            promoActiveContainer.classList.remove('hidden');
+            promoActiveContainer.classList.add('flex');
+        }
+        const activePromoName = document.getElementById('active-promo-name');
+        if (activePromoName) activePromoName.textContent = `${appliedPromo} (-${discountAmount}€)`;
+        
+        if (originalTotalEl) {
+            if (discountAmount > 0) {
+                originalTotalEl.textContent = `${subtotal} €`;
+                originalTotalEl.classList.remove('hidden');
+            } else {
+                originalTotalEl.classList.add('hidden');
+            }
+        }
+    } else {
+        if (promoInputContainer) promoInputContainer.classList.remove('hidden');
+        if (promoActiveContainer) {
+            promoActiveContainer.classList.add('hidden');
+            promoActiveContainer.classList.remove('flex');
+        }
+        if (originalTotalEl) originalTotalEl.classList.add('hidden');
+    }
+
+    let currentSubtotal = subtotal - discountAmount;
+    if (subtotalEl) subtotalEl.textContent = currentSubtotal;
+
+    let transactionFees = 0;
+
+    if (currentSubtotal > 0) {
+        if (paymentMethod === 'card1x') {
+            transactionFees = (currentSubtotal * 0.015) + 0.25;
+        } else if (paymentMethod === 'fractionne') {
+            transactionFees = currentSubtotal * 0.03;
+        }
+    }
+    
+    transactionFees = Math.round(transactionFees * 100) / 100;
+
+    if (feesEl) feesEl.textContent = transactionFees.toFixed(2);
+    if (feeRow) {
+        if (transactionFees > 0) {
+            feeRow.classList.remove('hidden');
+            feeRow.classList.add('flex');
+        } else {
+            feeRow.classList.add('hidden');
+            feeRow.classList.remove('flex');
+        }
+    }
+
+    const finalTotal = currentSubtotal + transactionFees;
+    if (finalTotalEl) finalTotalEl.textContent = finalTotal % 1 === 0 ? finalTotal : finalTotal.toFixed(2);
+}
+
+function applyPromoCode() {
+    const input = document.getElementById('promo-code');
+    if(!input) return;
+    const code = input.value.trim().toUpperCase();
+    if (code === 'CCPIKARBON') {
+        appliedPromo = code;
+        input.value = '';
+        updateCartUI();
+    }
+}
+
+function removePromoCode() {
+    appliedPromo = null;
+    discountAmount = 0;
+    updateCartUI();
+}
+
+function submitOrder() {
+    if (cart.length === 0) return;
+    
+    const nameEl = document.getElementById('client-name');
+    const emailEl = document.getElementById('client-email');
+    const phoneEl = document.getElementById('client-phone');
+    const addressEl = document.getElementById('client-address');
+    
+    const nomClient = nameEl ? nameEl.value.trim() : "";
+    const emailClient = emailEl ? emailEl.value.trim() : "";
+    const telClient = phoneEl ? phoneEl.value.trim() : ""; 
+    const adresseClient = addressEl ? addressEl.value.trim() : "";
+    
+    const errorMsg = document.getElementById('checkout-error');
+    const checkoutBtn = document.getElementById('checkout-btn');
+
+    if (!nomClient || !emailClient || !telClient || !adresseClient) {
+        if (errorMsg) errorMsg.classList.remove('hidden');
+        return; 
+    } else {
+        if (errorMsg) errorMsg.classList.add('hidden');
+    }
+    
+    const originalBtnHtml = checkoutBtn.innerHTML;
+    checkoutBtn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin mr-2"></i> Traitement en cours...';
+    checkoutBtn.disabled = true;
+    checkoutBtn.classList.add('opacity-75');
+    checkoutBtn.classList.remove('hover:bg-gray-800', 'hover:bg-[#524be0]', 'hover:bg-blue-700');
+    
+    let total = 0;
+    let produitsPourFichier = []; 
+    let factureNoms = []; 
+    let facturePrix = []; 
+    
+    cart.forEach((item, index) => {
+        total += item.price;
+        produitsPourFichier.push(`${item.title} (${item.config})`);
+        
+        factureNoms.push(`• ${item.title}\n  ${item.config}`);
+        facturePrix.push(`${item.price} €\n `); 
+    });
+    
+    const currentSubtotal = appliedPromo ? (total - discountAmount) : total;
+
+    const paymentMethodInput = document.querySelector('input[name="payment-method"]:checked');
+    const paymentMethodVal = paymentMethodInput ? paymentMethodInput.value : 'virement';
+    let transactionFees = 0;
+    let paymentMethodName = "Virement / Paylib / Espèces";
+
+    if (paymentMethodVal === 'card1x') {
+        transactionFees = (currentSubtotal * 0.015) + 0.25;
+        paymentMethodName = "Carte Bancaire (1x via Stripe)";
+    } else if (paymentMethodVal === 'fractionne') {
+        transactionFees = currentSubtotal * 0.03;
+        paymentMethodName = "Paiement en plusieurs fois (3x/4x)";
+    }
+    transactionFees = Math.round(transactionFees * 100) / 100;
+    const finalTotal = currentSubtotal + transactionFees;
+
+    if (appliedPromo) {
+        factureNoms.push(`\nREMISE (Code : ${appliedPromo})`);
+        facturePrix.push(`\n-${discountAmount} €`);
+    }
+
+    if (transactionFees > 0) {
+        factureNoms.push(`\nFrais de transaction (${paymentMethodName})`);
+        facturePrix.push(`\n+${transactionFees.toFixed(2)} €`);
+    }
+
+    const orderData = {
+        date: new Date().toLocaleString('fr-FR', { timeZone: 'Indian/Reunion' }),
+        nom: nomClient,
+        email: emailClient, 
+        telephone: telClient, 
+        adresse: adresseClient,
+        produits: produitsPourFichier.join(" + "), 
+        factureNoms: factureNoms.join("\n\n"), 
+        facturePrix: facturePrix.join("\n\n"), 
+        total: finalTotal % 1 === 0 ? finalTotal : finalTotal.toFixed(2),
+        promo: appliedPromo || "Aucun",
+        statutPaiement: "En attente via " + paymentMethodName,
+        statutLivraison: "À traiter"
+    };
+
+    fetch(API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify(orderData)
+    })
+    .then(response => response.text())
+    .then(data => {
+        const checkoutContent = document.getElementById('checkout-content');
+        if (checkoutContent) {
+            checkoutContent.classList.add('hidden');
+            checkoutContent.classList.remove('flex');
+        }
+        
+        const checkoutSuccess = document.getElementById('checkout-success');
+        if (checkoutSuccess) {
+            checkoutSuccess.classList.remove('hidden');
+            checkoutSuccess.classList.add('flex');
+        }
+        
+        const successPayText = document.getElementById('success-payment-method');
+        if (successPayText) {
+            if(paymentMethodVal === 'virement') {
+                successPayText.textContent = "le RIB pour finaliser la réservation";
+            } else if(paymentMethodVal === 'card1x') {
+                successPayText.textContent = "le lien Stripe sécurisé pour le paiement par carte";
+            } else {
+                successPayText.textContent = "le lien sécurisé pour le paiement en plusieurs fois";
+            }
+        }
+
+        checkoutBtn.innerHTML = originalBtnHtml;
+        checkoutBtn.disabled = false;
+        checkoutBtn.classList.remove('opacity-75');
+    })
+    .catch(error => {
+        console.error("Erreur Google :", error);
+        checkoutBtn.innerHTML = '<i class="fa-solid fa-triangle-exclamation mr-2"></i> Erreur, réessayez';
+        checkoutBtn.disabled = false;
+        checkoutBtn.classList.remove('opacity-75');
+        setTimeout(() => { updateCartUI(); }, 3000);
+    });
+}
+
+function closeSuccessAndReset() {
+    cart = [];
+    appliedPromo = null;
+    discountAmount = 0;
+    const nameEl = document.getElementById('client-name');
+    if (nameEl) nameEl.value = '';
+    const emailEl = document.getElementById('client-email');
+    if (emailEl) emailEl.value = '';
+    const phoneEl = document.getElementById('client-phone');
+    if (phoneEl) phoneEl.value = '';
+    const addressEl = document.getElementById('client-address');
+    if (addressEl) addressEl.value = '';
+    
+    const successEl = document.getElementById('checkout-success');
+    if (successEl) {
+        successEl.classList.add('hidden');
+        successEl.classList.remove('flex');
+    }
+    const contentEl = document.getElementById('checkout-content');
+    if (contentEl) {
+        contentEl.classList.remove('hidden');
+        contentEl.classList.add('flex');
+    }
+    
+    updateCartUI();
+    toggleCart();
+}
+
+async function loadCatalogue() {
+    try {
+        const response = await fetch(API_URL);
+        globalCatalogue = await response.json();
+        const loader = document.getElementById('loading-message');
+        if(loader) loader.style.display = 'none';
+        renderGrid('Tout');
+    } catch (error) {
+        console.error('Erreur:', error);
+        const loader = document.getElementById('loading-message');
+        if(loader) {
+            loader.innerHTML = `
+            <div class="bg-red-50 text-red-600 p-4 rounded-lg text-center border border-red-200">
+                <i class="fa-solid fa-triangle-exclamation text-2xl mb-2"></i>
+                <p class="font-bold">Erreur de connexion au catalogue.</p>
+            </div>`;
+        }
+    }
+}
+
+function filterCatalogue(category) {
+    const btns = document.querySelectorAll('.filter-btn');
+    btns.forEach(btn => {
+        if (btn.textContent.includes(category) || (category === 'Tout' && btn.textContent === 'Tout voir')) {
+            btn.classList.add('active', 'bg-brand-main', 'text-white');
+            btn.classList.remove('bg-white', 'text-gray-700');
+        } else {
+            btn.classList.remove('active', 'bg-brand-main', 'text-white');
+            btn.classList.add('bg-white', 'text-gray-700');
+        }
+    });
+    renderGrid(category);
+}
+
+function renderGrid(filterCategory) {
+    const grid = document.getElementById('product-grid');
+    if (!grid) return;
+    grid.innerHTML = '';
+    let count = 0;
+
+    globalCatalogue.forEach((item, index) => {
+        if(!item.Nom) return;
+        
+        const cat = (item.Categorie && item.Categorie.trim() !== "") ? item.Categorie.trim() : "Roues";
+        if (filterCategory !== 'Tout' && !cat.toLowerCase().includes(filterCategory.toLowerCase())) return;
+        count++;
+
+        const nomLC = item.Nom.toLowerCase();
+        const isFixedPriceWheel = nomLC.includes('bâton') || nomLC.includes('tri-spoke') || nomLC.includes('lenticulaire') || nomLC.includes('disc');
+        const isAccessory = cat.toLowerCase().includes('accessoire') || cat.toLowerCase().includes('composant');
+
+        let imageUrl = item.Image ? item.Image.split(',')[0].trim() : '[https://images.unsplash.com/photo-1511994298241-608e28f14fde?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80](https://images.unsplash.com/photo-1511994298241-608e28f14fde?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80)';
+        let prixAffiche = 'Sur devis';
+        if (item.Prix) {
+            prixAffiche = (isAccessory || isFixedPriceWheel) ? `${item.Prix} €` : `Dès ${item.Prix} €`;
+        }
+        
+        let statutBadge = '';
+        
+        if (nomLC.includes('50')) {
+            statutBadge += `<span class="absolute top-4 right-4 bg-brand-accent text-brand-main text-xs font-black px-3 py-1 rounded shadow-md z-20 transform rotate-3 border border-yellow-300">⭐ BEST-SELLER</span>`;
+        }
+
+        if (item.Statut) {
+            const statutLC = item.Statut.toLowerCase();
+            if (statutLC.includes('stock')) {
+                statutBadge += `<span class="absolute top-4 left-4 bg-green-500 text-white text-xs font-bold px-3 py-1 rounded shadow-md z-10"><i class="fa-solid fa-check mr-1"></i> En Stock</span>`;
+            } else if (statutLC.includes('arrivage')) {
+                statutBadge += `<span class="absolute top-4 left-4 bg-blue-500 text-white text-xs font-bold px-3 py-1 rounded shadow-md z-10"><i class="fa-solid fa-truck-fast mr-1"></i> Arrivage en cours</span>`;
+            } else {
+                statutBadge += `<span class="absolute top-4 left-4 bg-orange-500 text-white text-xs font-bold px-3 py-1 rounded shadow-md z-10"><i class="fa-solid fa-plane mr-1"></i> ${item.Statut}</span>`;
+            }
+        }
+
+        let specLigne = '';
+        if (isAccessory) {
+            specLigne = `<span class="flex items-center"><i class="fa-solid fa-weight-scale text-brand-accent mr-1.5"></i> ${item.Poids || '-'} g</span>`;
+        } else {
+            let weightPrefix = isFixedPriceWheel ? '' : 'Dès ';
+            specLigne = `
+                <span class="flex items-center"><i class="fa-solid fa-arrows-up-down text-brand-accent mr-1.5"></i> ${item.Hauteur || '-'}</span>
+                ${item.Poids ? `<span class="text-gray-300">|</span><span class="flex items-center"><i class="fa-solid fa-weight-scale text-brand-accent mr-1.5"></i> ${weightPrefix}${item.Poids} g</span>` : ''}
+            `;
+        }
+
+        let labelPrix = (isAccessory || isFixedPriceWheel) ? 'Prix unitaire' : 'Prix (la paire)';
+
+        const cardHtml = `
+            <div onclick="openModal(${index})" class="wheel-card bg-white rounded-xl shadow-md overflow-hidden border border-gray-100 flex flex-col relative group cursor-pointer">
+                ${statutBadge}
+                <div class="overflow-hidden h-64 bg-gray-50 flex items-center justify-center p-4 relative">
+                    <img src="${imageUrl}" alt="${item.Nom}" class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500">
+                    <div class="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition flex items-center justify-center">
+                        <span class="bg-brand-main text-white text-sm font-bold px-5 py-2 rounded-full shadow-lg transform translate-y-4 group-hover:translate-y-0 transition"><i class="fa-solid fa-eye mr-2"></i>Voir le produit</span>
+                    </div>
+                </div>
+                <div class="p-6 flex flex-col flex-grow text-center">
+                    <h4 class="text-xl font-black text-gray-900 mb-2">${item.Nom}</h4>
+                    <div class="flex justify-center items-center gap-3 text-sm text-gray-600 mb-4 font-medium">
+                        ${specLigne}
+                    </div>
+                    <div class="mt-auto border-t border-gray-100 pt-4">
+                        <span class="block text-xs uppercase tracking-wider text-gray-400 font-bold mb-1">${labelPrix}</span>
+                        <span class="text-2xl font-black text-brand-accent">${prixAffiche}</span>
+                    </div>
+                </div>
+            </div>
+        `;
+        grid.insertAdjacentHTML('beforeend', cardHtml);
+    });
+    
+    if (count === 0) {
+        grid.innerHTML = `<p class="col-span-full text-center text-gray-500 py-10">Aucun produit dans cette catégorie pour le moment.</p>`;
+    }
+}
+
+function updateHubOptions() {
+    const moyeuSelect = document.getElementById('config-moyeu');
+    const colorSelect = document.getElementById('config-couleur-moyeu');
+    const ratchetSelect = document.getElementById('config-ratchet');
+    const roulementsSelect = document.getElementById('config-roulements');
+    
+    if(!moyeuSelect || !colorSelect || !ratchetSelect || !roulementsSelect) return;
+
+    const currentHub = moyeuSelect.value;
+    const isHubChange = (lastHubSelected !== "" && lastHubSelected !== currentHub);
+    lastHubSelected = currentHub;
+
+    const currentColor = colorSelect.value;
+    const currentRatchet = ratchetSelect.value;
+    const currentRoulements = roulementsSelect.value;
+
+    if (currentHub === 'R2') {
+        colorSelect.innerHTML = `
+            <option value="Noir" data-price="0">Noir (Standard R2)</option>
+            <option value="Gris" data-price="50">Gris [+50€]</option>
+            <option value="Bleu" data-price="50">Bleu (Anodisé) [+50€]</option>
+            <option value="Rose" data-price="50">Rose (Anodisé) [+50€]</option>
+            <option value="Vert" data-price="50">Vert (Anodisé) [+50€]</option>
+        `;
+        ratchetSelect.innerHTML = `
+            <option value="45T" data-price="0">45T (Standard R2)</option>
+            <option value="72T" data-price="50">72T (Haute réactivité) [+50€]</option>
+        `;
+        roulementsSelect.innerHTML = `
+            <option value="Acier EZO" data-price="0">Acier EZO (Standard R2)</option>
+            <option value="Céramique TPI" data-price="80">Céramique TPI (Ultra-fluide) [+80€]</option>
+        `;
+        
+        if (isHubChange) {
+            colorSelect.value = 'Noir';
+        } else if(Array.from(colorSelect.options).some(opt => opt.value === currentColor)) {
+            colorSelect.value = currentColor;
+        } else {
+            colorSelect.selectedIndex = 0; 
+        }
+
+    } else { 
+        colorSelect.innerHTML = `
+            <option value="Argent" data-price="0">Argent (Standard RT240)</option>
+            <option value="Noir" data-price="0">Noir</option>
+        `;
+        ratchetSelect.innerHTML = `
+            <option value="54T" data-price="0">54T (Inclus avec RT240)</option>
+        `;
+        roulementsSelect.innerHTML = `
+            <option value="Céramique SS" data-price="0">Céramique SS (Inclus avec RT240)</option>
+        `;
+        
+        if (isHubChange) {
+            colorSelect.value = 'Argent';
+        } else if(Array.from(colorSelect.options).some(opt => opt.value === currentColor)) {
+            colorSelect.value = currentColor;
+        } else {
+            colorSelect.selectedIndex = 0; 
+        }
+    }
+
+    if(Array.from(ratchetSelect.options).some(opt => opt.value === currentRatchet)) {
+        ratchetSelect.value = currentRatchet;
+    } else {
+        ratchetSelect.selectedIndex = 0;
+    }
+    if(Array.from(roulementsSelect.options).some(opt => opt.value === currentRoulements)) {
+        roulementsSelect.value = currentRoulements;
+    } else {
+        roulementsSelect.selectedIndex = 0;
+    }
+}
+
+function updateBadgeUI(isOriginalStatus) {
+    const badge = document.getElementById('modal-badge');
+    if(!badge) return;
+    
+    let statusToDisplay = (isOriginalStatus && currentItemStatut !== "") ? currentItemStatut : "Sur Commande";
+    const statutLC = statusToDisplay.toLowerCase();
+    
+    if (statutLC.includes('stock')) {
+        badge.className = 'text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide w-max bg-green-100 text-green-700 transition-colors duration-300';
+        badge.innerHTML = '<i class="fa-solid fa-check mr-1"></i> En Stock Réunion';
+    } else if (statutLC.includes('arrivage')) {
+        badge.className = 'text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide w-max bg-blue-100 text-blue-700 transition-colors duration-300';
+        badge.innerHTML = '<i class="fa-solid fa-truck-fast mr-1"></i> Arrivage en cours';
+    } else if (statutLC.includes('commande')) {
+        badge.className = 'text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide w-max bg-orange-100 text-orange-700 transition-colors duration-300';
+        badge.innerHTML = `<i class="fa-solid fa-plane mr-1"></i> Sur Commande`;
+    } else {
+        badge.className = 'text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide w-max bg-orange-100 text-orange-700 transition-colors duration-300';
+        badge.innerHTML = `<i class="fa-solid fa-plane mr-1"></i> ${statusToDisplay}`;
+    }
+}
+
+function openModal(index) {
+    try {
+        const item = globalCatalogue[index];
+        if(!item) return;
+
+        currentBasePrice = parseInt(item.Prix) || 0;
+        currentBaseWeight = parseInt(item.Poids) || 0;
+        currentItemStatut = item.Statut || "";
+        
+        const nomLC = item.Nom ? String(item.Nom).toLowerCase() : "";
+        isCurrentItemAccessory = (item.Categorie && (String(item.Categorie).toLowerCase().includes('accessoire') || String(item.Categorie).toLowerCase().includes('composant')));
+        isCurrentItemWheelConfigurable = !isCurrentItemAccessory && !nomLC.includes('bâton') && !nomLC.includes('tri-spoke') && !nomLC.includes('lenticulaire') && !nomLC.includes('disc') && !nomLC.includes('manivelle');
+
+        const isSpecialWheel = nomLC.includes('bâton') || nomLC.includes('tri-spoke') || nomLC.includes('lenticulaire') || nomLC.includes('disc');
+        
+        const priceLabel = document.getElementById('modal-price-label');
+        if(priceLabel) priceLabel.textContent = (isCurrentItemAccessory || isSpecialWheel) ? 'Prix unitaire' : 'Prix (la paire)';
+
+        const titleEl = document.getElementById('modal-title');
+        if(titleEl) titleEl.textContent = item.Nom || "Produit";
+        
+        const descEl = document.getElementById('modal-desc');
+        if(descEl) descEl.textContent = item.Description || "Sélectionnez vos options pour ajouter ce produit au panier.";
+        
+        const hauteurEl = document.getElementById('modal-hauteur');
+        if(hauteurEl) hauteurEl.textContent = item.Hauteur || '-';
+
+        const bestsellerBadge = document.getElementById('modal-bestseller');
+        if (bestsellerBadge) {
+            if (nomLC.includes('50')) {
+                bestsellerBadge.classList.remove('hidden');
+                bestsellerBadge.classList.add('inline-flex', 'items-center');
+            } else {
+                bestsellerBadge.classList.add('hidden');
+                bestsellerBadge.classList.remove('inline-flex', 'items-center');
+            }
+        }
+
+        let images = item.Image ? item.Image.split(',') : ['[https://images.unsplash.com/photo-1511994298241-608e28f14fde?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80](https://images.unsplash.com/photo-1511994298241-608e28f14fde?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80)'];
+        
+        changeModalMedia(images[0].trim());
+
+        const gallery = document.getElementById('modal-gallery');
+        if (gallery) {
+            if (images.length > 1) {
+                gallery.innerHTML = images.map(img => {
+                    const url = img.trim();
+                    const isVideo = url.toLowerCase().endsWith('.mp4') || url.toLowerCase().endsWith('.webm');
+                    const iconPlay = isVideo ? `<div class="absolute inset-0 flex items-center justify-center bg-black/20 group-hover:bg-black/40 transition"><i class="fa-solid fa-circle-play text-white text-2xl shadow-sm opacity-90"></i></div>` : '';
+                    const mediaTag = isVideo ? `<video src="${url}#t=0.1" class="w-full h-full object-cover"></video>` : `<img src="${url}" class="w-full h-full object-cover">`;
+                    
+                    return `
+                    <div onclick="changeModalMedia('${url}')" class="group cursor-pointer border-2 border-transparent hover:border-brand-main rounded-lg overflow-hidden relative h-20 min-w-[5rem] bg-gray-100 flex-shrink-0 transition-all shadow-sm">
+                        ${mediaTag}
+                        ${iconPlay}
+                    </div>`;
+                }).join('');
+                gallery.classList.remove('hidden');
+            } else {
+                gallery.innerHTML = '';
+                gallery.classList.add('hidden');
+            }
+        }
+        
+        let largeurInt = "24 mm";
+        let largeurExt = "32 mm";
+        
+        if (nomLC.includes('lenticulaire') || nomLC.includes('disc')) {
+            largeurInt = "18 mm";
+            largeurExt = "25 mm";
+        } else if (nomLC.includes('bâton') || nomLC.includes('tri-spoke')) {
+            largeurInt = "21 mm";
+            largeurExt = "28 mm";
+        }
+
+        const larIntEl = document.getElementById('modal-largeur-int');
+        if(larIntEl) larIntEl.textContent = largeurInt;
+        const larExtEl = document.getElementById('modal-largeur-ext');
+        if(larExtEl) larExtEl.textContent = largeurExt;
+
+        const specJantesBox = document.getElementById('spec-jantes-box');
+        const poidsMaxContainer = document.getElementById('modal-poids-max-container');
+        const configuratorSection = document.getElementById('configurator-section');
+        const wheelConfigOptions = document.getElementById('wheel-config-options');
+        const manivellesConfigContainer = document.getElementById('config-manivelles-container');
+        
+        if (nomLC.includes('manivelle')) {
+            if(specJantesBox) specJantesBox.style.display = 'none';
+            if(configuratorSection) configuratorSection.style.display = 'block';
+            if(wheelConfigOptions) wheelConfigOptions.style.display = 'none';
+            if(manivellesConfigContainer) manivellesConfigContainer.style.display = 'block';
+            
+            const cPrice = document.getElementById('calc-price');
+            if(cPrice) cPrice.textContent = currentBasePrice > 0 ? currentBasePrice : '--';
+            const cWeight = document.getElementById('calc-weight');
+            if(cWeight) cWeight.textContent = currentBaseWeight > 0 ? currentBaseWeight : '--';
+            updateBadgeUI(true);
+        } else if (isCurrentItemAccessory) {
+            if(specJantesBox) specJantesBox.style.display = 'none';
+            if(configuratorSection) configuratorSection.style.display = 'none';
+            const cPrice = document.getElementById('calc-price');
+            if(cPrice) cPrice.textContent = currentBasePrice > 0 ? currentBasePrice : '--';
+            const cWeight = document.getElementById('calc-weight');
+            if(cWeight) cWeight.textContent = currentBaseWeight > 0 ? currentBaseWeight : '--';
+            updateBadgeUI(true);
+        } else if (isCurrentItemWheelConfigurable) {
+            if(specJantesBox) specJantesBox.style.display = 'block';
+            if(configuratorSection) configuratorSection.style.display = 'block';
+            if(wheelConfigOptions) wheelConfigOptions.style.display = 'block';
+            if(manivellesConfigContainer) manivellesConfigContainer.style.display = 'none';
+            if(poidsMaxContainer) poidsMaxContainer.style.display = 'block';
+            
+            const optUxl = document.getElementById('opt-uxl');
+            if (optUxl) {
+                if (nomLC.includes('75') || nomLC.includes('80')) {
+                    optUxl.setAttribute('data-weight-diff', '40');
+                    optUxl.textContent = 'UXL (Ultra-Light) - Renforcée [+40g]';
+                } else {
+                    optUxl.setAttribute('data-weight-diff', '30');
+                    optUxl.textContent = 'UXL (Ultra-Light) - Renforcée [+30g]';
+                }
+            }
+            
+            const mHub = document.getElementById('config-moyeu');
+            if(mHub) { mHub.value = 'R2'; lastHubSelected = 'R2'; }
+            
+            const mJante = document.getElementById('config-jante');
+            if(mJante) mJante.value = 'SUXL';
+            const mRayons = document.getElementById('config-rayons');
+            if(mRayons) mRayons.value = 'T33';
+            const mFinition = document.getElementById('config-finition');
+            if(mFinition) mFinition.value = 'Glossy Black'; 
+            const mLogos = document.getElementById('config-logos');
+            if(mLogos) mLogos.value = 'Petit logo noir';
+            const mRouelibre = document.getElementById('config-rouelibre');
+            if(mRouelibre) mRouelibre.value = 'Shimano HG';
+            const mFreinage = document.getElementById('config-freinage');
+            if(mFreinage) mFreinage.value = 'Disques';
+            
+            updateHubOptions(); 
+            const cColor = document.getElementById('config-couleur-moyeu');
+            if(cColor) cColor.value = 'Noir'; 
+            
+            updateConfig(); 
+        } else {
+            if(specJantesBox) specJantesBox.style.display = 'block';
+            if(configuratorSection) configuratorSection.style.display = 'none';
+            if(poidsMaxContainer) poidsMaxContainer.style.display = 'none';
+            const cPrice = document.getElementById('calc-price');
+            if(cPrice) cPrice.textContent = currentBasePrice > 0 ? currentBasePrice : '--';
+            const cWeight = document.getElementById('calc-weight');
+            if(cWeight) cWeight.textContent = currentBaseWeight > 0 ? currentBaseWeight : '--';
+            updateBadgeUI(true);
+        }
+
+        const pModal = document.getElementById('product-modal');
+        if (pModal) {
+            pModal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+    } catch(e) {
+        console.error("Erreur openModal:", e);
+        alert("Erreur lors de l'ouverture. Veuillez rafraîchir la page (F5).");
+    }
+}
+
+function closeModal() {
+    document.getElementById('product-modal').classList.add('hidden');
+    document.body.style.overflow = 'auto'; 
+    
+    const vidEl = document.getElementById('modal-video');
+    if(vidEl) {
+        try { vidEl.pause(); } catch(e) {}
+    }
+}
+
+function changeModalMedia(url) {
+    try {
+        const imgEl = document.getElementById('modal-image');
+        const vidEl = document.getElementById('modal-video');
+
+        if (!url) return;
+
+        if (url.toLowerCase().endsWith('.mp4') || url.toLowerCase().endsWith('.webm')) {
+            if (imgEl) imgEl.classList.add('hidden');
+            if (vidEl) {
+                vidEl.classList.remove('hidden');
+                vidEl.src = url;
+                vidEl.muted = false;
+                vidEl.volume = 0.5;
+
+                let playPromise = vidEl.play();
+                if (playPromise !== undefined) {
+                    playPromise.catch(error => {
+                        console.log("Autoplay bloqué, passage en muet.");
+                        vidEl.muted = true;
+                        vidEl.play().catch(e => console.log(e));
+                    });
+                }
+            }
+        } else {
+            if (vidEl) {
+                vidEl.classList.add('hidden');
+                try { vidEl.pause(); } catch(e) {}
+            }
+            if (imgEl) {
+                imgEl.classList.remove('hidden');
+                imgEl.src = url;
+            }
+        }
+    } catch(e) {
+        console.error("Erreur changeModalMedia:", e);
+    }
+}
+
+function updateConfig() {
+    if (!isCurrentItemWheelConfigurable) return; 
+
+    const moyeuSelect = document.getElementById('config-moyeu');
+    const janteSelect = document.getElementById('config-jante');
+    const rayonSelect = document.getElementById('config-rayons');
+    const ratchetSelect = document.getElementById('config-ratchet');
+    const roulementsSelect = document.getElementById('config-roulements');
+    const finitionSelect = document.getElementById('config-finition');
+    const colorSelect = document.getElementById('config-couleur-moyeu');
+    
+    const msgRecoR2 = document.getElementById('msg-reco-r2');
+    const t32Option = document.getElementById('opt-t32');
+
+    if (moyeuSelect && moyeuSelect.value === 'R2') {
+        if(msgRecoR2) msgRecoR2.style.display = 'flex';
+        if(t32Option) t32Option.style.display = 'none';
+        if (rayonSelect && rayonSelect.value === 'T32') {
+            rayonSelect.value = 'T33';
+        }
+    } else {
+        if(msgRecoR2) msgRecoR2.style.display = 'none';
+        if(t32Option) t32Option.style.display = '';
+    }
+    
+    const getPrice = (el) => {
+        if(!el || el.selectedIndex < 0) return 0;
+        return parseInt(el.options[el.selectedIndex].getAttribute('data-price')) || 0;
+    };
+
+    const moyeuPrice = getPrice(moyeuSelect);
+    const rayonPrice = getPrice(rayonSelect);
+    const colorPrice = getPrice(colorSelect);
+    const ratchetPrice = getPrice(ratchetSelect);
+    const roulementsPrice = getPrice(roulementsSelect);
+    const finitionPrice = getPrice(finitionSelect);
+    
+    const hubWeight = moyeuSelect && moyeuSelect.selectedIndex >= 0 ? (parseInt(moyeuSelect.options[moyeuSelect.selectedIndex].getAttribute('data-hub-weight')) || 238) : 238;
+    const spokeCount = moyeuSelect && moyeuSelect.selectedIndex >= 0 ? (parseInt(moyeuSelect.options[moyeuSelect.selectedIndex].getAttribute('data-spokes')) || 40) : 40;
+    const rimDiff = janteSelect && janteSelect.selectedIndex >= 0 ? (parseInt(janteSelect.options[janteSelect.selectedIndex].getAttribute('data-weight-diff')) || 0) : 0;
+    const finitionWeight = finitionSelect && finitionSelect.selectedIndex >= 0 ? (parseInt(finitionSelect.options[finitionSelect.selectedIndex].getAttribute('data-weight')) || 0) : 0;
+    const spokeWeight = rayonSelect && rayonSelect.selectedIndex >= 0 ? (parseFloat(rayonSelect.options[rayonSelect.selectedIndex].getAttribute('data-spoke-weight')) || 2.1) : 2.1;
+
+    const finalPrice = currentBasePrice + moyeuPrice + rayonPrice + finitionPrice + colorPrice + ratchetPrice + roulementsPrice;
+    
+    const baseComboWeight = 322; 
+    const newComboWeight = hubWeight + (spokeCount * spokeWeight) + rimDiff + finitionWeight;
+    const finalWeight = Math.round(currentBaseWeight - baseComboWeight + newComboWeight);
+
+    const cPrice = document.getElementById('calc-price');
+    if(cPrice) cPrice.textContent = finalPrice > 0 ? finalPrice : '--';
+    const cWeight = document.getElementById('calc-weight');
+    if(cWeight) cWeight.textContent = finalWeight > 0 ? finalWeight : '--';
+    
+    const poidsMaxSpan = document.getElementById('modal-poids-max');
+    if (poidsMaxSpan && janteSelect) {
+        poidsMaxSpan.textContent = janteSelect.value === 'UXL' ? '120 kg' : '90 kg';
+    }
+
+    let isStockConfig = true;
+    if (moyeuSelect && moyeuSelect.value !== 'R2') isStockConfig = false;
+    if (colorSelect && colorSelect.value !== 'Noir') isStockConfig = false;
+    if (janteSelect && janteSelect.value !== 'SUXL') isStockConfig = false;
+    if (rayonSelect && rayonSelect.value !== 'T33') isStockConfig = false;
+    if (ratchetSelect && ratchetSelect.value !== '45T') isStockConfig = false;
+    if (roulementsSelect && roulementsSelect.value !== 'Acier EZO') isStockConfig = false;
+    
+    const rouelibreSelect = document.getElementById('config-rouelibre');
+    if (rouelibreSelect && rouelibreSelect.value !== 'Shimano HG') isStockConfig = false;
+    if (finitionSelect && finitionSelect.value !== 'Glossy Black') isStockConfig = false;
+    const logoSelect = document.getElementById('config-logos');
+    if (logoSelect && logoSelect.value !== 'Petit logo noir') isStockConfig = false;
+    const freinageSelect = document.getElementById('config-freinage');
+    if (freinageSelect && freinageSelect.value !== 'Disques') isStockConfig = false; 
+
+    updateBadgeUI(isStockConfig);
+}
+
+// --- Logique du Menu Mobile ---
+const btnMenu = document.getElementById('mobile-menu-btn');
+const menuMobile = document.getElementById('mobile-menu');
+
+if(btnMenu) {
+    btnMenu.addEventListener('click', () => {
+        if(menuMobile) menuMobile.classList.toggle('hidden');
+        const icon = btnMenu.querySelector('i');
+        if(icon) {
+            if(menuMobile && menuMobile.classList.contains('hidden')) {
+                icon.classList.remove('fa-xmark');
+                icon.classList.add('fa-bars');
+            } else {
+                icon.classList.remove('fa-bars');
+                icon.classList.add('fa-xmark');
+            }
+        }
+    });
+}
+
+function closeMobileMenu() {
+    if(menuMobile) {
+        menuMobile.classList.add('hidden');
+        const icon = btnMenu ? btnMenu.querySelector('i') : null;
+        if(icon) {
+            icon.classList.remove('fa-xmark');
+            icon.classList.add('fa-bars');
+        }
+    }
+}
+
+loadCatalogue();
