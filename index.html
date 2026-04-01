@@ -1350,6 +1350,7 @@
             updateCartUI();
         }
 
+        // C'est cette fonction qui gère l'envoi et l'écran vert !
         function submitOrder() {
             if (cart.length === 0) return;
             
@@ -1387,7 +1388,8 @@
             
             const currentSubtotal = appliedPromo ? (total - discountAmount) : total;
 
-            const paymentMethodVal = document.querySelector('input[name="payment-method"]:checked')?.value || 'virement';
+            const paymentMethodInput = document.querySelector('input[name="payment-method"]:checked');
+            const paymentMethodVal = paymentMethodInput ? paymentMethodInput.value : 'virement';
             let transactionFees = 0;
             let paymentMethodName = "Virement / Paylib / Espèces";
 
@@ -1433,13 +1435,20 @@
             })
             .then(response => response.text())
             .then(data => {
-                document.getElementById('checkout-content').classList.add('hidden');
-                document.getElementById('checkout-content').classList.remove('flex');
-                document.getElementById('checkout-success').classList.remove('hidden');
-                document.getElementById('checkout-success').classList.add('flex');
+                const checkoutContent = document.getElementById('checkout-content');
+                if (checkoutContent) {
+                    checkoutContent.classList.add('hidden');
+                    checkoutContent.classList.remove('flex');
+                }
+                
+                const checkoutSuccess = document.getElementById('checkout-success');
+                if (checkoutSuccess) {
+                    checkoutSuccess.classList.remove('hidden');
+                    checkoutSuccess.classList.add('flex');
+                }
                 
                 const successPayText = document.getElementById('success-payment-method');
-                if(successPayText) {
+                if (successPayText) {
                     if(paymentMethodVal === 'virement') {
                         successPayText.textContent = "le RIB pour finaliser la réservation";
                     } else if(paymentMethodVal === 'card1x') {
