@@ -51,6 +51,11 @@
 </head>
 <body class="bg-gray-100 text-gray-800 font-sans selection:bg-brand-accent selection:text-white relative">
 
+    <!-- Bannière d'urgence (LANCEMENT5) -->
+    <div class="bg-brand-accent text-brand-main font-bold text-center py-2 px-4 text-sm z-50 relative">
+        🚨 OFFRE DE LANCEMENT : Jusqu'à -80€ sur votre montage avec le code LANCEMENT5 (Limité aux 5 premières commandes !) 🚨
+    </div>
+
     <!-- En-tête (Toujours visible) -->
     <header class="bg-brand-main text-white sticky top-0 z-40 shadow-lg">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex justify-between items-center">
@@ -915,15 +920,15 @@
         </div>
 
         <!-- ZONE DÉFILANTE -->
-        <div class="flex-grow overflow-y-auto bg-gray-50 flex flex-col relative">
+        <div class="flex-grow overflow-y-auto bg-gray-50 flex flex-col">
             
-            <!-- CONTENU DU PANIER -->
-            <div id="checkout-content" class="flex flex-col flex-grow">
-                <div id="cart-items-container" class="p-4 sm:p-6 flex flex-col gap-4 shrink-0">
-                    <div id="empty-cart-msg" class="text-center text-gray-500 mt-10"><p>Votre panier est vide.</p></div>
-                </div>
+            <div id="cart-items-container" class="p-4 sm:p-6 flex flex-col gap-4 shrink-0">
+                <div id="empty-cart-msg" class="text-center text-gray-500 mt-10"><p>Votre panier est vide.</p></div>
+            </div>
+            
+            <div class="p-4 sm:p-6 bg-white border-t border-gray-200 mt-auto shrink-0">
                 
-                <div class="p-4 sm:p-6 bg-white border-t border-gray-200 mt-auto shrink-0">
+                <div id="billing-info-container" class="mb-5 bg-gray-50 p-3 rounded-lg border border-gray-200 hidden">
                     <label class="block text-xs font-bold text-gray-500 mb-2 uppercase tracking-wide"><i class="fa-solid fa-file-invoice mr-1"></i> Coordonnées de facturation</label>
                     <input type="text" id="client-name" placeholder="Nom et Prénom *" class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm mb-2 focus:ring-1 focus:ring-brand-main outline-none">
                     <input type="email" id="client-email" placeholder="Adresse e-mail *" class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm mb-2 focus:ring-1 focus:ring-brand-main outline-none">
@@ -998,29 +1003,11 @@
                 <div id="checkout-error" class="hidden text-red-500 text-xs font-bold mb-3 text-center bg-red-50 p-2 rounded-lg border border-red-200"><i class="fa-solid fa-circle-exclamation mr-1"></i> Veuillez remplir vos coordonnées (Nom, E-mail, Tél, Adresse).</div>
                 
                 <!-- Bouton dont le texte change dynamiquement -->
-                <button onclick="submitOrder()" id="checkout-btn" class="w-full bg-brand-main hover:bg-gray-800 transition-colors text-white font-bold py-4 rounded-xl opacity-50 cursor-not-allowed shadow-md" disabled>
+                <button onclick="checkoutWhatsApp()" id="checkout-btn" class="w-full bg-brand-main hover:bg-gray-800 transition-colors text-white font-bold py-4 rounded-xl opacity-50 cursor-not-allowed shadow-md" disabled>
                     Valider ma commande <i class="fa-solid fa-paper-plane ml-2 text-xl"></i>
                 </button>
                 <p class="text-center text-[10px] text-gray-400 mt-3"><i class="fa-solid fa-shield-halved mr-1"></i> Commande sécurisée. Nous vous contacterons directement par e-mail ou WhatsApp.</p>
             </div>
-            </div>
-
-            <!-- MESSAGE DE SUCCÈS (Caché par défaut) -->
-            <div id="checkout-success" class="hidden flex-col items-center justify-center p-8 text-center h-full my-auto">
-                <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mb-6 mx-auto shadow-sm">
-                    <i class="fa-solid fa-check text-4xl text-green-500"></i>
-                </div>
-                <h3 class="text-2xl font-black text-gray-900 mb-2">Réservation confirmée !</h3>
-                <p class="text-gray-600 mb-6">Merci pour votre confiance. Votre demande a bien été transmise à notre atelier.</p>
-                <div class="bg-white p-5 rounded-xl border border-gray-200 text-sm text-left mb-8 shadow-sm w-full">
-                    <p class="mb-2"><i class="fa-solid fa-clock text-brand-accent mr-2"></i><strong>Et maintenant ?</strong></p>
-                    <p class="text-gray-600 leading-relaxed">Je vais vérifier votre configuration et je reviens vers vous très rapidement par e-mail ou WhatsApp avec <strong id="success-payment-method" class="text-gray-900">les informations de paiement</strong> pour valider définitivement la commande.</p>
-                </div>
-                <button onclick="toggleCart()" class="w-full bg-gray-200 hover:bg-gray-300 transition-colors text-gray-800 font-bold py-4 rounded-xl shadow-sm">
-                    Fermer et retourner au site
-                </button>
-            </div>
-            
         </div>
     </div>
 
@@ -1075,18 +1062,6 @@
                 panel.classList.add('cart-closed');
                 overlay.classList.add('hidden');
                 document.body.style.overflow = 'auto';
-                
-                // Réinitialiser la vue du panier après la fermeture (délai pour l'animation)
-                setTimeout(() => {
-                    const successView = document.getElementById('checkout-success');
-                    const contentView = document.getElementById('checkout-content');
-                    if(successView && contentView) {
-                        successView.classList.add('hidden');
-                        successView.classList.remove('flex');
-                        contentView.classList.remove('hidden');
-                        contentView.classList.add('flex');
-                    }
-                }, 300);
             }
         }
 
@@ -1206,7 +1181,7 @@
             cart.forEach(item => {
                 subtotal += item.price;
                 
-                if (appliedPromo === 'CCPIKARBON') {
+                if (appliedPromo === 'CCPIKARBON' || appliedPromo === 'LANCEMENT5') {
                     const titleLC = item.title.toLowerCase();
                     const isSpecialWheel = titleLC.includes('bâton') || titleLC.includes('tri-spoke') || titleLC.includes('lenticulaire') || titleLC.includes('disc');
                     
@@ -1290,7 +1265,7 @@
         function applyPromoCode() {
             const input = document.getElementById('promo-code');
             const code = input.value.trim().toUpperCase();
-            if (code === 'CCPIKARBON') {
+            if (code === 'CCPIKARBON' || code === 'LANCEMENT5') {
                 appliedPromo = code;
                 input.value = '';
                 updateCartUI();
@@ -1303,7 +1278,7 @@
             updateCartUI();
         }
 
-        function submitOrder() {
+        function checkoutWhatsApp() {
             if (cart.length === 0) return;
             
             const nomClient = document.getElementById('client-name').value.trim();
@@ -1311,7 +1286,6 @@
             const telClient = document.getElementById('client-phone').value.trim(); 
             const adresseClient = document.getElementById('client-address').value.trim();
             const errorMsg = document.getElementById('checkout-error');
-            const checkoutBtn = document.getElementById('checkout-btn');
 
             if (!nomClient || !emailClient || !telClient || !adresseClient) {
                 errorMsg.classList.remove('hidden');
@@ -1320,19 +1294,26 @@
                 errorMsg.classList.add('hidden');
             }
             
-            // Changement d'état du bouton
-            const originalBtnHtml = checkoutBtn.innerHTML;
-            checkoutBtn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin mr-2"></i> Traitement en cours...';
-            checkoutBtn.disabled = true;
-            checkoutBtn.classList.add('opacity-75');
-            checkoutBtn.classList.remove('hover:bg-gray-800', 'hover:bg-[#524be0]', 'hover:bg-blue-700');
+            let msg = "👋 Bonjour Karbòn Péi ! Je souhaite réserver le montage suivant :\n\n";
             
+            msg += `👤 *CLIENT :*\n`;
+            msg += `- Nom : ${nomClient}\n`;
+            msg += `- E-mail : ${emailClient}\n`;
+            msg += `- Tél : ${telClient}\n`;
+            msg += `- Adresse : ${adresseClient}\n\n`;
+            
+            msg += `🛒 *MA CONFIGURATION :*\n`;
             let total = 0;
             let produitsPourFichier = []; 
             let factureNoms = []; 
             let facturePrix = []; 
             
             cart.forEach((item, index) => {
+                msg += `*${index + 1}. ${item.title}*\n`;
+                if(item.config !== "Accessoire" && item.config !== "Modèle Standard") {
+                    msg += `   - Config : ${item.config}\n`;
+                }
+                msg += `   - Prix : ${item.price} €\n\n`;
                 total += item.price;
                 produitsPourFichier.push(`${item.title} (${item.config})`);
                 
@@ -1357,13 +1338,32 @@
             const finalTotal = currentSubtotal + transactionFees;
 
             if (appliedPromo) {
+                msg += `*SOUS-TOTAL : ${total} €*\n`;
+                msg += `*CODE PROMO : ${appliedPromo}*\n`;
+                msg += `*REMISE : -${discountAmount} €*\n`;
+                
                 factureNoms.push(`\nREMISE (Code : ${appliedPromo})`);
                 facturePrix.push(`\n-${discountAmount} €`);
+            } else {
+                msg += `*SOUS-TOTAL : ${currentSubtotal} €*\n`;
             }
 
+            msg += `\n💳 *MODE DE RÈGLEMENT CHOISI :*\n`;
+            msg += `- ${paymentMethodName}\n`;
             if (transactionFees > 0) {
+                msg += `- Frais de transaction : +${transactionFees.toFixed(2)} €\n`;
                 factureNoms.push(`\nFrais de transaction (${paymentMethodName})`);
                 facturePrix.push(`\n+${transactionFees.toFixed(2)} €`);
+            }
+            
+            msg += `\n*TOTAL : ${finalTotal % 1 === 0 ? finalTotal : finalTotal.toFixed(2)} €*\n\n`;
+            
+            if (paymentMethodVal === 'virement') {
+                msg += `Merci de m'envoyer le RIB/IBAN pour bloquer ma commande. 🙏\n\n`;
+            } else if (paymentMethodVal === 'card1x') {
+                msg += `Merci de m'envoyer le lien Stripe sécurisé pour le paiement par carte. 🙏\n\n`;
+            } else if (paymentMethodVal === 'fractionne') {
+                msg += `Merci de m'envoyer le lien sécurisé pour le paiement en plusieurs fois. 🙏\n\n`;
             }
 
             const orderData = {
@@ -1385,46 +1385,20 @@
                 method: 'POST',
                 headers: { 'Content-Type': 'text/plain;charset=utf-8' },
                 body: JSON.stringify(orderData)
-            })
-            .then(response => response.text())
-            .then(data => {
-                // Succès : on affiche le message de confirmation
-                document.getElementById('checkout-content').classList.add('hidden');
-                document.getElementById('checkout-content').classList.remove('flex');
-                document.getElementById('checkout-success').classList.remove('hidden');
-                document.getElementById('checkout-success').classList.add('flex');
-                
-                const successPayText = document.getElementById('success-payment-method');
-                if(paymentMethodVal === 'virement') {
-                    successPayText.textContent = "le RIB pour finaliser la réservation";
-                } else if(paymentMethodVal === 'card1x') {
-                    successPayText.textContent = "le lien Stripe sécurisé pour le paiement par carte";
-                } else {
-                    successPayText.textContent = "le lien sécurisé pour le paiement en plusieurs fois";
-                }
+            }).catch(error => console.error("Erreur d'enregistrement Google :", error));
 
-                // Vider le panier en arrière-plan
-                cart = [];
-                appliedPromo = null;
-                discountAmount = 0;
-                document.getElementById('client-name').value = '';
-                document.getElementById('client-email').value = '';
-                document.getElementById('client-phone').value = '';
-                document.getElementById('client-address').value = '';
-                updateCartUI();
-                
-                // Remettre le bouton à son état normal pour la prochaine fois
-                checkoutBtn.innerHTML = originalBtnHtml;
-            })
-            .catch(error => {
-                console.error("Erreur d'enregistrement Google :", error);
-                checkoutBtn.innerHTML = '<i class="fa-solid fa-triangle-exclamation mr-2"></i> Erreur, réessayez';
-                checkoutBtn.disabled = false;
-                checkoutBtn.classList.remove('opacity-75');
-                setTimeout(() => {
-                    updateCartUI(); // Reset button text properly
-                }, 3000);
-            });
+            const encodedMsg = encodeURIComponent(msg);
+            window.open(`https://wa.me/262692693870?text=${encodedMsg}`, '_blank');
+
+            cart = [];
+            appliedPromo = null;
+            discountAmount = 0;
+            document.getElementById('client-name').value = '';
+            document.getElementById('client-email').value = '';
+            document.getElementById('client-phone').value = '';
+            document.getElementById('client-address').value = '';
+            updateCartUI();
+            toggleCart();
         }
 
         async function loadCatalogue() {
