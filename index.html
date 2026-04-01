@@ -1076,6 +1076,17 @@
                 panel.classList.add('cart-closed');
                 overlay.classList.add('hidden');
                 document.body.style.overflow = 'auto';
+                
+                setTimeout(() => {
+                    const successView = document.getElementById('checkout-success');
+                    const contentView = document.getElementById('checkout-content');
+                    if(successView && contentView) {
+                        successView.classList.add('hidden');
+                        successView.classList.remove('flex');
+                        contentView.classList.remove('hidden');
+                        contentView.classList.add('flex');
+                    }
+                }, 300);
             }
         }
 
