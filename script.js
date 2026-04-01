@@ -1,4 +1,4 @@
-const API_URL = '[https://script.google.com/macros/s/AKfycbwi5uRAIjQ2vjbL7h9_LWAUzArqb4oNDNzHWqfM4dIkINVlY6v1Qv4no9V5ScitexSq/exec](https://script.google.com/macros/s/AKfycbwi5uRAIjQ2vjbL7h9_LWAUzArqb4oNDNzHWqfM4dIkINVlY6v1Qv4no9V5ScitexSq/exec)';
+const API_URL = 'https://script.google.com/macros/s/AKfycbwi5uRAIjQ2vjbL7h9_LWAUzArqb4oNDNzHWqfM4dIkINVlY6v1Qv4no9V5ScitexSq/exec';
 
 let globalCatalogue = [];
 let currentBasePrice = 0;
@@ -532,7 +532,7 @@ function renderGrid(filterCategory) {
         const isFixedPriceWheel = nomLC.includes('bâton') || nomLC.includes('tri-spoke') || nomLC.includes('lenticulaire') || nomLC.includes('disc');
         const isAccessory = cat.toLowerCase().includes('accessoire') || cat.toLowerCase().includes('composant');
 
-        let imageUrl = item.Image ? item.Image.split(',')[0].trim() : '[https://images.unsplash.com/photo-1511994298241-608e28f14fde?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80](https://images.unsplash.com/photo-1511994298241-608e28f14fde?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80)';
+        let imageUrl = item.Image ? item.Image.split(',')[0].trim() : 'https://images.unsplash.com/photo-1511994298241-608e28f14fde?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80';
         let prixAffiche = 'Sur devis';
         if (item.Prix) {
             prixAffiche = (isAccessory || isFixedPriceWheel) ? `${item.Prix} €` : `Dès ${item.Prix} €`;
@@ -731,7 +731,7 @@ function openModal(index) {
             }
         }
 
-        let images = item.Image ? item.Image.split(',') : ['[https://images.unsplash.com/photo-1511994298241-608e28f14fde?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80](https://images.unsplash.com/photo-1511994298241-608e28f14fde?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80)'];
+        let images = item.Image ? item.Image.split(',') : ['https://images.unsplash.com/photo-1511994298241-608e28f14fde?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80'];
         
         changeModalMedia(images[0].trim());
 
