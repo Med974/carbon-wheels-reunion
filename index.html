@@ -5,13 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Karbòn Péi - La Réunion & Métropole | Roues & Composants</title>
     
-    <!-- Icône de l'onglet du navigateur (Favicon) mis à jour avec le nouveau logo -->
     <link rel="icon" type="image/png" href="./images/logo_karbonpei.png">
 
-    <!-- Tailwind CSS pour le style -->
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- Font-Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
     
     <script>
@@ -51,16 +48,9 @@
 </head>
 <body class="bg-gray-100 text-gray-800 font-sans selection:bg-brand-accent selection:text-white relative">
 
-    <!-- Bannière d'urgence (LANCEMENT5) -->
-    <div class="bg-brand-accent text-brand-main font-bold text-center py-2 px-4 text-sm z-50 relative">
-        🚨 OFFRE DE LANCEMENT : Jusqu'à -80€ sur votre montage avec le code LANCEMENT5 (Limité aux 5 premières commandes !) 🚨
-    </div>
-
-    <!-- En-tête (Toujours visible) -->
     <header class="bg-brand-main text-white sticky top-0 z-40 shadow-lg">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex justify-between items-center">
             <div class="flex items-center gap-3 sm:gap-4">
-                <!-- Nouveau Logo agrandi ici -->
                 <img src="./images/logo_karbonpei.png" alt="Logo Karbòn Péi" class="w-14 h-14 sm:w-20 sm:h-20 object-contain rounded-full shadow-md border-2 border-brand-accent/20">
                 <div>
                     <h1 class="text-2xl sm:text-3xl font-black tracking-widest cursor-pointer" onclick="navigateTo('top')">KARBÒN <span class="text-brand-accent">PÉI</span></h1>
@@ -75,11 +65,9 @@
                 <a href="javascript:void(0)" onclick="navigateTo('faq')" class="hidden xl:inline-block text-sm text-gray-300 hover:text-white transition font-medium">F.A.Q</a>
                 <a href="javascript:void(0)" onclick="showWarranty()" class="hidden md:inline-block text-sm text-gray-300 hover:text-white transition font-medium">Garanties & SAV</a>
                 
-                <!-- Liens Réseaux Sociaux Navbar -->
                 <a href="https://www.instagram.com/karbonpei?igsh=d2MzMXhibHp2dWJq" target="_blank" class="hidden sm:inline-block text-gray-300 hover:text-brand-accent transition text-lg ml-2"><i class="fa-brands fa-instagram"></i></a>
                 <a href="https://www.facebook.com/share/1ArtcYroeF/" target="_blank" class="hidden sm:inline-block text-gray-300 hover:text-brand-accent transition text-lg"><i class="fa-brands fa-facebook"></i></a>
 
-                <!-- Bouton Menu Mobile (Hamburger) -->
                 <button id="mobile-menu-btn" class="md:hidden text-gray-300 hover:text-white focus:outline-none ml-2 sm:ml-4">
                     <i class="fa-solid fa-bars text-2xl"></i>
                 </button>
@@ -92,7 +80,6 @@
         </div>
     </header>
 
-    <!-- Menu Mobile Déroulant (Caché par défaut) -->
     <div id="mobile-menu" class="hidden fixed top-[72px] left-0 w-full bg-slate-900 border-b border-gray-800 z-40 md:hidden shadow-xl">
         <div class="flex flex-col px-6 pt-4 pb-8 space-y-5">
             <a href="javascript:void(0)" onclick="navigateTo('catalogue'); closeMobileMenu()" class="text-gray-300 hover:text-white font-medium text-lg border-b border-gray-800 pb-3 flex items-center justify-between">Catalogue <i class="fa-solid fa-chevron-right text-sm text-gray-600"></i></a>
@@ -103,12 +90,8 @@
         </div>
     </div>
 
-    <!-- ========================================== -->
-    <!-- VUE 1 : ACCUEIL & CATALOGUE (Par défaut)   -->
-    <!-- ========================================== -->
     <div id="view-home">
         
-        <!-- Hero Section -->
         <div class="relative bg-brand-main py-12 md:py-20 overflow-hidden">
             <div class="absolute inset-0">
                 <img src="./images/SL8.jpg" alt="Vélo Tarmac SL8" class="w-full h-full object-cover">
@@ -121,7 +104,6 @@
                     Des composants ultra-performants testés sur nos routes. Configurez vos roues sur-mesure avec une livraison garantie Zéro Frais de Douane.
                 </p>
 
-                <!-- L'argument massue du poids -->
                 <div class="bg-white/10 backdrop-blur-sm border border-brand-accent/30 rounded-xl p-4 mb-6 inline-block shadow-lg text-left">
                     <div class="flex items-center gap-4">
                         <div class="bg-brand-accent/20 p-3 rounded-full">
@@ -142,7 +124,6 @@
             </div>
         </div>
 
-        <!-- Section Marque DFS -->
         <section id="dfs-story" class="bg-white py-20 border-b border-gray-200">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex flex-col md:flex-row items-center gap-12">
@@ -196,7 +177,6 @@
             </div>
         </section>
 
-        <!-- Section Catalogue -->
         <main id="catalogue" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
             <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 border-b border-gray-300 pb-4 gap-4">
                 <div>
@@ -224,7 +204,6 @@
             <div id="product-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"></div>
         </main>
 
-        <!-- SECTION GARANTIES -->
         <section class="max-w-7xl mx-auto px-4 pb-16 pt-4 mb-8 border-b border-gray-200">
             <div class="text-center mb-8">
                 <h2 class="text-2xl font-black text-gray-900 uppercase tracking-tight">Un SAV géré depuis La Réunion</h2>
@@ -254,7 +233,6 @@
             </div>
         </section>
 
-        <!-- SECTION GUIDE PERFORMANCE -->
         <section id="guide-performance" class="bg-brand-main text-white py-20 border-t border-gray-800">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="text-center mb-16">
@@ -264,7 +242,6 @@
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    <!-- Point 1 -->
                     <div class="bg-gray-800/40 p-8 rounded-2xl border border-gray-700 hover:border-brand-accent transition duration-300">
                         <i class="fa-solid fa-arrows-left-right text-brand-accent text-3xl mb-4"></i>
                         <h4 class="text-xl font-bold mb-3">1. La Révolution de la Largeur</h4>
@@ -272,7 +249,6 @@
                         <p class="text-sm text-gray-400"><strong class="text-white">Rendement :</strong> Le volume d'air supérieur permet des pressions plus basses pour absorber vibrations et baisser drastiquement la résistance au roulement.</p>
                     </div>
                     
-                    <!-- Point 2 -->
                     <div class="bg-gray-800/40 p-8 rounded-2xl border border-gray-700 hover:border-brand-accent transition duration-300">
                         <i class="fa-solid fa-bolt text-brand-accent text-3xl mb-4"></i>
                         <h4 class="text-xl font-bold mb-3">2. Rayons Carbone</h4>
@@ -280,7 +256,6 @@
                         <p class="text-sm text-gray-400"><strong class="text-white">Avantage Aéro :</strong> Deux fois plus légers que l'acier, ils sont profilés comme des lames pour réduire la traînée.</p>
                     </div>
 
-                    <!-- Point 3 -->
                     <div class="bg-gray-800/40 p-8 rounded-2xl border border-gray-700 hover:border-brand-accent transition duration-300">
                         <i class="fa-solid fa-wind text-brand-accent text-3xl mb-4"></i>
                         <h4 class="text-xl font-bold mb-3">3. Moins, c'est mieux</h4>
@@ -288,7 +263,6 @@
                         <p class="text-sm text-gray-400"><strong class="text-white">Faisabilité :</strong> Seules des jantes ultra-rigides couplées à nos rayons carbone permettent des rayonnages épurés : <strong class="text-white">2x20 rayons</strong> avec le moyeu RT240, et <strong class="text-white">21 (avant) / 24 (arrière)</strong> avec le moyeu R2.</p>
                     </div>
 
-                    <!-- Point 4 -->
                     <div class="bg-gray-800/40 p-8 rounded-2xl border border-gray-700 hover:border-brand-accent transition duration-300 lg:col-span-1">
                         <i class="fa-solid fa-circle-notch text-brand-accent text-3xl mb-4"></i>
                         <h4 class="text-xl font-bold mb-3">4. La Masse en Rotation</h4>
@@ -296,7 +270,6 @@
                         <p class="text-sm text-gray-400"><strong class="text-white">Le bénéfice :</strong> Des relances foudroyantes en côte et une sensation d'inertie nulle sous la pédale.</p>
                     </div>
 
-                    <!-- Point 5 -->
                     <div class="bg-gray-800/40 p-8 rounded-2xl border border-gray-700 hover:border-brand-accent transition duration-300 lg:col-span-2">
                         <div class="flex flex-col md:flex-row gap-6 items-center">
                             <div class="flex-shrink-0 hidden md:block">
@@ -321,7 +294,6 @@
             </div>
         </section>
 
-        <!-- SECTION FOCUS TECHNOLOGIE R2 -->
         <section id="technologie" class="bg-gray-50 py-20 border-t border-gray-200">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="text-center mb-16">
@@ -331,7 +303,6 @@
                 </div>
 
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-                    <!-- Grille des caractéristiques -->
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
                             <i class="fa-solid fa-bolt-lightning text-brand-accent text-2xl mb-4"></i>
@@ -355,7 +326,6 @@
                         </div>
                     </div>
 
-                    <!-- Galerie Couleurs & Image Principale -->
                     <div class="relative">
                         <div class="bg-white p-4 rounded-3xl shadow-xl border border-gray-100 overflow-hidden group">
                             <img id="r2-main-view" src="./images/hubs/R2_rose.jpg" alt="Moyeu DFS R2" onerror="this.src='https://images.unsplash.com/photo-1593433551532-c94ca14926ca?auto=format&fit=crop&w=800&q=80'" class="w-full h-auto rounded-2xl transition-transform duration-700 group-hover:scale-105">
@@ -386,7 +356,6 @@
                                 </div>
                             </div>
                         </div>
-                        <!-- Badge Flottant -->
                         <div class="absolute -bottom-6 -left-6 bg-brand-main text-white p-6 rounded-2xl shadow-2xl hidden md:block border-l-4 border-brand-accent">
                             <div class="text-3xl font-black text-brand-accent leading-none">74mm</div>
                             <div class="text-[10px] uppercase font-bold tracking-widest text-gray-400 mt-1">Diamètre Flasque</div>
@@ -396,7 +365,6 @@
             </div>
         </section>
 
-        <!-- Section F.A.Q -->
         <section id="faq" class="bg-white py-20 border-t border-gray-200">
             <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="text-center mb-12">
@@ -407,7 +375,6 @@
 
                 <div class="space-y-10">
                     
-                    <!-- Catégorie 1 -->
                     <div>
                         <h3 class="text-xl font-black text-gray-900 mb-4 flex items-center gap-2 border-b border-gray-100 pb-2"><i class="fa-solid fa-box text-brand-accent"></i> Expédition & Douane</h3>
                         <div class="space-y-3">
@@ -443,7 +410,6 @@
                         </div>
                     </div>
 
-                    <!-- Catégorie 2 -->
                     <div>
                         <h3 class="text-xl font-black text-gray-900 mb-4 flex items-center gap-2 border-b border-gray-100 pb-2"><i class="fa-solid fa-sliders text-brand-accent"></i> Le Configurateur Sur-Mesure</h3>
                         <div class="space-y-3">
@@ -468,7 +434,6 @@
                         </div>
                     </div>
 
-                    <!-- Catégorie 3 -->
                     <div>
                         <h3 class="text-xl font-black text-gray-900 mb-4 flex items-center gap-2 border-b border-gray-100 pb-2"><i class="fa-solid fa-shield-halved text-brand-accent"></i> Garanties & SAV</h3>
                         <div class="space-y-3">
@@ -494,7 +459,6 @@
                         </div>
                     </div>
 
-                    <!-- Catégorie 4 -->
                     <div>
                         <h3 class="text-xl font-black text-gray-900 mb-4 flex items-center gap-2 border-b border-gray-100 pb-2"><i class="fa-solid fa-gear text-brand-accent"></i> Technique & Compatibilité</h3>
                         <div class="space-y-3">
@@ -535,7 +499,6 @@
                         </div>
                     </div>
 
-                    <!-- Catégorie 5 -->
                     <div>
                         <h3 class="text-xl font-black text-gray-900 mb-4 flex items-center gap-2 border-b border-gray-100 pb-2"><i class="fa-solid fa-credit-card text-brand-accent"></i> Paiement</h3>
                         <div class="space-y-3">
@@ -545,7 +508,7 @@
                                     <span class="transition group-open:rotate-180 flex-shrink-0"><i class="fa-solid fa-chevron-down text-brand-accent"></i></span>
                                 </summary>
                                 <div class="text-gray-600 p-5 pt-0 text-sm leading-relaxed bg-gray-50">
-                                    Oui ! Nous proposons le paiement en 3 ou 4 fois sécurisé par carte bancaire. Il vous suffira de sélectionner l'option via le lien de paiement que nous vous enverrons lors de la validation de votre configuration.
+                                    Oui ! Nous proposons le paiement en 3 ou 4 fois sécurisé par carte bancaire. Il vous suffira de sélectionner l'option dans le panier. Nous vous enverrons ensuite le lien de paiement sécurisé.
                                 </div>
                             </details>
                         </div>
@@ -555,7 +518,6 @@
             </div>
         </section>
 
-        <!-- Section Contact -->
         <section id="contact" class="bg-gray-50 py-16 border-t border-gray-200">
             <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="text-center mb-10">
@@ -596,14 +558,7 @@
         </section>
 
     </div>
-    <!-- ========================================== -->
-    <!-- FIN VUE 1 -->
-    <!-- ========================================== -->
 
-
-    <!-- ========================================== -->
-    <!-- VUE 2 : PAGE DES GARANTIES & SAV (Cachée)  -->
-    <!-- ========================================== -->
     <div id="view-warranty" class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 hidden">
         
         <button onclick="navigateTo('top')" class="text-brand-accent font-bold hover:text-brand-main transition-colors mb-8 flex items-center gap-2 bg-white px-4 py-2 rounded-lg border border-gray-200 shadow-sm">
@@ -615,7 +570,6 @@
 
         <div class="space-y-8">
             
-            <!-- SECTION 1 : GARANTIE STANDARD -->
             <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-200 relative overflow-hidden">
                 <div class="absolute top-0 left-0 w-2 h-full bg-green-500"></div>
                 <h2 class="text-2xl font-black text-gray-900 mb-6 flex items-center gap-3">
@@ -648,7 +602,6 @@
                 </div>
             </div>
 
-            <!-- SECTION 2 : CRASH REPLACEMENT -->
             <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-200 relative overflow-hidden">
                 <div class="absolute top-0 left-0 w-2 h-full bg-brand-accent"></div>
                 <h2 class="text-2xl font-black text-gray-900 mb-4 flex items-center gap-3">
@@ -666,7 +619,6 @@
                 </div>
             </div>
 
-            <!-- SECTION 3 : EXCLUSIONS -->
             <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-200 relative overflow-hidden">
                 <div class="absolute top-0 left-0 w-2 h-full bg-red-500"></div>
                 <h2 class="text-2xl font-black text-gray-900 mb-6 flex items-center gap-3">
@@ -701,12 +653,7 @@
 
         </div>
     </div>
-    <!-- ========================================== -->
-    <!-- FIN VUE 2 -->
-    <!-- ========================================== -->
 
-
-    <!-- Footer (Toujours visible) -->
     <footer class="bg-brand-main text-gray-400 py-12 border-t-4 border-brand-accent">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <div class="flex justify-center items-center gap-2 mb-4">
@@ -723,17 +670,13 @@
                 <a href="https://www.facebook.com/share/1ArtcYroeF/" target="_blank" class="text-gray-500 hover:text-brand-accent transition"><i class="fa-brands fa-facebook"></i></a>
                 <a href="https://www.strava.com/clubs/2018327" target="_blank" class="text-gray-500 hover:text-brand-accent transition" title="Club Strava"><i class="fa-brands fa-strava"></i></a>
             </div>
-            <!-- AJOUT DU SIRET COMPLET ICI -->
             <p class="text-xs">&copy; 2026 Karbòn Péi - Mehdi CEUSTERMANS EI. SIRET : 102 582 095 00018. TVA non applicable, art. 293 B du CGI.</p>
         </div>
     </footer>
 
-    <!-- Bulle WhatsApp Flottante (Nouveau !) -->
     <a href="https://wa.me/262692693870" target="_blank" class="fixed bottom-6 right-6 z-50 flex items-center gap-3 bg-white p-2 sm:pr-4 rounded-full shadow-2xl border border-gray-200 hover:scale-105 transition-transform duration-300 group">
         <div class="relative flex-shrink-0">
-            <!-- Pense à ajouter ta photo nommée photo_mehdi.jpg dans ton dossier images -->
             <img src="./images/photo_mehdi.jpg" alt="Mehdi - Karbòn Péi" onerror="this.src='https://ui-avatars.com/api/?name=Mehdi&background=0f172a&color=eab308';" class="w-12 h-12 sm:w-14 sm:h-14 rounded-full object-cover border-2 border-[#25D366]">
-            <!-- Point vert clignotant pour le statut "En ligne" -->
             <span class="absolute bottom-0 right-0 w-3.5 h-3.5 bg-[#25D366] border-2 border-white rounded-full animate-pulse"></span>
         </div>
         <div class="hidden sm:block">
@@ -742,7 +685,6 @@
         </div>
     </a>
 
-    <!-- MODALE CONFIGURATEUR -->
     <div id="product-modal" class="fixed inset-0 z-[100] hidden bg-black/80 flex items-center justify-center p-4 backdrop-blur-sm transition-opacity">
         <div class="bg-white rounded-2xl w-full max-w-5xl max-h-[95vh] overflow-y-auto flex flex-col md:flex-row relative shadow-2xl">
             <button onclick="closeModal()" class="md:hidden absolute top-4 right-4 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-sm text-gray-500 z-10"><i class="fa-solid fa-xmark"></i></button>
@@ -754,8 +696,7 @@
                     <video id="modal-video" src="" class="hidden w-full h-full object-contain mix-blend-multiply rounded-xl shadow-sm" autoplay loop muted playsinline></video>
                 </div>
                 <div id="modal-gallery" class="flex gap-2 w-full overflow-x-auto custom-scrollbar py-3">
-                    <!-- Miniatures injectées ici -->
-                </div>
+                    </div>
             </div>
             
             <div class="w-full md:w-1/2 p-6 md:p-8 flex flex-col">
@@ -816,12 +757,10 @@
                             </div>
                         </div>
 
-                        <!-- Menu des couleurs dynamique selon le moyeu choisi -->
                         <div id="color-hub-container" class="mb-5 bg-gray-100 p-3 rounded-lg border border-gray-200">
                             <label class="block text-xs font-bold text-gray-600 mb-2"><i class="fa-solid fa-palette text-brand-accent mr-1"></i> Couleur du Moyeu</label>
                             <select id="config-couleur-moyeu" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm font-semibold" onchange="updateConfig()">
-                                <!-- Rempli dynamiquement -->
-                            </select>
+                                </select>
                         </div>
 
                         <div class="mb-5">
@@ -845,15 +784,13 @@
                         <div class="mb-5">
                             <label class="block text-xs font-bold text-gray-500 mb-2">4. Système Ratchet (Engagement)</label>
                             <select id="config-ratchet" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-3 text-sm font-semibold" onchange="updateConfig()">
-                                <!-- Rempli automatiquement par Javascript -->
-                            </select>
+                                </select>
                         </div>
 
                         <div class="mb-5">
                             <label class="block text-xs font-bold text-gray-500 mb-2">5. Roulements (Bearings)</label>
                             <select id="config-roulements" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-3 text-sm font-semibold" onchange="updateConfig()">
-                                <!-- Rempli automatiquement par Javascript -->
-                            </select>
+                                </select>
                         </div>
 
                         <div class="mb-5">
@@ -909,26 +846,22 @@
         </div>
     </div>
 
-    <!-- PANIER LATÉRAL -->
     <div id="cart-overlay" class="fixed inset-0 bg-black/50 z-[110] hidden backdrop-blur-sm" onclick="toggleCart()"></div>
     <div id="cart-panel" class="cart-closed fixed inset-y-0 right-0 z-[120] w-full max-w-md bg-white shadow-2xl flex flex-col">
         
-        <!-- HEADER -->
         <div class="p-4 sm:p-6 bg-brand-main text-white flex justify-between items-center shrink-0">
             <h2 class="text-xl font-black flex items-center gap-2"><i class="fa-solid fa-cart-shopping text-brand-accent"></i> Mon Panier</h2>
             <button onclick="toggleCart()" class="text-gray-300 hover:text-white"><i class="fa-solid fa-xmark text-2xl px-2"></i></button>
         </div>
 
-        <!-- ZONE DÉFILANTE -->
-        <div class="flex-grow overflow-y-auto bg-gray-50 flex flex-col">
+        <div class="flex-grow overflow-y-auto bg-gray-50 flex flex-col relative">
             
-            <div id="cart-items-container" class="p-4 sm:p-6 flex flex-col gap-4 shrink-0">
-                <div id="empty-cart-msg" class="text-center text-gray-500 mt-10"><p>Votre panier est vide.</p></div>
-            </div>
-            
-            <div class="p-4 sm:p-6 bg-white border-t border-gray-200 mt-auto shrink-0">
+            <div id="checkout-content" class="flex flex-col flex-grow">
+                <div id="cart-items-container" class="p-4 sm:p-6 flex flex-col gap-4 shrink-0">
+                    <div id="empty-cart-msg" class="text-center text-gray-500 mt-10"><p>Votre panier est vide.</p></div>
+                </div>
                 
-                <div id="billing-info-container" class="mb-5 bg-gray-50 p-3 rounded-lg border border-gray-200 hidden">
+                <div class="p-4 sm:p-6 bg-white border-t border-gray-200 mt-auto shrink-0">
                     <label class="block text-xs font-bold text-gray-500 mb-2 uppercase tracking-wide"><i class="fa-solid fa-file-invoice mr-1"></i> Coordonnées de facturation</label>
                     <input type="text" id="client-name" placeholder="Nom et Prénom *" class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm mb-2 focus:ring-1 focus:ring-brand-main outline-none">
                     <input type="email" id="client-email" placeholder="Adresse e-mail *" class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm mb-2 focus:ring-1 focus:ring-brand-main outline-none">
@@ -939,7 +872,6 @@
                 <div id="payment-method-container" class="mb-5 bg-gray-50 p-3 rounded-lg border border-gray-200 hidden">
                     <label class="block text-xs font-bold text-gray-500 mb-3 uppercase tracking-wide"><i class="fa-solid fa-credit-card mr-1"></i> Mode de règlement</label>
                     <div class="space-y-2">
-                        <!-- VIREMENT -->
                         <label class="flex items-start gap-3 cursor-pointer p-3 border border-green-200 rounded-md bg-green-50 hover:bg-green-100 transition">
                             <input type="radio" name="payment-method" value="virement" class="mt-1 text-green-600 focus:ring-green-500" checked onchange="updateCartUI()">
                             <div class="flex-grow">
@@ -947,16 +879,14 @@
                                 <span class="block text-xs text-green-700 font-medium">100% Gratuit et sans frais.</span>
                             </div>
                         </label>
-                        <!-- CB 1X (ACTIF) -->
                         <label class="flex items-start gap-3 cursor-pointer p-3 border border-gray-200 rounded-md bg-white hover:bg-gray-50 transition">
                             <input type="radio" name="payment-method" value="card1x" class="mt-1 text-brand-main focus:ring-brand-main" onchange="updateCartUI()">
                             <div class="flex-grow">
                                 <span class="block text-sm font-bold text-gray-900">Carte Bancaire (1x)</span>
-                                <span class="block text-xs text-gray-500 font-medium">Lien Stripe sécurisé envoyé par message.</span>
+                                <span class="block text-xs text-gray-500 font-medium">Lien Stripe sécurisé envoyé par e-mail.</span>
                             </div>
                             <i class="fa-brands fa-stripe text-2xl text-[#635BFF]"></i>
                         </label>
-                        <!-- PAIEMENT EN PLUSIEURS FOIS (GRISÉ EN ATTENTE ACTIVATION) -->
                         <label class="flex items-start gap-3 p-3 border border-gray-200 rounded-md bg-gray-100 opacity-60 cursor-not-allowed transition">
                             <input type="radio" name="payment-method" value="fractionne" class="mt-1" disabled onchange="updateCartUI()">
                             <div class="flex-grow">
@@ -1002,12 +932,27 @@
                 
                 <div id="checkout-error" class="hidden text-red-500 text-xs font-bold mb-3 text-center bg-red-50 p-2 rounded-lg border border-red-200"><i class="fa-solid fa-circle-exclamation mr-1"></i> Veuillez remplir vos coordonnées (Nom, E-mail, Tél, Adresse).</div>
                 
-                <!-- Bouton dont le texte change dynamiquement -->
-                <button onclick="checkoutWhatsApp()" id="checkout-btn" class="w-full bg-brand-main hover:bg-gray-800 transition-colors text-white font-bold py-4 rounded-xl opacity-50 cursor-not-allowed shadow-md" disabled>
+                <button onclick="submitOrder()" id="checkout-btn" class="w-full bg-brand-main hover:bg-gray-800 transition-colors text-white font-bold py-4 rounded-xl opacity-50 cursor-not-allowed shadow-md" disabled>
                     Valider ma commande <i class="fa-solid fa-paper-plane ml-2 text-xl"></i>
                 </button>
-                <p class="text-center text-[10px] text-gray-400 mt-3"><i class="fa-solid fa-shield-halved mr-1"></i> Commande sécurisée. Nous vous contacterons directement par e-mail ou WhatsApp.</p>
+                <p class="text-center text-[10px] text-gray-400 mt-3"><i class="fa-solid fa-shield-halved mr-1"></i> Paiement sécurisé lors de la validation.</p>
             </div>
+
+            <div id="checkout-success" class="hidden flex-col items-center justify-center p-8 text-center h-full my-auto absolute inset-0 bg-gray-50 z-10">
+                <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mb-6 mx-auto shadow-sm">
+                    <i class="fa-solid fa-check text-4xl text-green-500"></i>
+                </div>
+                <h3 class="text-2xl font-black text-gray-900 mb-2">Réservation confirmée !</h3>
+                <p class="text-gray-600 mb-6">Merci pour votre confiance. Votre demande a bien été transmise à notre atelier.</p>
+                <div class="bg-white p-5 rounded-xl border border-gray-200 text-sm text-left mb-8 shadow-sm w-full">
+                    <p class="mb-2"><i class="fa-solid fa-clock text-brand-accent mr-2"></i><strong>Et maintenant ?</strong></p>
+                    <p class="text-gray-600 leading-relaxed">Je vais vérifier votre configuration et je reviens vers vous très rapidement avec <strong id="success-payment-method" class="text-gray-900">les informations de paiement</strong> pour valider définitivement la commande.</p>
+                </div>
+                <button onclick="toggleCart()" class="w-full bg-gray-200 hover:bg-gray-300 transition-colors text-gray-800 font-bold py-4 rounded-xl shadow-sm">
+                    Fermer et retourner au site
+                </button>
+            </div>
+            
         </div>
     </div>
 
@@ -1024,6 +969,8 @@
         let cart = [];
         let appliedPromo = null;
         let discountAmount = 0;
+        
+        let lastHubSelected = "";
 
         function navigateTo(sectionId) {
             document.getElementById('view-warranty').classList.add('hidden');
@@ -1062,6 +1009,17 @@
                 panel.classList.add('cart-closed');
                 overlay.classList.add('hidden');
                 document.body.style.overflow = 'auto';
+                
+                setTimeout(() => {
+                    const successView = document.getElementById('checkout-success');
+                    const contentView = document.getElementById('checkout-content');
+                    if(successView && contentView) {
+                        successView.classList.add('hidden');
+                        successView.classList.remove('flex');
+                        contentView.classList.remove('hidden');
+                        contentView.classList.add('flex');
+                    }
+                }, 300);
             }
         }
 
@@ -1071,6 +1029,7 @@
             img.src = src;
         }
 
+        // Fonction "Blindée" (Sécurisée) pour l'ajout au panier
         function addToCart() {
             const title = document.getElementById('modal-title').textContent;
             const finalPrice = parseInt(document.getElementById('calc-price').textContent) || 0;
@@ -1079,24 +1038,30 @@
             let configText = "";
             let imgUrl = document.getElementById('modal-image').src; 
 
-            if (document.getElementById('configurator-section').style.display !== 'none') {
+            if (isCurrentItemWheelConfigurable || document.getElementById('configurator-section').style.display !== 'none') {
                 const titleLC = title.toLowerCase();
                 
                 if (titleLC.includes('manivelle')) {
                     const longueur = document.getElementById('config-longueur-manivelle').value;
                     configText = `Longueur : ${longueur}`;
                 } else {
-                    const moyeu = document.getElementById('config-moyeu').options[document.getElementById('config-moyeu').selectedIndex].text.split('(')[0].trim();
-                    const jante = document.getElementById('config-jante').value;
-                    const rayon = document.getElementById('config-rayons').options[document.getElementById('config-rayons').selectedIndex].text.split('(')[0].trim();
-                    const ratchet = document.getElementById('config-ratchet').options[document.getElementById('config-ratchet').selectedIndex].text.split('(')[0].trim();
-                    const roulements = document.getElementById('config-roulements').options[document.getElementById('config-roulements').selectedIndex].text.split('(')[0].trim();
-                    const rouelibre = document.getElementById('config-rouelibre').value;
-                    const finition = document.getElementById('config-finition').options[document.getElementById('config-finition').selectedIndex].text.split('(')[0].trim();
-                    const logos = document.getElementById('config-logos').options[document.getElementById('config-logos').selectedIndex].text.split('(')[0].trim();
-                    const freinage = document.getElementById('config-freinage').options[document.getElementById('config-freinage').selectedIndex].text.split('(')[0].trim();
+                    // Lecture 100% sécurisée des options pour éviter les plantages
+                    const getSelectText = (id) => {
+                        const el = document.getElementById(id);
+                        if (!el || el.selectedIndex < 0) return "";
+                        return el.options[el.selectedIndex].text.split('(')[0].trim();
+                    };
                     
-                    let couleurMoyeu = " (" + document.getElementById('config-couleur-moyeu').value + ")";
+                    const moyeu = getSelectText('config-moyeu');
+                    const jante = document.getElementById('config-jante') ? document.getElementById('config-jante').value : "";
+                    const rayon = getSelectText('config-rayons');
+                    const ratchet = getSelectText('config-ratchet');
+                    const roulements = getSelectText('config-roulements');
+                    const rouelibre = document.getElementById('config-rouelibre') ? document.getElementById('config-rouelibre').value : "";
+                    const finition = getSelectText('config-finition');
+                    const logos = getSelectText('config-logos');
+                    const freinage = getSelectText('config-freinage');
+                    const couleurMoyeu = document.getElementById('config-couleur-moyeu') ? " (" + document.getElementById('config-couleur-moyeu').value + ")" : "";
 
                     configText = `${moyeu}${couleurMoyeu} | Jantes ${jante} | ${rayon} | Ratchet ${ratchet} | Roulements ${roulements} | ${rouelibre} | ${finition} | Logos : ${logos} | ${freinage}`;
                 }
@@ -1148,10 +1113,10 @@
                 checkoutBtn.innerHTML = 'Valider ma réservation <i class="fa-solid fa-paper-plane ml-2 text-xl"></i>';
             } else if (paymentMethod === 'card1x') {
                 checkoutBtn.className = "w-full bg-[#635BFF] hover:bg-[#524be0] transition-colors text-white font-bold py-4 rounded-xl shadow-md";
-                checkoutBtn.innerHTML = 'Recevoir le lien Stripe <i class="fa-solid fa-lock ml-2 text-xl"></i>';
+                checkoutBtn.innerHTML = 'Valider (Paiement Stripe) <i class="fa-solid fa-lock ml-2 text-xl"></i>';
             } else if (paymentMethod === 'fractionne') {
                 checkoutBtn.className = "w-full bg-blue-600 hover:bg-blue-700 transition-colors text-white font-bold py-4 rounded-xl shadow-md";
-                checkoutBtn.innerHTML = 'Recevoir le lien 3x/4x <i class="fa-solid fa-lock ml-2 text-xl"></i>';
+                checkoutBtn.innerHTML = 'Valider (Paiement en 3x/4x) <i class="fa-solid fa-lock ml-2 text-xl"></i>';
             }
 
             if (cart.length > 0) {
@@ -1181,7 +1146,8 @@
             cart.forEach(item => {
                 subtotal += item.price;
                 
-                if (appliedPromo === 'CCPIKARBON' || appliedPromo === 'LANCEMENT5') {
+                // Code promo conservé
+                if (appliedPromo === 'CCPIKARBON') {
                     const titleLC = item.title.toLowerCase();
                     const isSpecialWheel = titleLC.includes('bâton') || titleLC.includes('tri-spoke') || titleLC.includes('lenticulaire') || titleLC.includes('disc');
                     
@@ -1265,7 +1231,7 @@
         function applyPromoCode() {
             const input = document.getElementById('promo-code');
             const code = input.value.trim().toUpperCase();
-            if (code === 'CCPIKARBON' || code === 'LANCEMENT5') {
+            if (code === 'CCPIKARBON') {
                 appliedPromo = code;
                 input.value = '';
                 updateCartUI();
@@ -1278,7 +1244,7 @@
             updateCartUI();
         }
 
-        function checkoutWhatsApp() {
+        function submitOrder() {
             if (cart.length === 0) return;
             
             const nomClient = document.getElementById('client-name').value.trim();
@@ -1286,6 +1252,7 @@
             const telClient = document.getElementById('client-phone').value.trim(); 
             const adresseClient = document.getElementById('client-address').value.trim();
             const errorMsg = document.getElementById('checkout-error');
+            const checkoutBtn = document.getElementById('checkout-btn');
 
             if (!nomClient || !emailClient || !telClient || !adresseClient) {
                 errorMsg.classList.remove('hidden');
@@ -1294,26 +1261,17 @@
                 errorMsg.classList.add('hidden');
             }
             
-            let msg = "👋 Bonjour Karbòn Péi ! Je souhaite réserver le montage suivant :\n\n";
+            const originalBtnHtml = checkoutBtn.innerHTML;
+            checkoutBtn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin mr-2"></i> Traitement en cours...';
+            checkoutBtn.disabled = true;
+            checkoutBtn.classList.add('opacity-75');
             
-            msg += `👤 *CLIENT :*\n`;
-            msg += `- Nom : ${nomClient}\n`;
-            msg += `- E-mail : ${emailClient}\n`;
-            msg += `- Tél : ${telClient}\n`;
-            msg += `- Adresse : ${adresseClient}\n\n`;
-            
-            msg += `🛒 *MA CONFIGURATION :*\n`;
             let total = 0;
             let produitsPourFichier = []; 
             let factureNoms = []; 
             let facturePrix = []; 
             
             cart.forEach((item, index) => {
-                msg += `*${index + 1}. ${item.title}*\n`;
-                if(item.config !== "Accessoire" && item.config !== "Modèle Standard") {
-                    msg += `   - Config : ${item.config}\n`;
-                }
-                msg += `   - Prix : ${item.price} €\n\n`;
                 total += item.price;
                 produitsPourFichier.push(`${item.title} (${item.config})`);
                 
@@ -1338,32 +1296,13 @@
             const finalTotal = currentSubtotal + transactionFees;
 
             if (appliedPromo) {
-                msg += `*SOUS-TOTAL : ${total} €*\n`;
-                msg += `*CODE PROMO : ${appliedPromo}*\n`;
-                msg += `*REMISE : -${discountAmount} €*\n`;
-                
                 factureNoms.push(`\nREMISE (Code : ${appliedPromo})`);
                 facturePrix.push(`\n-${discountAmount} €`);
-            } else {
-                msg += `*SOUS-TOTAL : ${currentSubtotal} €*\n`;
             }
 
-            msg += `\n💳 *MODE DE RÈGLEMENT CHOISI :*\n`;
-            msg += `- ${paymentMethodName}\n`;
             if (transactionFees > 0) {
-                msg += `- Frais de transaction : +${transactionFees.toFixed(2)} €\n`;
                 factureNoms.push(`\nFrais de transaction (${paymentMethodName})`);
                 facturePrix.push(`\n+${transactionFees.toFixed(2)} €`);
-            }
-            
-            msg += `\n*TOTAL : ${finalTotal % 1 === 0 ? finalTotal : finalTotal.toFixed(2)} €*\n\n`;
-            
-            if (paymentMethodVal === 'virement') {
-                msg += `Merci de m'envoyer le RIB/IBAN pour bloquer ma commande. 🙏\n\n`;
-            } else if (paymentMethodVal === 'card1x') {
-                msg += `Merci de m'envoyer le lien Stripe sécurisé pour le paiement par carte. 🙏\n\n`;
-            } else if (paymentMethodVal === 'fractionne') {
-                msg += `Merci de m'envoyer le lien sécurisé pour le paiement en plusieurs fois. 🙏\n\n`;
             }
 
             const orderData = {
@@ -1385,20 +1324,43 @@
                 method: 'POST',
                 headers: { 'Content-Type': 'text/plain;charset=utf-8' },
                 body: JSON.stringify(orderData)
-            }).catch(error => console.error("Erreur d'enregistrement Google :", error));
+            })
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('checkout-content').classList.add('hidden');
+                document.getElementById('checkout-content').classList.remove('flex');
+                document.getElementById('checkout-success').classList.remove('hidden');
+                document.getElementById('checkout-success').classList.add('flex');
+                
+                const successPayText = document.getElementById('success-payment-method');
+                if(paymentMethodVal === 'virement') {
+                    successPayText.textContent = "le RIB pour finaliser la réservation";
+                } else if(paymentMethodVal === 'card1x') {
+                    successPayText.textContent = "le lien Stripe sécurisé pour le paiement par carte";
+                } else {
+                    successPayText.textContent = "le lien sécurisé pour le paiement en plusieurs fois";
+                }
 
-            const encodedMsg = encodeURIComponent(msg);
-            window.open(`https://wa.me/262692693870?text=${encodedMsg}`, '_blank');
-
-            cart = [];
-            appliedPromo = null;
-            discountAmount = 0;
-            document.getElementById('client-name').value = '';
-            document.getElementById('client-email').value = '';
-            document.getElementById('client-phone').value = '';
-            document.getElementById('client-address').value = '';
-            updateCartUI();
-            toggleCart();
+                cart = [];
+                appliedPromo = null;
+                discountAmount = 0;
+                document.getElementById('client-name').value = '';
+                document.getElementById('client-email').value = '';
+                document.getElementById('client-phone').value = '';
+                document.getElementById('client-address').value = '';
+                updateCartUI();
+                
+                checkoutBtn.innerHTML = originalBtnHtml;
+            })
+            .catch(error => {
+                console.error("Erreur:", error);
+                checkoutBtn.innerHTML = '<i class="fa-solid fa-triangle-exclamation mr-2"></i> Erreur de réseau, réessayez';
+                checkoutBtn.disabled = false;
+                checkoutBtn.classList.remove('opacity-75');
+                setTimeout(() => {
+                    updateCartUI();
+                }, 3000);
+            });
         }
 
         async function loadCatalogue() {
@@ -1519,11 +1481,15 @@
             const ratchetSelect = document.getElementById('config-ratchet');
             const roulementsSelect = document.getElementById('config-roulements');
             
+            const currentHub = moyeuSelect.value;
+            const isHubChange = (lastHubSelected !== currentHub);
+            lastHubSelected = currentHub;
+
             const currentColor = colorSelect.value;
             const currentRatchet = ratchetSelect.value;
             const currentRoulements = roulementsSelect.value;
 
-            if (moyeuSelect.value === 'R2') {
+            if (currentHub === 'R2') {
                 colorSelect.innerHTML = `
                     <option value="Noir" data-price="0">Noir (Standard R2)</option>
                     <option value="Gris" data-price="50">Gris [+50€]</option>
@@ -1539,6 +1505,15 @@
                     <option value="Acier EZO" data-price="0">Acier EZO (Standard R2)</option>
                     <option value="Céramique TPI" data-price="80">Céramique TPI (Ultra-fluide) [+80€]</option>
                 `;
+                
+                if (isHubChange) {
+                    colorSelect.value = 'Noir';
+                } else if(Array.from(colorSelect.options).some(opt => opt.value === currentColor)) {
+                    colorSelect.value = currentColor;
+                } else {
+                    colorSelect.value = 'Noir'; 
+                }
+
             } else { 
                 colorSelect.innerHTML = `
                     <option value="Argent" data-price="0">Argent (Standard RT240)</option>
@@ -1550,13 +1525,16 @@
                 roulementsSelect.innerHTML = `
                     <option value="Céramique SS" data-price="0">Céramique SS (Inclus avec RT240)</option>
                 `;
+                
+                if (isHubChange) {
+                    colorSelect.value = 'Argent';
+                } else if(Array.from(colorSelect.options).some(opt => opt.value === currentColor)) {
+                    colorSelect.value = currentColor;
+                } else {
+                    colorSelect.value = 'Argent';
+                }
             }
 
-            if(Array.from(colorSelect.options).some(opt => opt.value === currentColor)) {
-                colorSelect.value = currentColor;
-            } else {
-                colorSelect.selectedIndex = 0; 
-            }
             if(Array.from(ratchetSelect.options).some(opt => opt.value === currentRatchet)) {
                 ratchetSelect.value = currentRatchet;
             }
@@ -1689,6 +1667,8 @@
                 }
                 
                 document.getElementById('config-moyeu').value = 'R2';
+                lastHubSelected = 'R2';
+                
                 document.getElementById('config-jante').value = 'SUXL';
                 document.getElementById('config-rayons').value = 'T33';
                 document.getElementById('config-finition').value = 'Glossy Black'; 
