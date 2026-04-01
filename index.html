@@ -1318,7 +1318,7 @@
             updateCartUI();
         }
 
-        function checkoutWhatsApp() {
+        function submitOrder() {
             if (cart.length === 0) return;
             
             const nomClient = document.getElementById('client-name').value.trim();
@@ -1326,34 +1326,26 @@
             const telClient = document.getElementById('client-phone').value.trim(); 
             const adresseClient = document.getElementById('client-address').value.trim();
             const errorMsg = document.getElementById('checkout-error');
+            const checkoutBtn = document.getElementById('checkout-btn');
 
             if (!nomClient || !emailClient || !telClient || !adresseClient) {
-                errorMsg.classList.remove('hidden');
+                if (errorMsg) errorMsg.classList.remove('hidden');
                 return; 
             } else {
-                errorMsg.classList.add('hidden');
+                if (errorMsg) errorMsg.classList.add('hidden');
             }
             
-            let msg = "👋 Bonjour Karbòn Péi ! Je souhaite réserver le montage suivant :\n\n";
+            const originalBtnHtml = checkoutBtn.innerHTML;
+            checkoutBtn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin mr-2"></i> Traitement en cours...';
+            checkoutBtn.disabled = true;
+            checkoutBtn.classList.add('opacity-75');
             
-            msg += `👤 *CLIENT :*\n`;
-            msg += `- Nom : ${nomClient}\n`;
-            msg += `- E-mail : ${emailClient}\n`;
-            msg += `- Tél : ${telClient}\n`;
-            msg += `- Adresse : ${adresseClient}\n\n`;
-            
-            msg += `🛒 *MA CONFIGURATION :*\n`;
             let total = 0;
             let produitsPourFichier = []; 
             let factureNoms = []; 
             let facturePrix = []; 
             
             cart.forEach((item, index) => {
-                msg += `*${index + 1}. ${item.title}*\n`;
-                if(item.config !== "Accessoire" && item.config !== "Modèle Standard") {
-                    msg += `   - Config : ${item.config}\n`;
-                }
-                msg += `   - Prix : ${item.price} €\n\n`;
                 total += item.price;
                 produitsPourFichier.push(`${item.title} (${item.config})`);
                 
@@ -1363,7 +1355,8 @@
             
             const currentSubtotal = appliedPromo ? (total - discountAmount) : total;
 
-            const paymentMethodVal = document.querySelector('input[name="payment-method"]:checked')?.value || 'virement';
+            const paymentMethodInput = document.querySelector('input[name="payment-method"]:checked');
+            const paymentMethodVal = paymentMethodInput ? paymentMethodInput.value : 'virement';
             let transactionFees = 0;
             let paymentMethodName = "Virement / Paylib / Espèces";
 
@@ -1378,32 +1371,13 @@
             const finalTotal = currentSubtotal + transactionFees;
 
             if (appliedPromo) {
-                msg += `*SOUS-TOTAL : ${total} €*\n`;
-                msg += `*CODE PROMO : ${appliedPromo}*\n`;
-                msg += `*REMISE : -${discountAmount} €*\n`;
-                
                 factureNoms.push(`\nREMISE (Code : ${appliedPromo})`);
                 facturePrix.push(`\n-${discountAmount} €`);
-            } else {
-                msg += `*SOUS-TOTAL : ${currentSubtotal} €*\n`;
             }
 
-            msg += `\n💳 *MODE DE RÈGLEMENT CHOISI :*\n`;
-            msg += `- ${paymentMethodName}\n`;
             if (transactionFees > 0) {
-                msg += `- Frais de transaction : +${transactionFees.toFixed(2)} €\n`;
                 factureNoms.push(`\nFrais de transaction (${paymentMethodName})`);
                 facturePrix.push(`\n+${transactionFees.toFixed(2)} €`);
-            }
-            
-            msg += `\n*TOTAL : ${finalTotal % 1 === 0 ? finalTotal : finalTotal.toFixed(2)} €*\n\n`;
-            
-            if (paymentMethodVal === 'virement') {
-                msg += `Merci de m'envoyer le RIB/IBAN pour bloquer ma commande. 🙏\n\n`;
-            } else if (paymentMethodVal === 'card1x') {
-                msg += `Merci de m'envoyer le lien Stripe sécurisé pour le paiement par carte. 🙏\n\n`;
-            } else if (paymentMethodVal === 'fractionne') {
-                msg += `Merci de m'envoyer le lien sécurisé pour le paiement en plusieurs fois. 🙏\n\n`;
             }
 
             const orderData = {
@@ -1425,18 +1399,68 @@
                 method: 'POST',
                 headers: { 'Content-Type': 'text/plain;charset=utf-8' },
                 body: JSON.stringify(orderData)
-            }).catch(error => console.error("Erreur d'enregistrement Google :", error));
+            })
+            .then(response => response.text())
+            .then(data => {
+                const checkoutContent = document.getElementById('checkout-content');
+                if (checkoutContent) {
+                    checkoutContent.classList.add('hidden');
+                    checkoutContent.classList.remove('flex');
+                }
+                
+                const checkoutSuccess = document.getElementById('checkout-success');
+                if (checkoutSuccess) {
+                    checkoutSuccess.classList.remove('hidden');
+                    checkoutSuccess.classList.add('flex');
+                }
+                
+                const successPayText = document.getElementById('success-payment-method');
+                if (successPayText) {
+                    if(paymentMethodVal === 'virement') {
+                        successPayText.textContent = "le RIB pour finaliser la réservation";
+                    } else if(paymentMethodVal === 'card1x') {
+                        successPayText.textContent = "le lien Stripe sécurisé pour le paiement par carte";
+                    } else {
+                        successPayText.textContent = "le lien sécurisé pour le paiement en plusieurs fois";
+                    }
+                }
 
-            const encodedMsg = encodeURIComponent(msg);
-            window.open(`https://wa.me/262692693870?text=${encodedMsg}`, '_blank');
+                checkoutBtn.innerHTML = originalBtnHtml;
+                checkoutBtn.disabled = false;
+                checkoutBtn.classList.remove('opacity-75');
+            })
+            .catch(error => {
+                console.error("Erreur d'enregistrement Google :", error);
+                checkoutBtn.innerHTML = '<i class="fa-solid fa-triangle-exclamation mr-2"></i> Erreur, réessayez';
+                checkoutBtn.disabled = false;
+                checkoutBtn.classList.remove('opacity-75');
+            });
+        }
 
+        function closeSuccessAndReset() {
             cart = [];
             appliedPromo = null;
             discountAmount = 0;
-            document.getElementById('client-name').value = '';
-            document.getElementById('client-email').value = '';
-            document.getElementById('client-phone').value = '';
-            document.getElementById('client-address').value = '';
+            const nameEl = document.getElementById('client-name');
+            if (nameEl) nameEl.value = '';
+            const emailEl = document.getElementById('client-email');
+            if (emailEl) emailEl.value = '';
+            const phoneEl = document.getElementById('client-phone');
+            if (phoneEl) phoneEl.value = '';
+            const addressEl = document.getElementById('client-address');
+            if (addressEl) addressEl.value = '';
+            
+            const successEl = document.getElementById('checkout-success');
+            if (successEl) {
+                successEl.classList.add('hidden');
+                successEl.classList.remove('flex');
+            }
+            const contentEl = document.getElementById('checkout-content');
+            if (contentEl) {
+                contentEl.classList.remove('hidden');
+                contentEl.classList.add('flex');
+            }
+            
             updateCartUI();
             toggleCart();
         }
