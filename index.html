@@ -915,15 +915,15 @@
         </div>
 
         <!-- ZONE DÉFILANTE -->
-        <div class="flex-grow overflow-y-auto bg-gray-50 flex flex-col">
+        <div class="flex-grow overflow-y-auto bg-gray-50 flex flex-col relative">
             
-            <div id="cart-items-container" class="p-4 sm:p-6 flex flex-col gap-4 shrink-0">
-                <div id="empty-cart-msg" class="text-center text-gray-500 mt-10"><p>Votre panier est vide.</p></div>
-            </div>
-            
-            <div class="p-4 sm:p-6 bg-white border-t border-gray-200 mt-auto shrink-0">
+            <!-- CONTENU DU PANIER -->
+            <div id="checkout-content" class="flex flex-col flex-grow">
+                <div id="cart-items-container" class="p-4 sm:p-6 flex flex-col gap-4 shrink-0">
+                    <div id="empty-cart-msg" class="text-center text-gray-500 mt-10"><p>Votre panier est vide.</p></div>
+                </div>
                 
-                <div id="billing-info-container" class="mb-5 bg-gray-50 p-3 rounded-lg border border-gray-200 hidden">
+                <div class="p-4 sm:p-6 bg-white border-t border-gray-200 mt-auto shrink-0">
                     <label class="block text-xs font-bold text-gray-500 mb-2 uppercase tracking-wide"><i class="fa-solid fa-file-invoice mr-1"></i> Coordonnées de facturation</label>
                     <input type="text" id="client-name" placeholder="Nom et Prénom *" class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm mb-2 focus:ring-1 focus:ring-brand-main outline-none">
                     <input type="email" id="client-email" placeholder="Adresse e-mail *" class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm mb-2 focus:ring-1 focus:ring-brand-main outline-none">
@@ -998,11 +998,28 @@
                 <div id="checkout-error" class="hidden text-red-500 text-xs font-bold mb-3 text-center bg-red-50 p-2 rounded-lg border border-red-200"><i class="fa-solid fa-circle-exclamation mr-1"></i> Veuillez remplir vos coordonnées (Nom, E-mail, Tél, Adresse).</div>
                 
                 <!-- Bouton dont le texte change dynamiquement -->
-                <button onclick="checkoutWhatsApp()" id="checkout-btn" class="w-full bg-brand-main hover:bg-gray-800 transition-colors text-white font-bold py-4 rounded-xl opacity-50 cursor-not-allowed shadow-md" disabled>
+                <button onclick="checkoutWhatsApp()" id="checkout-btn" class="w-full bg-brand-main hover:bg-gray-800 transition-colors text-white font-bold py-4 rounded-xl shadow-md">
                     Valider ma commande <i class="fa-solid fa-paper-plane ml-2 text-xl"></i>
                 </button>
                 <p class="text-center text-[10px] text-gray-400 mt-3"><i class="fa-solid fa-shield-halved mr-1"></i> Commande sécurisée. Nous vous contacterons directement par e-mail ou WhatsApp.</p>
             </div>
+
+            <!-- MESSAGE DE SUCCÈS (Caché par défaut) -->
+            <div id="checkout-success" class="hidden flex-col items-center justify-center p-8 text-center h-full my-auto absolute inset-0 bg-gray-50 z-10">
+                <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mb-6 mx-auto shadow-sm">
+                    <i class="fa-solid fa-check text-4xl text-green-500"></i>
+                </div>
+                <h3 class="text-2xl font-black text-gray-900 mb-2">Réservation confirmée !</h3>
+                <p class="text-gray-600 mb-6">Merci pour votre confiance. Votre demande a bien été transmise à notre atelier.</p>
+                <div class="bg-white p-5 rounded-xl border border-gray-200 text-sm text-left mb-8 shadow-sm w-full">
+                    <p class="mb-2"><i class="fa-solid fa-clock text-brand-accent mr-2"></i><strong>Et maintenant ?</strong></p>
+                    <p class="text-gray-600 leading-relaxed">Je vais vérifier votre configuration et je reviens vers vous très rapidement avec <strong id="success-payment-method" class="text-gray-900">les informations de paiement</strong> pour valider définitivement la commande.</p>
+                </div>
+                <button onclick="closeSuccessAndReset()" class="w-full bg-gray-200 hover:bg-gray-300 transition-colors text-gray-800 font-bold py-4 rounded-xl shadow-sm">
+                    Fermer et retourner au site
+                </button>
+            </div>
+            
         </div>
     </div>
 
@@ -1059,6 +1076,17 @@
                 panel.classList.add('cart-closed');
                 overlay.classList.add('hidden');
                 document.body.style.overflow = 'auto';
+                
+                setTimeout(() => {
+                    const successView = document.getElementById('checkout-success');
+                    const contentView = document.getElementById('checkout-content');
+                    if(successView && contentView) {
+                        successView.classList.add('hidden');
+                        successView.classList.remove('flex');
+                        contentView.classList.remove('hidden');
+                        contentView.classList.add('flex');
+                    }
+                }, 300);
             }
         }
 
@@ -1068,68 +1096,77 @@
             img.src = src;
         }
 
+        // Fonction "Blindée" 100% sécurisée
         function addToCart() {
-            const title = document.getElementById('modal-title').textContent;
-            const finalPrice = parseInt(document.getElementById('calc-price').textContent) || 0;
-            const finalWeight = document.getElementById('calc-weight').textContent;
-            
-            let configText = "";
-            let imgUrl = document.getElementById('modal-image').src; 
-
-            if (document.getElementById('configurator-section').style.display !== 'none') {
-                const titleLC = title.toLowerCase();
+            try {
+                const titleEl = document.getElementById('modal-title');
+                const title = titleEl ? titleEl.textContent : "Produit";
+                const priceEl = document.getElementById('calc-price');
+                const finalPrice = priceEl ? (parseInt(priceEl.textContent) || 0) : 0;
+                const weightEl = document.getElementById('calc-weight');
+                const finalWeight = weightEl ? weightEl.textContent : "--";
                 
-                if (titleLC.includes('manivelle')) {
-                    const longueur = document.getElementById('config-longueur-manivelle').value;
-                    configText = `Longueur : ${longueur}`;
+                let configText = "";
+                const imgEl = document.getElementById('modal-image');
+                let imgUrl = imgEl ? imgEl.src : ""; 
+
+                const configSection = document.getElementById('configurator-section');
+
+                if (isCurrentItemWheelConfigurable || (configSection && configSection.style.display !== 'none')) {
+                    const titleLC = title.toLowerCase();
+                    
+                    if (titleLC.includes('manivelle')) {
+                        const manivelleEl = document.getElementById('config-longueur-manivelle');
+                        const longueur = manivelleEl ? manivelleEl.value : "";
+                        configText = `Longueur : ${longueur}`;
+                    } else {
+                        const getSelectText = (id) => {
+                            const el = document.getElementById(id);
+                            if (!el || el.selectedIndex < 0) return "";
+                            return el.options[el.selectedIndex].text.split('(')[0].trim();
+                        };
+                        
+                        const moyeu = getSelectText('config-moyeu') || "RT240";
+                        const janteEl = document.getElementById('config-jante');
+                        const jante = janteEl ? janteEl.value : "SUXL";
+                        const rayon = getSelectText('config-rayons') || "T33";
+                        const ratchet = getSelectText('config-ratchet') || "45T";
+                        const roulements = getSelectText('config-roulements') || "Acier EZO";
+                        
+                        const rouelibreEl = document.getElementById('config-rouelibre');
+                        const rouelibre = rouelibreEl ? rouelibreEl.value : "Shimano HG";
+                        
+                        const finition = getSelectText('config-finition') || "Glossy Black";
+                        const logos = getSelectText('config-logos') || "Petit logo noir";
+                        const freinage = getSelectText('config-freinage') || "Disques";
+                        
+                        const colorEl = document.getElementById('config-couleur-moyeu');
+                        const couleurMoyeu = (colorEl && colorEl.value) ? " (" + colorEl.value + ")" : "";
+
+                        configText = `${moyeu}${couleurMoyeu} | Jantes ${jante} | ${rayon} | Ratchet ${ratchet} | Roulements ${roulements} | ${rouelibre} | ${finition} | Logos : ${logos} | ${freinage}`;
+                    }
                 } else {
-                    const moyeuSelect = document.getElementById('config-moyeu');
-                    const moyeu = moyeuSelect && moyeuSelect.selectedIndex >= 0 ? moyeuSelect.options[moyeuSelect.selectedIndex].text.split('(')[0].trim() : "RT240";
-                    
-                    const jante = document.getElementById('config-jante') ? document.getElementById('config-jante').value : "SUXL";
-                    
-                    const rayonSelect = document.getElementById('config-rayons');
-                    const rayon = rayonSelect && rayonSelect.selectedIndex >= 0 ? rayonSelect.options[rayonSelect.selectedIndex].text.split('(')[0].trim() : "T33";
-                    
-                    const ratchetSelect = document.getElementById('config-ratchet');
-                    const ratchet = ratchetSelect && ratchetSelect.selectedIndex >= 0 ? ratchetSelect.options[ratchetSelect.selectedIndex].text.split('(')[0].trim() : "45T";
-                    
-                    const roulementsSelect = document.getElementById('config-roulements');
-                    const roulements = roulementsSelect && roulementsSelect.selectedIndex >= 0 ? roulementsSelect.options[roulementsSelect.selectedIndex].text.split('(')[0].trim() : "Acier EZO";
-                    
-                    const rouelibre = document.getElementById('config-rouelibre') ? document.getElementById('config-rouelibre').value : "Shimano HG";
-                    
-                    const finitionSelect = document.getElementById('config-finition');
-                    const finition = finitionSelect && finitionSelect.selectedIndex >= 0 ? finitionSelect.options[finitionSelect.selectedIndex].text.split('(')[0].trim() : "Glossy Black";
-                    
-                    const logosSelect = document.getElementById('config-logos');
-                    const logos = logosSelect && logosSelect.selectedIndex >= 0 ? logosSelect.options[logosSelect.selectedIndex].text.split('(')[0].trim() : "Petit logo noir";
-                    
-                    const freinageSelect = document.getElementById('config-freinage');
-                    const freinage = freinageSelect && freinageSelect.selectedIndex >= 0 ? freinageSelect.options[freinageSelect.selectedIndex].text.split('(')[0].trim() : "Disques";
-                    
-                    const couleurMoyeu = document.getElementById('config-couleur-moyeu') ? " (" + document.getElementById('config-couleur-moyeu').value + ")" : "";
-
-                    configText = `${moyeu}${couleurMoyeu} | Jantes ${jante} | ${rayon} | Ratchet ${ratchet} | Roulements ${roulements} | ${rouelibre} | ${finition} | Logos : ${logos} | ${freinage}`;
+                    configText = isCurrentItemAccessory ? "Accessoire" : "Modèle Standard";
                 }
-            } else {
-                configText = isCurrentItemAccessory ? "Accessoire" : "Modèle Standard";
+
+                const item = {
+                    id: Date.now(),
+                    title: title,
+                    price: finalPrice,
+                    weight: finalWeight,
+                    config: configText,
+                    image: imgUrl,
+                    isAccessory: isCurrentItemAccessory
+                };
+
+                cart.push(item);
+                updateCartUI();
+                closeModal();
+                toggleCart();
+            } catch (e) {
+                console.error("Erreur lors de l'ajout au panier:", e);
+                alert("Erreur système : " + e.message);
             }
-
-            const item = {
-                id: Date.now(),
-                title: title,
-                price: finalPrice,
-                weight: finalWeight,
-                config: configText,
-                image: imgUrl,
-                isAccessory: isCurrentItemAccessory
-            };
-
-            cart.push(item);
-            updateCartUI();
-            closeModal();
-            toggleCart();
         }
 
         function removeFromCart(id) {
@@ -1154,16 +1191,19 @@
             
             if (errorMsg) errorMsg.classList.add('hidden');
 
-            const paymentMethod = document.querySelector('input[name="payment-method"]:checked')?.value || 'virement';
+            // C'EST ICI QU'ETAIT LE CRASH : Remplacement de l'opérateur de compatibilité
+            const paymentMethodInput = document.querySelector('input[name="payment-method"]:checked');
+            const paymentMethod = paymentMethodInput ? paymentMethodInput.value : 'virement';
+            
             if (paymentMethod === 'virement') {
                 checkoutBtn.className = "w-full bg-brand-main hover:bg-gray-800 transition-colors text-white font-bold py-4 rounded-xl shadow-md";
                 checkoutBtn.innerHTML = 'Valider ma réservation <i class="fa-solid fa-paper-plane ml-2 text-xl"></i>';
             } else if (paymentMethod === 'card1x') {
                 checkoutBtn.className = "w-full bg-[#635BFF] hover:bg-[#524be0] transition-colors text-white font-bold py-4 rounded-xl shadow-md";
-                checkoutBtn.innerHTML = 'Recevoir le lien Stripe <i class="fa-solid fa-lock ml-2 text-xl"></i>';
+                checkoutBtn.innerHTML = 'Valider (Paiement Stripe) <i class="fa-solid fa-lock ml-2 text-xl"></i>';
             } else if (paymentMethod === 'fractionne') {
                 checkoutBtn.className = "w-full bg-blue-600 hover:bg-blue-700 transition-colors text-white font-bold py-4 rounded-xl shadow-md";
-                checkoutBtn.innerHTML = 'Recevoir le lien 3x/4x <i class="fa-solid fa-lock ml-2 text-xl"></i>';
+                checkoutBtn.innerHTML = 'Valider (Paiement en 3x/4x) <i class="fa-solid fa-lock ml-2 text-xl"></i>';
             }
 
             if (cart.length > 0) {
@@ -1193,6 +1233,7 @@
             cart.forEach(item => {
                 subtotal += item.price;
                 
+                // Promo Club
                 if (appliedPromo === 'CCPIKARBON') {
                     const titleLC = item.title.toLowerCase();
                     const isSpecialWheel = titleLC.includes('bâton') || titleLC.includes('tri-spoke') || titleLC.includes('lenticulaire') || titleLC.includes('disc');
@@ -1290,7 +1331,7 @@
             updateCartUI();
         }
 
-        function checkoutWhatsApp() {
+        function submitOrder() {
             if (cart.length === 0) return;
             
             const nomClient = document.getElementById('client-name').value.trim();
@@ -1298,34 +1339,26 @@
             const telClient = document.getElementById('client-phone').value.trim(); 
             const adresseClient = document.getElementById('client-address').value.trim();
             const errorMsg = document.getElementById('checkout-error');
+            const checkoutBtn = document.getElementById('checkout-btn');
 
             if (!nomClient || !emailClient || !telClient || !adresseClient) {
-                errorMsg.classList.remove('hidden');
+                if (errorMsg) errorMsg.classList.remove('hidden');
                 return; 
             } else {
-                errorMsg.classList.add('hidden');
+                if (errorMsg) errorMsg.classList.add('hidden');
             }
             
-            let msg = "👋 Bonjour Karbòn Péi ! Je souhaite réserver le montage suivant :\n\n";
+            const originalBtnHtml = checkoutBtn.innerHTML;
+            checkoutBtn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin mr-2"></i> Traitement en cours...';
+            checkoutBtn.disabled = true;
+            checkoutBtn.classList.add('opacity-75');
             
-            msg += `👤 *CLIENT :*\n`;
-            msg += `- Nom : ${nomClient}\n`;
-            msg += `- E-mail : ${emailClient}\n`;
-            msg += `- Tél : ${telClient}\n`;
-            msg += `- Adresse : ${adresseClient}\n\n`;
-            
-            msg += `🛒 *MA CONFIGURATION :*\n`;
             let total = 0;
             let produitsPourFichier = []; 
             let factureNoms = []; 
             let facturePrix = []; 
             
             cart.forEach((item, index) => {
-                msg += `*${index + 1}. ${item.title}*\n`;
-                if(item.config !== "Accessoire" && item.config !== "Modèle Standard") {
-                    msg += `   - Config : ${item.config}\n`;
-                }
-                msg += `   - Prix : ${item.price} €\n\n`;
                 total += item.price;
                 produitsPourFichier.push(`${item.title} (${item.config})`);
                 
@@ -1350,32 +1383,13 @@
             const finalTotal = currentSubtotal + transactionFees;
 
             if (appliedPromo) {
-                msg += `*SOUS-TOTAL : ${total} €*\n`;
-                msg += `*CODE PROMO : ${appliedPromo}*\n`;
-                msg += `*REMISE : -${discountAmount} €*\n`;
-                
                 factureNoms.push(`\nREMISE (Code : ${appliedPromo})`);
                 facturePrix.push(`\n-${discountAmount} €`);
-            } else {
-                msg += `*SOUS-TOTAL : ${currentSubtotal} €*\n`;
             }
 
-            msg += `\n💳 *MODE DE RÈGLEMENT CHOISI :*\n`;
-            msg += `- ${paymentMethodName}\n`;
             if (transactionFees > 0) {
-                msg += `- Frais de transaction : +${transactionFees.toFixed(2)} €\n`;
                 factureNoms.push(`\nFrais de transaction (${paymentMethodName})`);
                 facturePrix.push(`\n+${transactionFees.toFixed(2)} €`);
-            }
-            
-            msg += `\n*TOTAL : ${finalTotal % 1 === 0 ? finalTotal : finalTotal.toFixed(2)} €*\n\n`;
-            
-            if (paymentMethodVal === 'virement') {
-                msg += `Merci de m'envoyer le RIB/IBAN pour bloquer ma commande. 🙏\n\n`;
-            } else if (paymentMethodVal === 'card1x') {
-                msg += `Merci de m'envoyer le lien Stripe sécurisé pour le paiement par carte. 🙏\n\n`;
-            } else if (paymentMethodVal === 'fractionne') {
-                msg += `Merci de m'envoyer le lien sécurisé pour le paiement en plusieurs fois. 🙏\n\n`;
             }
 
             const orderData = {
@@ -1397,18 +1411,62 @@
                 method: 'POST',
                 headers: { 'Content-Type': 'text/plain;charset=utf-8' },
                 body: JSON.stringify(orderData)
-            }).catch(error => console.error("Erreur d'enregistrement Google :", error));
+            })
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('checkout-content').classList.add('hidden');
+                document.getElementById('checkout-content').classList.remove('flex');
+                document.getElementById('checkout-success').classList.remove('hidden');
+                document.getElementById('checkout-success').classList.add('flex');
+                
+                const successPayText = document.getElementById('success-payment-method');
+                if(successPayText) {
+                    if(paymentMethodVal === 'virement') {
+                        successPayText.textContent = "le RIB pour finaliser la réservation";
+                    } else if(paymentMethodVal === 'card1x') {
+                        successPayText.textContent = "le lien Stripe sécurisé pour le paiement par carte";
+                    } else {
+                        successPayText.textContent = "le lien sécurisé pour le paiement en plusieurs fois";
+                    }
+                }
 
-            const encodedMsg = encodeURIComponent(msg);
-            window.open(`https://wa.me/262692693870?text=${encodedMsg}`, '_blank');
+                checkoutBtn.innerHTML = originalBtnHtml;
+                checkoutBtn.disabled = false;
+                checkoutBtn.classList.remove('opacity-75');
+            })
+            .catch(error => {
+                console.error("Erreur d'enregistrement Google :", error);
+                checkoutBtn.innerHTML = '<i class="fa-solid fa-triangle-exclamation mr-2"></i> Erreur, réessayez';
+                checkoutBtn.disabled = false;
+                checkoutBtn.classList.remove('opacity-75');
+                setTimeout(() => { updateCartUI(); }, 3000);
+            });
+        }
 
+        function closeSuccessAndReset() {
             cart = [];
             appliedPromo = null;
             discountAmount = 0;
-            document.getElementById('client-name').value = '';
-            document.getElementById('client-email').value = '';
-            document.getElementById('client-phone').value = '';
-            document.getElementById('client-address').value = '';
+            const nameEl = document.getElementById('client-name');
+            if (nameEl) nameEl.value = '';
+            const emailEl = document.getElementById('client-email');
+            if (emailEl) emailEl.value = '';
+            const phoneEl = document.getElementById('client-phone');
+            if (phoneEl) phoneEl.value = '';
+            const addressEl = document.getElementById('client-address');
+            if (addressEl) addressEl.value = '';
+            
+            const successEl = document.getElementById('checkout-success');
+            if (successEl) {
+                successEl.classList.add('hidden');
+                successEl.classList.remove('flex');
+            }
+            const contentEl = document.getElementById('checkout-content');
+            if (contentEl) {
+                contentEl.classList.remove('hidden');
+                contentEl.classList.add('flex');
+            }
+            
             updateCartUI();
             toggleCart();
         }
@@ -1534,7 +1592,7 @@
             const currentHub = moyeuSelect.value;
             const isHubChange = (lastHubSelected !== "" && lastHubSelected !== currentHub);
             lastHubSelected = currentHub;
-            
+
             const currentColor = colorSelect.value;
             const currentRatchet = ratchetSelect.value;
             const currentRoulements = roulementsSelect.value;
@@ -1563,6 +1621,7 @@
                 } else {
                     colorSelect.selectedIndex = 0; 
                 }
+
             } else { 
                 colorSelect.innerHTML = `
                     <option value="Argent" data-price="0">Argent (Standard RT240)</option>
@@ -1586,9 +1645,13 @@
 
             if(Array.from(ratchetSelect.options).some(opt => opt.value === currentRatchet)) {
                 ratchetSelect.value = currentRatchet;
+            } else {
+                ratchetSelect.selectedIndex = 0;
             }
             if(Array.from(roulementsSelect.options).some(opt => opt.value === currentRoulements)) {
                 roulementsSelect.value = currentRoulements;
+            } else {
+                roulementsSelect.selectedIndex = 0;
             }
         }
 
