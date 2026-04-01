@@ -51,11 +51,6 @@
 </head>
 <body class="bg-gray-100 text-gray-800 font-sans selection:bg-brand-accent selection:text-white relative">
 
-    <!-- Bannière d'urgence (LANCEMENT5) -->
-    <div class="bg-brand-accent text-brand-main font-bold text-center py-2 px-4 text-sm z-50 relative">
-        🚨 OFFRE DE LANCEMENT : Jusqu'à -80€ sur votre montage avec le code LANCEMENT5 (Limité aux 5 premières commandes !) 🚨
-    </div>
-
     <!-- En-tête (Toujours visible) -->
     <header class="bg-brand-main text-white sticky top-0 z-40 shadow-lg">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex justify-between items-center">
@@ -1198,7 +1193,7 @@
             cart.forEach(item => {
                 subtotal += item.price;
                 
-                if (appliedPromo === 'CCPIKARBON' || appliedPromo === 'LANCEMENT5') {
+                if (appliedPromo === 'CCPIKARBON') {
                     const titleLC = item.title.toLowerCase();
                     const isSpecialWheel = titleLC.includes('bâton') || titleLC.includes('tri-spoke') || titleLC.includes('lenticulaire') || titleLC.includes('disc');
                     
@@ -1282,7 +1277,7 @@
         function applyPromoCode() {
             const input = document.getElementById('promo-code');
             const code = input.value.trim().toUpperCase();
-            if (code === 'CCPIKARBON' || code === 'LANCEMENT5') {
+            if (code === 'CCPIKARBON') {
                 appliedPromo = code;
                 input.value = '';
                 updateCartUI();
