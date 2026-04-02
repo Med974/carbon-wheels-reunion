@@ -812,8 +812,8 @@
                         <div id="config-taille-pneu-container" class="mt-4 hidden">
                             <label class="block text-xs font-bold text-gray-500 mb-2"><i class="fa-solid fa-ruler text-brand-accent mr-1"></i> Taille du pneu</label>
                             <select id="config-taille-pneu" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-3 text-sm font-semibold" onchange="updateConfig()">
-                                <option value="28mm">28 mm</option>
-                                <option value="30mm">30 mm</option>
+                                <option value="30mm" selected>30 mm (En Stock)</option>
+                                <option value="28mm">28 mm (Sur Commande)</option>
                             </select>
                         </div>
                     </div>
@@ -923,11 +923,11 @@
                 </div>
                 
                 <div class="flex justify-between items-end mb-6 bg-brand-main text-white p-4 rounded-xl shadow-md">
-                    <div>
+                    <div id="modal-weight-block">
                         <span class="block text-xs text-gray-400 font-bold uppercase tracking-wider mb-1">Poids</span>
                         <div class="text-xl font-bold"><span id="calc-weight">--</span> g <span class="text-xs text-gray-400">+/- 30g</span></div>
                     </div>
-                    <div class="text-right">
+                    <div class="text-right ml-auto">
                         <span id="modal-price-label" class="block text-xs text-gray-400 font-bold uppercase tracking-wider mb-1">Prix</span>
                         <div class="text-3xl font-black text-brand-accent"><span id="calc-price">--</span> €</div>
                     </div>
