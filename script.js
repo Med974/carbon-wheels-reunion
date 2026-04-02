@@ -796,6 +796,7 @@ function openModal(index) {
         const wheelConfigOptions = document.getElementById('wheel-config-options');
         const manivellesConfigContainer = document.getElementById('config-manivelles-container');
         const accessoryConfigContainer = document.getElementById('accessory-config-container');
+        const weightBlock = document.getElementById('modal-weight-block');
         
         if (nomLC.includes('manivelle')) {
             if(specJantesBox) specJantesBox.style.display = 'none';
@@ -803,6 +804,7 @@ function openModal(index) {
             if(wheelConfigOptions) wheelConfigOptions.style.display = 'none';
             if(manivellesConfigContainer) manivellesConfigContainer.style.display = 'block';
             if(accessoryConfigContainer) accessoryConfigContainer.style.display = 'none';
+            if(weightBlock) weightBlock.style.display = 'block';
             
             const cPrice = document.getElementById('calc-price');
             if(cPrice) cPrice.textContent = currentBasePrice > 0 ? currentBasePrice : '--';
@@ -814,6 +816,7 @@ function openModal(index) {
             if(configuratorSection) configuratorSection.style.display = 'block';
             if(wheelConfigOptions) wheelConfigOptions.style.display = 'none';
             if(manivellesConfigContainer) manivellesConfigContainer.style.display = 'none';
+            if(weightBlock) weightBlock.style.display = 'none';
             
             if(accessoryConfigContainer) accessoryConfigContainer.style.display = 'block';
             
@@ -838,6 +841,7 @@ function openModal(index) {
             if(manivellesConfigContainer) manivellesConfigContainer.style.display = 'none';
             if(accessoryConfigContainer) accessoryConfigContainer.style.display = 'none';
             if(poidsMaxContainer) poidsMaxContainer.style.display = 'block';
+            if(weightBlock) weightBlock.style.display = 'block';
             
             const optUxl = document.getElementById('opt-uxl');
             if (optUxl) {
@@ -878,6 +882,7 @@ function openModal(index) {
             if(specJantesBox) specJantesBox.style.display = 'block';
             if(configuratorSection) configuratorSection.style.display = 'none';
             if(poidsMaxContainer) poidsMaxContainer.style.display = 'none';
+            if(weightBlock) weightBlock.style.display = 'block';
             const cPrice = document.getElementById('calc-price');
             if(cPrice) cPrice.textContent = currentBasePrice > 0 ? currentBasePrice : '--';
             const cWeight = document.getElementById('calc-weight');
@@ -946,12 +951,12 @@ function changeModalMedia(url) {
 }
 
 function updateConfig() {
+    const titleEl = document.getElementById('modal-title');
+    const titleLC = titleEl ? titleEl.textContent.toLowerCase() : "";
+
     if (isCurrentItemAccessory) {
         const qteEl = document.getElementById('config-quantite');
         const qte = qteEl ? parseInt(qteEl.value) : 1;
-        
-        const titleEl = document.getElementById('modal-title');
-        const titleLC = titleEl ? titleEl.textContent.toLowerCase() : "";
         
         let finalPrice = currentBasePrice * qte;
         
@@ -966,8 +971,29 @@ function updateConfig() {
         
         const cPrice = document.getElementById('calc-price');
         if(cPrice) cPrice.textContent = finalPrice > 0 ? finalPrice : '--';
+        
+        // Mise à jour du poids uniquement pour les axes et manivelles
         const cWeight = document.getElementById('calc-weight');
-        if(cWeight) cWeight.textContent = finalWeight > 0 ? finalWeight : '--';
+        if(cWeight) {
+            if (titleLC.includes('axe') || titleLC.includes('manivelle')) {
+                cWeight.textContent = finalWeight > 0 ? finalWeight : '--';
+            } else {
+                cWeight.textContent = '--';
+            }
+        }
+
+        // Gestion dynamique du badge En Stock / Sur Commande pour les pneus
+        if (titleLC.includes('pneu') || titleLC.includes('gp5000')) {
+            const tailleEl = document.getElementById('config-taille-pneu');
+            if (tailleEl && tailleEl.value === '28mm') {
+                updateBadgeUI(false); // Force le badge à "Sur Commande"
+            } else {
+                updateBadgeUI(true);  // Remet le badge d'origine (En Stock)
+            }
+        } else {
+            updateBadgeUI(true);
+        }
+        
         return; // On arrête l'exécution ici pour les accessoires !
     }
 
