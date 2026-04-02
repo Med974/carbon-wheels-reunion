@@ -119,6 +119,13 @@ function addToCart() {
                 const couleurMoyeu = (colorEl && colorEl.value) ? " (" + colorEl.value + ")" : "";
 
                 configText = `${moyeu}${couleurMoyeu} | Jantes ${jante} | ${rayon} | Ratchet ${ratchet} | Roulements ${roulements} | ${rouelibre} | ${finition} | Logos : ${logos} | ${freinage}`;
+                
+                // Ajout de l'accessoire optionnel (Étape 10)
+                const accessoiresSelect = document.getElementById('config-accessoires');
+                if (accessoiresSelect && accessoiresSelect.value !== 'Aucun') {
+                    const accPrice = parseInt(accessoiresSelect.options[accessoiresSelect.selectedIndex].getAttribute('data-price')) || 0;
+                    configText += ` | + ${accessoiresSelect.value} [+${accPrice}€]`;
+                }
             }
         } else {
             configText = isCurrentItemAccessory ? "Accessoire" : "Modèle Standard";
@@ -832,6 +839,10 @@ function openModal(index) {
             const mFreinage = document.getElementById('config-freinage');
             if(mFreinage) mFreinage.value = 'Disques';
             
+            // On réinitialise l'upsell Accessoires à chaque nouvelle ouverture
+            const mAccessoires = document.getElementById('config-accessoires');
+            if(mAccessoires) mAccessoires.value = 'Aucun';
+            
             updateHubOptions(); 
             const cColor = document.getElementById('config-couleur-moyeu');
             if(cColor) cColor.value = 'Noir'; 
@@ -919,6 +930,9 @@ function updateConfig() {
     const finitionSelect = document.getElementById('config-finition');
     const colorSelect = document.getElementById('config-couleur-moyeu');
     
+    // Le menu déroulant de l'upsell Accessoires (Etape 10)
+    const accessoiresSelect = document.getElementById('config-accessoires');
+    
     const msgRecoR2 = document.getElementById('msg-reco-r2');
     const t32Option = document.getElementById('opt-t32');
 
@@ -945,16 +959,25 @@ function updateConfig() {
     const roulementsPrice = getPrice(roulementsSelect);
     const finitionPrice = getPrice(finitionSelect);
     
+    // Prix supplémentaire des accessoires
+    const accessoiresPrice = getPrice(accessoiresSelect);
+    
     const hubWeight = moyeuSelect && moyeuSelect.selectedIndex >= 0 ? (parseInt(moyeuSelect.options[moyeuSelect.selectedIndex].getAttribute('data-hub-weight')) || 238) : 238;
     const spokeCount = moyeuSelect && moyeuSelect.selectedIndex >= 0 ? (parseInt(moyeuSelect.options[moyeuSelect.selectedIndex].getAttribute('data-spokes')) || 40) : 40;
     const rimDiff = janteSelect && janteSelect.selectedIndex >= 0 ? (parseInt(janteSelect.options[janteSelect.selectedIndex].getAttribute('data-weight-diff')) || 0) : 0;
     const finitionWeight = finitionSelect && finitionSelect.selectedIndex >= 0 ? (parseInt(finitionSelect.options[finitionSelect.selectedIndex].getAttribute('data-weight')) || 0) : 0;
     const spokeWeight = rayonSelect && rayonSelect.selectedIndex >= 0 ? (parseFloat(rayonSelect.options[rayonSelect.selectedIndex].getAttribute('data-spoke-weight')) || 2.1) : 2.1;
 
-    const finalPrice = currentBasePrice + moyeuPrice + rayonPrice + finitionPrice + colorPrice + ratchetPrice + roulementsPrice;
+    // Surpoids de l'option Freins à Patins (130g de résine haute température)
+    const freinageSelect = document.getElementById('config-freinage');
+    const freinageWeight = freinageSelect && freinageSelect.value === 'Patins' ? 130 : 0;
+
+    // Le Prix Final prend en compte les accessoires !
+    const finalPrice = currentBasePrice + moyeuPrice + rayonPrice + finitionPrice + colorPrice + ratchetPrice + roulementsPrice + accessoiresPrice;
     
     const baseComboWeight = 322; 
-    const newComboWeight = hubWeight + (spokeCount * spokeWeight) + rimDiff + finitionWeight;
+    // Le Poids Final prend en compte l'option Patins
+    const newComboWeight = hubWeight + (spokeCount * spokeWeight) + rimDiff + finitionWeight + freinageWeight;
     const finalWeight = Math.round(currentBaseWeight - baseComboWeight + newComboWeight);
 
     const cPrice = document.getElementById('calc-price');
@@ -980,7 +1003,6 @@ function updateConfig() {
     if (finitionSelect && finitionSelect.value !== 'Glossy Black') isStockConfig = false;
     const logoSelect = document.getElementById('config-logos');
     if (logoSelect && logoSelect.value !== 'Petit logo noir') isStockConfig = false;
-    const freinageSelect = document.getElementById('config-freinage');
     if (freinageSelect && freinageSelect.value !== 'Disques') isStockConfig = false; 
 
     updateBadgeUI(isStockConfig);
