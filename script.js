@@ -920,6 +920,31 @@ function changeModalMedia(url) {
 }
 
 function updateConfig() {
+    if (isCurrentItemAccessory) {
+        const qteEl = document.getElementById('config-quantite');
+        const qte = qteEl ? parseInt(qteEl.value) : 1;
+        
+        const titleEl = document.getElementById('modal-title');
+        const titleLC = titleEl ? titleEl.textContent.toLowerCase() : "";
+        
+        let finalPrice = currentBasePrice * qte;
+        
+        // Logique dégressive pour les Bidons Ahyka (39€ l'unité, 75€ la paire)
+        if (titleLC.includes('bidon') || titleLC.includes('ahyka')) {
+            const pairs = Math.floor(qte / 2);
+            const singles = qte % 2;
+            finalPrice = (pairs * 75) + (singles * currentBasePrice); 
+        }
+        
+        const finalWeight = currentBaseWeight * qte;
+        
+        const cPrice = document.getElementById('calc-price');
+        if(cPrice) cPrice.textContent = finalPrice > 0 ? finalPrice : '--';
+        const cWeight = document.getElementById('calc-weight');
+        if(cWeight) cWeight.textContent = finalWeight > 0 ? finalWeight : '--';
+        return; // On arrête l'exécution ici pour les accessoires
+    }
+
     if (!isCurrentItemWheelConfigurable) return; 
 
     const moyeuSelect = document.getElementById('config-moyeu');
