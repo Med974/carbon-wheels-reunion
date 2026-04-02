@@ -94,6 +94,16 @@ function addToCart() {
                 const manivelleEl = document.getElementById('config-longueur-manivelle');
                 const longueur = manivelleEl ? manivelleEl.value : "";
                 configText = `Longueur : ${longueur}`;
+            } else if (isCurrentItemAccessory) {
+                const qteEl = document.getElementById('config-quantite');
+                const qte = qteEl ? parseInt(qteEl.value) : 1;
+                if (titleLC.includes('pneu') || titleLC.includes('gp5000')) {
+                    const tailleEl = document.getElementById('config-taille-pneu');
+                    const taille = tailleEl ? tailleEl.value : "";
+                    configText = `Quantité : ${qte} | Taille : ${taille}`;
+                } else {
+                    configText = `Quantité : ${qte}`;
+                }
             } else {
                 const getSelectText = (id) => {
                     const el = document.getElementById(id);
@@ -785,12 +795,14 @@ function openModal(index) {
         const configuratorSection = document.getElementById('configurator-section');
         const wheelConfigOptions = document.getElementById('wheel-config-options');
         const manivellesConfigContainer = document.getElementById('config-manivelles-container');
+        const accessoryConfigContainer = document.getElementById('accessory-config-container');
         
         if (nomLC.includes('manivelle')) {
             if(specJantesBox) specJantesBox.style.display = 'none';
             if(configuratorSection) configuratorSection.style.display = 'block';
             if(wheelConfigOptions) wheelConfigOptions.style.display = 'none';
             if(manivellesConfigContainer) manivellesConfigContainer.style.display = 'block';
+            if(accessoryConfigContainer) accessoryConfigContainer.style.display = 'none';
             
             const cPrice = document.getElementById('calc-price');
             if(cPrice) cPrice.textContent = currentBasePrice > 0 ? currentBasePrice : '--';
@@ -799,17 +811,32 @@ function openModal(index) {
             updateBadgeUI(true);
         } else if (isCurrentItemAccessory) {
             if(specJantesBox) specJantesBox.style.display = 'none';
-            if(configuratorSection) configuratorSection.style.display = 'none';
-            const cPrice = document.getElementById('calc-price');
-            if(cPrice) cPrice.textContent = currentBasePrice > 0 ? currentBasePrice : '--';
-            const cWeight = document.getElementById('calc-weight');
-            if(cWeight) cWeight.textContent = currentBaseWeight > 0 ? currentBaseWeight : '--';
+            if(configuratorSection) configuratorSection.style.display = 'block';
+            if(wheelConfigOptions) wheelConfigOptions.style.display = 'none';
+            if(manivellesConfigContainer) manivellesConfigContainer.style.display = 'none';
+            
+            if(accessoryConfigContainer) accessoryConfigContainer.style.display = 'block';
+            
+            const tailleContainer = document.getElementById('config-taille-pneu-container');
+            if(tailleContainer) {
+                if (nomLC.includes('pneu') || nomLC.includes('gp5000')) {
+                    tailleContainer.style.display = 'block';
+                } else {
+                    tailleContainer.style.display = 'none';
+                }
+            }
+            
+            const qteEl = document.getElementById('config-quantite');
+            if(qteEl) qteEl.value = '1';
+            
+            updateConfig();
             updateBadgeUI(true);
         } else if (isCurrentItemWheelConfigurable) {
             if(specJantesBox) specJantesBox.style.display = 'block';
             if(configuratorSection) configuratorSection.style.display = 'block';
             if(wheelConfigOptions) wheelConfigOptions.style.display = 'block';
             if(manivellesConfigContainer) manivellesConfigContainer.style.display = 'none';
+            if(accessoryConfigContainer) accessoryConfigContainer.style.display = 'none';
             if(poidsMaxContainer) poidsMaxContainer.style.display = 'block';
             
             const optUxl = document.getElementById('opt-uxl');
@@ -839,7 +866,6 @@ function openModal(index) {
             const mFreinage = document.getElementById('config-freinage');
             if(mFreinage) mFreinage.value = 'Disques';
             
-            // On réinitialise l'upsell Accessoires à chaque nouvelle ouverture
             const mAccessoires = document.getElementById('config-accessoires');
             if(mAccessoires) mAccessoires.value = 'Aucun';
             
@@ -942,7 +968,7 @@ function updateConfig() {
         if(cPrice) cPrice.textContent = finalPrice > 0 ? finalPrice : '--';
         const cWeight = document.getElementById('calc-weight');
         if(cWeight) cWeight.textContent = finalWeight > 0 ? finalWeight : '--';
-        return; // On arrête l'exécution ici pour les accessoires
+        return; // On arrête l'exécution ici pour les accessoires !
     }
 
     if (!isCurrentItemWheelConfigurable) return; 
@@ -1002,8 +1028,6 @@ function updateConfig() {
     const ratchetPrice = getPrice(ratchetSelect);
     const roulementsPrice = getPrice(roulementsSelect);
     const finitionPrice = getPrice(finitionSelect);
-    
-    // Prix supplémentaire des accessoires
     const accessoiresPrice = getPrice(accessoiresSelect);
     
     const hubWeight = moyeuSelect && moyeuSelect.selectedIndex >= 0 ? (parseInt(moyeuSelect.options[moyeuSelect.selectedIndex].getAttribute('data-hub-weight')) || 238) : 238;
@@ -1011,15 +1035,12 @@ function updateConfig() {
     const rimDiff = janteSelect && janteSelect.selectedIndex >= 0 ? (parseInt(janteSelect.options[janteSelect.selectedIndex].getAttribute('data-weight-diff')) || 0) : 0;
     const finitionWeight = finitionSelect && finitionSelect.selectedIndex >= 0 ? (parseInt(finitionSelect.options[finitionSelect.selectedIndex].getAttribute('data-weight')) || 0) : 0;
     const spokeWeight = rayonSelect && rayonSelect.selectedIndex >= 0 ? (parseFloat(rayonSelect.options[rayonSelect.selectedIndex].getAttribute('data-spoke-weight')) || 2.1) : 2.1;
-
-    // Surpoids de l'option Freins à Patins (130g de résine haute température)
+    
     const freinageWeight = freinageSelect && freinageSelect.value === 'Patins' ? 130 : 0;
 
-    // Le Prix Final prend en compte les accessoires !
     const finalPrice = currentBasePrice + moyeuPrice + rayonPrice + finitionPrice + colorPrice + ratchetPrice + roulementsPrice + accessoiresPrice;
     
     const baseComboWeight = 322; 
-    // Le Poids Final prend en compte l'option Patins
     const newComboWeight = hubWeight + (spokeCount * spokeWeight) + rimDiff + finitionWeight + freinageWeight;
     const finalWeight = Math.round(currentBaseWeight - baseComboWeight + newComboWeight);
 
