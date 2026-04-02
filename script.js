@@ -982,17 +982,16 @@ function updateConfig() {
             }
         }
 
-        // Gestion dynamique du badge En Stock / Sur Commande pour les pneus
-        if (titleLC.includes('pneu') || titleLC.includes('gp5000')) {
-            const tailleEl = document.getElementById('config-taille-pneu');
-            if (tailleEl && tailleEl.value === '28mm') {
-                updateBadgeUI(false); // Force le badge à "Sur Commande"
-            } else {
-                updateBadgeUI(true);  // Remet le badge d'origine (En Stock)
-            }
-        } else {
-            updateBadgeUI(true);
+        // Gestion dynamique du badge En Stock / Sur Commande pour les options
+        const tailleSelect = document.getElementById('config-taille-pneu');
+        const tailleContainer = document.getElementById('config-taille-pneu-container');
+        
+        let customStatut = null;
+        if (tailleContainer && tailleContainer.style.display !== 'none' && tailleSelect && tailleSelect.selectedIndex >= 0) {
+            customStatut = tailleSelect.options[tailleSelect.selectedIndex].getAttribute('data-statut');
         }
+
+        updateBadgeUI(true, customStatut);
         
         return; // On arrête l'exécution ici pour les accessoires !
     }
