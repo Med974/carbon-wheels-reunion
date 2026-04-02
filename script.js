@@ -627,7 +627,7 @@ function updateHubOptions() {
         `;
         roulementsSelect.innerHTML = `
             <option value="Acier EZO" data-price="0">Acier EZO (Standard R2)</option>
-            <option value="Céramique TPI" data-price="80">Céramique TPI (Ultra-fluide) [+80€]</option>
+            <option value="Céramique TPI" data-price="70">Céramique TPI (Ultra-fluide) [+70€]</option>
         `;
         
         if (isHubChange) {
