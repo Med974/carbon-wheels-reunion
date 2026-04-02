@@ -929,22 +929,41 @@ function updateConfig() {
     const roulementsSelect = document.getElementById('config-roulements');
     const finitionSelect = document.getElementById('config-finition');
     const colorSelect = document.getElementById('config-couleur-moyeu');
+    const freinageSelect = document.getElementById('config-freinage');
     
     // Le menu déroulant de l'upsell Accessoires (Etape 10)
     const accessoiresSelect = document.getElementById('config-accessoires');
     
     const msgRecoR2 = document.getElementById('msg-reco-r2');
     const t32Option = document.getElementById('opt-t32');
+    const patinsOption = freinageSelect ? Array.from(freinageSelect.options).find(opt => opt.value === 'Patins') : null;
 
     if (moyeuSelect && moyeuSelect.value === 'R2') {
         if(msgRecoR2) msgRecoR2.style.display = 'flex';
-        if(t32Option) t32Option.style.display = 'none';
+        if(t32Option) {
+            t32Option.disabled = true;
+            t32Option.textContent = 'Carbone T32 (Incompatible avec moyeu R2)';
+        }
         if (rayonSelect && rayonSelect.value === 'T32') {
             rayonSelect.value = 'T33';
         }
+        if (patinsOption) {
+            patinsOption.disabled = false;
+            patinsOption.textContent = 'Freins à Patins (Bande Haute Température)';
+        }
     } else {
         if(msgRecoR2) msgRecoR2.style.display = 'none';
-        if(t32Option) t32Option.style.display = '';
+        if(t32Option) {
+            t32Option.disabled = false;
+            t32Option.textContent = 'Carbone T32 (Aéro pur, 3.2 x 0.98mm - 2.1g)';
+        }
+        if (patinsOption) {
+            patinsOption.disabled = true;
+            patinsOption.textContent = 'Freins à Patins (Incompatible avec RT240)';
+        }
+        if (freinageSelect && freinageSelect.value === 'Patins') {
+            freinageSelect.value = 'Disques';
+        }
     }
     
     const getPrice = (el) => {
@@ -969,7 +988,6 @@ function updateConfig() {
     const spokeWeight = rayonSelect && rayonSelect.selectedIndex >= 0 ? (parseFloat(rayonSelect.options[rayonSelect.selectedIndex].getAttribute('data-spoke-weight')) || 2.1) : 2.1;
 
     // Surpoids de l'option Freins à Patins (130g de résine haute température)
-    const freinageSelect = document.getElementById('config-freinage');
     const freinageWeight = freinageSelect && freinageSelect.value === 'Patins' ? 130 : 0;
 
     // Le Prix Final prend en compte les accessoires !
