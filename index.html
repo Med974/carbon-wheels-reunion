@@ -876,11 +876,25 @@
                             </select>
                         </div>
 
-                        <div>
+                        <div class="mb-5">
                             <label class="block text-xs font-bold text-gray-500 mb-2">9. Type de Freinage</label>
                             <select id="config-freinage" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-3 text-sm font-semibold border-brand-accent shadow-sm" onchange="updateConfig()">
                                 <option value="Disques" selected>Freins à Disques (Centerlock)</option>
                                 <option value="Patins">Freins à Patins (Bande Haute Température)</option>
+                            </select>
+                        </div>
+
+                        <!-- ÉTAPE 10 : ACCESSOIRES (UPSELL) -->
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 mb-2">10. Équipements & Consommables <span class="text-green-600 font-normal">(Prix Privilège)</span></label>
+                            <select id="config-accessoires" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-3 text-sm font-semibold border-green-500 shadow-sm" onchange="updateConfig()">
+                                <option value="Aucun" data-price="0">Aucun accessoire supplémentaire [+0€]</option>
+                                <option value="2x Pneus Continental GP5000 (28mm)" data-price="130">🚴 [PACK PNEUS] 2x Pneus Continental GP5000 (28mm) [+130€ au lieu de 150€]</option>
+                                <option value="2x Pneus Continental GP5000 (30mm)" data-price="130">🚴 [PACK PNEUS] 2x Pneus Continental GP5000 (30mm) [+130€ au lieu de 150€]</option>
+                                <option value="1x Kit Bidon Aéro Ahyka" data-price="35">💧 [PACK AÉRO] 1x Kit Bidon Aéro Ahyka [+35€]</option>
+                                <option value="2x Kits Bidons Aéro Ahyka" data-price="60">💧 [PACK AÉRO] 2x Kits Bidons Aéro Ahyka [+60€]</option>
+                                <option value="Pack Complet (2x GP5000 28mm + 2x Bidons Aéro)" data-price="190">🔥 [FULL PACK] 2x GP5000 (28mm) + 2x Kits Bidons Aéro [+190€]</option>
+                                <option value="Pack Complet (2x GP5000 30mm + 2x Bidons Aéro)" data-price="190">🔥 [FULL PACK] 2x GP5000 (30mm) + 2x Kits Bidons Aéro [+190€]</option>
                             </select>
                         </div>
                     </div>
