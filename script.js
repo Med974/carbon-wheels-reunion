@@ -76,10 +76,15 @@ function addToCart() {
     try {
         const titleEl = document.getElementById('modal-title');
         const title = titleEl ? titleEl.textContent : "Produit";
+        const titleLC = title.toLowerCase();
         const priceEl = document.getElementById('calc-price');
         const finalPrice = priceEl ? (parseInt(priceEl.textContent) || 0) : 0;
         const weightEl = document.getElementById('calc-weight');
-        const finalWeight = weightEl ? weightEl.textContent : "--";
+        let finalWeight = weightEl ? weightEl.textContent : "--";
+        
+        if (isCurrentItemAccessory && !titleLC.includes('axe') && !titleLC.includes('manivelle')) {
+            finalWeight = "--";
+        }
         
         let configText = "";
         const imgEl = document.getElementById('modal-image');
@@ -88,8 +93,6 @@ function addToCart() {
         const configSection = document.getElementById('configurator-section');
 
         if (isCurrentItemWheelConfigurable || (configSection && configSection.style.display !== 'none')) {
-            const titleLC = title.toLowerCase();
-            
             if (titleLC.includes('manivelle')) {
                 const manivelleEl = document.getElementById('config-longueur-manivelle');
                 const longueur = manivelleEl ? manivelleEl.value : "";
@@ -248,6 +251,13 @@ function updateCartUI() {
         if (container) {
             const div = document.createElement('div');
             div.className = "bg-white p-4 rounded-xl border border-gray-100 shadow-sm flex gap-4 relative group";
+            
+            // On cache les grammes dans le panier si c'est "--" ou un pneu/bidon
+            let weightDisplay = `<span class="text-xs text-gray-400 font-medium"><i class="fa-solid fa-weight-scale mr-1"></i>${item.weight}g</span>`;
+            if (item.weight === "--" || item.weight === "") {
+                weightDisplay = ``;
+            }
+
             div.innerHTML = `
                 <button onclick="removeFromCart(${item.id})" class="absolute -top-2 -right-2 bg-red-100 text-red-600 rounded-full w-6 h-6 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition shadow hover:bg-red-200"><i class="fa-solid fa-xmark"></i></button>
                 <div class="w-16 h-16 bg-gray-50 rounded-lg flex-shrink-0 flex items-center justify-center p-1 border border-gray-100 overflow-hidden">
@@ -257,8 +267,8 @@ function updateCartUI() {
                     <h5 class="font-bold text-gray-900 text-sm leading-tight mb-1">${item.title}</h5>
                     <p class="text-[10px] text-gray-500 mb-2 font-medium bg-gray-50 p-1 rounded inline-block">${item.config}</p>
                     <div class="flex justify-between items-center">
-                        <span class="text-xs text-gray-400 font-medium"><i class="fa-solid fa-weight-scale mr-1"></i>${item.weight}g</span>
-                        <span class="font-black text-brand-accent">${item.price} €</span>
+                        ${weightDisplay}
+                        <span class="font-black text-brand-accent ml-auto">${item.price} €</span>
                     </div>
                 </div>
             `;
@@ -574,7 +584,11 @@ function renderGrid(filterCategory) {
 
         let specLigne = '';
         if (isAccessory) {
-            specLigne = `<span class="flex items-center"><i class="fa-solid fa-weight-scale text-brand-accent mr-1.5"></i> ${item.Poids || '-'} g</span>`;
+            if (nomLC.includes('axe') || nomLC.includes('manivelle')) {
+                specLigne = `<span class="flex items-center"><i class="fa-solid fa-weight-scale text-brand-accent mr-1.5"></i> ${item.Poids || '-'} g</span>`;
+            } else {
+                specLigne = ``; // On masque tout pour les pneus et bidons sur la boutique
+            }
         } else {
             let weightPrefix = isFixedPriceWheel ? '' : 'Dès ';
             specLigne = `
@@ -644,7 +658,7 @@ function updateHubOptions() {
         `;
         roulementsSelect.innerHTML = `
             <option value="Acier EZO" data-price="0">Acier EZO (Standard R2)</option>
-            <option value="Céramique TPI" data-price="70">Céramique TPI (Ultra-fluide) [+70€]</option>
+            <option value="Céramique TPI" data-price="80">Céramique TPI (Ultra-fluide) [+80€]</option>
         `;
         
         if (isHubChange) {
@@ -688,11 +702,17 @@ function updateHubOptions() {
     }
 }
 
-function updateBadgeUI(isOriginalStatus) {
+function updateBadgeUI(isOriginalStatus, overrideStatus = null) {
     const badge = document.getElementById('modal-badge');
     if(!badge) return;
     
-    let statusToDisplay = (isOriginalStatus && currentItemStatut !== "") ? currentItemStatut : "Sur Commande";
+    let statusToDisplay = "Sur Commande";
+    if (overrideStatus && overrideStatus !== "") {
+        statusToDisplay = overrideStatus;
+    } else if (isOriginalStatus && currentItemStatut !== "") {
+        statusToDisplay = currentItemStatut;
+    }
+    
     const statutLC = statusToDisplay.toLowerCase();
     
     if (statutLC.includes('stock')) {
@@ -796,7 +816,6 @@ function openModal(index) {
         const wheelConfigOptions = document.getElementById('wheel-config-options');
         const manivellesConfigContainer = document.getElementById('config-manivelles-container');
         const accessoryConfigContainer = document.getElementById('accessory-config-container');
-        const weightBlock = document.getElementById('modal-weight-block');
         
         if (nomLC.includes('manivelle')) {
             if(specJantesBox) specJantesBox.style.display = 'none';
@@ -804,7 +823,6 @@ function openModal(index) {
             if(wheelConfigOptions) wheelConfigOptions.style.display = 'none';
             if(manivellesConfigContainer) manivellesConfigContainer.style.display = 'block';
             if(accessoryConfigContainer) accessoryConfigContainer.style.display = 'none';
-            if(weightBlock) weightBlock.style.display = 'block';
             
             const cPrice = document.getElementById('calc-price');
             if(cPrice) cPrice.textContent = currentBasePrice > 0 ? currentBasePrice : '--';
@@ -816,13 +834,31 @@ function openModal(index) {
             if(configuratorSection) configuratorSection.style.display = 'block';
             if(wheelConfigOptions) wheelConfigOptions.style.display = 'none';
             if(manivellesConfigContainer) manivellesConfigContainer.style.display = 'none';
-            if(weightBlock) weightBlock.style.display = 'none';
             
             if(accessoryConfigContainer) accessoryConfigContainer.style.display = 'block';
             
             const tailleContainer = document.getElementById('config-taille-pneu-container');
-            if(tailleContainer) {
-                if (nomLC.includes('pneu') || nomLC.includes('gp5000')) {
+            const tailleSelect = document.getElementById('config-taille-pneu');
+            if(tailleContainer && tailleSelect) {
+                if (item.Variantes) {
+                    tailleSelect.innerHTML = '';
+                    const variantesList = item.Variantes.split(',');
+                    variantesList.forEach(v => {
+                        const parts = v.split(':');
+                        const nomVar = parts[0].trim();
+                        const statVar = parts.length > 1 ? parts[1].trim() : '';
+                        const opt = document.createElement('option');
+                        opt.value = nomVar;
+                        opt.textContent = nomVar; // Affiche juste la taille sans "En Stock"
+                        opt.setAttribute('data-statut', statVar);
+                        tailleSelect.appendChild(opt);
+                    });
+                    tailleContainer.style.display = 'block';
+                } else if (nomLC.includes('pneu') || nomLC.includes('gp5000')) {
+                    tailleSelect.innerHTML = `
+                        <option value="30 mm" data-statut="En Stock">30 mm</option>
+                        <option value="28 mm" data-statut="Sur Commande">28 mm</option>
+                    `;
                     tailleContainer.style.display = 'block';
                 } else {
                     tailleContainer.style.display = 'none';
@@ -833,7 +869,6 @@ function openModal(index) {
             if(qteEl) qteEl.value = '1';
             
             updateConfig();
-            updateBadgeUI(true);
         } else if (isCurrentItemWheelConfigurable) {
             if(specJantesBox) specJantesBox.style.display = 'block';
             if(configuratorSection) configuratorSection.style.display = 'block';
@@ -841,7 +876,6 @@ function openModal(index) {
             if(manivellesConfigContainer) manivellesConfigContainer.style.display = 'none';
             if(accessoryConfigContainer) accessoryConfigContainer.style.display = 'none';
             if(poidsMaxContainer) poidsMaxContainer.style.display = 'block';
-            if(weightBlock) weightBlock.style.display = 'block';
             
             const optUxl = document.getElementById('opt-uxl');
             if (optUxl) {
@@ -882,7 +916,6 @@ function openModal(index) {
             if(specJantesBox) specJantesBox.style.display = 'block';
             if(configuratorSection) configuratorSection.style.display = 'none';
             if(poidsMaxContainer) poidsMaxContainer.style.display = 'none';
-            if(weightBlock) weightBlock.style.display = 'block';
             const cPrice = document.getElementById('calc-price');
             if(cPrice) cPrice.textContent = currentBasePrice > 0 ? currentBasePrice : '--';
             const cWeight = document.getElementById('calc-weight');
@@ -954,6 +987,17 @@ function updateConfig() {
     const titleEl = document.getElementById('modal-title');
     const titleLC = titleEl ? titleEl.textContent.toLowerCase() : "";
 
+    // NOUVEAU : On masque complètement le bloc du poids pour les accessoires non mécaniques
+    const cWeightSpan = document.getElementById('calc-weight');
+    if (cWeightSpan && cWeightSpan.parentElement && cWeightSpan.parentElement.parentElement) {
+        const weightBlock = cWeightSpan.parentElement.parentElement;
+        if (isCurrentItemAccessory && !titleLC.includes('axe') && !titleLC.includes('manivelle')) {
+            weightBlock.style.visibility = 'hidden';
+        } else {
+            weightBlock.style.visibility = 'visible';
+        }
+    }
+
     if (isCurrentItemAccessory) {
         const qteEl = document.getElementById('config-quantite');
         const qte = qteEl ? parseInt(qteEl.value) : 1;
@@ -973,12 +1017,11 @@ function updateConfig() {
         if(cPrice) cPrice.textContent = finalPrice > 0 ? finalPrice : '--';
         
         // Mise à jour du poids uniquement pour les axes et manivelles
-        const cWeight = document.getElementById('calc-weight');
-        if(cWeight) {
+        if(cWeightSpan) {
             if (titleLC.includes('axe') || titleLC.includes('manivelle')) {
-                cWeight.textContent = finalWeight > 0 ? finalWeight : '--';
+                cWeightSpan.textContent = finalWeight > 0 ? finalWeight : '--';
             } else {
-                cWeight.textContent = '--';
+                cWeightSpan.textContent = '--';
             }
         }
 
@@ -1071,8 +1114,7 @@ function updateConfig() {
 
     const cPrice = document.getElementById('calc-price');
     if(cPrice) cPrice.textContent = finalPrice > 0 ? finalPrice : '--';
-    const cWeight = document.getElementById('calc-weight');
-    if(cWeight) cWeight.textContent = finalWeight > 0 ? finalWeight : '--';
+    if(cWeightSpan) cWeightSpan.textContent = finalWeight > 0 ? finalWeight : '--';
     
     const poidsMaxSpan = document.getElementById('modal-poids-max');
     if (poidsMaxSpan && janteSelect) {
