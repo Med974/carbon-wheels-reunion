@@ -798,6 +798,26 @@
                         </select>
                     </div>
 
+                    <div id="accessory-config-container" class="mb-5 hidden">
+                        <label class="block text-xs font-bold text-gray-500 mb-2"><i class="fa-solid fa-list-ol text-brand-accent mr-1"></i> Quantité</label>
+                        <select id="config-quantite" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-3 text-sm font-semibold" onchange="updateConfig()">
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                            <option value="6">6</option>
+                        </select>
+                        
+                        <div id="config-taille-pneu-container" class="mt-4 hidden">
+                            <label class="block text-xs font-bold text-gray-500 mb-2"><i class="fa-solid fa-ruler text-brand-accent mr-1"></i> Taille du pneu</label>
+                            <select id="config-taille-pneu" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-3 text-sm font-semibold" onchange="updateConfig()">
+                                <option value="28mm">28 mm</option>
+                                <option value="30mm">30 mm</option>
+                            </select>
+                        </div>
+                    </div>
+
                     <div id="wheel-config-options">
                         <div class="mb-5">
                             <label class="block text-xs font-bold text-gray-500 mb-2">1. Moyeu (Hub)</label>
