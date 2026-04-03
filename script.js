@@ -196,9 +196,9 @@ function updateCartUI() {
         } else if (paymentMethod === 'card1x') {
             checkoutBtn.className = "w-full bg-[#635BFF] hover:bg-[#524be0] transition-colors text-white font-bold py-4 rounded-xl shadow-md";
             checkoutBtn.innerHTML = 'Valider (Paiement Stripe) <i class="fa-solid fa-lock ml-2 text-xl"></i>';
-        } else if (paymentMethod === '3x_pei') {
-            checkoutBtn.className = "w-full bg-brand-main hover:bg-gray-800 transition-colors text-white font-bold py-4 rounded-xl shadow-md";
-            checkoutBtn.innerHTML = 'Valider la réservation en 3X <i class="fa-solid fa-handshake ml-2 text-xl"></i>';
+        } else if (paymentMethod === 'fractionne') {
+            checkoutBtn.className = "w-full bg-blue-600 hover:bg-blue-700 transition-colors text-white font-bold py-4 rounded-xl shadow-md";
+            checkoutBtn.innerHTML = 'Valider (Paiement en 3x/4x) <i class="fa-solid fa-lock ml-2 text-xl"></i>';
         }
     }
 
@@ -314,8 +314,9 @@ function updateCartUI() {
     if (currentSubtotal > 0) {
         if (paymentMethod === 'card1x') {
             transactionFees = (currentSubtotal * 0.015) + 0.25;
+        } else if (paymentMethod === 'fractionne') {
+            transactionFees = currentSubtotal * 0.03;
         }
-        // Pour 'virement' et '3x_pei', les frais restent à 0.
     }
     
     transactionFees = Math.round(transactionFees * 100) / 100;
@@ -404,11 +405,10 @@ function submitOrder() {
     if (paymentMethodVal === 'card1x') {
         transactionFees = (currentSubtotal * 0.015) + 0.25;
         paymentMethodName = "Carte Bancaire (1x via Stripe)";
-    } else if (paymentMethodVal === '3x_pei') {
-        transactionFees = 0;
-        paymentMethodName = "Paiement en 3X Karbòn Péi (Sans frais)";
+    } else if (paymentMethodVal === 'fractionne') {
+        transactionFees = currentSubtotal * 0.03;
+        paymentMethodName = "Paiement en plusieurs fois (3x/4x)";
     }
-    
     transactionFees = Math.round(transactionFees * 100) / 100;
     const finalTotal = currentSubtotal + transactionFees;
 
@@ -462,8 +462,8 @@ function submitOrder() {
                 successPayText.textContent = "le RIB pour finaliser la réservation";
             } else if(paymentMethodVal === 'card1x') {
                 successPayText.textContent = "le lien Stripe sécurisé pour le paiement par carte";
-            } else if(paymentMethodVal === '3x_pei') {
-                successPayText.textContent = "le récapitulatif pour effectuer ton premier versement (50%) et lancer la production à l'usine";
+            } else {
+                successPayText.textContent = "le lien sécurisé pour le paiement en plusieurs fois";
             }
         }
 
