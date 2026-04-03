@@ -196,9 +196,9 @@ function updateCartUI() {
         } else if (paymentMethod === 'card1x') {
             checkoutBtn.className = "w-full bg-[#635BFF] hover:bg-[#524be0] transition-colors text-white font-bold py-4 rounded-xl shadow-md";
             checkoutBtn.innerHTML = 'Valider (Paiement Stripe) <i class="fa-solid fa-lock ml-2 text-xl"></i>';
-        } else if (paymentMethod === 'fractionne') {
-            checkoutBtn.className = "w-full bg-blue-600 hover:bg-blue-700 transition-colors text-white font-bold py-4 rounded-xl shadow-md";
-            checkoutBtn.innerHTML = 'Valider (Paiement en 3x/4x) <i class="fa-solid fa-lock ml-2 text-xl"></i>';
+        } else if (paymentMethod === '3x_pei') {
+            checkoutBtn.className = "w-full bg-brand-main hover:bg-gray-800 transition-colors text-white font-bold py-4 rounded-xl shadow-md";
+            checkoutBtn.innerHTML = 'Valider la réservation en 3X <i class="fa-solid fa-handshake ml-2 text-xl"></i>';
         }
     }
 
@@ -252,7 +252,6 @@ function updateCartUI() {
             const div = document.createElement('div');
             div.className = "bg-white p-4 rounded-xl border border-gray-100 shadow-sm flex gap-4 relative group";
             
-            // On cache les grammes dans le panier si c'est "--" ou un pneu/bidon
             let weightDisplay = `<span class="text-xs text-gray-400 font-medium"><i class="fa-solid fa-weight-scale mr-1"></i>${item.weight}g</span>`;
             if (item.weight === "--" || item.weight === "") {
                 weightDisplay = ``;
@@ -314,8 +313,6 @@ function updateCartUI() {
     if (currentSubtotal > 0) {
         if (paymentMethod === 'card1x') {
             transactionFees = (currentSubtotal * 0.015) + 0.25;
-        } else if (paymentMethod === 'fractionne') {
-            transactionFees = currentSubtotal * 0.03;
         }
     }
     
@@ -405,10 +402,11 @@ function submitOrder() {
     if (paymentMethodVal === 'card1x') {
         transactionFees = (currentSubtotal * 0.015) + 0.25;
         paymentMethodName = "Carte Bancaire (1x via Stripe)";
-    } else if (paymentMethodVal === 'fractionne') {
-        transactionFees = currentSubtotal * 0.03;
-        paymentMethodName = "Paiement en plusieurs fois (3x/4x)";
+    } else if (paymentMethodVal === '3x_pei') {
+        transactionFees = 0;
+        paymentMethodName = "Paiement en 3X Karbòn Péi (Sans frais)";
     }
+    
     transactionFees = Math.round(transactionFees * 100) / 100;
     const finalTotal = currentSubtotal + transactionFees;
 
@@ -462,8 +460,8 @@ function submitOrder() {
                 successPayText.textContent = "le RIB pour finaliser la réservation";
             } else if(paymentMethodVal === 'card1x') {
                 successPayText.textContent = "le lien Stripe sécurisé pour le paiement par carte";
-            } else {
-                successPayText.textContent = "le lien sécurisé pour le paiement en plusieurs fois";
+            } else if(paymentMethodVal === '3x_pei') {
+                successPayText.textContent = "le récapitulatif pour effectuer ton premier versement (50%) et lancer la production à l'usine";
             }
         }
 
@@ -587,7 +585,7 @@ function renderGrid(filterCategory) {
             if (nomLC.includes('axe') || nomLC.includes('manivelle')) {
                 specLigne = `<span class="flex items-center"><i class="fa-solid fa-weight-scale text-brand-accent mr-1.5"></i> ${item.Poids || '-'} g</span>`;
             } else {
-                specLigne = ``; // On masque tout pour les pneus et bidons sur la boutique
+                specLigne = ``; 
             }
         } else {
             let weightPrefix = isFixedPriceWheel ? '' : 'Dès ';
@@ -849,7 +847,7 @@ function openModal(index) {
                         const statVar = parts.length > 1 ? parts[1].trim() : '';
                         const opt = document.createElement('option');
                         opt.value = nomVar;
-                        opt.textContent = nomVar; // Affiche juste la taille sans "En Stock"
+                        opt.textContent = nomVar; 
                         opt.setAttribute('data-statut', statVar);
                         tailleSelect.appendChild(opt);
                     });
@@ -987,7 +985,6 @@ function updateConfig() {
     const titleEl = document.getElementById('modal-title');
     const titleLC = titleEl ? titleEl.textContent.toLowerCase() : "";
 
-    // NOUVEAU : On masque complètement le bloc du poids pour les accessoires non mécaniques
     const cWeightSpan = document.getElementById('calc-weight');
     if (cWeightSpan && cWeightSpan.parentElement && cWeightSpan.parentElement.parentElement) {
         const weightBlock = cWeightSpan.parentElement.parentElement;
@@ -1004,7 +1001,6 @@ function updateConfig() {
         
         let finalPrice = currentBasePrice * qte;
         
-        // Logique dégressive pour les Bidons Ahyka (39€ l'unité, 75€ la paire)
         if (titleLC.includes('bidon') || titleLC.includes('ahyka')) {
             const pairs = Math.floor(qte / 2);
             const singles = qte % 2;
@@ -1016,7 +1012,6 @@ function updateConfig() {
         const cPrice = document.getElementById('calc-price');
         if(cPrice) cPrice.textContent = finalPrice > 0 ? finalPrice : '--';
         
-        // Mise à jour du poids uniquement pour les axes et manivelles
         if(cWeightSpan) {
             if (titleLC.includes('axe') || titleLC.includes('manivelle')) {
                 cWeightSpan.textContent = finalWeight > 0 ? finalWeight : '--';
@@ -1025,7 +1020,6 @@ function updateConfig() {
             }
         }
 
-        // Gestion dynamique du badge En Stock / Sur Commande pour les options
         const tailleSelect = document.getElementById('config-taille-pneu');
         const tailleContainer = document.getElementById('config-taille-pneu-container');
         
@@ -1036,7 +1030,7 @@ function updateConfig() {
 
         updateBadgeUI(true, customStatut);
         
-        return; // On arrête l'exécution ici pour les accessoires !
+        return; 
     }
 
     if (!isCurrentItemWheelConfigurable) return; 
@@ -1050,7 +1044,6 @@ function updateConfig() {
     const colorSelect = document.getElementById('config-couleur-moyeu');
     const freinageSelect = document.getElementById('config-freinage');
     
-    // Le menu déroulant de l'upsell Accessoires (Etape 10)
     const accessoiresSelect = document.getElementById('config-accessoires');
     
     const msgRecoR2 = document.getElementById('msg-reco-r2');
