@@ -1044,7 +1044,21 @@ function updateConfig() {
     const colorSelect = document.getElementById('config-couleur-moyeu');
     const freinageSelect = document.getElementById('config-freinage');
     
+    // Le menu déroulant de l'upsell Accessoires (Etape 10)
     const accessoiresSelect = document.getElementById('config-accessoires');
+    
+    // --- NOUVEAU : Mise à jour dynamique des largeurs selon le freinage ---
+    const larIntEl = document.getElementById('modal-largeur-int');
+    const larExtEl = document.getElementById('modal-largeur-ext');
+    if (freinageSelect && larIntEl && larExtEl) {
+        if (freinageSelect.value === 'Patins') {
+            larIntEl.textContent = '21 mm';
+            larExtEl.textContent = '28 mm';
+        } else {
+            larIntEl.textContent = '24 mm';
+            larExtEl.textContent = '32 mm';
+        }
+    }
     
     const msgRecoR2 = document.getElementById('msg-reco-r2');
     const t32Option = document.getElementById('opt-t32');
