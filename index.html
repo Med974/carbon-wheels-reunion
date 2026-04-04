@@ -678,42 +678,59 @@
         </div>
     </a>
 
-    <!-- MODALE CONFIGURATEUR (OPTIMISÉE GRILLE & HAUTEUR) -->
+    <!-- MODALE CONFIGURATEUR -->
     <div id="product-modal" class="fixed inset-0 z-[100] hidden bg-black/80 flex items-center justify-center p-4 backdrop-blur-sm transition-opacity">
         <div class="bg-white rounded-2xl w-full max-w-5xl max-h-[95vh] overflow-y-auto flex flex-col md:flex-row relative shadow-2xl">
             <button onclick="closeModal()" class="md:hidden absolute top-4 right-4 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-sm text-gray-500 z-10"><i class="fa-solid fa-xmark"></i></button>
             <button onclick="closeModal()" class="hidden md:block absolute top-4 right-4 text-gray-400 hover:text-gray-900 z-10 bg-white rounded-full p-2 shadow"><i class="fa-solid fa-xmark text-2xl px-1"></i></button>
             
-            <!-- Gauche : Media -->
-            <div class="w-full md:w-1/2 bg-gray-50 p-6 flex flex-col items-start justify-start border-r border-gray-200 relative">
-                <div class="w-full aspect-square mb-4 relative flex items-center justify-center">
-                    <img id="modal-image" src="" alt="Produit" class="max-w-full max-h-full object-contain mix-blend-multiply transition-opacity duration-300 drop-shadow-xl">
+            <!-- Gauche : Infos & Media -->
+            <div class="w-full md:w-1/2 bg-gray-50 p-6 md:p-8 flex flex-col items-start justify-start border-r border-gray-200 relative">
+                
+                <!-- Titre & Description -->
+                <div class="w-full mb-4">
+                    <div class="flex flex-wrap gap-2 mb-3">
+                        <span id="modal-badge" class="text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide w-max transition-colors duration-300"></span>
+                        <span id="modal-bestseller" class="hidden text-xs font-black px-3 py-1 rounded-full uppercase tracking-wide w-max bg-brand-accent text-brand-main shadow-sm border border-yellow-300">⭐ BEST-SELLER</span>
+                    </div>
+                    <h3 id="modal-title" class="text-3xl font-black text-gray-900 mb-2 leading-tight"></h3>
+                    <p id="modal-desc" class="text-xs text-gray-500 leading-relaxed mb-1"></p>
+                </div>
+
+                <!-- Specs Compactes (Anciennes couleurs) -->
+                <div id="spec-jantes-box" class="w-full bg-blue-50/50 p-3 rounded-xl border border-blue-100 mb-6 hidden">
+                    <div class="grid grid-cols-4 gap-1 divide-x divide-blue-200/60 text-center items-center">
+                        <div class="px-1 text-center">
+                            <span class="block text-[9px] lg:text-[10px] uppercase font-bold text-blue-400 tracking-wider mb-0.5">Larg. Int</span>
+                            <span id="modal-largeur-int" class="font-bold text-blue-900 text-sm">24 mm</span>
+                        </div>
+                        <div class="px-1 text-center">
+                            <span class="block text-[9px] lg:text-[10px] uppercase font-bold text-blue-400 tracking-wider mb-0.5">Larg. Ext</span>
+                            <span id="modal-largeur-ext" class="font-bold text-blue-900 text-sm">32 mm</span>
+                        </div>
+                        <div class="px-1 text-center">
+                            <span class="block text-[9px] lg:text-[10px] uppercase font-bold text-blue-400 tracking-wider mb-0.5">Hauteur</span>
+                            <span id="modal-hauteur" class="font-bold text-blue-900 text-sm">--</span>
+                        </div>
+                        <div id="modal-poids-max-container" class="px-1 text-center">
+                            <span class="block text-[9px] lg:text-[10px] uppercase font-bold text-orange-400 tracking-wider mb-0.5" title="Poids limite cycliste"><i class="fa-solid fa-triangle-exclamation mr-0.5"></i>Max</span>
+                            <span id="modal-poids-max" class="font-bold text-blue-900 text-sm">90 kg</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Photos / Vidéo -->
+                <div class="w-full aspect-square mb-4 relative flex items-center justify-center bg-white rounded-xl shadow-sm border border-gray-100 p-2">
+                    <img id="modal-image" src="" alt="Produit" class="max-w-full max-h-full object-contain mix-blend-multiply transition-opacity duration-300 drop-shadow-md">
                     <video id="modal-video" src="" class="hidden w-full h-full object-contain mix-blend-multiply rounded-xl shadow-sm" autoplay loop muted playsinline></video>
                 </div>
                 <div id="modal-gallery" class="flex gap-2 w-full overflow-x-auto custom-scrollbar py-2">
                     <!-- Miniatures injectées ici -->
                 </div>
-                
-                <!-- Specs Compactes (Déplacées ici sous les photos) -->
-                <div id="spec-jantes-box" class="w-full bg-white p-3 rounded-xl border border-gray-200 mt-4 hidden shadow-sm">
-                    <div class="grid grid-cols-4 gap-1 text-center items-center">
-                        <div class="px-1 text-center"><span class="block text-[9px] uppercase font-bold text-slate-400 mb-0.5">Larg. Int</span><span id="modal-largeur-int" class="font-black text-brand-main text-xs">24 mm</span></div>
-                        <div class="px-1 text-center"><span class="block text-[9px] uppercase font-bold text-slate-400 mb-0.5">Larg. Ext</span><span id="modal-largeur-ext" class="font-black text-brand-main text-xs">32 mm</span></div>
-                        <div class="px-1 border-x border-slate-100 text-center"><span class="block text-[9px] uppercase font-bold text-slate-400 mb-0.5">Hauteur</span><span id="modal-hauteur" class="font-black text-brand-main text-xs">--</span></div>
-                        <div id="modal-poids-max-container" class="px-1 text-center"><span class="block text-[9px] uppercase font-bold text-orange-400 mb-0.5">⚠ Max</span><span id="modal-poids-max" class="font-black text-orange-600 text-xs">90 kg</span></div>
-                    </div>
-                </div>
             </div>
             
             <!-- Droite : Configurator (GRILLE 2 COLONNES) -->
             <div class="w-full md:w-1/2 p-6 md:p-8 flex flex-col bg-white">
-                <div class="flex flex-wrap gap-2 mb-3">
-                    <span id="modal-badge" class="text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide w-max transition-colors duration-300"></span>
-                    <span id="modal-bestseller" class="hidden text-xs font-black px-3 py-1 rounded-full uppercase tracking-wide w-max bg-brand-accent text-brand-main shadow-sm border border-yellow-300">⭐ BEST-SELLER</span>
-                </div>
-                <h3 id="modal-title" class="text-3xl font-black text-gray-900 mb-2 leading-tight"></h3>
-                <p id="modal-desc" class="text-xs text-gray-500 mb-4 leading-relaxed"></p>
-
                 <div id="configurator-section" class="flex-grow">
                     <h4 class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3 flex items-center">
                         <i class="fa-solid fa-sliders text-brand-accent mr-2"></i> Personnalisation
@@ -805,8 +822,8 @@
                         <div class="mb-3">
                             <label class="block text-xs font-bold text-gray-500 mb-1">7. Finition</label>
                             <select id="config-finition" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm font-semibold shadow-sm" onchange="updateConfig()">
-                                <option value="UD Matte" data-weight="0" data-price="0">UD Matte Carbone</option>
-                                <option value="Glossy Black" data-weight="0" data-price="0" selected>Paintless Glossy Black</option>
+                                <option value="UD Matte">UD Matte</option>
+                                <option value="Glossy Black" selected>Glossy Black</option>
                             </select>
                         </div>
                         
@@ -814,8 +831,8 @@
                             <label class="block text-xs font-bold text-gray-500 mb-1">8. Design Logos</label>
                             <select id="config-logos" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm font-semibold shadow-sm" onchange="updateConfig()">
                                 <option value="Petit logo noir" selected>Logo Noir (Furtif)</option>
-                                <option value="Petit logo blanc">Petit logo Blanc</option>
-                                <option value="Gros logo blanc">Gros logo Blanc</option>
+                                <option value="Petit logo blanc">Petit Blanc</option>
+                                <option value="Gros logo blanc">Gros Blanc</option>
                             </select>
                         </div>
 
