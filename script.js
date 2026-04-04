@@ -133,12 +133,18 @@ function addToCart() {
 
                 configText = `${moyeu}${couleurMoyeu} | Jantes ${jante} | ${rayon} | Ratchet ${ratchet} | Roulements ${roulements} | ${rouelibre} | ${finition} | Logos : ${logos} | ${freinage}`;
                 
-                // Ajout de l'accessoire optionnel (Étape 10)
-                const accessoiresSelect = document.getElementById('config-accessoires');
-                if (accessoiresSelect && accessoiresSelect.value !== 'Aucun') {
-                    const accPrice = parseInt(accessoiresSelect.options[accessoiresSelect.selectedIndex].getAttribute('data-price')) || 0;
-                    configText += ` | + ${accessoiresSelect.value} [+${accPrice}€]`;
-                }
+                // Ajout des accessoires optionnels (Étapes 10, 11, 12)
+                const addAccessoryToConfigText = (selectId) => {
+                    const selectEl = document.getElementById(selectId);
+                    if (selectEl && selectEl.value !== 'Aucun') {
+                        const accPrice = parseInt(selectEl.options[selectEl.selectedIndex].getAttribute('data-price')) || 0;
+                        configText += ` | + ${selectEl.value} [+${accPrice}€]`;
+                    }
+                };
+                
+                addAccessoryToConfigText('config-pneus');
+                addAccessoryToConfigText('config-bidons');
+                addAccessoryToConfigText('config-tpu');
             }
         } else {
             configText = isCurrentItemAccessory ? "Accessoire" : "Modèle Standard";
@@ -902,8 +908,13 @@ function openModal(index) {
             const mFreinage = document.getElementById('config-freinage');
             if(mFreinage) mFreinage.value = 'Disques';
             
-            const mAccessoires = document.getElementById('config-accessoires');
-            if(mAccessoires) mAccessoires.value = 'Aucun';
+            // Réinitialiser les 3 menus déroulants (Étapes 10, 11, 12)
+            const mPneus = document.getElementById('config-pneus');
+            if(mPneus) mPneus.value = 'Aucun';
+            const mBidons = document.getElementById('config-bidons');
+            if(mBidons) mBidons.value = 'Aucun';
+            const mTpu = document.getElementById('config-tpu');
+            if(mTpu) mTpu.value = 'Aucun';
             
             updateHubOptions(); 
             const cColor = document.getElementById('config-couleur-moyeu');
@@ -1044,8 +1055,10 @@ function updateConfig() {
     const colorSelect = document.getElementById('config-couleur-moyeu');
     const freinageSelect = document.getElementById('config-freinage');
     
-    // Le menu déroulant de l'upsell Accessoires (Etape 10)
-    const accessoiresSelect = document.getElementById('config-accessoires');
+    // Les menus déroulants de l'upsell Accessoires (Etapes 10, 11, 12)
+    const pneusSelect = document.getElementById('config-pneus');
+    const bidonsSelect = document.getElementById('config-bidons');
+    const tpuSelect = document.getElementById('config-tpu');
     
     // --- NOUVEAU : Mise à jour dynamique des largeurs selon le freinage ---
     const larIntEl = document.getElementById('modal-largeur-int');
@@ -1103,7 +1116,11 @@ function updateConfig() {
     const ratchetPrice = getPrice(ratchetSelect);
     const roulementsPrice = getPrice(roulementsSelect);
     const finitionPrice = getPrice(finitionSelect);
-    const accessoiresPrice = getPrice(accessoiresSelect);
+    
+    const pneusPrice = getPrice(pneusSelect);
+    const bidonsPrice = getPrice(bidonsSelect);
+    const tpuPrice = getPrice(tpuSelect);
+    const accessoiresPrice = pneusPrice + bidonsPrice + tpuPrice;
     
     const hubWeight = moyeuSelect && moyeuSelect.selectedIndex >= 0 ? (parseInt(moyeuSelect.options[moyeuSelect.selectedIndex].getAttribute('data-hub-weight')) || 238) : 238;
     const spokeCount = moyeuSelect && moyeuSelect.selectedIndex >= 0 ? (parseInt(moyeuSelect.options[moyeuSelect.selectedIndex].getAttribute('data-spokes')) || 40) : 40;
