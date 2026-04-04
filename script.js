@@ -100,10 +100,10 @@ function addToCart() {
             } else if (isCurrentItemAccessory) {
                 const qteEl = document.getElementById('config-quantite');
                 const qte = qteEl ? parseInt(qteEl.value) : 1;
-                if (titleLC.includes('pneu') || titleLC.includes('gp5000') || titleLC.includes('tpu') || titleLC.includes('chambre')) {
+                if (titleLC.includes('pneu') || titleLC.includes('gp5000')) {
                     const tailleEl = document.getElementById('config-taille-pneu');
                     const taille = tailleEl ? tailleEl.value : "";
-                    configText = `Quantité : ${qte} | Variante : ${taille}`;
+                    configText = `Quantité : ${qte} | Taille : ${taille}`;
                 } else {
                     configText = `Quantité : ${qte}`;
                 }
@@ -662,7 +662,7 @@ function updateHubOptions() {
         `;
         roulementsSelect.innerHTML = `
             <option value="Acier EZO" data-price="0">Acier EZO (Standard R2)</option>
-            <option value="Céramique TPI" data-price="60">Céramique TPI (Ultra-fluide) [+60€]</option>
+            <option value="Céramique TPI" data-price="80">Céramique TPI (Ultra-fluide) [+80€]</option>
         `;
         
         if (isHubChange) {
@@ -864,12 +864,6 @@ function openModal(index) {
                         <option value="28 mm" data-statut="Sur Commande">28 mm</option>
                     `;
                     tailleContainer.style.display = 'block';
-                } else if (nomLC.includes('tpu') || nomLC.includes('chambre')) {
-                    tailleSelect.innerHTML = `
-                        <option value="Valve 65mm" data-statut="En Stock">Valve 65mm (Profils 30/40/50)</option>
-                        <option value="Valve 85mm" data-statut="Sur Commande">Valve 85mm (Profils 60/80)</option>
-                    `;
-                    tailleContainer.style.display = 'block';
                 } else {
                     tailleContainer.style.display = 'none';
                 }
@@ -1021,7 +1015,7 @@ function updateConfig() {
         if (titleLC.includes('bidon') || titleLC.includes('ahyka')) {
             const pairs = Math.floor(qte / 2);
             const singles = qte % 2;
-            finalPrice = (pairs * 60) + (singles * currentBasePrice); 
+            finalPrice = (pairs * 75) + (singles * currentBasePrice); 
         }
         
         const finalWeight = currentBaseWeight * qte;
@@ -1124,9 +1118,9 @@ function updateConfig() {
     const finitionPrice = getPrice(finitionSelect);
     
     const pneusPrice = getPrice(pneusSelect);
-    const bidonsPrice = getPrice(bidonsPrice); // Correction ici pour utiliser bidonsSelect
+    const bidonsPrice = getPrice(bidonsSelect);
     const tpuPrice = getPrice(tpuSelect);
-    const accessoiresPrice = pneusPrice + (bidonsSelect ? getPrice(bidonsSelect) : 0) + tpuPrice;
+    const accessoiresPrice = pneusPrice + bidonsPrice + tpuPrice;
     
     const hubWeight = moyeuSelect && moyeuSelect.selectedIndex >= 0 ? (parseInt(moyeuSelect.options[moyeuSelect.selectedIndex].getAttribute('data-hub-weight')) || 238) : 238;
     const spokeCount = moyeuSelect && moyeuSelect.selectedIndex >= 0 ? (parseInt(moyeuSelect.options[moyeuSelect.selectedIndex].getAttribute('data-spokes')) || 40) : 40;
