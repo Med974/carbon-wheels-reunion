@@ -904,19 +904,44 @@
                             </select>
                         </div>
 
-                        <!-- ÉTAPE 10 : ACCESSOIRES (UPSELL) -->
-                        <div>
-                            <label class="block text-xs font-bold text-gray-500 mb-2">10. Équipements & Consommables <span class="text-green-600 font-normal">(Prix Privilège)</span></label>
-                            <select id="config-accessoires" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-3 text-sm font-semibold border-green-500 shadow-sm" onchange="updateConfig()">
-                                <option value="Aucun" data-price="0">Aucun accessoire supplémentaire [+0€]</option>
+                        <!-- ÉTAPE 10 : PNEUS -->
+                        <div class="mb-6">
+                            <label class="block text-gray-800 font-bold mb-2">
+                                Étape 10 : Pneus Continental GP5000 <span class="text-sm text-green-600 font-normal">(Tarif Privilège)</span>
+                            </label>
+                            <select id="config-pneus" class="w-full border border-gray-300 rounded p-3 bg-white" onchange="updateConfig()">
+                                <option value="Aucun" data-price="0">Ne pas ajouter de pneus [+0€]</option>
                                 <option value="2x Pneus Continental GP5000 (28mm)" data-price="110">🚴 [PACK PNEUS] 2x GP5000 (28mm) [+110€ au lieu de 130€]</option>
                                 <option value="2x Pneus Continental GP5000 (30mm)" data-price="110">🚴 [PACK PNEUS] 2x GP5000 (30mm) [+110€ au lieu de 130€]</option>
                                 <option value="2x Pneus Continental GP5000 (Mixte 28/30)" data-price="110">🚴 [PACK PNEUS] Mixte 28mm Av / 30mm Ar [+110€ au lieu de 130€]</option>
+                            </select>
+                        </div>
+
+                        <!-- ÉTAPE 11 : BIDONS AÉRO -->
+                        <div class="mb-6">
+                            <label class="block text-gray-800 font-bold mb-2">
+                                Étape 11 : Kits Bidons Aéro Ahyka <span class="text-sm text-green-600 font-normal">(Tarif Privilège)</span>
+                            </label>
+                            <select id="config-bidons" class="w-full border border-gray-300 rounded p-3 bg-white" onchange="updateConfig()">
+                                <option value="Aucun" data-price="0">Ne pas ajouter de kit Aéro [+0€]</option>
                                 <option value="1x Kit Aéro (1 Bidon + 1 Porte-bidon)" data-price="35">💧 [PACK AÉRO] 1x Kit (1 Bidon + 1 Porte-bidon) [+35€ au lieu de 39€]</option>
                                 <option value="2x Kits Aéro (2 Bidons + 2 Porte-bidons)" data-price="60">💧 [PACK AÉRO] 2x Kits (2 Bidons + 2 Porte-bidons) [+60€ au lieu de 75€]</option>
-                                <option value="Pack Complet (2x GP5000 28mm + 2x Kits Aéro)" data-price="170">🔥 [FULL PACK] 2x GP5000 (28mm) + 2x Kits Aéro [+170€ au lieu de 205€]</option>
-                                <option value="Pack Complet (2x GP5000 30mm + 2x Kits Aéro)" data-price="170">🔥 [FULL PACK] 2x GP5000 (30mm) + 2x Kits Aéro [+170€ au lieu de 205€]</option>
-                                <option value="Pack Complet (GP5000 Mixte + 2x Kits Aéro)" data-price="170">🔥 [FULL PACK] GP5000 Mixte + 2x Kits Aéro [+170€ au lieu de 205€]</option>
+                            </select>
+                        </div>
+
+                        <!-- ÉTAPE 12 : CHAMBRES TPU -->
+                        <div class="mb-6">
+                            <label class="block text-gray-800 font-bold mb-2">
+                                Étape 12 : Chambres TPU Ultra-légères <span class="text-sm text-green-600 font-normal">(36g)</span>
+                            </label>
+                            <select id="config-tpu" class="w-full border border-gray-300 rounded p-3 bg-white" onchange="updateConfig()">
+                                <option value="Aucun" data-price="0">Ne pas ajouter de chambres TPU [+0€]</option>
+                                <option value="1x Chambre TPU (36g)" data-price="15">🎈 1x Chambre TPU Ultra-légère 36g [+15€]</option>
+                                <option value="2x Chambres TPU (36g)" data-price="25">🎈 2x Chambres TPU Ultra-légères 36g [+25€ au lieu de 30€]</option>
+                                <option value="3x Chambres TPU (36g)" data-price="38">🎈 3x Chambres TPU Ultra-légères 36g [+38€ au lieu de 45€]</option>
+                                <option value="4x Chambres TPU (36g)" data-price="50">🎈 4x Chambres TPU Ultra-légères 36g [+50€ au lieu de 60€]</option>
+                                <option value="5x Chambres TPU (36g)" data-price="62">🎈 5x Chambres TPU Ultra-légères 36g [+62€ au lieu de 75€]</option>
+                                <option value="6x Chambres TPU (36g)" data-price="75">🎈 6x Chambres TPU Ultra-légères 36g [+75€ au lieu de 90€]</option>
                             </select>
                         </div>
                     </div>
