@@ -896,7 +896,7 @@ function openModal(index) {
             if(mHub) { mHub.value = 'R2'; lastHubSelected = 'R2'; }
             
             const mJante = document.getElementById('config-jante');
-            if(mJante) mJante.value = 'SUXL';
+            if(mJante) mJante.value = 'UXL'; // <-- NOUVEAU : Sélection par défaut sur UXL car R2 est le moyeu par défaut !
             const mRayons = document.getElementById('config-rayons');
             if(mRayons) mRayons.value = 'T33';
             const mFinition = document.getElementById('config-finition');
@@ -1060,6 +1060,8 @@ function updateConfig() {
     const bidonsSelect = document.getElementById('config-bidons');
     const tpuSelect = document.getElementById('config-tpu');
     
+    // --- Mise à jour dynamique des largeurs selon le freinage ---
+    const larIntEl = document.getElementById('modal-largeur-int');
     // --- NOUVEAU : Mise à jour dynamique des largeurs selon le freinage ---
     const larIntEl = document.getElementById('modal-largeur-int');
     const larExtEl = document.getElementById('modal-largeur-ext');
@@ -1076,9 +1078,12 @@ function updateConfig() {
     const msgRecoR2 = document.getElementById('msg-reco-r2');
     const t32Option = document.getElementById('opt-t32');
     const patinsOption = freinageSelect ? Array.from(freinageSelect.options).find(opt => opt.value === 'Patins') : null;
+    const suxlOption = janteSelect ? Array.from(janteSelect.options).find(opt => opt.value === 'SUXL') : null; // <-- NOUVEAU
 
     if (moyeuSelect && moyeuSelect.value === 'R2') {
         if(msgRecoR2) msgRecoR2.style.display = 'flex';
+        
+        // Rayons : On désactive le T32
         if(t32Option) {
             t32Option.disabled = true;
             t32Option.textContent = 'Carbone T32 (Incompatible avec moyeu R2)';
@@ -1086,16 +1091,35 @@ function updateConfig() {
         if (rayonSelect && rayonSelect.value === 'T32') {
             rayonSelect.value = 'T33';
         }
+
+        // Jantes : On désactive le SUXL
+        if(suxlOption) {
+            suxlOption.disabled = true;
+            suxlOption.textContent = 'SUXL (Incompatible avec moyeu R2)';
+        }
+        if (janteSelect && janteSelect.value === 'SUXL') {
+            janteSelect.value = 'UXL';
+        }
+        
         if (patinsOption) {
             patinsOption.disabled = false;
             patinsOption.textContent = 'Freins à Patins (Bande Haute Température)';
         }
     } else {
         if(msgRecoR2) msgRecoR2.style.display = 'none';
+        
+        // Rayons : On débloque le T32
         if(t32Option) {
             t32Option.disabled = false;
             t32Option.textContent = 'Carbone T32 (Aéro pur, 3.2 x 0.98mm - 2.1g)';
         }
+
+        // Jantes : On débloque le SUXL
+        if(suxlOption) {
+            suxlOption.disabled = false;
+            suxlOption.textContent = 'SUXL (Super Ultra-Light)';
+        }
+        
         if (patinsOption) {
             patinsOption.disabled = true;
             patinsOption.textContent = 'Freins à Patins (Incompatible avec RT240)';
