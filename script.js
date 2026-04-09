@@ -896,7 +896,7 @@ function openModal(index) {
             if(mHub) { mHub.value = 'R2'; lastHubSelected = 'R2'; }
             
             const mJante = document.getElementById('config-jante');
-            if(mJante) mJante.value = 'SUXL';
+            if(mJante) mJante.value = 'UXL';
             const mRayons = document.getElementById('config-rayons');
             if(mRayons) mRayons.value = 'T33';
             const mFinition = document.getElementById('config-finition');
@@ -1076,6 +1076,7 @@ function updateConfig() {
     const msgRecoR2 = document.getElementById('msg-reco-r2');
     const t32Option = document.getElementById('opt-t32');
     const patinsOption = freinageSelect ? Array.from(freinageSelect.options).find(opt => opt.value === 'Patins') : null;
+    const suxlOption = janteSelect ? Array.from(janteSelect.options).find(opt => opt.value === 'SUXL') : null;
 
     if (moyeuSelect && moyeuSelect.value === 'R2') {
         if(msgRecoR2) msgRecoR2.style.display = 'flex';
@@ -1086,6 +1087,13 @@ function updateConfig() {
         if (rayonSelect && rayonSelect.value === 'T32') {
             rayonSelect.value = 'T33';
         }
+        if (suxlOption) {
+            suxlOption.disabled = true;
+            suxlOption.textContent = 'SUXL (Incompatible avec moyeu R2)';
+        }
+        if (janteSelect && janteSelect.value === 'SUXL') {
+            janteSelect.value = 'UXL';
+        }
         if (patinsOption) {
             patinsOption.disabled = false;
             patinsOption.textContent = 'Freins à Patins (Bande Haute Température)';
@@ -1095,6 +1103,10 @@ function updateConfig() {
         if(t32Option) {
             t32Option.disabled = false;
             t32Option.textContent = 'Carbone T32 (Aéro pur, 3.2 x 0.98mm - 2.1g)';
+        }
+        if (suxlOption) {
+            suxlOption.disabled = false;
+            suxlOption.textContent = 'SUXL (Super Ultra-Light)';
         }
         if (patinsOption) {
             patinsOption.disabled = true;
