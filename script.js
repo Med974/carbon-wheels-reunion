@@ -199,6 +199,9 @@ function updateCartUI() {
         if (paymentMethod === 'virement') {
             checkoutBtn.className = "w-full bg-brand-main hover:bg-gray-800 transition-colors text-white font-bold py-4 rounded-xl shadow-md";
             checkoutBtn.innerHTML = 'Valider ma réservation <i class="fa-solid fa-paper-plane ml-2 text-xl"></i>';
+        } else if (paymentMethod === 'especes') {
+            checkoutBtn.className = "w-full bg-green-600 hover:bg-green-700 transition-colors text-white font-bold py-4 rounded-xl shadow-md";
+            checkoutBtn.innerHTML = 'Valider (Paiement en Espèces) <i class="fa-solid fa-hand-holding-dollar ml-2 text-xl"></i>';
         } else if (paymentMethod === 'card1x') {
             checkoutBtn.className = "w-full bg-[#635BFF] hover:bg-[#524be0] transition-colors text-white font-bold py-4 rounded-xl shadow-md";
             checkoutBtn.innerHTML = 'Valider (Paiement Stripe) <i class="fa-solid fa-lock ml-2 text-xl"></i>';
@@ -403,11 +406,14 @@ function submitOrder() {
     const paymentMethodInput = document.querySelector('input[name="payment-method"]:checked');
     const paymentMethodVal = paymentMethodInput ? paymentMethodInput.value : 'virement';
     let transactionFees = 0;
-    let paymentMethodName = "Virement / Paylib / Espèces";
+    let paymentMethodName = "Virement";
 
     if (paymentMethodVal === 'card1x') {
         transactionFees = (currentSubtotal * 0.015) + 0.25;
         paymentMethodName = "Carte Bancaire (1x via Stripe)";
+    } else if (paymentMethodVal === 'especes') {
+                transactionFees = 0;
+                paymentMethodName = "Espèces (À la commande)";
     } else if (paymentMethodVal === '3x_pei') {
         transactionFees = 0;
         paymentMethodName = "Paiement en 3X Karbòn Péi (Sans frais)";
@@ -464,6 +470,8 @@ function submitOrder() {
         if (successPayText) {
             if(paymentMethodVal === 'virement') {
                 successPayText.textContent = "le RIB pour finaliser la réservation";
+            } else if(paymentMethodVal === 'especes') {
+                successPayText.textContent = "un message pour se voir afin de procéder au paiement en espèces";
             } else if(paymentMethodVal === 'card1x') {
                 successPayText.textContent = "le lien Stripe sécurisé pour le paiement par carte";
             } else if(paymentMethodVal === '3x_pei') {
