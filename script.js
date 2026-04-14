@@ -1059,7 +1059,8 @@ function updateConfig() {
                 // Afficher/Cacher le choix de la denture selon l'option sélectionnée
                 const selectedPlateauxValue = plateauxSelect.value;
                 if (dentureContainer) {
-                    if (selectedPlateauxValue.includes('Pack Complet') || selectedPlateauxValue.includes('Capteur')) {
+                    // On n'affiche la denture QUE s'il choisit un "Pack Complet" (avec plateaux)
+                    if (selectedPlateauxValue.includes('Pack Complet')) {
                         dentureContainer.style.display = 'block';
                     } else {
                         dentureContainer.style.display = 'none';
