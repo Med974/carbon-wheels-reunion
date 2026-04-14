@@ -1032,6 +1032,11 @@ function updateConfig() {
         }
     }
 
+    const toleranceSpan = document.getElementById('weight-tolerance');
+    if (toleranceSpan) {
+        toleranceSpan.textContent = (isCurrentItemAccessory || !isCurrentItemWheelConfigurable) ? '(+/- 5g)' : '(+/- 30g)';
+    }
+
     if (isCurrentItemAccessory) {
         const qteEl = document.getElementById('config-quantite');
         const qte = qteEl ? parseInt(qteEl.value) : 1;
