@@ -82,7 +82,7 @@ function addToCart() {
         const weightEl = document.getElementById('calc-weight');
         let finalWeight = weightEl ? weightEl.textContent : "--";
         
-        if (isCurrentItemAccessory && !titleLC.includes('axe') && !titleLC.includes('manivelle')) {
+        if (isCurrentItemAccessory && currentBaseWeight <= 0) {
             finalWeight = "--";
         }
         
@@ -613,8 +613,9 @@ function renderGrid(filterCategory) {
 
         let specLigne = '';
         if (isAccessory) {
-            if (nomLC.includes('axe') || nomLC.includes('manivelle')) {
-                specLigne = `<span class="flex items-center"><i class="fa-solid fa-weight-scale text-brand-accent mr-1.5"></i> ${item.Poids || '-'} g</span>`;
+            const parsedWeight = parseInt(item.Poids) || 0;
+            if (parsedWeight > 0) {
+                specLigne = `<span class="flex items-center"><i class="fa-solid fa-weight-scale text-brand-accent mr-1.5"></i> ${parsedWeight} g</span>`;
             } else {
                 specLigne = ``; 
             }
@@ -1024,7 +1025,7 @@ function updateConfig() {
     const cWeightSpan = document.getElementById('calc-weight');
     if (cWeightSpan && cWeightSpan.parentElement && cWeightSpan.parentElement.parentElement) {
         const weightBlock = cWeightSpan.parentElement.parentElement;
-        if (isCurrentItemAccessory && !titleLC.includes('axe') && !titleLC.includes('manivelle')) {
+        if (isCurrentItemAccessory && currentBaseWeight <= 0) {
             weightBlock.style.visibility = 'hidden';
         } else {
             weightBlock.style.visibility = 'visible';
@@ -1093,7 +1094,7 @@ function updateConfig() {
         if(cPrice) cPrice.textContent = finalPrice > 0 ? finalPrice : '--';
         
         if(cWeightSpan) {
-            if (titleLC.includes('axe') || titleLC.includes('manivelle')) {
+            if (currentBaseWeight > 0) {
                 cWeightSpan.textContent = finalWeight > 0 ? finalWeight : '--';
             } else {
                 cWeightSpan.textContent = '--';
