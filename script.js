@@ -1040,6 +1040,16 @@ function updateConfig() {
         // --- NOUVEAU : GESTION DYNAMIQUE DES MANIVELLES ---
         if (titleLC.includes('manivelle')) {
             const modeleSelect = document.getElementById('config-modele-manivelle');
+            const plateauxSelect = document.getElementById('config-plateaux-manivelle');
+            
+            // Ajout du prix des plateaux/étoile
+            let plateauxPrice = 0;
+            if (plateauxSelect && plateauxSelect.selectedIndex >= 0) {
+                plateauxPrice = parseInt(plateauxSelect.options[plateauxSelect.selectedIndex].getAttribute('data-price')) || 0;
+            }
+            
+            finalPrice = (currentBasePrice + plateauxPrice) * qte;
+            
             if (modeleSelect && modeleSelect.selectedIndex >= 0) {
                 const selectedOption = modeleSelect.options[modeleSelect.selectedIndex];
                 
@@ -1047,7 +1057,7 @@ function updateConfig() {
                 const baseManivelleWeight = parseInt(selectedOption.getAttribute('data-crank-weight')) || 290;
                 finalWeight = baseManivelleWeight * qte;
                 
-                // 2. Mise à jour des Infos Techniques (Axis, Q-Factor, Carbone)
+                // 2. Mise à jour des Infos Techniques
                 const techAxis = document.getElementById('tech-axis');
                 const techQfactor = document.getElementById('tech-qfactor');
                 const techMaterial = document.getElementById('tech-material');
