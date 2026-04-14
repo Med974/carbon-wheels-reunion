@@ -753,13 +753,36 @@
                     </h4>
                     
                     <div id="config-manivelles-container" class="mb-3 hidden">
+                        <label class="block text-xs font-bold text-gray-500 mb-1"><i class="fa-solid fa-bicycle text-brand-accent mr-1"></i> Modèle & Axe (Spindle)</label>
+                        <select id="config-modele-manivelle" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm font-semibold border-brand-accent shadow-sm mb-2" onchange="updateConfig()">
+                            <option value="CT1" data-crank-weight="290" data-axis="93mm" data-qfactor="148mm" data-material="T800 + T1000" selected>Modèle CT1 (Axe Titane 24mm - Standard Shimano)</option>
+                            <option value="CA1" data-crank-weight="310" data-axis="92mm" data-qfactor="149mm" data-material="T700 + T800">Modèle CA1 (Axe Alu DUB 28.99mm - Standard SRAM)</option>
+                        </select>
+                        
+                        <!-- Boîte d'informations dynamiques -->
+                        <div class="bg-gray-50 border border-gray-200 rounded-lg p-2 mb-3 text-xs text-gray-600 flex justify-between">
+                            <span><b>Axis :</b> <span id="tech-axis">93mm</span></span>
+                            <span><b>Q-Factor :</b> <span id="tech-qfactor">148mm</span></span>
+                            <span><b>Carbone :</b> <span id="tech-material">T800 + T1000</span></span>
+                        </div>
+
                         <label class="block text-xs font-bold text-gray-500 mb-1"><i class="fa-solid fa-ruler text-brand-accent mr-1"></i> Longueur des Manivelles</label>
-                        <select id="config-longueur-manivelle" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm font-semibold border-brand-accent shadow-sm" onchange="updateConfig()">
+                        <select id="config-longueur-manivelle" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm font-semibold shadow-sm mb-3" onchange="updateConfig()">
                             <option value="160mm">160 mm</option>
+                            <option value="162.5mm">162.5 mm</option>
                             <option value="165mm">165 mm</option>
+                            <option value="167.5mm">167.5 mm</option>
                             <option value="170mm" selected>170 mm</option>
                             <option value="172.5mm">172.5 mm</option>
                             <option value="175mm">175 mm</option>
+                        </select>
+                        
+                        <label class="block text-xs font-bold text-gray-500 mb-1"><i class="fa-solid fa-paint-roller text-brand-accent mr-1"></i> Finition du Carbone</label>
+                        <select id="config-finition-manivelle" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm font-semibold shadow-sm" onchange="updateConfig()">
+                            <option value="UD Matte" selected>UD Matte (Furtif)</option>
+                            <option value="UD Glossy">UD Glossy (Brillant)</option>
+                            <option value="3K Matte">3K Matte (Tressé mat)</option>
+                            <option value="3K Glossy">3K Glossy (Tressé brillant)</option>
                         </select>
                     </div>
 
