@@ -100,7 +100,9 @@ function addToCart() {
                 const longueur = manivelleEl ? manivelleEl.value : "";
                 const finitionEl = document.getElementById('config-finition-manivelle');
                 const finition = finitionEl ? finitionEl.value : "";
-                configText = `${modele} | Longueur : ${longueur} | Finition : ${finition}`;
+                const logoEl = document.getElementById('config-logo-manivelle');
+                const logo = logoEl ? logoEl.value : "";
+                configText = `${modele} | Longueur : ${longueur} | Finition : ${finition} | ${logo}`;
             } else if (isCurrentItemAccessory) {
                 const qteEl = document.getElementById('config-quantite');
                 const qte = qteEl ? parseInt(qteEl.value) : 1;
