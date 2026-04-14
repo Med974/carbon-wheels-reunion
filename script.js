@@ -1025,7 +1025,7 @@ function updateConfig() {
     const cWeightSpan = document.getElementById('calc-weight');
     if (cWeightSpan && cWeightSpan.parentElement && cWeightSpan.parentElement.parentElement) {
         const weightBlock = cWeightSpan.parentElement.parentElement;
-        if (isCurrentItemAccessory && currentBaseWeight <= 0) {
+        if (isCurrentItemAccessory && currentBaseWeight <= 0 && !titleLC.includes('manivelle') && !titleLC.includes('axe')) {
             weightBlock.style.visibility = 'hidden';
         } else {
             weightBlock.style.visibility = 'visible';
@@ -1054,14 +1054,16 @@ function updateConfig() {
             
             // Ajout du prix des plateaux/étoile au total
             let plateauxPrice = 0;
+            let plateauxWeight = 0;
             if (plateauxSelect && plateauxSelect.selectedIndex >= 0) {
                 plateauxPrice = parseInt(plateauxSelect.options[plateauxSelect.selectedIndex].getAttribute('data-price')) || 0;
+                plateauxWeight = parseInt(plateauxSelect.options[plateauxSelect.selectedIndex].getAttribute('data-weight')) || 0;
                 
                 // Afficher/Cacher le choix de la denture selon l'option sélectionnée
                 const selectedPlateauxValue = plateauxSelect.value;
                 if (dentureContainer) {
-                    // On n'affiche la denture QUE s'il choisit un "Pack Complet" (avec plateaux)
-                    if (selectedPlateauxValue.includes('Pack Complet')) {
+                    // On n'affiche la denture QUE s'il choisit un "Pack Complet" ou le "Capteur + Plateaux"
+                    if (selectedPlateauxValue.includes('Pack Complet') || selectedPlateauxValue.includes('Capteur XCADEY + Plateaux')) {
                         dentureContainer.style.display = 'block';
                     } else {
                         dentureContainer.style.display = 'none';
@@ -1077,7 +1079,7 @@ function updateConfig() {
                 const selectedOption = modeleSelect.options[modeleSelect.selectedIndex];
                 
                 const baseManivelleWeight = parseInt(selectedOption.getAttribute('data-crank-weight')) || 290;
-                finalWeight = baseManivelleWeight * qte;
+                finalWeight = (baseManivelleWeight + plateauxWeight) * qte;
                 
                 const techAxis = document.getElementById('tech-axis');
                 const techQfactor = document.getElementById('tech-qfactor');
@@ -1094,7 +1096,7 @@ function updateConfig() {
         if(cPrice) cPrice.textContent = finalPrice > 0 ? finalPrice : '--';
         
         if(cWeightSpan) {
-            if (currentBaseWeight > 0) {
+            if (currentBaseWeight > 0 || titleLC.includes('manivelle') || titleLC.includes('axe')) {
                 cWeightSpan.textContent = finalWeight > 0 ? finalWeight : '--';
             } else {
                 cWeightSpan.textContent = '--';
