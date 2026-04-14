@@ -113,6 +113,7 @@ function addToCart() {
                 }
                 
                 configText = `${modele} | Longueur : ${longueur} | Finition : ${finition} | ${logo} | Plateaux : ${plateaux}${dentureText}`;
+                
             } else if (isCurrentItemAccessory) {
                 const qteEl = document.getElementById('config-quantite');
                 const qte = qteEl ? parseInt(qteEl.value) : 1;
@@ -1044,18 +1045,18 @@ function updateConfig() {
         
         let finalWeight = currentBaseWeight * qte;
         
-        // --- NOUVEAU : GESTION DYNAMIQUE DES MANIVELLES ---
+        // --- GESTION DYNAMIQUE DES MANIVELLES ---
         if (titleLC.includes('manivelle')) {
             const modeleSelect = document.getElementById('config-modele-manivelle');
             const plateauxSelect = document.getElementById('config-plateaux-manivelle');
             const dentureContainer = document.getElementById('config-denture-container');
             
-            // Ajout du prix des plateaux/étoile
+            // Ajout du prix des plateaux/étoile au total
             let plateauxPrice = 0;
             if (plateauxSelect && plateauxSelect.selectedIndex >= 0) {
                 plateauxPrice = parseInt(plateauxSelect.options[plateauxSelect.selectedIndex].getAttribute('data-price')) || 0;
                 
-                // Afficher/Cacher le choix de la denture
+                // Afficher/Cacher le choix de la denture selon l'option sélectionnée
                 const selectedPlateauxValue = plateauxSelect.value;
                 if (dentureContainer) {
                     if (selectedPlateauxValue.includes('Pack Complet') || selectedPlateauxValue.includes('Capteur')) {
@@ -1066,16 +1067,16 @@ function updateConfig() {
                 }
             }
             
+            // Nouveau calcul du prix
             finalPrice = (currentBasePrice + plateauxPrice) * qte;
             
+            // Mise à jour des specs (Poids, Q-Factor, Axe)
             if (modeleSelect && modeleSelect.selectedIndex >= 0) {
                 const selectedOption = modeleSelect.options[modeleSelect.selectedIndex];
                 
-                // 1. Mise à jour du Poids selon le modèle
                 const baseManivelleWeight = parseInt(selectedOption.getAttribute('data-crank-weight')) || 290;
                 finalWeight = baseManivelleWeight * qte;
                 
-                // 2. Mise à jour des Infos Techniques
                 const techAxis = document.getElementById('tech-axis');
                 const techQfactor = document.getElementById('tech-qfactor');
                 const techMaterial = document.getElementById('tech-material');
