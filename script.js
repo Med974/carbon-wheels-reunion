@@ -105,7 +105,14 @@ function addToCart() {
                 const plateauxEl = document.getElementById('config-plateaux-manivelle');
                 const plateaux = plateauxEl ? plateauxEl.value : "";
                 
-                configText = `${modele} | Longueur : ${longueur} | Finition : ${finition} | ${logo} | Plateaux : ${plateaux}`;
+                let dentureText = "";
+                const dentureContainer = document.getElementById('config-denture-container');
+                if (dentureContainer && dentureContainer.style.display !== 'none') {
+                    const dentureEl = document.getElementById('config-denture-manivelle');
+                    if (dentureEl) dentureText = ` | Denture : ${dentureEl.value}`;
+                }
+                
+                configText = `${modele} | Longueur : ${longueur} | Finition : ${finition} | ${logo} | Plateaux : ${plateaux}${dentureText}`;
             } else if (isCurrentItemAccessory) {
                 const qteEl = document.getElementById('config-quantite');
                 const qte = qteEl ? parseInt(qteEl.value) : 1;
@@ -1041,11 +1048,22 @@ function updateConfig() {
         if (titleLC.includes('manivelle')) {
             const modeleSelect = document.getElementById('config-modele-manivelle');
             const plateauxSelect = document.getElementById('config-plateaux-manivelle');
+            const dentureContainer = document.getElementById('config-denture-container');
             
             // Ajout du prix des plateaux/étoile
             let plateauxPrice = 0;
             if (plateauxSelect && plateauxSelect.selectedIndex >= 0) {
                 plateauxPrice = parseInt(plateauxSelect.options[plateauxSelect.selectedIndex].getAttribute('data-price')) || 0;
+                
+                // Afficher/Cacher le choix de la denture
+                const selectedPlateauxValue = plateauxSelect.value;
+                if (dentureContainer) {
+                    if (selectedPlateauxValue.includes('Pack Complet') || selectedPlateauxValue.includes('Capteur')) {
+                        dentureContainer.style.display = 'block';
+                    } else {
+                        dentureContainer.style.display = 'none';
+                    }
+                }
             }
             
             finalPrice = (currentBasePrice + plateauxPrice) * qte;
