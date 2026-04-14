@@ -794,16 +794,20 @@
                         <select id="config-plateaux-manivelle" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm font-semibold shadow-sm mb-3" onchange="updateConfig()">
                             <option value="Manivelles Nues" data-price="0" selected>Manivelles nues (sans étoile) [+0€]</option>
                             <option value="Étoile Carbone 110BCD" data-price="89">Adaptateur : Étoile Carbone 110 BCD (Pour Shimano) [+89€]</option>
+                            <option value="Étoile Carbone 107BCD" data-price="89">Adaptateur : Étoile Carbone 107 BCD (Pour SRAM) [+89€]</option>
                             <option value="Pack Complet : Étoile + Plateaux PassQuest" data-price="189">Pack Complet : Étoile Carbone + Plateaux CNC Pass Quest [+189€]</option>
                             <option value="Option Capteur de Puissance XCADEY" data-price="369">⚡ Option PRO : Capteur de puissance intégré XCADEY [+369€]</option>
                         </select>
 
-                        <!-- NOUVEAU : Choix de la denture (caché par défaut) -->
+                        <!-- Choix de la denture (caché par défaut) -->
                         <div id="config-denture-container" style="display: none;" class="mb-3">
                             <label class="block text-xs font-bold text-gray-500 mb-1"><i class="fa-solid fa-cogs text-brand-accent mr-1"></i> Denture des Plateaux</label>
                             <select id="config-denture-manivelle" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm font-semibold shadow-sm" onchange="updateConfig()">
+                                <option value="46/33">46/33 (Grimpette / SRAM 12v)</option>
+                                <option value="48/35">48/35 (Polyvalent / SRAM 12v)</option>
                                 <option value="50/34" selected>50/34 (Grimpeur / Cyclo)</option>
-                                <option value="52/36">52/36 (Polyvalent / Vallonné)</option>
+                                <option value="52/36">52/36 (Vallonné / Polyvalent)</option>
+                                <option value="53/39">53/39 (Classique Pro)</option>
                                 <option value="54/40">54/40 (Plat / Coursier Aéro)</option>
                             </select>
                         </div>
