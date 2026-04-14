@@ -777,7 +777,7 @@
                         </select>
                         
                         <label class="block text-xs font-bold text-gray-500 mb-1"><i class="fa-solid fa-paint-roller text-brand-accent mr-1"></i> Finition du Carbone</label>
-                        <select id="config-finition-manivelle" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm font-semibold shadow-sm" onchange="updateConfig()">
+                        <select id="config-finition-manivelle" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm font-semibold shadow-sm mb-3" onchange="updateConfig()">
                             <option value="UD Matte" selected>UD Matte (Furtif)</option>
                             <option value="UD Glossy">UD Glossy (Brillant)</option>
                             <option value="3K Matte">3K Matte (Tressé mat)</option>
@@ -785,23 +785,19 @@
                         </select>
 
                         <label class="block text-xs font-bold text-gray-500 mb-1"><i class="fa-solid fa-palette text-brand-accent mr-1"></i> Couleur du Logo</label>
-                        <select id="config-logo-manivelle" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm font-semibold shadow-sm" onchange="updateConfig()">
-                            <option value="Logo Blanc" selected>Logo Blanc</option>
-                            <option value="Logo Noir">Logo Noir</option>
+                        <select id="config-logo-manivelle" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm font-semibold shadow-sm mb-3" onchange="updateConfig()">
+                            <option value="Logo Blanc" selected>Logo Blanc (Racing)</option>
+                            <option value="Logo Noir">Logo Noir (Furtif)</option>
                         </select>
-                    </div>
 
-                    <div id="accessory-config-container" class="mb-3 hidden">
-                        <label class="block text-xs font-bold text-gray-500 mb-1"><i class="fa-solid fa-list-ol text-brand-accent mr-1"></i> Quantité</label>
-                        <select id="config-quantite" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm font-semibold" onchange="updateConfig()">
-                            <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option>
-                            <option value="5">5</option><option value="6">6</option>
+                        <label class="block text-xs font-bold text-gray-500 mb-1"><i class="fa-solid fa-gear text-brand-accent mr-1"></i> Étoile & Plateaux</label>
+                        <select id="config-plateaux-manivelle" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm font-semibold shadow-sm" onchange="updateConfig()">
+                            <option value="Manivelles Nues" selected>Manivelles nues (sans plateaux)</option>
+                            <option value="Sur Devis : Adaptateur Shimano">Sur Devis : Ajouter une étoile adaptatrice pour Shimano</option>
+                            <option value="Sur Devis : Adaptateur SRAM">Sur Devis : Ajouter une étoile adaptatrice pour SRAM</option>
+                            <option value="Sur Devis : Plateaux Complets">Sur Devis : Ajouter des plateaux ultra-légers complets</option>
                         </select>
-                        
-                        <div id="config-taille-pneu-container" class="mt-3 hidden">
-                            <label class="block text-xs font-bold text-gray-500 mb-1"><i class="fa-solid fa-ruler text-brand-accent mr-1"></i> Taille</label>
-                            <select id="config-taille-pneu" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm font-semibold" onchange="updateConfig()"></select>
-                        </div>
+                        <p class="text-[10px] text-gray-400 mt-1 italic">*Si vous choisissez "Sur Devis", nous vous contacterons après réservation pour vérifier la compatibilité avec votre vélo.</p>
                     </div>
 
                     <!-- GRILLE DE CONFIGURATION (2 COLONNES) -->
