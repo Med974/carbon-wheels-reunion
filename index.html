@@ -790,14 +790,14 @@
                             <option value="Logo Noir">Logo Noir (Furtif)</option>
                         </select>
 
-                        <label class="block text-xs font-bold text-gray-500 mb-1"><i class="fa-solid fa-gear text-brand-accent mr-1"></i> Étoile & Plateaux</label>
-                        <select id="config-plateaux-manivelle" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm font-semibold shadow-sm" onchange="updateConfig()">
-                            <option value="Manivelles Nues" selected>Manivelles nues (sans plateaux)</option>
-                            <option value="Sur Devis : Adaptateur Shimano">Sur Devis : Ajouter une étoile adaptatrice pour Shimano</option>
-                            <option value="Sur Devis : Adaptateur SRAM">Sur Devis : Ajouter une étoile adaptatrice pour SRAM</option>
-                            <option value="Sur Devis : Plateaux Complets">Sur Devis : Ajouter des plateaux ultra-légers complets</option>
+                        <label class="block text-xs font-bold text-gray-500 mb-1"><i class="fa-solid fa-gear text-brand-accent mr-1"></i> Étoile, Plateaux & Capteur</label>
+                        <select id="config-plateaux-manivelle" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm font-semibold shadow-sm mb-2" onchange="updateConfig()">
+                            <option value="Manivelles Nues" data-price="0" selected>Manivelles nues (sans étoile) [+0€]</option>
+                            <option value="Étoile Carbone 110BCD" data-price="89">Adaptateur : Étoile Carbone 110 BCD (Pour plateaux Shimano) [+89€]</option>
+                            <option value="Pack Complet : Étoile + Plateaux PassQuest" data-price="189">Pack Complet : Étoile Carbone + Plateaux CNC Pass Quest [+189€]</option>
+                            <option value="Option Capteur de Puissance XCADEY" data-price="369">⚡ Option PRO : Capteur de puissance intégré XCADEY [+369€]</option>
                         </select>
-                        <p class="text-[10px] text-gray-400 mt-1 italic">*Si vous choisissez "Sur Devis", nous vous contacterons après réservation pour vérifier la compatibilité avec votre vélo.</p>
+                        <p class="text-[10px] text-gray-400 mt-1 italic">*Si vous prenez les plateaux complets, nous vous contacterons pour choisir votre denture exacte (ex: 50/34, 52/36...).</p>
                     </div>
 
                     <!-- GRILLE DE CONFIGURATION (2 COLONNES) -->
