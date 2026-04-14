@@ -94,9 +94,13 @@ function addToCart() {
 
         if (isCurrentItemWheelConfigurable || (configSection && configSection.style.display !== 'none')) {
             if (titleLC.includes('manivelle')) {
+                const modeleEl = document.getElementById('config-modele-manivelle');
+                const modele = modeleEl ? modeleEl.options[modeleEl.selectedIndex].text : "";
                 const manivelleEl = document.getElementById('config-longueur-manivelle');
                 const longueur = manivelleEl ? manivelleEl.value : "";
-                configText = `Longueur : ${longueur}`;
+                const finitionEl = document.getElementById('config-finition-manivelle');
+                const finition = finitionEl ? finitionEl.value : "";
+                configText = `${modele} | Longueur : ${longueur} | Finition : ${finition}`;
             } else if (isCurrentItemAccessory) {
                 const qteEl = document.getElementById('config-quantite');
                 const qte = qteEl ? parseInt(qteEl.value) : 1;
@@ -1026,7 +1030,29 @@ function updateConfig() {
             finalPrice = (pairs * 75) + (singles * currentBasePrice); 
         }
         
-        const finalWeight = currentBaseWeight * qte;
+        let finalWeight = currentBaseWeight * qte;
+        
+        // --- NOUVEAU : GESTION DYNAMIQUE DES MANIVELLES ---
+        if (titleLC.includes('manivelle')) {
+            const modeleSelect = document.getElementById('config-modele-manivelle');
+            if (modeleSelect && modeleSelect.selectedIndex >= 0) {
+                const selectedOption = modeleSelect.options[modeleSelect.selectedIndex];
+                
+                // 1. Mise à jour du Poids selon le modèle
+                const baseManivelleWeight = parseInt(selectedOption.getAttribute('data-crank-weight')) || 290;
+                finalWeight = baseManivelleWeight * qte;
+                
+                // 2. Mise à jour des Infos Techniques (Axis, Q-Factor, Carbone)
+                const techAxis = document.getElementById('tech-axis');
+                const techQfactor = document.getElementById('tech-qfactor');
+                const techMaterial = document.getElementById('tech-material');
+                
+                if (techAxis) techAxis.textContent = selectedOption.getAttribute('data-axis') || "";
+                if (techQfactor) techQfactor.textContent = selectedOption.getAttribute('data-qfactor') || "";
+                if (techMaterial) techMaterial.textContent = selectedOption.getAttribute('data-material') || "";
+            }
+        }
+        // --------------------------------------------------
         
         const cPrice = document.getElementById('calc-price');
         if(cPrice) cPrice.textContent = finalPrice > 0 ? finalPrice : '--';
