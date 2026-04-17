@@ -829,6 +829,32 @@
                             <select id="config-taille-pneu" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm font-semibold" onchange="updateConfig()"></select>
                         </div>
                     </div>
+
+                    <!-- NOUVEAU BLOC : OPTIONS ROUES SPÉCIALES (Bâtons / Lenticulaire) -->
+                    <div id="special-wheel-config-container" class="mb-3 hidden bg-gray-50 p-4 rounded-xl border border-gray-200">
+                        <div class="mb-3">
+                            <label class="block text-xs font-bold text-gray-500 mb-1"><i class="fa-solid fa-compact-disc text-brand-accent mr-1"></i> Type de Freinage</label>
+                            <select id="config-freinage-special" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm font-semibold shadow-sm">
+                                <option value="Freins à Disques" selected>Freins à Disques (Centerlock)</option>
+                                <option value="Freins à Patins">Freins à Patins</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="block text-xs font-bold text-gray-500 mb-1"><i class="fa-solid fa-gear text-brand-accent mr-1"></i> Corps de roue libre (Roue arrière)</label>
+                            <select id="config-rouelibre-special" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm font-semibold shadow-sm">
+                                <option value="Shimano HG">Shimano HG (11/12v)</option>
+                                <option value="SRAM XDR">SRAM XDR (12v)</option>
+                                <option value="Roue Avant" selected>Non applicable (Roue Avant)</option>
+                            </select>
+                        </div>
+                        <div class="mb-1">
+                            <label class="block text-xs font-bold text-gray-500 mb-1"><i class="fa-solid fa-paint-roller text-brand-accent mr-1"></i> Finition du Carbone</label>
+                            <select id="config-finition-special" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm font-semibold shadow-sm">
+                                <option value="UD Matte">UD Matte</option>
+                                <option value="Glossy Black">Glossy Black</option>
+                            </select>
+                        </div>
+                    </div>
                     
                     <!-- GRILLE DE CONFIGURATION (2 COLONNES) -->
                     <div id="wheel-config-options" class="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-1">
