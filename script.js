@@ -1132,12 +1132,21 @@ function updateConfig() {
     const colorSelect = document.getElementById('config-couleur-moyeu');
     const freinageSelect = document.getElementById('config-freinage');
     
-    // Les menus déroulants de l'upsell Accessoires (Etapes 10, 11, 12)
     const pneusSelect = document.getElementById('config-pneus');
     const bidonsSelect = document.getElementById('config-bidons');
     const tpuSelect = document.getElementById('config-tpu');
+
+    const optT52Interne = document.getElementById('opt-t52-interne');
+    if (optT52Interne && moyeuSelect) {
+        if (moyeuSelect.value === 'R2') {
+            optT52Interne.setAttribute('data-price', '159');
+            optT52Interne.textContent = 'Carbone T52 + Écrous Internes [+159€]';
+        } else {
+            optT52Interne.setAttribute('data-price', '99');
+            optT52Interne.textContent = 'Carbone T52 + Écrous Internes [+99€]';
+        }
+    }
     
-    // --- NOUVEAU : Mise à jour dynamique des largeurs selon le freinage ---
     const larIntEl = document.getElementById('modal-largeur-int');
     const larExtEl = document.getElementById('modal-largeur-ext');
     if (freinageSelect && larIntEl && larExtEl) {
