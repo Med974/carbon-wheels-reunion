@@ -957,19 +957,27 @@ function openModal(index) {
             
             updateConfig(); 
         } else if (isSpecialWheel) {
-        if(specJantesBox) specJantesBox.style.display = 'block';
-        if(configuratorSection) configuratorSection.style.display = 'block';
-        if(wheelConfigOptions) wheelConfigOptions.style.display = 'none';
-        if(manivellesConfigContainer) manivellesConfigContainer.style.display = 'none';
-        if(accessoryConfigContainer) accessoryConfigContainer.style.display = 'none';
-        if(specialWheelConfigContainer) specialWheelConfigContainer.style.display = 'block';
-        if(poidsMaxContainer) poidsMaxContainer.style.display = 'none';
-        
-        const cPrice = document.getElementById('calc-price');
-        if(cPrice) cPrice.textContent = currentBasePrice > 0 ? currentBasePrice : '--';
-        const cWeight = document.getElementById('calc-weight');
-        if(cWeight) cWeight.textContent = currentBaseWeight > 0 ? currentBaseWeight : '--';
-        updateBadgeUI(true);
+            const groupeRouelibre = document.getElementById('groupe-rouelibre-special');
+            if (groupeRouelibre) {
+                if (nomLC.includes('bâton') || nomLC.includes('tri-spoke')) {
+                    groupeRouelibre.style.display = 'none'; // Cache pour la roue avant
+                } else {
+                    groupeRouelibre.style.display = 'block'; // Affiche pour la lenticulaire
+                }
+            }
+            if(specJantesBox) specJantesBox.style.display = 'block';
+            if(configuratorSection) configuratorSection.style.display = 'block';
+            if(wheelConfigOptions) wheelConfigOptions.style.display = 'none';
+            if(manivellesConfigContainer) manivellesConfigContainer.style.display = 'none';
+            if(accessoryConfigContainer) accessoryConfigContainer.style.display = 'none';
+            if(specialWheelConfigContainer) specialWheelConfigContainer.style.display = 'block';
+            if(poidsMaxContainer) poidsMaxContainer.style.display = 'none';
+            
+            const cPrice = document.getElementById('calc-price');
+            if(cPrice) cPrice.textContent = currentBasePrice > 0 ? currentBasePrice : '--';
+            const cWeight = document.getElementById('calc-weight');
+            if(cWeight) cWeight.textContent = currentBaseWeight > 0 ? currentBaseWeight : '--';
+            updateBadgeUI(true);
         } else {
             if(specJantesBox) specJantesBox.style.display = 'block';
             if(configuratorSection) configuratorSection.style.display = 'none';
