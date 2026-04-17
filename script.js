@@ -123,15 +123,8 @@ function addToCart() {
                     configText = `Quantité : ${qte} | Taille : ${taille}`;
                 } else {
                     configText = `Quantité : ${qte}`;
-                } else if (titleLC.includes('bâton') || titleLC.includes('tri-spoke') || titleLC.includes('lenticulaire') || titleLC.includes('disc')) {
-                    const freinEl = document.getElementById('config-freinage-special');
-                    const rlEl = document.getElementById('config-rouelibre-special');
-                    const finitionEl = document.getElementById('config-finition-special');
-                    const frein = freinEl ? freinEl.value : "";
-                    const rl = rlEl ? rlEl.value : "";
-                    const finition = finitionEl ? finitionEl.value : "";
-                    configText = `${frein} | Roue Libre : ${rl} | Finition : ${finition}`;
-                } else {
+                }
+            } else {
                 const getSelectText = (id) => {
                     const el = document.getElementById(id);
                     if (!el || el.selectedIndex < 0) return "";
@@ -853,7 +846,6 @@ function openModal(index) {
         const wheelConfigOptions = document.getElementById('wheel-config-options');
         const manivellesConfigContainer = document.getElementById('config-manivelles-container');
         const accessoryConfigContainer = document.getElementById('accessory-config-container');
-        const specialWheelConfigContainer = document.getElementById('special-wheel-config-container');
         
         if (nomLC.includes('manivelle')) {
             if(specJantesBox) specJantesBox.style.display = 'none';
@@ -955,26 +947,10 @@ function openModal(index) {
             if(cColor) cColor.value = 'Noir'; 
             
             updateConfig(); 
-        } else if (isSpecialWheel) {
-        if(specJantesBox) specJantesBox.style.display = 'block';
-        if(configuratorSection) configuratorSection.style.display = 'block';
-        if(wheelConfigOptions) wheelConfigOptions.style.display = 'none';
-        if(manivellesConfigContainer) manivellesConfigContainer.style.display = 'none';
-        if(accessoryConfigContainer) accessoryConfigContainer.style.display = 'none';
-        if(specialWheelConfigContainer) specialWheelConfigContainer.style.display = 'block';
-        if(poidsMaxContainer) poidsMaxContainer.style.display = 'none';
-        
-        const cPrice = document.getElementById('calc-price');
-        if(cPrice) cPrice.textContent = currentBasePrice > 0 ? currentBasePrice : '--';
-        const cWeight = document.getElementById('calc-weight');
-        if(cWeight) cWeight.textContent = currentBaseWeight > 0 ? currentBaseWeight : '--';
-        updateBadgeUI(true);
         } else {
             if(specJantesBox) specJantesBox.style.display = 'block';
             if(configuratorSection) configuratorSection.style.display = 'none';
             if(poidsMaxContainer) poidsMaxContainer.style.display = 'none';
-            if(specialWheelConfigContainer) specialWheelConfigContainer.style.display = 'none';
-            
             const cPrice = document.getElementById('calc-price');
             if(cPrice) cPrice.textContent = currentBasePrice > 0 ? currentBasePrice : '--';
             const cWeight = document.getElementById('calc-weight');
