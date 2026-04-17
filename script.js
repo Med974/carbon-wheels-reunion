@@ -684,11 +684,11 @@ function updateHubOptions() {
         `;
         ratchetSelect.innerHTML = `
             <option value="45T" data-price="0">45T (Standard R2)</option>
-            <option value="72T" data-price="50">72T (Haute réactivité) [+50€]</option>
+            <option value="72T" data-price="49">72T (Haute réactivité) [+49€]</option>
         `;
         roulementsSelect.innerHTML = `
             <option value="Acier EZO" data-price="0">Acier EZO (Standard R2)</option>
-            <option value="Céramique TPI" data-price="80">Céramique TPI (Ultra-fluide) [+80€]</option>
+            <option value="Céramique TPI" data-price="79">Céramique TPI (Ultra-fluide) [+79€]</option>
         `;
         
         if (isHubChange) {
