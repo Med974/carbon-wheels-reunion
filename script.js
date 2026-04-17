@@ -131,7 +131,11 @@ function addToCart() {
                     const frein = freinEl ? freinEl.value : "";
                     const rl = rlEl ? rlEl.value : "";
                     const finition = finitionEl ? finitionEl.value : "";
-                    configText = `${frein} | Roue Libre : ${rl} | Finition : ${finition}`;
+                    if (titleLC.includes('bâton') || titleLC.includes('tri-spoke')) {
+                        configText = `${frein} | Finition : ${finition}`;
+                    } else {
+                        configText = `${frein} | Roue Libre : ${rl} | Finition : ${finition}`;
+                    }
                 } else {
                 const getSelectText = (id) => {
                     const el = document.getElementById(id);
