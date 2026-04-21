@@ -156,13 +156,11 @@ function addToCart() {
                 const finition = getSelectText('config-finition') || "Glossy Black";
                 const logos = getSelectText('config-logos') || "Petit logo noir";
                 const freinage = getSelectText('config-freinage') || "Disques";
-                const disquesVal = document.getElementById('config-disques') ? document.getElementById('config-disques').value : "Aucun";
-                const disquesText = disquesVal !== 'Aucun' ? ` | + ${disquesVal}` : "";
                 
                 const colorEl = document.getElementById('config-couleur-moyeu');
                 const couleurMoyeu = (colorEl && colorEl.value) ? " (" + colorEl.value + ")" : "";
 
-                configText = `${moyeu}${couleurMoyeu} | Jantes ${jante} | ${rayon} | Ratchet ${ratchet} | Roulements ${roulements} | ${rouelibre} | ${finition} | Logos : ${logos} | ${freinage}${disquesText}`;
+                configText = `${moyeu}${couleurMoyeu} | Jantes ${jante} | ${rayon} | Ratchet ${ratchet} | Roulements ${roulements} | ${rouelibre} | ${finition} | Logos : ${logos} | ${freinage}`;
                 
                 // Ajout des accessoires optionnels (Étapes 10, 11, 12)
                 const addAccessoryToConfigText = (selectId) => {
@@ -1168,20 +1166,8 @@ function updateConfig() {
     const ratchetSelect = document.getElementById('config-ratchet');
     const roulementsSelect = document.getElementById('config-roulements');
     const finitionSelect = document.getElementById('config-finition');
-    const disquesSelect = document.getElementById('config-disques');
-    const disquesContainer = document.getElementById('config-disques-container');
+    const colorSelect = document.getElementById('config-couleur-moyeu');
     const freinageSelect = document.getElementById('config-freinage');
-
-    // Masquer l'option disques si le client choisit des freins à patins
-    if (freinageSelect && disquesContainer) {
-        if (freinageSelect.value === 'Patins') {
-            disquesContainer.style.display = 'none';
-            if (disquesSelect) disquesSelect.value = 'Aucun';
-        } else {
-            disquesContainer.style.display = 'block';
-        }
-    }
-    const disquesPrice = disquesSelect && disquesSelect.selectedIndex >= 0 ? (parseInt(disquesSelect.options[disquesSelect.selectedIndex].getAttribute('data-price')) || 0) : 0;
     
     const pneusSelect = document.getElementById('config-pneus');
     const bidonsSelect = document.getElementById('config-bidons');
@@ -1279,7 +1265,7 @@ function updateConfig() {
     
     const freinageWeight = freinageSelect && freinageSelect.value === 'Patins' ? 130 : 0;
 
-    const finalPrice = currentBasePrice + moyeuPrice + rayonPrice + finitionPrice + colorPrice + ratchetPrice + roulementsPrice + accessoiresPrice + disquesPrice;
+    const finalPrice = currentBasePrice + moyeuPrice + rayonPrice + finitionPrice + colorPrice + ratchetPrice + roulementsPrice + accessoiresPrice;
     
     const baseComboWeight = 322; 
     const newComboWeight = hubWeight + (spokeCount * spokeWeight) + rimDiff + finitionWeight + freinageWeight;
