@@ -129,6 +129,7 @@ function addToCart() {
                     const rlEl = document.getElementById('config-rouelibre-special');
                     const gammeEl = document.getElementById('config-gamme-special');
                     const ratchetSpecialEl = document.getElementById('config-ratchet-special');
+                    const largeurSpecialEl = document.getElementById('config-largeur-special');
                     
                     const frein = freinEl ? freinEl.value : "";
                     const rl = rlEl ? rlEl.value : "";
@@ -139,10 +140,15 @@ function addToCart() {
                         ratchetText = ` | Ratchet : ${ratchetSpecialEl.value}`;
                     }
                     
+                    let largeurText = "";
+                    if ((titleLC.includes('lenticulaire') || titleLC.includes('disc')) && largeurSpecialEl) {
+                        largeurText = ` | Largeur : ${largeurSpecialEl.value}`;
+                    }
+                    
                     if (titleLC.includes('bâton') || titleLC.includes('tri-spoke')) {
                         configText = `${gamme} | ${frein}`;
                     } else {
-                        configText = `${gamme}${ratchetText} | ${frein} | Roue Libre : ${rl}`;
+                        configText = `${gamme}${ratchetText}${largeurText} | ${frein} | Roue Libre : ${rl}`;
                     }
                 } else {
                 const getSelectText = (id) => {
@@ -1195,7 +1201,7 @@ function updateConfig() {
     // --- GESTION DU PRIX DES ROUES SPÉCIALES (BÂTONS / LENTICULAIRES) ---
     const isSpecialWheel = titleLC.includes('bâton') || titleLC.includes('tri-spoke') || titleLC.includes('lenticulaire') || titleLC.includes('disc');
     
-	if (isSpecialWheel) {
+    if (isSpecialWheel) {
         const gammeSelect = document.getElementById('config-gamme-special');
         const gammeVal = gammeSelect ? gammeSelect.value : "";
         const gammePrice = gammeSelect && gammeSelect.selectedIndex >= 0 ? (parseInt(gammeSelect.options[gammeSelect.selectedIndex].getAttribute('data-price')) || 0) : 0;
@@ -1212,8 +1218,43 @@ function updateConfig() {
                 ratchetPrice = parseInt(ratchetSpecialSelect.options[ratchetSpecialSelect.selectedIndex].getAttribute('data-price')) || 0;
             } else {
                 blocRatchetSpecial.style.display = 'none';
-                ratchetSpecialSelect.selectedIndex = 0; // Remet à 45T par défaut en fond
+                ratchetSpecialSelect.selectedIndex = 0; // Remet à 45T par défaut
             }
+        }
+
+        // Gestion des largeurs pour Lenticulaire (Blocage 19/26 sur UXL/RUXL)
+        const blocLargeurSpecial = document.getElementById('bloc-largeur-special');
+        const largeurSpecialSelect = document.getElementById('config-largeur-special');
+        
+        if (titleLC.includes('lenticulaire') || titleLC.includes('disc')) {
+            if (blocLargeurSpecial) blocLargeurSpecial.style.display = 'block';
+            
+            if (largeurSpecialSelect) {
+                const opt19 = largeurSpecialSelect.querySelector('option[value="19/26mm"]');
+                if (opt19) {
+                    if (gammeVal === 'Série UXL' || gammeVal === 'Série RUXL') {
+                        opt19.disabled = true;
+                        opt19.textContent = '19/26mm (Indisponible sur UXL/RUXL)';
+                        if (largeurSpecialSelect.value === '19/26mm') largeurSpecialSelect.value = '21/28mm';
+                    } else {
+                        opt19.disabled = false;
+                        opt19.textContent = '19mm Int. / 26mm Ext.';
+                    }
+                }
+                
+                // Mise à jour des specs bleues en haut du Modal
+                const larIntEl = document.getElementById('modal-largeur-int');
+                const larExtEl = document.getElementById('modal-largeur-ext');
+                if(larIntEl && larExtEl) {
+                    const parts = largeurSpecialSelect.value.split('/');
+                    if(parts.length === 2) {
+                        larIntEl.textContent = parts[0].replace('mm', ' mm');
+                        larExtEl.textContent = parts[1].replace('mm', ' mm');
+                    }
+                }
+            }
+        } else {
+            if (blocLargeurSpecial) blocLargeurSpecial.style.display = 'none';
         }
 
         const finalPrice = currentBasePrice + gammePrice + ratchetPrice;
@@ -1224,7 +1265,7 @@ function updateConfig() {
         if(cWeightSpan) cWeightSpan.textContent = finalWeight > 0 ? finalWeight : '--';
         
         updateBadgeUI(gammePrice === 0 && ratchetPrice === 0); 
-        return; 
+        return; // On stoppe le calcul ici pour les roues spéciales !
     }
 
     // Sécurité pour la suite du code (Roues classiques)
