@@ -127,14 +127,22 @@ function addToCart() {
             } else if (titleLC.includes('bâton') || titleLC.includes('tri-spoke') || titleLC.includes('lenticulaire') || titleLC.includes('disc')) {
                     const freinEl = document.getElementById('config-freinage-special');
                     const rlEl = document.getElementById('config-rouelibre-special');
-                    const finitionEl = document.getElementById('config-finition-special');
+                    const gammeEl = document.getElementById('config-gamme-special');
+                    const ratchetSpecialEl = document.getElementById('config-ratchet-special');
+                    
                     const frein = freinEl ? freinEl.value : "";
                     const rl = rlEl ? rlEl.value : "";
-                    const finition = finitionEl ? finitionEl.value : "";
+                    const gamme = gammeEl ? gammeEl.value : "Série STD";
+                    
+                    let ratchetText = "";
+                    if (gamme === 'Série RUXL' && ratchetSpecialEl) {
+                        ratchetText = ` | Ratchet : ${ratchetSpecialEl.value}`;
+                    }
+                    
                     if (titleLC.includes('bâton') || titleLC.includes('tri-spoke')) {
-                        configText = `${frein} | Finition : ${finition}`;
+                        configText = `${gamme} | ${frein}`;
                     } else {
-                        configText = `${frein} | Roue Libre : ${rl} | Finition : ${finition}`;
+                        configText = `${gamme}${ratchetText} | ${frein} | Roue Libre : ${rl}`;
                     }
                 } else {
                 const getSelectText = (id) => {
@@ -861,6 +869,11 @@ function openModal(index) {
         const manivellesConfigContainer = document.getElementById('config-manivelles-container');
         const accessoryConfigContainer = document.getElementById('accessory-config-container');
         const specialWheelConfigContainer = document.getElementById('special-wheel-config-container');
+		// FORCER LE MASQUAGE DES MENUS SPÉCIAUX POUR TOUS LES AUTRES PRODUITS
+        const blocRatchetSpecial = document.getElementById('bloc-ratchet-special');
+        if (blocRatchetSpecial) blocRatchetSpecial.style.display = 'none';
+        const blocLargeurSpecial = document.getElementById('bloc-largeur-special');
+        if (blocLargeurSpecial) blocLargeurSpecial.style.display = 'none';
         
         if (nomLC.includes('manivelle')) {
             if(specJantesBox) specJantesBox.style.display = 'none';
@@ -971,6 +984,25 @@ function openModal(index) {
                     groupeRouelibre.style.display = 'block'; // Affiche pour la lenticulaire
                 }
             }
+			// --- INJECTION DES VERSIONS (STD, XL, UXL, RUXL...) ---
+            const gammeSelect = document.getElementById('config-gamme-special');
+            if (gammeSelect) {
+                gammeSelect.innerHTML = '';
+                if (nomLC.includes('lenticulaire') || nomLC.includes('disc')) {
+                    gammeSelect.innerHTML = `
+                        <option value="Série STD" data-price="0" data-weight-diff="0">Série STD (Moyeu 36T) - 1050g [+0€]</option>
+                        <option value="Série XL" data-price="100" data-weight-diff="-70">Série XL (Moyeu 36T) - 980g [+100€]</option>
+                        <option value="Série UXL" data-price="200" data-weight-diff="-150">Série UXL (Moyeu 54T) - 900g [+200€]</option>
+                        <option value="Série RUXL" data-price="250" data-weight-diff="-150">Série RUXL (Moyeu SSF) - 900g [+250€]</option>
+                    `;
+                } else if (nomLC.includes('bâton') || nomLC.includes('tri-spoke')) {
+                    gammeSelect.innerHTML = `
+                        <option value="Série STD" data-price="0" data-weight-diff="0">Série STD - 880g [+0€]</option>
+                        <option value="Série XL" data-price="100" data-weight-diff="-80">Série XL (Ultra-Léger) - 800g [+100€]</option>
+                    `;
+                }
+            }
+            // ------------------------------------------------
             if(specJantesBox) specJantesBox.style.display = 'block';
             if(configuratorSection) configuratorSection.style.display = 'block';
             if(wheelConfigOptions) wheelConfigOptions.style.display = 'none';
@@ -1160,6 +1192,42 @@ function updateConfig() {
         return; 
     }
 
+    // --- GESTION DU PRIX DES ROUES SPÉCIALES (BÂTONS / LENTICULAIRES) ---
+    const isSpecialWheel = titleLC.includes('bâton') || titleLC.includes('tri-spoke') || titleLC.includes('lenticulaire') || titleLC.includes('disc');
+    
+	if (isSpecialWheel) {
+        const gammeSelect = document.getElementById('config-gamme-special');
+        const gammeVal = gammeSelect ? gammeSelect.value : "";
+        const gammePrice = gammeSelect && gammeSelect.selectedIndex >= 0 ? (parseInt(gammeSelect.options[gammeSelect.selectedIndex].getAttribute('data-price')) || 0) : 0;
+        const gammeWeightDiff = gammeSelect && gammeSelect.selectedIndex >= 0 ? (parseInt(gammeSelect.options[gammeSelect.selectedIndex].getAttribute('data-weight-diff')) || 0) : 0;
+
+        // Gestion de l'affichage dynamique du Ratchet pour RUXL
+        const blocRatchetSpecial = document.getElementById('bloc-ratchet-special');
+        const ratchetSpecialSelect = document.getElementById('config-ratchet-special');
+        let ratchetPrice = 0;
+        
+        if (blocRatchetSpecial && ratchetSpecialSelect) {
+            if (gammeVal === 'Série RUXL') {
+                blocRatchetSpecial.style.display = 'block';
+                ratchetPrice = parseInt(ratchetSpecialSelect.options[ratchetSpecialSelect.selectedIndex].getAttribute('data-price')) || 0;
+            } else {
+                blocRatchetSpecial.style.display = 'none';
+                ratchetSpecialSelect.selectedIndex = 0; // Remet à 45T par défaut en fond
+            }
+        }
+
+        const finalPrice = currentBasePrice + gammePrice + ratchetPrice;
+        const finalWeight = currentBaseWeight + gammeWeightDiff;
+
+        const cPrice = document.getElementById('calc-price');
+        if(cPrice) cPrice.textContent = finalPrice > 0 ? finalPrice : '--';
+        if(cWeightSpan) cWeightSpan.textContent = finalWeight > 0 ? finalWeight : '--';
+        
+        updateBadgeUI(gammePrice === 0 && ratchetPrice === 0); 
+        return; 
+    }
+
+    // Sécurité pour la suite du code (Roues classiques)
     if (!isCurrentItemWheelConfigurable) return; 
 
     const moyeuSelect = document.getElementById('config-moyeu');
