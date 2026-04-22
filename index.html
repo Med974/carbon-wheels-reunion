@@ -846,11 +846,10 @@
                                 <option value="SRAM XDR">SRAM XDR (12v)</option>
                             </select>
                         </div>
-                        <div class="mb-1">
-                            <label class="block text-xs font-bold text-gray-500 mb-1"><i class="fa-solid fa-paint-roller text-brand-accent mr-1"></i> Finition du Carbone</label>
-                            <select id="config-finition-special" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm font-semibold shadow-sm">
-                                <option value="UD Matte">UD Matte</option>
-                                <option value="Glossy Black">Glossy Black</option>
+                        <div class="mb-3">
+                            <label class="block text-xs font-bold text-brand-accent mb-1">Série / Technologie <span class="text-gray-400 font-normal">(Poids & Moyeu)</span></label>
+                            <select id="config-gamme-special" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm font-semibold shadow-sm border-brand-accent" onchange="updateConfig()">
+                                <!-- Rempli par le Javascript -->
                             </select>
                         </div>
                     </div>
