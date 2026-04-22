@@ -852,6 +852,15 @@
                                 <!-- Rempli par le Javascript -->
                             </select>
                         </div>
+                        <!-- NOUVEAU BLOC : LARGEUR JANTE (Visible pour Lenticulaire) -->
+                        <div id="bloc-largeur-special" class="mb-3" style="display: none;">
+                            <label class="block text-xs font-bold text-gray-500 mb-1"><i class="fa-solid fa-arrows-left-right text-brand-accent mr-1"></i> Largeur de la jante (Int/Ext)</label>
+                            <select id="config-largeur-special" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm font-semibold shadow-sm" onchange="updateConfig()">
+                                <option value="19/26mm">19mm Int. / 26mm Ext.</option>
+                                <option value="21/28mm" selected>21mm Int. / 28mm Ext.</option>
+                                <option value="24.5/30mm">24.5mm Int. / 30mm Ext.</option>
+                            </select>
+                        </div>
                         <div id="bloc-ratchet-special" class="mb-3" style="display: none;">
                             <label class="block text-xs font-bold text-gray-500 mb-1">Système Ratchet</label>
                             <select id="config-ratchet-special" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm font-semibold shadow-sm" onchange="updateConfig()">
