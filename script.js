@@ -117,7 +117,7 @@ function addToCart() {
             } else if (isCurrentItemAccessory) {
                 const qteEl = document.getElementById('config-quantite');
                 const qte = qteEl ? parseInt(qteEl.value) : 1;
-                if (titleLC.includes('pneu') || titleLC.includes('gp5000')) {
+                if (titleLC.includes('pneu') || titleLC.includes('gp5000') || titleLC.includes('galfer') || titleLC.includes('disque')) {
                     const tailleEl = document.getElementById('config-taille-pneu');
                     const taille = tailleEl ? tailleEl.value : "";
                     configText = `Quantité : ${qte} | Taille : ${taille}`;
@@ -1133,6 +1133,18 @@ function updateConfig() {
         }
         
         let finalWeight = currentBaseWeight * qte;
+		
+		// --- GESTION DYNAMIQUE DU POIDS DES DISQUES ---
+        if (titleLC.includes('disque') || titleLC.includes('galfer')) {
+            const tailleSelect = document.getElementById('config-taille-pneu');
+            if (tailleSelect && tailleSelect.value) {
+                if (tailleSelect.value.includes('160mm')) {
+                    finalWeight = 98 * qte;
+                } else if (tailleSelect.value.includes('140mm')) {
+                    finalWeight = 76 * qte;
+                }
+            }
+        }
         
         // --- GESTION DYNAMIQUE DES MANIVELLES ---
         if (titleLC.includes('manivelle')) {
@@ -1184,7 +1196,7 @@ function updateConfig() {
         if(cPrice) cPrice.textContent = finalPrice > 0 ? finalPrice : '--';
         
         if(cWeightSpan) {
-            if (currentBaseWeight > 0 || titleLC.includes('manivelle') || titleLC.includes('axe')) {
+            if (currentBaseWeight > 0 || titleLC.includes('manivelle') || titleLC.includes('axe') || titleLC.includes('disque') || titleLC.includes('galfer')) {
                 cWeightSpan.textContent = finalWeight > 0 ? finalWeight : '--';
             } else {
                 cWeightSpan.textContent = '--';
