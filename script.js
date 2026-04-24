@@ -940,7 +940,8 @@ function openModal(index) {
                 } else {
                     tailleContainer.style.display = 'none';
 				}
-            
+			}
+			
             const qteEl = document.getElementById('config-quantite');
             if(qteEl) qteEl.value = '1';
             
