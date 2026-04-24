@@ -117,7 +117,13 @@ function addToCart() {
             } else if (isCurrentItemAccessory) {
                 const qteEl = document.getElementById('config-quantite');
                 const qte = qteEl ? parseInt(qteEl.value) : 1;
-                if (titleLC.includes('pneu') || titleLC.includes('gp5000') || titleLC.includes('galfer') || titleLC.includes('disque')) {
+                if (titleLC.includes('galfer') || titleLC.includes('disque')) {
+                    const modeleSelect = document.getElementById('config-galfer-modele');
+                    const m = modeleSelect ? modeleSelect.options[modeleSelect.selectedIndex].text.split(' [+')[0] : "";
+                    const tailleSelect = document.getElementById('config-galfer-taille');
+                    const t = tailleSelect ? tailleSelect.value : "";
+                    configText = `Modèle : ${m} | Taille : ${t} | Quantité : ${qte}`;
+                } else if (titleLC.includes('pneu') || titleLC.includes('gp5000')) {
                     const tailleEl = document.getElementById('config-taille-pneu');
                     const taille = tailleEl ? tailleEl.value : "";
                     configText = `Quantité : ${qte} | Taille : ${taille}`;
@@ -903,7 +909,14 @@ function openModal(index) {
             
             const tailleContainer = document.getElementById('config-taille-pneu-container');
             const tailleSelect = document.getElementById('config-taille-pneu');
-            if(tailleContainer && tailleSelect) {
+            const galferContainer = document.getElementById('galfer-config-container');
+            
+            if (nomLC.includes('galfer') || nomLC.includes('disque')) {
+                if(tailleContainer) tailleContainer.style.display = 'none';
+                if(galferContainer) galferContainer.style.display = 'block';
+            } else if(tailleContainer && tailleSelect) {
+                if(galferContainer) galferContainer.style.display = 'none';
+                
                 if (item.Variantes) {
                     tailleSelect.innerHTML = '';
                     const variantesList = item.Variantes.split(',');
@@ -926,8 +939,7 @@ function openModal(index) {
                     tailleContainer.style.display = 'block';
                 } else {
                     tailleContainer.style.display = 'none';
-                }
-            }
+				}
             
             const qteEl = document.getElementById('config-quantite');
             if(qteEl) qteEl.value = '1';
@@ -1134,17 +1146,27 @@ function updateConfig() {
         
         let finalWeight = currentBaseWeight * qte;
 		
-		// --- GESTION DYNAMIQUE DU POIDS DES DISQUES ---
-        if (titleLC.includes('disque') || titleLC.includes('galfer')) {
-            const tailleSelect = document.getElementById('config-taille-pneu');
-            if (tailleSelect && tailleSelect.value) {
-                if (tailleSelect.value.includes('160mm')) {
-                    finalWeight = 98 * qte;
-                } else if (tailleSelect.value.includes('140mm')) {
-                    finalWeight = 76 * qte;
-                }
-            }
-        }
+        // --- GESTION DYNAMIQUE PRIX/POIDS DES DISQUES ---
+        if (titleLC.includes('disque') || titleLC.includes('galfer')) {
+            const modeleSelect = document.getElementById('config-galfer-modele');
+            const tailleSelect = document.getElementById('config-galfer-taille');
+            
+            let unitPrice = currentBasePrice; // Prix catalogue par défaut (65)
+            if (modeleSelect) {
+                unitPrice = parseInt(modeleSelect.options[modeleSelect.selectedIndex].getAttribute('data-price')) || 65;
+            }
+            finalPrice = unitPrice * qte;
+            
+            if (tailleSelect && modeleSelect) {
+                const isShark = modeleSelect.value.includes('Shark');
+                if (tailleSelect.value.includes('160mm')) {
+                    finalWeight = (isShark ? 104 : 98) * qte;
+                } else {
+                    finalWeight = (isShark ? 90 : 76) * qte;
+                }
+            }
+        }
+        // ----------------------------------------------
         
         // --- GESTION DYNAMIQUE DES MANIVELLES ---
         if (titleLC.includes('manivelle')) {
