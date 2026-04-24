@@ -904,6 +904,8 @@ function openModal(index) {
             if(configuratorSection) configuratorSection.style.display = 'block';
             if(wheelConfigOptions) wheelConfigOptions.style.display = 'none';
             if(manivellesConfigContainer) manivellesConfigContainer.style.display = 'none';
+			if(specialWheelConfigContainer) specialWheelConfigContainer.style.display = 'none';
+            if(poidsMaxContainer) poidsMaxContainer.style.display = 'none';
             
             if(accessoryConfigContainer) accessoryConfigContainer.style.display = 'block';
             
