@@ -1006,11 +1006,12 @@
                             </select>
                         </div>
 
-                        <div id="config-disques-container" class="md:col-span-2 mb-3">
-                            <label class="block text-xs font-bold text-gray-500 mb-1">13. Disques de Freins <span class="text-green-600 font-normal">Privilège</span>
+                        <div id="config-disques-container" class="mb-3">
+                            <label class="block text-xs font-bold text-gray-500 mb-1">
+                                13. Disques de Freins <span class="text-green-600 font-normal">(Privilège)</span>
                             </label>
-                            <select id="config-disques" class="w-full border border-gray-300 rounded p-3 bg-white" onchange="updateConfig()">
-                                <option value="Aucun" data-price="0">Aucun disque [+0€]</option>
+                            <select id="config-disques" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm font-semibold shadow-sm" onchange="updateConfig()">
+                                <option value="Aucun" data-price="0">Ne pas ajouter de disques [+0€]</option>
                                 <option value="Pack 2x GALFER Road Wave" data-price="119">🌊 Pack 2x GALFER Road Wave (196g) [+119€ au lieu de +130€]</option>
                                 <option value="Pack 2x GALFER Disc Shark" data-price="159">🦈 Pack 2x GALFER Disc Shark (Freinage Extrême) [+159€] au lieu de +170€</option>
                             </select>
