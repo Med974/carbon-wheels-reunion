@@ -1011,9 +1011,19 @@
                                 13. Disques de Freins <span class="text-green-600 font-normal">(Privilège)</span>
                             </label>
                             <select id="config-disques" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm font-semibold shadow-sm" onchange="updateConfig()">
-                                <option value="Aucun" data-price="0">Ne pas ajouter de disques [+0€]</option>
-                                <option value="Pack 2x GALFER Road Wave" data-price="119">🌊 Pack 2x GALFER Road Wave (196g) [+119€ au lieu de +130€]</option>
-                                <option value="Pack 2x GALFER Disc Shark" data-price="159">🦈 Pack 2x GALFER Disc Shark (Freinage Extrême) [+159€] au lieu de +170€</option>
+                                <option value="Aucun" data-price="0">Aucun disque [+0€]</option>
+                                
+                                <optgroup label="🌊 GALFER Road Wave [+119€ au lieu de 130€]">
+                                    <option value="2x Road Wave 140mm" data-price="119">Paire 140mm / 140mm</option>
+                                    <option value="2x Road Wave 160mm" data-price="119">Paire 160mm / 160mm</option>
+                                    <option value="1x Road Wave 160mm + 1x Road Wave 140mm" data-price="119">Mixte 160mm Avant / 140mm Arrière</option>
+                                </optgroup>
+                                
+                                <optgroup label="🦈 GALFER Disc Shark [+159€ au lieu de 170€]">
+                                    <option value="2x Disc Shark 140mm" data-price="159">Paire 140mm / 140mm</option>
+                                    <option value="2x Disc Shark 160mm" data-price="159">Paire 160mm / 160mm</option>
+                                    <option value="1x Disc Shark 160mm + 1x Disc Shark 140mm" data-price="159">Mixte 160mm Avant / 140mm Arrière</option>
+                                </optgroup>
                             </select>
                             <p class="text-[9px] text-gray-400 mt-1 italic"><i class="fa-solid fa-info-circle mr-1"></i>Les disques sont livrés avec les écrous de serrage (Lockrings).</p>
                         </div>
