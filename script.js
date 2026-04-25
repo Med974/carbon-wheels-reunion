@@ -196,6 +196,7 @@ function addToCart() {
                 addAccessoryToConfigText('config-pneus');
                 addAccessoryToConfigText('config-bidons');
                 addAccessoryToConfigText('config-tpu');
+				addAccessoryToConfigText('config-plaquettes');
             }
         } else {
             configText = isCurrentItemAccessory ? "Accessoire" : "Modèle Standard";
@@ -1436,7 +1437,7 @@ function updateConfig() {
     
     const freinageWeight = freinageSelect && freinageSelect.value === 'Patins' ? 130 : 0;
 
-    const finalPrice = currentBasePrice + moyeuPrice + rayonPrice + finitionPrice + colorPrice + ratchetPrice + roulementsPrice + accessoiresPrice + disquesPrice; + plaquettesPrice;
+    const finalPrice = currentBasePrice + moyeuPrice + rayonPrice + finitionPrice + colorPrice + ratchetPrice + roulementsPrice + accessoiresPrice + disquesPrice + plaquettesPrice;
     
     const baseComboWeight = 322; 
     const newComboWeight = hubWeight + (spokeCount * spokeWeight) + rimDiff + finitionWeight + freinageWeight;
