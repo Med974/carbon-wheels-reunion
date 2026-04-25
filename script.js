@@ -123,10 +123,10 @@ function addToCart() {
                     const tailleSelect = document.getElementById('config-galfer-taille');
                     const t = tailleSelect ? tailleSelect.value : "";
                     configText = `Modèle : ${m} | Taille : ${t} | Quantité : ${qte}`;
-                } else if (titleLC.includes('pneu') || titleLC.includes('gp5000')) {
+                } else if (titleLC.includes('pneu') || titleLC.includes('gp5000') || titleLC.includes('tpu') || titleLC.includes('chambre')) {
                     const tailleEl = document.getElementById('config-taille-pneu');
                     const taille = tailleEl ? tailleEl.value : "";
-                    configText = `Quantité : ${qte} | Taille : ${taille}`;
+                    configText = `Taille : ${taille} | Quantité : ${qte}`;
                 } else {
                     configText = `Quantité : ${qte}`;
                 } 
