@@ -903,7 +903,7 @@
                                 <option value="72T" data-price="49">72T (Haute réactivité) [+49€]</option>
                             </select>
                         </div>
-                        <!-- Encart spécifique à la location (Calendrier + Conditions + Alerte de stock) -->
+                        <!-- Encart spécifique à la location (Calendrier + Montage + Conditions + Alerte de stock) -->
                         <div id="bloc-location-details" class="mb-3" style="display: none;">
                             
                             <!-- 1. Le calendrier de réservation -->
@@ -912,10 +912,21 @@
                                     <i class="fa-solid fa-calendar-days text-brand-accent mr-1"></i> Date de votre week-end de course
                                 </label>
                                 <input type="date" id="config-date-location" class="w-full bg-white border border-brand-accent rounded-lg px-3 py-2 text-sm font-semibold shadow-sm" onchange="checkDateAvailability(); updateConfig();">
-                                <p class="text-[10px] text-gray-500 mt-1 italic leading-tight">Retrait le vendredi après-midi et retour le lundi matin.</p>
+                                <p class="text-[10px] text-gray-500 mt-1 italic leading-tight">Retrait le vendredi après-midi et retour le lundi matin à l'atelier de Saint-Paul.</p>
                             </div>
 
-                            <!-- 2. Alerte de stock épuisé (Cachée par défaut) -->
+                            <!-- 2. Option de Montage Cassette & Disque -->
+                            <div class="mb-3">
+                                <label class="block text-xs font-bold text-gray-600 mb-1">
+                                    <i class="fa-solid fa-screwdriver-wrench text-brand-accent mr-1"></i> Option de montage à l'atelier
+                                </label>
+                                <select id="config-montage-location" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm font-semibold shadow-sm" onchange="updateConfig()">
+                                    <option value="Sans Montage" data-price="0" selected>Je monte mes propres disques et cassette (+0€)</option>
+                                    <option value="Avec Montage (+30€)" data-price="30">Mehdi monte mon disque et ma cassette à l'atelier (+30€)</option>
+                                </select>
+                            </div>
+
+                            <!-- 3. Alerte de stock épuisé (Cachée par défaut) -->
                             <div id="alert-location-epuisee" class="hidden items-start gap-3 bg-red-50 border border-red-200 text-red-800 p-3 rounded-xl mb-3 shadow-sm">
                                 <i class="fa-solid fa-triangle-exclamation text-red-600 text-lg mt-0.5 animate-pulse"></i>
                                 <div>
@@ -924,12 +935,13 @@
                                 </div>
                             </div>
 
-                            <!-- 3. Les conditions de location (Chèque, contrat, etc.) -->
+                            <!-- 4. Les conditions de location (Chèque, contrat, matériel fourni) -->
                             <div class="bg-green-50 border border-green-200 rounded-xl p-3 text-[11px] text-green-800">
                                 <strong class="block mb-1 uppercase tracking-wider text-green-900"><i class="fa-solid fa-circle-info mr-1"></i> Conditions de retrait :</strong>
                                 <ul class="space-y-1 list-disc list-inside">
                                     <li>Chèque de caution de <strong>1000 €</strong> (non encaissé) requis au retrait.</li>
                                     <li>Copie de votre pièce d'identité valide.</li>
+                                    <li>Pneu haut de gamme <strong>Continental GP5000 (28mm)</strong> et <strong>chambre TPU ultra-légère</strong> fournis et installés d'office.</li>
                                     <li>Signature du contrat de location simplifié à l'atelier.</li>
                                 </ul>
                             </div>
