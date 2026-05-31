@@ -146,16 +146,22 @@ function addToCart() {
                         ratchetText = ` | Ratchet : ${ratchetSpecialEl.value}`;
                     }
                     
-                    let largeurText = "";
-                    if ((titleLC.includes('lenticulaire') || titleLC.includes('disc')) && largeurSpecialEl) {
-                        largeurText = ` | Largeur : ${largeurSpecialEl.value}`;
-                    }
-                    
-                    if (titleLC.includes('bâton') || titleLC.includes('tri-spoke')) {
-                        configText = `${gamme} | ${frein}`;
-                    } else {
-                        configText = `${gamme}${ratchetText}${largeurText} | ${frein} | Roue Libre : ${rl}`;
-                    }
+					let largeurText = "";
+	                if ((titleLC.includes('lenticulaire') || titleLC.includes('disc')) && largeurSpecialEl) {
+	                    largeurText = ` | Largeur : ${largeurSpecialEl.value}`;
+	                }
+	                
+	                let stickerText = "";
+	                const stickerEl = document.getElementById('config-sticker-lenticulaire');
+	                if ((titleLC.includes('lenticulaire') || titleLC.includes('disc')) && stickerEl) {
+	                    stickerText = ` | Sticker : ${stickerEl.value}`;
+	                }
+	                
+	                if (titleLC.includes('bâton') || titleLC.includes('tri-spoke')) {
+	                    configText = `${gamme} | ${frein}`;
+	                } else {
+	                    configText = `${gamme}${ratchetText}${largeurText}${stickerText} | ${frein} | Roue Libre : ${rl}`;
+	                }
                 } else {
                 const getSelectText = (id) => {
                     const el = document.getElementById(id);
@@ -887,6 +893,8 @@ function openModal(index) {
         if (blocRatchetSpecial) blocRatchetSpecial.style.display = 'none';
         const blocLargeurSpecial = document.getElementById('bloc-largeur-special');
         if (blocLargeurSpecial) blocLargeurSpecial.style.display = 'none';
+		const blocStickerLenti = document.getElementById('bloc-sticker-lenticulaire');
+        if (blocStickerLenti) blocStickerLenti.style.display = 'none';
         
         if (nomLC.includes('manivelle')) {
             if(specJantesBox) specJantesBox.style.display = 'none';
@@ -1272,6 +1280,8 @@ function updateConfig() {
         
         if (titleLC.includes('lenticulaire') || titleLC.includes('disc')) {
             if (blocLargeurSpecial) blocLargeurSpecial.style.display = 'block';
+			const blocStickerLenti = document.getElementById('bloc-sticker-lenticulaire');
+            if (blocStickerLenti) blocStickerLenti.style.display = 'block';
             
             if (largeurSpecialSelect) {
                 const opt19 = largeurSpecialSelect.querySelector('option[value="19/26mm"]');
