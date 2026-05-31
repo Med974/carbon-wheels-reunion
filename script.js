@@ -1566,11 +1566,19 @@ function setLenticulaireMode(mode) {
 	const selectLargeur = document.getElementById('config-largeur-special');
     const selectSticker = document.getElementById('config-sticker-lenticulaire');
     
-    // Configurer le calendrier pour n'autoriser que les dates futures (à partir d'aujourd'hui)
+    // Configurer le calendrier de location
     const dateInput = document.getElementById('config-date-location');
     if (dateInput) {
+        // Date de livraison de la 1ère roue : vendredi 26 juin 2026
+        const dateDispoInitiale = "2026-06-26"; 
         const aujourdhui = new Date().toISOString().split('T')[0];
-        dateInput.min = aujourdhui;
+        
+        // Si aujourd'hui est avant la livraison, la date minimale est le 26 juin 2026
+        if (aujourdhui < dateDispoInitiale) {
+            dateInput.min = dateDispoInitiale;
+        } else {
+            dateInput.min = aujourdhui;
+        }
     }
     
     if (mode === 'location') {
