@@ -173,7 +173,8 @@ function addToCart() {
 	                } else {
 	                    configText = `${gamme}${ratchetText}${largeurText}${stickerText} | ${frein} | Roue Libre : ${rl}`;
 	                }
-                } else {
+                }
+			} else {
                 const getSelectText = (id) => {
                     const el = document.getElementById(id);
                     if (!el || el.selectedIndex < 0) return "";
