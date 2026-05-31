@@ -1298,7 +1298,7 @@ function updateConfig() {
             const montagePrice = selectMontage && selectMontage.selectedIndex >= 0 ? (parseInt(selectMontage.options[selectMontage.selectedIndex].getAttribute('data-price')) || 0) : 0;
             
             finalPrice = 100 + montagePrice; // Tarif de base de 100€ + option de montage
-            finalWeight = 1050; // Poids fixe de ta jante de location
+            finalWeight = 980; // Poids fixe de ta jante de location
             updateBadgeUI(false, "Disponible à la location");
         } else {
             gammePrice = gammeSelect && gammeSelect.selectedIndex >= 0 ? (parseInt(gammeSelect.options[gammeSelect.selectedIndex].getAttribute('data-price')) || 0) : 0;
@@ -1583,7 +1583,7 @@ function setLenticulaireMode(mode) {
         
         // Verrouiller la gamme sur la version de ta flotte de location (Série STD)
         if (blocGamme) {
-            blocGamme.value = "Série STD";
+            blocGamme.value = "Série XL";
             blocGamme.disabled = true; 
         }
 
