@@ -1555,6 +1555,8 @@ function setLenticulaireMode(mode) {
     const blocLocationDetails = document.getElementById('bloc-location-details');
     const blocGamme = document.getElementById('config-gamme-special');
     const selectFreinage = document.getElementById('config-freinage-special');
+	const selectLargeur = document.getElementById('config-largeur-special');
+    const selectSticker = document.getElementById('config-sticker-lenticulaire');
     
     // Configurer le calendrier pour n'autoriser que les dates futures (à partir d'aujourd'hui)
     const dateInput = document.getElementById('config-date-location');
@@ -1582,6 +1584,18 @@ function setLenticulaireMode(mode) {
             selectFreinage.value = "Freins à Disques";
             selectFreinage.disabled = true;
         }
+
+		// Verrouiller la largeur sur 24.5/30mm pour la flotte de location
+        if (selectLargeur) {
+            selectLargeur.value = "24.5/30mm";
+            selectLargeur.disabled = true;
+        }
+
+        // Verrouiller obligatoirement avec le sticker Karbòn Péi d'origine
+        if (selectSticker) {
+            selectSticker.value = "Avec Sticker";
+            selectSticker.disabled = true;
+        }
         
         // Charger les indisponibilités depuis le Sheet
         fetchUnavailableDates();
@@ -1594,6 +1608,8 @@ function setLenticulaireMode(mode) {
         if (blocLocationDetails) blocLocationDetails.style.display = 'none';
         if (blocGamme) blocGamme.disabled = false;
         if (selectFreinage) selectFreinage.disabled = false;
+		if (selectLargeur) selectLargeur.disabled = false;
+        if (selectSticker) selectSticker.disabled = false;
         
         // Masquer l'alerte d'indisponibilité si elle était affichée
         const alertEpuise = document.getElementById('alert-location-epuisee');
