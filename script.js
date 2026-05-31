@@ -139,7 +139,7 @@ function addToCart() {
                     const dateLoc = dateEl && dateEl.value ? dateEl.value : "Date non précisée";
                     const rl = document.getElementById('config-rouelibre-special').value;
 
-                    finalTitle = ${title} (Location Week-end);
+                    finalTitle = `${title} (Location Week-end)`;
                     configText = `Week-end du : ${dateLoc} | Freins à Disques | Roue libre : ${rl}`;
                     finalPrice = 100; // Forcer le prix de la location à 100€
                 } else {
