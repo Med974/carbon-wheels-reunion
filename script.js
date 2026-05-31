@@ -1299,7 +1299,6 @@ function updateConfig() {
         // Gestion de l'affichage dynamique du Ratchet pour RUXL
         const blocRatchetSpecial = document.getElementById('bloc-ratchet-special');
         const ratchetSpecialSelect = document.getElementById('config-ratchet-special');
-        let ratchetPrice = 0;
         
         if (blocRatchetSpecial && ratchetSpecialSelect) {
             if (gammeVal === 'Série RUXL') {
