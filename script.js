@@ -1,6 +1,8 @@
 const API_URL = 'https://script.google.com/macros/s/AKfycbwi5uRAIjQ2vjbL7h9_LWAUzArqb4oNDNzHWqfM4dIkINVlY6v1Qv4no9V5ScitexSq/exec';
 
 let globalCatalogue = [];
+let currentLenticulaireMode = "achat"; // "achat" ou "location"
+let unavailableRentalDates = []; // Liste des dates bloquées renvoyées par le Sheet
 let currentBasePrice = 0;
 let currentBaseWeight = 0;
 let isCurrentItemAccessory = false;
@@ -131,6 +133,15 @@ function addToCart() {
                     configText = `Quantité : ${qte}`;
                 } 
             } else if (titleLC.includes('bâton') || titleLC.includes('tri-spoke') || titleLC.includes('lenticulaire') || titleLC.includes('disc')) {
+				if (currentLenticulaireMode === 'location') {
+                    const dateEl = document.getElementById('config-date-location');
+                    const dateLoc = dateEl && dateEl.value ? dateEl.value : "Date non précisée";
+                    const rl = document.getElementById('config-rouelibre-special').value;
+
+                    item.title = `${title} (Location Week-end)`;
+                    configText = `Week-end du : ${dateLoc} | Freins à Disques | Roue libre : ${rl}`;
+                    item.price = 100; // Forcer le prix de la location à 100€
+                } else {
                     const freinEl = document.getElementById('config-freinage-special');
                     const rlEl = document.getElementById('config-rouelibre-special');
                     const gammeEl = document.getElementById('config-gamme-special');
@@ -1065,6 +1076,18 @@ function openModal(index) {
             updateBadgeUI(true);
         }
 
+		// Gestion de l'affichage du sélecteur de location
+        const blocModeLenti = document.getElementById('bloc-mode-lenticulaire');
+        const blocLocationDetails = document.getElementById('bloc-location-details');
+
+        if (nomLC.includes('lenticulaire') || nomLC.includes('disc')) {
+            if (blocModeLenti) blocModeLenti.style.display = 'flex';
+            setLenticulaireMode('achat'); // Par défaut en mode achat à l'ouverture
+        } else {
+            if (blocModeLenti) blocModeLenti.style.display = 'none';
+            if (blocLocationDetails) blocLocationDetails.style.display = 'none';
+        }
+		
         const pModal = document.getElementById('product-modal');
         if (pModal) {
             pModal.classList.remove('hidden');
@@ -1256,8 +1279,22 @@ function updateConfig() {
     if (isSpecialWheel) {
         const gammeSelect = document.getElementById('config-gamme-special');
         const gammeVal = gammeSelect ? gammeSelect.value : "";
-        const gammePrice = gammeSelect && gammeSelect.selectedIndex >= 0 ? (parseInt(gammeSelect.options[gammeSelect.selectedIndex].getAttribute('data-price')) || 0) : 0;
-        const gammeWeightDiff = gammeSelect && gammeSelect.selectedIndex >= 0 ? (parseInt(gammeSelect.options[gammeSelect.selectedIndex].getAttribute('data-weight-diff')) || 0) : 0;
+        
+        let finalPrice = currentBasePrice;
+        let finalWeight = currentBaseWeight;
+        let ratchetPrice = 0;
+
+        if (currentLenticulaireMode === 'location') {
+            finalPrice = 100; // Forcer le prix de la location à 100€
+            finalWeight = 1050; // Poids fixe de ta jante de location
+            updateBadgeUI(false, "Disponible à la location");
+        } else {
+            const gammePrice = gammeSelect && gammeSelect.selectedIndex >= 0 ? (parseInt(gammeSelect.options[gammeSelect.selectedIndex].getAttribute('data-price')) || 0) : 0;
+            const gammeWeightDiff = gammeSelect && gammeSelect.selectedIndex >= 0 ? (parseInt(gammeSelect.options[gammeSelect.selectedIndex].getAttribute('data-weight-diff')) || 0) : 0;
+            
+            finalPrice = currentBasePrice + gammePrice;
+            finalWeight = currentBaseWeight + gammeWeightDiff;
+        }
 
         // Gestion de l'affichage dynamique du Ratchet pour RUXL
         const blocRatchetSpecial = document.getElementById('bloc-ratchet-special');
@@ -1508,6 +1545,105 @@ function closeMobileMenu() {
             icon.classList.remove('fa-xmark');
             icon.classList.add('fa-bars');
         }
+    }
+}
+
+function setLenticulaireMode(mode) {
+    currentLenticulaireMode = mode;
+    const btnAchat = document.getElementById('btn-mode-achat');
+    const btnLocation = document.getElementById('btn-mode-location');
+    const blocLocationDetails = document.getElementById('bloc-location-details');
+    const blocGamme = document.getElementById('config-gamme-special');
+    const selectFreinage = document.getElementById('config-freinage-special');
+    
+    // Configurer le calendrier pour n'autoriser que les dates futures (à partir d'aujourd'hui)
+    const dateInput = document.getElementById('config-date-location');
+    if (dateInput) {
+        const aujourdhui = new Date().toISOString().split('T')[0];
+        dateInput.min = aujourdhui;
+    }
+    
+    if (mode === 'location') {
+        // Style bouton actif Location (vert)
+        if(btnAchat) btnAchat.className = "flex-1 text-center py-2 text-xs font-bold rounded-lg text-gray-500 hover:text-brand-main transition-all uppercase tracking-wider";
+        if(btnLocation) btnLocation.className = "flex-1 text-center py-2 text-xs font-black rounded-lg bg-green-600 text-white shadow-md transition-all uppercase tracking-wider";
+        
+        // Afficher l'encart complet de location (date + conditions)
+        if (blocLocationDetails) blocLocationDetails.style.display = 'block';
+        
+        // Verrouiller la gamme sur la version de ta flotte de location (Série STD)
+        if (blocGamme) {
+            blocGamme.value = "Série STD";
+            blocGamme.disabled = true; 
+        }
+
+        // Verrouiller obligatoirement sur "Disques" pour la location
+        if (selectFreinage) {
+            selectFreinage.value = "Freins à Disques";
+            selectFreinage.disabled = true;
+        }
+        
+        // Charger les indisponibilités depuis le Sheet
+        fetchUnavailableDates();
+    } else {
+        // Style bouton actif Achat
+        if(btnAchat) btnAchat.className = "flex-1 text-center py-2 text-xs font-black rounded-lg bg-brand-main text-white shadow transition-all uppercase tracking-wider";
+        if(btnLocation) btnLocation.className = "flex-1 text-center py-2 text-xs font-bold rounded-lg text-gray-500 hover:text-brand-main transition-all uppercase tracking-wider";
+        
+        // Masquer l'encart et débloquer les options pour l'achat
+        if (blocLocationDetails) blocLocationDetails.style.display = 'none';
+        if (blocGamme) blocGamme.disabled = false;
+        if (selectFreinage) selectFreinage.disabled = false;
+        
+        // Masquer l'alerte d'indisponibilité si elle était affichée
+        const alertEpuise = document.getElementById('alert-location-epuisee');
+        if (alertEpuise) alertEpuise.classList.add('hidden');
+        
+        // Débloquer le bouton d'ajout au panier
+        const submitBtn = document.querySelector('button[onclick="addToCart()"]');
+        if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+        }
+    }
+    updateConfig();
+}
+
+async function fetchUnavailableDates() {
+    try {
+        const response = await fetch(`${API_URL}?action=getUnavailableDates`);
+        unavailableRentalDates = await response.json();
+        checkDateAvailability(); // Vérifie la date sélectionnée
+    } catch (error) {
+        console.error("Impossible de charger le calendrier de location :", error);
+    }
+}
+
+function checkDateAvailability() {
+    if (currentLenticulaireMode !== 'location') return;
+    
+    const dateInput = document.getElementById('config-date-location');
+    const alertEpuise = document.getElementById('alert-location-epuisee');
+    const submitBtn = document.querySelector('button[onclick="addToCart()"]');
+    
+    if (!dateInput || !submitBtn) return;
+    
+    const dateSelectionnee = dateInput.value; // Format "YYYY-MM-DD"
+    
+    // Si le week-end est complet (2 jantes déjà réservées)
+    if (dateSelectionnee && unavailableRentalDates.includes(dateSelectionnee)) {
+        if (alertEpuise) {
+            alertEpuise.classList.remove('hidden');
+            alertEpuise.classList.add('flex');
+        }
+        // Bloquer l'ajout au panier !
+        submitBtn.disabled = true;
+        submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
+    } else {
+        if (alertEpuise) alertEpuise.classList.add('hidden');
+        // Débloquer le bouton
+        submitBtn.disabled = false;
+        submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
     }
 }
 
