@@ -80,7 +80,8 @@ function addToCart() {
         const title = titleEl ? titleEl.textContent : "Produit";
         const titleLC = title.toLowerCase();
         const priceEl = document.getElementById('calc-price');
-        const finalPrice = priceEl ? (parseInt(priceEl.textContent) || 0) : 0;
+        let finalPrice = priceEl ? (parseInt(priceEl.textContent) || 0) : 0;
+		let finalTitle = title;
         const weightEl = document.getElementById('calc-weight');
         let finalWeight = weightEl ? weightEl.textContent : "--";
         
@@ -138,9 +139,9 @@ function addToCart() {
                     const dateLoc = dateEl && dateEl.value ? dateEl.value : "Date non précisée";
                     const rl = document.getElementById('config-rouelibre-special').value;
 
-                    item.title = `${title} (Location Week-end)`;
+                    finalTitle = ${title} (Location Week-end);
                     configText = `Week-end du : ${dateLoc} | Freins à Disques | Roue libre : ${rl}`;
-                    item.price = 100; // Forcer le prix de la location à 100€
+                    finalPrice = 100; // Forcer le prix de la location à 100€
                 } else {
                     const freinEl = document.getElementById('config-freinage-special');
                     const rlEl = document.getElementById('config-rouelibre-special');
@@ -222,7 +223,7 @@ function addToCart() {
 
         const item = {
             id: Date.now(),
-            title: title,
+            title: finalTitle,
             price: finalPrice,
             weight: finalWeight,
             config: configText,
@@ -1284,14 +1285,16 @@ function updateConfig() {
         let finalPrice = currentBasePrice;
         let finalWeight = currentBaseWeight;
         let ratchetPrice = 0;
+		let gammePrice = 0;
+		let gammeWeightDiff = 0;
 
         if (currentLenticulaireMode === 'location') {
             finalPrice = 100; // Forcer le prix de la location à 100€
             finalWeight = 1050; // Poids fixe de ta jante de location
             updateBadgeUI(false, "Disponible à la location");
         } else {
-            const gammePrice = gammeSelect && gammeSelect.selectedIndex >= 0 ? (parseInt(gammeSelect.options[gammeSelect.selectedIndex].getAttribute('data-price')) || 0) : 0;
-            const gammeWeightDiff = gammeSelect && gammeSelect.selectedIndex >= 0 ? (parseInt(gammeSelect.options[gammeSelect.selectedIndex].getAttribute('data-weight-diff')) || 0) : 0;
+            gammePrice = gammeSelect && gammeSelect.selectedIndex >= 0 ? (parseInt(gammeSelect.options[gammeSelect.selectedIndex].getAttribute('data-price')) || 0) : 0;
+            gammeWeightDiff = gammeSelect && gammeSelect.selectedIndex >= 0 ? (parseInt(gammeSelect.options[gammeSelect.selectedIndex].getAttribute('data-weight-diff')) || 0) : 0;
             
             finalPrice = currentBasePrice + gammePrice;
             finalWeight = currentBaseWeight + gammeWeightDiff;
@@ -1347,9 +1350,6 @@ function updateConfig() {
         } else {
             if (blocLargeurSpecial) blocLargeurSpecial.style.display = 'none';
         }
-
-        const finalPrice = currentBasePrice + gammePrice + ratchetPrice;
-        const finalWeight = currentBaseWeight + gammeWeightDiff;
 
         const cPrice = document.getElementById('calc-price');
         if(cPrice) cPrice.textContent = finalPrice > 0 ? finalPrice : '--';
