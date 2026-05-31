@@ -852,6 +852,15 @@
 
                     <!-- NOUVEAU BLOC : OPTIONS ROUES SPÉCIALES (Bâtons / Lenticulaire) -->
                     <div id="special-wheel-config-container" class="mb-3 hidden bg-gray-50 p-4 rounded-xl border border-gray-200">
+                        <!-- Sélecteur de Mode : Achat vs Location -->
+                        <div id="bloc-mode-lenticulaire" class="mb-4 bg-gray-100 p-1 rounded-xl flex gap-1 border border-gray-200" style="display: none;">
+                            <button type="button" id="btn-mode-achat" onclick="setLenticulaireMode('achat')" class="flex-1 text-center py-2 text-xs font-black rounded-lg bg-white text-brand-main shadow transition-all uppercase tracking-wider">
+                                🛒 Acheter
+                            </button>
+                            <button type="button" id="btn-mode-location" onclick="setLenticulaireMode('location')" class="flex-1 text-center py-2 text-xs font-bold rounded-lg text-gray-500 hover:text-brand-main transition-all uppercase tracking-wider">
+                                🔑 Louer (100€ / Week-end)
+                            </button>
+                        </div>
                         <div class="mb-3">
                             <label class="block text-xs font-bold text-gray-500 mb-1"><i class="fa-solid fa-compact-disc text-brand-accent mr-1"></i> Type de Freinage</label>
                             <select id="config-freinage-special" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm font-semibold shadow-sm">
@@ -893,6 +902,37 @@
                                 <option value="45T" data-price="0">45T (Inclus)</option>
                                 <option value="72T" data-price="49">72T (Haute réactivité) [+49€]</option>
                             </select>
+                        </div>
+                        <!-- Encart spécifique à la location (Calendrier + Conditions + Alerte de stock) -->
+                        <div id="bloc-location-details" class="mb-3" style="display: none;">
+                            
+                            <!-- 1. Le calendrier de réservation -->
+                            <div class="mb-3">
+                                <label class="block text-xs font-bold text-gray-600 mb-1">
+                                    <i class="fa-solid fa-calendar-days text-brand-accent mr-1"></i> Date de votre week-end de course
+                                </label>
+                                <input type="date" id="config-date-location" class="w-full bg-white border border-brand-accent rounded-lg px-3 py-2 text-sm font-semibold shadow-sm" onchange="checkDateAvailability(); updateConfig();">
+                                <p class="text-[10px] text-gray-500 mt-1 italic leading-tight">Retrait le vendredi après-midi et retour le lundi matin.</p>
+                            </div>
+
+                            <!-- 2. Alerte de stock épuisé (Cachée par défaut) -->
+                            <div id="alert-location-epuisee" class="hidden items-start gap-3 bg-red-50 border border-red-200 text-red-800 p-3 rounded-xl mb-3 shadow-sm">
+                                <i class="fa-solid fa-triangle-exclamation text-red-600 text-lg mt-0.5 animate-pulse"></i>
+                                <div>
+                                    <strong class="text-xs block">Week-end indisponible !</strong>
+                                    <span class="text-[10px] leading-tight block">Nos 2 roues lenticulaires de flotte sont déjà réservées pour cette date. Veuillez choisir un autre week-end.</span>
+                                </div>
+                            </div>
+
+                            <!-- 3. Les conditions de location (Chèque, contrat, etc.) -->
+                            <div class="bg-green-50 border border-green-200 rounded-xl p-3 text-[11px] text-green-800">
+                                <strong class="block mb-1 uppercase tracking-wider text-green-900"><i class="fa-solid fa-circle-info mr-1"></i> Conditions de retrait :</strong>
+                                <ul class="space-y-1 list-disc list-inside">
+                                    <li>Chèque de caution de <strong>1000 €</strong> (non encaissé) requis au retrait.</li>
+                                    <li>Copie de votre pièce d'identité valide.</li>
+                                    <li>Signature du contrat de location simplifié à l'atelier.</li>
+                                </ul>
+                            </div>
                         </div>
                     </div>
                     
