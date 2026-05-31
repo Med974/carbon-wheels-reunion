@@ -134,15 +134,18 @@ function addToCart() {
                     configText = `Quantité : ${qte}`;
                 } 
             } else if (titleLC.includes('bâton') || titleLC.includes('tri-spoke') || titleLC.includes('lenticulaire') || titleLC.includes('disc')) {
-				if (currentLenticulaireMode === 'location') {
-                    const dateEl = document.getElementById('config-date-location');
-                    const dateLoc = dateEl && dateEl.value ? dateEl.value : "Date non précisée";
-                    const rl = document.getElementById('config-rouelibre-special').value;
+            if (currentLenticulaireMode === 'location') {
+                const dateEl = document.getElementById('config-date-location');
+                const dateLoc = dateEl && dateEl.value ? dateEl.value : "Date non précisée";
+                const rl = document.getElementById('config-rouelibre-special').value;
+                const selectMontage = document.getElementById('config-montage-location');
+                const montageText = selectMontage ? selectMontage.value : "Sans Montage";
+                const montagePrice = selectMontage && selectMontage.selectedIndex >= 0 ? (parseInt(selectMontage.options[selectMontage.selectedIndex].getAttribute('data-price')) || 0) : 0;
 
-                    finalTitle = `${title} (Location Week-end)`;
-                    configText = `Week-end du : ${dateLoc} | Freins à Disques | Roue libre : ${rl}`;
-                    finalPrice = 100; // Forcer le prix de la location à 100€
-                } else {
+                finalTitle = `${title} (Location Week-end)`;
+                configText = `Week-end du : ${dateLoc} | Freins à Disques | Roue libre : ${rl} | Option : ${montageText}`;
+                finalPrice = 100 + montagePrice; // Prix de base de 100€ + option de montage
+            } else {
                     const freinEl = document.getElementById('config-freinage-special');
                     const rlEl = document.getElementById('config-rouelibre-special');
                     const gammeEl = document.getElementById('config-gamme-special');
@@ -915,6 +918,7 @@ function openModal(index) {
             if(wheelConfigOptions) wheelConfigOptions.style.display = 'none';
             if(manivellesConfigContainer) manivellesConfigContainer.style.display = 'block';
             if(accessoryConfigContainer) accessoryConfigContainer.style.display = 'none';
+			if(specialWheelConfigContainer) specialWheelConfigContainer.style.display = 'none';
             
             const cPrice = document.getElementById('calc-price');
             if(cPrice) cPrice.textContent = currentBasePrice > 0 ? currentBasePrice : '--';
@@ -977,6 +981,7 @@ function openModal(index) {
             if(manivellesConfigContainer) manivellesConfigContainer.style.display = 'none';
             if(accessoryConfigContainer) accessoryConfigContainer.style.display = 'none';
             if(poidsMaxContainer) poidsMaxContainer.style.display = 'block';
+			if(specialWheelConfigContainer) specialWheelConfigContainer.style.display = 'none';
             
             const optUxl = document.getElementById('opt-uxl');
             if (optUxl) {
@@ -1289,7 +1294,10 @@ function updateConfig() {
 		let gammeWeightDiff = 0;
 
         if (currentLenticulaireMode === 'location') {
-            finalPrice = 100; // Forcer le prix de la location à 100€
+            const selectMontage = document.getElementById('config-montage-location');
+            const montagePrice = selectMontage && selectMontage.selectedIndex >= 0 ? (parseInt(selectMontage.options[selectMontage.selectedIndex].getAttribute('data-price')) || 0) : 0;
+            
+            finalPrice = 100 + montagePrice; // Tarif de base de 100€ + option de montage
             finalWeight = 1050; // Poids fixe de ta jante de location
             updateBadgeUI(false, "Disponible à la location");
         } else {
@@ -1610,6 +1618,8 @@ function setLenticulaireMode(mode) {
         if (selectFreinage) selectFreinage.disabled = false;
 		if (selectLargeur) selectLargeur.disabled = false;
         if (selectSticker) selectSticker.disabled = false;
+		const selectMontage = document.getElementById('config-montage-location');
+        if (selectMontage) selectMontage.value = "Sans Montage";
         
         // Masquer l'alerte d'indisponibilité si elle était affichée
         const alertEpuise = document.getElementById('alert-location-epuisee');
