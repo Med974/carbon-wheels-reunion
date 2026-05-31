@@ -872,13 +872,19 @@
                                 <!-- Rempli par le Javascript -->
                             </select>
                         </div>
-                        <!-- NOUVEAU BLOC : LARGEUR JANTE (Visible pour Lenticulaire) -->
                         <div id="bloc-largeur-special" class="mb-3" style="display: none;">
                             <label class="block text-xs font-bold text-gray-500 mb-1"><i class="fa-solid fa-arrows-left-right text-brand-accent mr-1"></i> Largeur de la jante (Int/Ext)</label>
                             <select id="config-largeur-special" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm font-semibold shadow-sm" onchange="updateConfig()">
                                 <option value="19/26mm">19mm Int. / 26mm Ext.</option>
                                 <option value="21/28mm" selected>21mm Int. / 28mm Ext.</option>
                                 <option value="24.5/30mm">24.5mm Int. / 30mm Ext.</option>
+                            </select>
+                        </div>
+                        <div id="bloc-sticker-lenticulaire" class="mb-3" style="display: none;">
+                            <label class="block text-xs font-bold text-gray-500 mb-1"><i class="fa-solid fa-ticket text-brand-accent mr-1"></i> Sticker Karbòn Péi</label>
+                            <select id="config-sticker-lenticulaire" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm font-semibold shadow-sm" onchange="updateConfig()">
+                                <option value="Avec Sticker" selected>Avec Sticker Karbòn Péi (Flocage d'origine) [Inclus]</option>
+                                <option value="Sans Sticker">Sans Sticker (Design Furtif / Carbone Nu)</option>
                             </select>
                         </div>
                         <div id="bloc-ratchet-special" class="mb-3" style="display: none;">
