@@ -137,7 +137,7 @@ function addToCart() {
             } else if (titleLC.includes('bâton') || titleLC.includes('tri-spoke') || titleLC.includes('lenticulaire') || titleLC.includes('disc')) {
             if (currentLenticulaireMode === 'location') {
                 const dateEl = document.getElementById('config-date-location');
-                const dateLoc = dateEl && dateEl.value ? dateEl.value : "Date non précisée";
+                const dateLoc = dateEl && dateEl.value ? getFridayOfWeek(dateEl.value) : "Date non précisée";
                 const rl = document.getElementById('config-rouelibre-special').value;
                 const selectMontage = document.getElementById('config-montage-location');
                 const montageText = selectMontage ? selectMontage.value : "Sans Montage";
@@ -1705,7 +1705,7 @@ function checkDateAvailability() {
     
     if (!dateInput || !submitBtn) return;
     
-    const dateSelectionnee = dateInput.value; // Format "YYYY-MM-DD"
+    const dateSelectionnee = getFridayOfWeek(dateInput.value);
     
     // Si le week-end est complet (2 jantes déjà réservées)
     if (dateSelectionnee && unavailableRentalDates.includes(dateSelectionnee)) {
@@ -1798,6 +1798,30 @@ function closeCustomAlert() {
         alertModal.classList.add('hidden');
         alertModal.classList.remove('flex');
     }
+}
+
+// Normalise n'importe quelle date du week-end (Ven, Sam, Dim) au Vendredi de ce même week-end
+function getFridayOfWeek(dateStr) {
+    if (!dateStr) return "";
+    const parts = dateStr.split('-');
+    // Création de la date en local pour éviter les décalages de fuseau horaire
+    const d = new Date(parts[0], parts[1] - 1, parts[2]);
+    const day = d.getDay(); // 0: Dimanche, 1: Lundi, ..., 6: Samedi
+    
+    let daysToFriday = 5 - day;
+    if (day === 0) {
+        daysToFriday = -2; // Dimanche est 2 jours après le vendredi
+    } else if (day === 6) {
+        daysToFriday = -1; // Samedi est 1 jour après le vendredi
+    }
+    
+    d.setDate(d.getDate() + daysToFriday);
+    
+    // Formatage propre en YYYY-MM-DD
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const date = String(d.getDate()).padStart(2, '0');
+    return `${year}-${month}-${date}`;
 }
 
 loadCatalogue();
