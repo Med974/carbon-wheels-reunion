@@ -1733,51 +1733,70 @@ function setDeliveryZone(zone) {
     const opt5050 = document.getElementById('option-pay-5050');
     
     if (zone === 'metropole') {
-        if (btnReunion) btnReunion.className = "flex-1 py-2 text-xs font-bold rounded-lg bg-white text-gray-500 hover:text-brand-main border border-gray-300 transition-all";
+        if (btnReunion) btnReunion.className = "flex-1 py-2 text-xs font-bold rounded-lg bg-white text-gray-700 hover:text-brand-main border border-gray-300 transition-all";
         if (btnMetropole) btnMetropole.className = "flex-1 py-2 text-xs font-black rounded-lg bg-brand-main text-white shadow-sm border border-brand-main transition-all";
         
-        // Masquer le 3X et afficher le 50/50
         if (opt3x) opt3x.classList.add('hidden');
-        if (opt5050) {
-            opt5050.classList.remove('hidden');
-            opt5050.classList.add('flex');
-        }
+        if (opt5050) { opt5050.classList.remove('hidden'); opt5050.classList.add('flex'); }
         
-        // Si 3X était coché, on re-bascule sur 50/50
         const radio3x = document.querySelector('input[name="payment-method"][value="3x_pei"]');
         const radio5050 = document.querySelector('input[name="payment-method"][value="5050_metropole"]');
-        if (radio3x && radio3x.checked && radio5050) {
-            radio5050.checked = true;
-        }
+        if (radio3x && radio3x.checked && radio5050) radio5050.checked = true;
         
-        // Nettoyage du panier : on filtre les accessoires hors roues
-        const previousLength = cart.length;
-        cart = cart.filter(item => {
-            const titleLC = item.title.toLowerCase();
-            const isAccessoryItem = item.isAccessory || titleLC.includes('pneu') || titleLC.includes('tpu') || titleLC.includes('chambre') || titleLC.includes('disque') || titleLC.includes('plaquette') || titleLC.includes('cassette') || titleLC.includes('bidon');
-            return !isAccessoryItem;
+        // --- CORRECTION MAJEURE : NETTOYAGE DU CONTENU DE LA CONFIGURATION ---
+        let optionsModifiees = false;
+        
+        cart.forEach(item => {
+            if (item.config && !item.isAccessory) {
+                const configOriginale = item.config;
+                
+                // Nettoyage chirurgical de la chaîne de texte des options interdites
+                item.config = item.config
+                    .replace(/ \| \+ 2x Pneus Continental GP5000 \(Mixte 28\/30\) \[\+115€\]/g, "")
+                    .replace(/ \| \+ 2x Pneus Continental GP5000 \(30mm\) \[\+115€\]/g, "")
+                    .replace(/ \| \+ 2x Pneus Continental GP5000 \(28mm\) \[\+115€\]/g, "")
+                    .replace(/ \| \+ 2x Chambres TPU 65mm \[\+25€\]/g, "")
+                    .replace(/ \| \+ 2x Paires Plaquettes SRAM \(Galfer FD513\) \[\+48€\]/g, "")
+                    .replace(/ \| \+ 1x Disc Shark 160mm \[\+89€\]/g, "")
+                    .replace(/ \| \+ 1x Disc Shark 140mm \[\+70€\]/g, "")
+                    .replace(/ \| \+ 2x Disques Galfer Fixed Wave \[\+90€\]/g, "")
+                    .replace(/ \| \+ 2x Disques Galfer Shark \[\+159€\]/g, "")
+                    .replace(/ \| \+ Cassette [^|]+/g, "")
+                    .replace(/ \| \+ Bidon [^|]+/g, "");
+
+                if (item.config !== configOriginale) {
+                    optionsModifiees = true;
+                    // Recalcul du prix de base de la jante nue en fonction des composants restants
+                    if (configOriginale.includes('+115€')) item.price -= 115;
+                    if (configOriginale.includes('+25€')) item.price -= 25;
+                    if (configOriginale.includes('+48€')) item.price -= 48;
+                    if (configOriginale.includes('+159€')) item.price -= 159;
+                    if (configOriginale.includes('+89€')) item.price -= 89;
+                    if (configOriginale.includes('+70€')) item.price -= 70;
+                    if (configOriginale.includes('+90€')) item.price -= 90;
+                    
+                    // Ajustement du poids visuel estimé
+                    item.weight = "990"; // Poids standard de la Ghost 50 nue en jante UXL
+                }
+            }
         });
-        
-        if (cart.length < previousLength) {
-            showCustomAlert("📍 Mode Métropole activé : Les accessoires (pneus, TPU, disques, plaquettes, cassettes) ont été retirés de votre panier car ils sont réservés aux montages physiques à notre atelier de La Réunion.");
+
+        // Filtrage des accessoires commandés seuls (hors jantes)
+        cart = cart.filter(item => !item.isAccessory);
+
+        if (optionsModifiees) {
+            showCustomAlert("📍 Mode Métropole activé : Les accessoires (pneus, TPU, disques, plaquettes) ont été retirés de votre configuration car ils sont réservés aux montages physiques à notre atelier de La Réunion. Le prix a été mis à jour.");
         }
     } else {
         if (btnReunion) btnReunion.className = "flex-1 py-2 text-xs font-black rounded-lg bg-brand-main text-white shadow-sm border border-brand-main transition-all";
         if (btnMetropole) btnMetropole.className = "flex-1 py-2 text-xs font-bold rounded-lg bg-white text-gray-500 hover:text-brand-main border border-gray-300 transition-all";
         
-        // Ré-afficher le 3X et masquer le 50/50
         if (opt3x) opt3x.classList.remove('hidden');
-        if (opt5050) {
-            opt5050.classList.add('hidden');
-            opt5050.classList.remove('flex');
-        }
+        if (opt5050) { opt5050.classList.add('hidden'); opt5050.classList.remove('flex'); }
         
-        // Si 50/50 était coché, on re-bascule sur 3X
         const radio5050 = document.querySelector('input[name="payment-method"][value="5050_metropole"]');
         const radio3x = document.querySelector('input[name="payment-method"][value="3x_pei"]');
-        if (radio5050 && radio5050.checked && radio3x) {
-            radio3x.checked = true;
-        }
+        if (radio5050 && radio5050.checked && radio3x) radio3x.checked = true;
     }
     updateCartUI();
 }
