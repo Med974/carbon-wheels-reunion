@@ -1759,7 +1759,7 @@ function setDeliveryZone(zone) {
         });
         
         if (cart.length < previousLength) {
-            alert("📍 Mode Métropole activé : Les accessoires (pneus, TPU, disques, plaquettes, cassettes) ont été retirés de votre panier car ils sont réservés aux montages physiques à notre atelier de La Réunion.");
+            showCustomAlert("📍 Mode Métropole activé : Les accessoires (pneus, TPU, disques, plaquettes, cassettes) ont été retirés de votre panier car ils sont réservés aux montages physiques à notre atelier de La Réunion.");
         }
     } else {
         if (btnReunion) btnReunion.className = "flex-1 py-2 text-xs font-black rounded-lg bg-brand-main text-white shadow-sm border border-brand-main transition-all";
@@ -1780,6 +1780,24 @@ function setDeliveryZone(zone) {
         }
     }
     updateCartUI();
+}
+
+function showCustomAlert(message) {
+    const alertModal = document.getElementById('custom-alert-modal');
+    const alertText = document.getElementById('custom-alert-text');
+    if (alertModal && alertText) {
+        alertText.textContent = message;
+        alertModal.classList.remove('hidden');
+        alertModal.classList.add('flex');
+    }
+}
+
+function closeCustomAlert() {
+    const alertModal = document.getElementById('custom-alert-modal');
+    if (alertModal) {
+        alertModal.classList.add('hidden');
+        alertModal.classList.remove('flex');
+    }
 }
 
 loadCatalogue();
