@@ -1040,7 +1040,7 @@
                         <!-- ========================================== -->
                         <!-- DÉBUT DE L'ENCART VERT ACCESSOIRES (10-14) -->
                         <!-- ========================================== -->
-                        <div class="md:col-span-2 bg-green-50 border border-green-200 rounded-xl p-4 mb-3 shadow-sm">
+                        <div id="green-accessory-box" class="md:col-span-2 bg-green-50 border border-green-200 rounded-xl p-4 mb-3 shadow-sm">
                             
                             <!-- En-tête de l'encart -->
                             <div class="flex items-center mb-4 border-b border-green-200 pb-2">
@@ -1151,6 +1151,19 @@
             <button onclick="toggleCart()" class="text-gray-300 hover:text-white"><i class="fa-solid fa-xmark text-2xl px-2"></i></button>
         </div>
 
+        <!-- SÉLECTEUR DE ZONE DE LIVRAISON -->
+        <div class="p-4 bg-gray-100 border-b border-gray-200 shrink-0">
+            <label class="block text-[10px] font-black text-gray-500 mb-2 uppercase tracking-wider">📍 Ma zone de livraison :</label>
+            <div class="flex gap-2">
+                <button type="button" id="zone-reunion" onclick="setDeliveryZone('reunion')" class="flex-1 py-2 text-xs font-black rounded-lg bg-brand-main text-white shadow-sm border border-brand-main transition-all">
+                    🇷🇪 La Réunion
+                </button>
+                <button type="button" id="zone-metropole" onclick="setDeliveryZone('metropole')" class="flex-1 py-2 text-xs font-bold rounded-lg bg-white text-gray-500 hover:text-brand-main border border-gray-300 transition-all">
+                    🇫🇷 Métropole
+                </button>
+            </div>
+        </div>
+        
         <!-- ZONE DÉFILANTE -->
         <div class="flex-grow overflow-y-auto bg-gray-50 flex flex-col relative">
             
@@ -1204,6 +1217,16 @@
                                     <span class="block text-[11px] text-green-600 font-bold mt-0.5"><i class="fa-solid fa-check mr-1"></i>0€ de frais de dossier</span>
                                 </div>
                                 <div class="text-brand-accent text-xl"><i class="fa-solid fa-handshake"></i></div>
+                            </label>
+                            <!-- Option 50/50 Métropole (Cachée par défaut) -->
+                            <label id="option-pay-5050" class="flex items-start gap-3 cursor-pointer p-3 border border-gray-200 rounded-md bg-white hover:bg-gray-50 transition hidden">
+                                <input type="radio" name="payment-method" value="5050_metropole" class="mt-1 text-brand-accent focus:ring-brand-accent" onchange="updateCartUI()">
+                                <div class="flex-grow">
+                                    <span class="block text-sm font-bold text-gray-900">Paiement en 2X Karbòn Péi</span>
+                                    <span class="block text-xs text-gray-500 font-medium">50% à la commande / 50% avant expédition</span>
+                                    <span class="block text-[11px] text-green-600 font-bold mt-0.5"><i class="fa-solid fa-check mr-1"></i>Garantie Zéro frais de douane</span>
+                                </div>
+                                <div class="text-brand-accent text-xl"><i class="fa-solid fa-arrows-split-up-and-left"></i></div>
                             </label>
                         </div>
                     </div>
