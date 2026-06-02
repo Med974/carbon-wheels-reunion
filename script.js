@@ -3,6 +3,7 @@ const API_URL = 'https://script.google.com/macros/s/AKfycbwi5uRAIjQ2vjbL7h9_LWAU
 let globalCatalogue = [];
 let currentLenticulaireMode = "achat"; // "achat" ou "location"
 let unavailableRentalDates = []; // Liste des dates bloquées renvoyées par le Sheet
+let currentDeliveryZone = "reunion"; // "reunion" ou "metropole"
 let currentBasePrice = 0;
 let currentBaseWeight = 0;
 let isCurrentItemAccessory = false;
@@ -282,6 +283,9 @@ function updateCartUI() {
         } else if (paymentMethod === '3x_pei') {
             checkoutBtn.className = "w-full bg-brand-main hover:bg-gray-800 transition-colors text-white font-bold py-4 rounded-xl shadow-md";
             checkoutBtn.innerHTML = 'Valider la réservation en 3X <i class="fa-solid fa-handshake ml-2 text-xl"></i>';
+        } else if (paymentMethod === '5050_metropole') {
+            checkoutBtn.className = "w-full bg-brand-main hover:bg-gray-800 transition-colors text-white font-bold py-4 rounded-xl shadow-md";
+            checkoutBtn.innerHTML = 'Valider mon acompte de 50% <i class="fa-solid fa-percent ml-2 text-xl"></i>';
         }
     }
 
@@ -491,6 +495,9 @@ function submitOrder() {
     } else if (paymentMethodVal === '3x_pei') {
         transactionFees = 0;
         paymentMethodName = "Paiement en 3X Karbòn Péi (Sans frais)";
+    } else if (paymentMethodVal === '5050_metropole') {
+        transactionFees = 0;
+        paymentMethodName = "Paiement en 2X Karbòn Péi (Sans frais)";
     }
     
     transactionFees = Math.round(transactionFees * 100) / 100;
@@ -549,6 +556,9 @@ function submitOrder() {
             } else if(paymentMethodVal === 'card1x') {
                 successPayText.textContent = "le lien Stripe sécurisé pour le paiement par carte";
             } else if(paymentMethodVal === '3x_pei') {
+                successPayText.textContent = "le récapitulatif pour effectuer ton premier versement (50%) et lancer la production à l'usine";
+            } else if(paymentMethodVal === '5050_metropole') {
+                const acompte = finalTotal / 2;
                 successPayText.textContent = "le récapitulatif pour effectuer ton premier versement (50%) et lancer la production à l'usine";
             }
         }
@@ -1094,6 +1104,21 @@ function openModal(index) {
             if (blocModeLenti) blocModeLenti.style.display = 'none';
             if (blocLocationDetails) blocLocationDetails.style.display = 'none';
         }
+
+        const submitBtn = document.querySelector('button[onclick="addToCart()"]');
+        if (isCurrentItemAccessory && currentDeliveryZone === 'metropole') {
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.className = "w-full bg-gray-300 text-gray-500 font-bold py-3 rounded-xl flex justify-center items-center gap-3 cursor-not-allowed shrink-0";
+                submitBtn.innerHTML = 'Indisponible en Métropole (Retrait Réunion uniquement) <i class="fa-solid fa-ban text-xl"></i>';
+            }
+        } else {
+            if (submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.className = "w-full bg-brand-accent hover:bg-yellow-400 text-brand-main font-bold py-3 rounded-xl flex justify-center items-center gap-3 transition shadow-lg shrink-0";
+                submitBtn.innerHTML = 'Ajouter au panier <i class="fa-solid fa-cart-plus text-xl"></i>';
+            }
+        }
 		
         const pModal = document.getElementById('product-modal');
         if (pModal) {
@@ -1418,6 +1443,9 @@ function updateConfig() {
             larExtEl.textContent = '32 mm';
         }
     }
+
+	const plaquettesSelect = document.getElementById('config-plaquettes');
+    const cassettesSelect = document.getElementById('config-cassettes');
     
     const msgRecoR2 = document.getElementById('msg-reco-r2');
     const t32Option = document.getElementById('opt-t32');
@@ -1468,6 +1496,22 @@ function updateConfig() {
         return parseInt(el.options[el.selectedIndex].getAttribute('data-price')) || 0;
     };
 
+    const greenBox = document.getElementById('green-accessory-box');
+    if (greenBox) {
+        if (currentDeliveryZone === 'metropole') {
+            greenBox.style.display = 'none';
+            // Force les valeurs d'accessoires à zéro pour ne pas fausser le prix
+            if (pneusSelect) pneusSelect.value = 'Aucun';
+            if (bidonsSelect) bidonsSelect.value = 'Aucun';
+            if (tpuSelect) tpuSelect.value = 'Aucun';
+            if (disquesSelect) disquesSelect.value = 'Aucun';
+            if (plaquettesSelect) plaquettesSelect.value = 'Aucun';
+            if (cassettesSelect) cassettesSelect.value = 'Aucune';
+        } else {
+            greenBox.style.display = 'block';
+        }
+    }
+	
     const moyeuPrice = getPrice(moyeuSelect);
     const rayonPrice = getPrice(rayonSelect);
     const colorPrice = getPrice(colorSelect);
@@ -1476,7 +1520,6 @@ function updateConfig() {
     const finitionPrice = getPrice(finitionSelect);
 
     // --- AJOUT : ON RÉCUPÈRE LE PRIX DES PLAQUETTES ---
-    const plaquettesSelect = document.getElementById('config-plaquettes');
     const plaquettesPrice = plaquettesSelect && plaquettesSelect.selectedIndex >= 0 ? (parseInt(plaquettesSelect.options[plaquettesSelect.selectedIndex].getAttribute('data-price')) || 0) : 0;
 	
     const pneusPrice = getPrice(pneusSelect);
@@ -1679,6 +1722,64 @@ function checkDateAvailability() {
         submitBtn.disabled = false;
         submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
     }
+}
+
+function setDeliveryZone(zone) {
+    currentDeliveryZone = zone;
+    const btnReunion = document.getElementById('zone-reunion');
+    const btnMetropole = document.getElementById('zone-metropole');
+    
+    const opt3x = document.querySelector('input[name="payment-method"][value="3x_pei"]')?.parentElement;
+    const opt5050 = document.getElementById('option-pay-5050');
+    
+    if (zone === 'metropole') {
+        if (btnReunion) btnReunion.className = "flex-1 py-2 text-xs font-bold rounded-lg bg-white text-gray-500 hover:text-brand-main border border-gray-300 transition-all";
+        if (btnMetropole) btnMetropole.className = "flex-1 py-2 text-xs font-black rounded-lg bg-brand-main text-white shadow-sm border border-brand-main transition-all";
+        
+        // Masquer le 3X et afficher le 50/50
+        if (opt3x) opt3x.classList.add('hidden');
+        if (opt5050) {
+            opt5050.classList.remove('hidden');
+            opt5050.classList.add('flex');
+        }
+        
+        // Si 3X était coché, on re-bascule sur 50/50
+        const radio3x = document.querySelector('input[name="payment-method"][value="3x_pei"]');
+        const radio5050 = document.querySelector('input[name="payment-method"][value="5050_metropole"]');
+        if (radio3x && radio3x.checked && radio5050) {
+            radio5050.checked = true;
+        }
+        
+        // Nettoyage du panier : on filtre les accessoires hors roues
+        const previousLength = cart.length;
+        cart = cart.filter(item => {
+            const titleLC = item.title.toLowerCase();
+            const isAccessoryItem = item.isAccessory || titleLC.includes('pneu') || titleLC.includes('tpu') || titleLC.includes('chambre') || titleLC.includes('disque') || titleLC.includes('plaquette') || titleLC.includes('cassette') || titleLC.includes('bidon');
+            return !isAccessoryItem;
+        });
+        
+        if (cart.length < previousLength) {
+            alert("📍 Mode Métropole activé : Les accessoires (pneus, TPU, disques, plaquettes, cassettes) ont été retirés de votre panier car ils sont réservés aux montages physiques à notre atelier de La Réunion.");
+        }
+    } else {
+        if (btnReunion) btnReunion.className = "flex-1 py-2 text-xs font-black rounded-lg bg-brand-main text-white shadow-sm border border-brand-main transition-all";
+        if (btnMetropole) btnMetropole.className = "flex-1 py-2 text-xs font-bold rounded-lg bg-white text-gray-500 hover:text-brand-main border border-gray-300 transition-all";
+        
+        // Ré-afficher le 3X et masquer le 50/50
+        if (opt3x) opt3x.classList.remove('hidden');
+        if (opt5050) {
+            opt5050.classList.add('hidden');
+            opt5050.classList.remove('flex');
+        }
+        
+        // Si 50/50 était coché, on re-bascule sur 3X
+        const radio5050 = document.querySelector('input[name="payment-method"][value="5050_metropole"]');
+        const radio3x = document.querySelector('input[name="payment-method"][value="3x_pei"]');
+        if (radio5050 && radio5050.checked && radio3x) {
+            radio3x.checked = true;
+        }
+    }
+    updateCartUI();
 }
 
 loadCatalogue();
