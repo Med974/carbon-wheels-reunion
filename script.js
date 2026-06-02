@@ -1823,20 +1823,23 @@ function closeCustomAlert() {
 function getFridayOfWeek(dateStr) {
     if (!dateStr) return "";
     const parts = dateStr.split('-');
-    // Création de la date en local pour éviter les décalages de fuseau horaire
+    // Création de la date en local
     const d = new Date(parts[0], parts[1] - 1, parts[2]);
     const day = d.getDay(); // 0: Dimanche, 1: Lundi, ..., 6: Samedi
     
     let daysToFriday = 5 - day;
     if (day === 0) {
-        daysToFriday = -2; // Dimanche est 2 jours après le vendredi
+        daysToFriday = -2; // CORRECTION : Le dimanche recule de 2 jours pour atteindre le vendredi d'avant
     } else if (day === 6) {
-        daysToFriday = -1; // Samedi est 1 jour après le vendredi
+        daysToFriday = -1; // Le samedi recule de 1 jour pour atteindre le vendredi d'avant
+    } else if (day >= 1 && day <= 4) {
+        // Optionnel : Si un client choisit en semaine (Lun-Jeu), on le rattache aussi au vendredi qui arrive
+        daysToFriday = 5 - day;
     }
     
     d.setDate(d.getDate() + daysToFriday);
     
-    // Formatage propre en YYYY-MM-DD
+    // Formatage en YYYY-MM-DD
     const year = d.getFullYear();
     const month = String(d.getMonth() + 1).padStart(2, '0');
     const date = String(d.getDate()).padStart(2, '0');
