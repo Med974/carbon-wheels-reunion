@@ -10,7 +10,6 @@ let isCurrentItemAccessory = false;
 let isCurrentItemWheelConfigurable = false;
 let currentItemStatut = "";
 let unavailableTestDates = [];
-let currentItemStatut = "";
 
 let cart = [];
 let appliedPromo = null;
