@@ -948,10 +948,15 @@ function openModal(index) {
             if(cWeight) cWeight.textContent = currentBaseWeight > 0 ? currentBaseWeight : '978';
             updateBadgeUI(false, "Disponible à l'essai");
 
-            const dateInputTest = document.getElementById('config-date-test');
+			const dateInputTest = document.getElementById('config-date-test');
             if(dateInputTest) {
+                const dateDispoTest = "2026-07-25"; 
                 const aujourdhui = new Date().toISOString().split('T')[0];
-                dateInputTest.min = aujourdhui;
+                if (aujourdhui < dateDispoTest) {
+                    dateInputTest.min = dateDispoTest;
+                } else {
+                    dateInputTest.min = aujourdhui;
+                }
             }
             fetchUnavailableTestDates();
             
