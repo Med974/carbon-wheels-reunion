@@ -9,6 +9,8 @@ let currentBaseWeight = 0;
 let isCurrentItemAccessory = false;
 let isCurrentItemWheelConfigurable = false;
 let currentItemStatut = "";
+let unavailableTestDates = [];
+let currentItemStatut = "";
 
 let cart = [];
 let appliedPromo = null;
@@ -94,10 +96,16 @@ function addToCart() {
         const imgEl = document.getElementById('modal-image');
         let imgUrl = imgEl ? imgEl.src : ""; 
 
-        const configSection = document.getElementById('configurator-section');
+		const configSection = document.getElementById('configurator-section');
 
         if (isCurrentItemWheelConfigurable || (configSection && configSection.style.display !== 'none')) {
-            if (titleLC.includes('manivelle')) {
+            if (isCurrentItemTestProgram) {
+                const dateEl = document.getElementById('config-date-test');
+                const dateLoc = dateEl && dateEl.value ? getFridayOfWeek(dateEl.value) : "Date non précisée";
+                configText = `Week-end du : ${dateLoc} | GHOST 50mm Glossy, Moyeux RT240, Rayons T32`;
+                finalPrice = 50;
+                finalWeight = 978;
+            } else if (titleLC.includes('manivelle')) {
                 const modeleEl = document.getElementById('config-modele-manivelle');
                 const modele = modeleEl ? modeleEl.options[modeleEl.selectedIndex].text : "";
                 const manivelleEl = document.getElementById('config-longueur-manivelle');
@@ -836,9 +844,10 @@ function openModal(index) {
         currentBaseWeight = parseInt(item.Poids) || 0;
         currentItemStatut = item.Statut || "";
         
-        const nomLC = item.Nom ? String(item.Nom).toLowerCase() : "";
+		const nomLC = item.Nom ? String(item.Nom).toLowerCase() : "";
         isCurrentItemAccessory = (item.Categorie && (String(item.Categorie).toLowerCase().includes('accessoire') || String(item.Categorie).toLowerCase().includes('composant')));
-        isCurrentItemWheelConfigurable = !isCurrentItemAccessory && !nomLC.includes('bâton') && !nomLC.includes('tri-spoke') && !nomLC.includes('lenticulaire') && !nomLC.includes('disc') && !nomLC.includes('manivelle');
+        isCurrentItemTestProgram = nomLC.includes('test') || nomLC.includes('essai');
+        isCurrentItemWheelConfigurable = !isCurrentItemAccessory && !isCurrentItemTestProgram && !nomLC.includes('bâton') && !nomLC.includes('tri-spoke') && !nomLC.includes('lenticulaire') && !nomLC.includes('disc') && !nomLC.includes('manivelle');
 
         const isSpecialWheel = nomLC.includes('bâton') || nomLC.includes('tri-spoke') || nomLC.includes('lenticulaire') || nomLC.includes('disc');
         
@@ -911,9 +920,10 @@ function openModal(index) {
         const poidsMaxContainer = document.getElementById('modal-poids-max-container');
         const configuratorSection = document.getElementById('configurator-section');
         const wheelConfigOptions = document.getElementById('wheel-config-options');
-        const manivellesConfigContainer = document.getElementById('config-manivelles-container');
+		const manivellesConfigContainer = document.getElementById('config-manivelles-container');
         const accessoryConfigContainer = document.getElementById('accessory-config-container');
         const specialWheelConfigContainer = document.getElementById('special-wheel-config-container');
+        const testConfigContainer = document.getElementById('test-program-config-container');
 		// FORCER LE MASQUAGE DES MENUS SPÉCIAUX POUR TOUS LES AUTRES PRODUITS
         const blocRatchetSpecial = document.getElementById('bloc-ratchet-special');
         if (blocRatchetSpecial) blocRatchetSpecial.style.display = 'none';
@@ -922,25 +932,50 @@ function openModal(index) {
 		const blocStickerLenti = document.getElementById('bloc-sticker-lenticulaire');
         if (blocStickerLenti) blocStickerLenti.style.display = 'none';
         
-        if (nomLC.includes('manivelle')) {
+		if (isCurrentItemTestProgram) {
+            if(specJantesBox) specJantesBox.style.display = 'none';
+            if(configuratorSection) configuratorSection.style.display = 'block';
+            if(wheelConfigOptions) wheelConfigOptions.style.display = 'none';
+            if(manivellesConfigContainer) manivellesConfigContainer.style.display = 'none';
+            if(accessoryConfigContainer) accessoryConfigContainer.style.display = 'none';
+            if(specialWheelConfigContainer) specialWheelConfigContainer.style.display = 'none';
+            if(testConfigContainer) testConfigContainer.style.display = 'block';
+            if(poidsMaxContainer) poidsMaxContainer.style.display = 'none';
+            
+            const cPrice = document.getElementById('calc-price');
+            if(cPrice) cPrice.textContent = 50;
+            const cWeight = document.getElementById('calc-weight');
+            if(cWeight) cWeight.textContent = currentBaseWeight > 0 ? currentBaseWeight : '978';
+            updateBadgeUI(false, "Disponible à l'essai");
+
+            const dateInputTest = document.getElementById('config-date-test');
+            if(dateInputTest) {
+                const aujourdhui = new Date().toISOString().split('T')[0];
+                dateInputTest.min = aujourdhui;
+            }
+            fetchUnavailableTestDates();
+            
+        } else if (nomLC.includes('manivelle')) {
             if(specJantesBox) specJantesBox.style.display = 'none';
             if(configuratorSection) configuratorSection.style.display = 'block';
             if(wheelConfigOptions) wheelConfigOptions.style.display = 'none';
             if(manivellesConfigContainer) manivellesConfigContainer.style.display = 'block';
             if(accessoryConfigContainer) accessoryConfigContainer.style.display = 'none';
 			if(specialWheelConfigContainer) specialWheelConfigContainer.style.display = 'none';
+            if(testConfigContainer) testConfigContainer.style.display = 'none';
             
             const cPrice = document.getElementById('calc-price');
             if(cPrice) cPrice.textContent = currentBasePrice > 0 ? currentBasePrice : '--';
             const cWeight = document.getElementById('calc-weight');
             if(cWeight) cWeight.textContent = currentBaseWeight > 0 ? currentBaseWeight : '--';
             updateBadgeUI(true);
-        } else if (isCurrentItemAccessory) {
+		} else if (isCurrentItemAccessory) {
             if(specJantesBox) specJantesBox.style.display = 'none';
             if(configuratorSection) configuratorSection.style.display = 'block';
             if(wheelConfigOptions) wheelConfigOptions.style.display = 'none';
             if(manivellesConfigContainer) manivellesConfigContainer.style.display = 'none';
 			if(specialWheelConfigContainer) specialWheelConfigContainer.style.display = 'none';
+            if(testConfigContainer) testConfigContainer.style.display = 'none';
             if(poidsMaxContainer) poidsMaxContainer.style.display = 'none';
             
             if(accessoryConfigContainer) accessoryConfigContainer.style.display = 'block';
@@ -984,7 +1019,7 @@ function openModal(index) {
             if(qteEl) qteEl.value = '1';
             
             updateConfig();
-        } else if (isCurrentItemWheelConfigurable) {
+		} else if (isCurrentItemWheelConfigurable) {
             if(specJantesBox) specJantesBox.style.display = 'block';
             if(configuratorSection) configuratorSection.style.display = 'block';
             if(wheelConfigOptions) wheelConfigOptions.style.display = 'block';
@@ -992,6 +1027,7 @@ function openModal(index) {
             if(accessoryConfigContainer) accessoryConfigContainer.style.display = 'none';
             if(poidsMaxContainer) poidsMaxContainer.style.display = 'block';
 			if(specialWheelConfigContainer) specialWheelConfigContainer.style.display = 'none';
+            if(testConfigContainer) testConfigContainer.style.display = 'none';
             
             const optUxl = document.getElementById('opt-uxl');
             if (optUxl) {
@@ -1061,12 +1097,13 @@ function openModal(index) {
                 }
             }
             // ------------------------------------------------
-            if(specJantesBox) specJantesBox.style.display = 'block';
+			if(specJantesBox) specJantesBox.style.display = 'block';
             if(configuratorSection) configuratorSection.style.display = 'block';
             if(wheelConfigOptions) wheelConfigOptions.style.display = 'none';
             if(manivellesConfigContainer) manivellesConfigContainer.style.display = 'none';
             if(accessoryConfigContainer) accessoryConfigContainer.style.display = 'none';
             if(specialWheelConfigContainer) specialWheelConfigContainer.style.display = 'block';
+            if(testConfigContainer) testConfigContainer.style.display = 'none';
             if(poidsMaxContainer) poidsMaxContainer.style.display = 'none';
             
             const cPrice = document.getElementById('calc-price');
@@ -1105,8 +1142,8 @@ function openModal(index) {
             if (blocLocationDetails) blocLocationDetails.style.display = 'none';
         }
 
-        const submitBtn = document.querySelector('button[onclick="addToCart()"]');
-        if (isCurrentItemAccessory && currentDeliveryZone === 'metropole') {
+		const submitBtn = document.querySelector('button[onclick="addToCart()"]');
+        if ((isCurrentItemAccessory || isCurrentItemTestProgram) && currentDeliveryZone === 'metropole') {
             if (submitBtn) {
                 submitBtn.disabled = true;
                 submitBtn.className = "w-full bg-gray-300 text-gray-500 font-bold py-3 rounded-xl flex justify-center items-center gap-3 cursor-not-allowed shrink-0";
@@ -1724,6 +1761,42 @@ function checkDateAvailability() {
     }
 }
 
+async function fetchUnavailableTestDates() {
+    try {
+        // En attendant une liaison Google Sheet complète pour le test,
+        // on initialise la liste à vide. (Sera connecté plus tard si besoin)
+        unavailableTestDates = []; 
+        checkTestDateAvailability();
+    } catch (error) {
+        console.error("Impossible de charger le calendrier d'essai :", error);
+    }
+}
+
+function checkTestDateAvailability() {
+    if (!isCurrentItemTestProgram) return;
+    
+    const dateInput = document.getElementById('config-date-test');
+    const alertEpuise = document.getElementById('alert-test-epuisee');
+    const submitBtn = document.querySelector('button[onclick="addToCart()"]');
+    
+    if (!dateInput || !submitBtn) return;
+    
+    const dateSelectionnee = getFridayOfWeek(dateInput.value);
+    
+    if (dateSelectionnee && unavailableTestDates.includes(dateSelectionnee)) {
+        if (alertEpuise) {
+            alertEpuise.classList.remove('hidden');
+            alertEpuise.classList.add('flex');
+        }
+        submitBtn.disabled = true;
+        submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
+    } else {
+        if (alertEpuise) alertEpuise.classList.add('hidden');
+        submitBtn.disabled = false;
+        submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+    }
+}
+
 function setDeliveryZone(zone) {
     currentDeliveryZone = zone;
     const btnReunion = document.getElementById('zone-reunion');
@@ -1781,11 +1854,19 @@ function setDeliveryZone(zone) {
             }
         });
 
-        // Filtrage des accessoires commandés seuls (hors jantes)
-        cart = cart.filter(item => !item.isAccessory);
+		// Filtrage des accessoires commandés seuls (hors jantes) et des programmes d'essai
+        let hadTestsOrAcc = false;
+        cart = cart.filter(item => {
+            const isTest = item.title.toLowerCase().includes('test') || item.title.toLowerCase().includes('essai');
+            if (item.isAccessory || isTest) {
+                hadTestsOrAcc = true;
+                return false;
+            }
+            return true;
+        });
 
-        if (optionsModifiees) {
-            showCustomAlert("📍 Mode Métropole activé : Les accessoires (pneus, TPU, disques, plaquettes) ont été retirés de votre configuration car ils sont réservés aux montages physiques à notre atelier de La Réunion. Le prix a été mis à jour.");
+        if (optionsModifiees || hadTestsOrAcc) {
+            showCustomAlert("📍 Mode Métropole activé : Les accessoires ou programmes d'essai ont été retirés de votre panier car ils sont réservés aux clients de La Réunion. Le prix a été mis à jour.");
         }
     } else {
         if (btnReunion) btnReunion.className = "flex-1 py-2 text-xs font-black rounded-lg bg-brand-main text-white shadow-sm border border-brand-main transition-all";
