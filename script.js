@@ -10,6 +10,8 @@ let isCurrentItemAccessory = false;
 let isCurrentItemWheelConfigurable = false;
 let currentItemStatut = "";
 let unavailableTestDates = [];
+let isCurrentItemTestProgram = false;
+let isCurrentItemStockReady = false;
 
 let cart = [];
 let appliedPromo = null;
@@ -846,6 +848,7 @@ function openModal(index) {
 		const nomLC = item.Nom ? String(item.Nom).toLowerCase() : "";
         isCurrentItemAccessory = (item.Categorie && (String(item.Categorie).toLowerCase().includes('accessoire') || String(item.Categorie).toLowerCase().includes('composant')));
         isCurrentItemTestProgram = nomLC.includes('test') || nomLC.includes('essai');
+		isCurrentItemStockReady = nomLC.includes('prêt-à-rouler') || nomLC.includes('pret-a-rouler');
         isCurrentItemWheelConfigurable = !isCurrentItemAccessory && !isCurrentItemTestProgram && !nomLC.includes('bâton') && !nomLC.includes('tri-spoke') && !nomLC.includes('lenticulaire') && !nomLC.includes('disc') && !nomLC.includes('manivelle');
 
         const isSpecialWheel = nomLC.includes('bâton') || nomLC.includes('tri-spoke') || nomLC.includes('lenticulaire') || nomLC.includes('disc');
@@ -1044,35 +1047,68 @@ function openModal(index) {
                 }
             }
             
-            const mHub = document.getElementById('config-moyeu');
-            if(mHub) { mHub.value = 'R2'; lastHubSelected = 'R2'; }
-            
+			const mHub = document.getElementById('config-moyeu');
             const mJante = document.getElementById('config-jante');
-            if(mJante) mJante.value = 'UXL';
             const mRayons = document.getElementById('config-rayons');
-            if(mRayons) mRayons.value = 'T33';
             const mFinition = document.getElementById('config-finition');
-            if(mFinition) mFinition.value = 'Glossy Black'; 
             const mLogos = document.getElementById('config-logos');
-            if(mLogos) mLogos.value = 'Petit logo noir';
             const mRouelibre = document.getElementById('config-rouelibre');
-            if(mRouelibre) mRouelibre.value = 'Shimano HG';
             const mFreinage = document.getElementById('config-freinage');
-            if(mFreinage) mFreinage.value = 'Disques';
-            
-            // Réinitialiser les 3 menus déroulants (Étapes 10, 11, 12)
+
+            // Réinitialiser les menus d'accessoires
             const mPneus = document.getElementById('config-pneus');
             if(mPneus) mPneus.value = 'Aucun';
             const mBidons = document.getElementById('config-bidons');
             if(mBidons) mBidons.value = 'Aucun';
             const mTpu = document.getElementById('config-tpu');
             if(mTpu) mTpu.value = 'Aucun';
+
+            const bannerStock = document.getElementById('stock-locked-banner');
+
+            // VERROUILLAGE SI C'EST LE PACK "PRÊT-À-ROULER"
+            if (isCurrentItemStockReady) {
+                if(bannerStock) bannerStock.classList.remove('hidden');
+
+                if(mHub) { mHub.value = 'R2'; mHub.disabled = true; lastHubSelected = 'R2'; }
+                if(mJante) { mJante.value = 'SUXL'; mJante.disabled = true; } // Par défaut sur SUXL, à modifier par UXL si besoin
+                if(mRayons) { mRayons.value = 'T33'; mRayons.disabled = true; }
+                if(mFinition) { mFinition.value = 'Glossy Black'; mFinition.disabled = true; }
+                if(mLogos) { mLogos.value = 'Petit logo noir'; mLogos.disabled = true; }
+                if(mFreinage) { mFreinage.value = 'Disques'; mFreinage.disabled = true; }
+                if(mRouelibre) { mRouelibre.value = 'Shimano HG'; mRouelibre.disabled = false; } // Laissé déverrouillé au cas où tu aurais un corps SRAM
+
+                updateHubOptions(); 
+
+                const cColor = document.getElementById('config-couleur-moyeu');
+                if(cColor) { cColor.value = 'Noir'; cColor.disabled = true; }
+                const cRatchet = document.getElementById('config-ratchet');
+                if(cRatchet) { cRatchet.value = '45T'; cRatchet.disabled = true; }
+                const cRoulements = document.getElementById('config-roulements');
+                if(cRoulements) { cRoulements.value = 'Acier EZO'; cRoulements.disabled = true; }
+
+            } else {
+                // DÉVERROUILLAGE SI C'EST UNE ROUE SUR MESURE NORMALE
+                if(bannerStock) bannerStock.classList.add('hidden');
+
+                if(mHub) { mHub.value = 'R2'; mHub.disabled = false; lastHubSelected = 'R2'; }
+                if(mJante) { mJante.value = 'UXL'; mJante.disabled = false; }
+                if(mRayons) { mRayons.value = 'T33'; mRayons.disabled = false; }
+                if(mFinition) { mFinition.value = 'Glossy Black'; mFinition.disabled = false; }
+                if(mLogos) { mLogos.value = 'Petit logo noir'; mLogos.disabled = false; }
+                if(mFreinage) { mFreinage.value = 'Disques'; mFreinage.disabled = false; }
+                if(mRouelibre) { mRouelibre.value = 'Shimano HG'; mRouelibre.disabled = false; }
+
+                updateHubOptions(); 
+
+                const cColor = document.getElementById('config-couleur-moyeu');
+                if(cColor) { cColor.value = 'Noir'; cColor.disabled = false; }
+                const cRatchet = document.getElementById('config-ratchet');
+                if(cRatchet) { cRatchet.disabled = false; }
+                const cRoulements = document.getElementById('config-roulements');
+                if(cRoulements) { cRoulements.disabled = false; }
+            }
             
-            updateHubOptions(); 
-            const cColor = document.getElementById('config-couleur-moyeu');
-            if(cColor) cColor.value = 'Noir'; 
-            
-            updateConfig(); 
+            updateConfig();
         } else if (isSpecialWheel) {
             const groupeRouelibre = document.getElementById('groupe-rouelibre-special');
             if (groupeRouelibre) {
