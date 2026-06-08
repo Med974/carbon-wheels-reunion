@@ -848,7 +848,7 @@ function openModal(index) {
 		const nomLC = item.Nom ? String(item.Nom).toLowerCase() : "";
         isCurrentItemAccessory = (item.Categorie && (String(item.Categorie).toLowerCase().includes('accessoire') || String(item.Categorie).toLowerCase().includes('composant')));
         isCurrentItemTestProgram = nomLC.includes('test') || nomLC.includes('essai');
-		isCurrentItemStockReady = nomLC.includes('prêt-à-rouler') || nomLC.includes('pret a rouler');
+		isCurrentItemStockReady = nomLC.includes('prêt-à-rouler') || nomLC.includes('pret-a-rouler') || nomLC.includes('prêt à rouler') || nomLC.includes('pret a rouler');
         isCurrentItemWheelConfigurable = !isCurrentItemAccessory && !isCurrentItemTestProgram && !nomLC.includes('bâton') && !nomLC.includes('tri-spoke') && !nomLC.includes('lenticulaire') && !nomLC.includes('disc') && !nomLC.includes('manivelle');
 
         const isSpecialWheel = nomLC.includes('bâton') || nomLC.includes('tri-spoke') || nomLC.includes('lenticulaire') || nomLC.includes('disc');
