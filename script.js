@@ -927,13 +927,17 @@ function openModal(index) {
         const specialWheelConfigContainer = document.getElementById('special-wheel-config-container');
         const testConfigContainer = document.getElementById('test-program-config-container');
 		// FORCER LE MASQUAGE DES MENUS SPÉCIAUX POUR TOUS LES AUTRES PRODUITS
-        const blocRatchetSpecial = document.getElementById('bloc-ratchet-special');
-        if (blocRatchetSpecial) blocRatchetSpecial.style.display = 'none';
-        const blocLargeurSpecial = document.getElementById('bloc-largeur-special');
-        if (blocLargeurSpecial) blocLargeurSpecial.style.display = 'none';
+		const blocRatchetSpecial = document.getElementById('bloc-ratchet-special');
+		if (blocRatchetSpecial) blocRatchetSpecial.style.display = 'none';
+		const blocLargeurSpecial = document.getElementById('bloc-largeur-special');
+		if (blocLargeurSpecial) blocLargeurSpecial.style.display = 'none';
 		const blocStickerLenti = document.getElementById('bloc-sticker-lenticulaire');
-        if (blocStickerLenti) blocStickerLenti.style.display = 'none';
-        
+		if (blocStickerLenti) blocStickerLenti.style.display = 'none';
+		
+		// MASQUAGE DE LA BANNIÈRE STOCK PAR DÉFAUT À CHAQUE OUVERTURE
+		const mainBannerStock = document.getElementById('stock-locked-banner');
+		if (mainBannerStock) mainBannerStock.classList.add('hidden');
+		
 		if (isCurrentItemTestProgram) {
             if(specJantesBox) specJantesBox.style.display = 'none';
             if(configuratorSection) configuratorSection.style.display = 'block';
