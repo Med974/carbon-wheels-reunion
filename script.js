@@ -956,6 +956,7 @@ function openModal(index) {
 
 			const dateInputTest = document.getElementById('config-date-test');
             if(dateInputTest) {
+				dateInputTest.value = "";
                 const dateDispoTest = "2026-07-25"; 
                 const aujourdhui = new Date().toISOString().split('T')[0];
                 if (aujourdhui < dateDispoTest) {
@@ -1201,11 +1202,16 @@ function openModal(index) {
             }
         }
 		
-        const pModal = document.getElementById('product-modal');
+		const pModal = document.getElementById('product-modal');
         if (pModal) {
             pModal.classList.remove('hidden');
             document.body.style.overflow = 'hidden';
         }
+
+        // --- VERROUILLAGE SÉCURITÉ : Forcer la vérification des champs date obligatoires ---
+        if (isCurrentItemTestProgram) checkTestDateAvailability();
+        if (isSpecialWheel && currentLenticulaireMode === 'location') checkDateAvailability();
+
     } catch(e) {
         console.error("Erreur openModal:", e);
         alert("Erreur lors de l'ouverture. Veuillez rafraîchir la page (F5).");
@@ -1785,30 +1791,38 @@ function checkDateAvailability() {
     const submitBtn = document.querySelector('button[onclick="addToCart()"]');
     
     if (!dateInput || !submitBtn) return;
+
+    // 1. SÉCURITÉ : CHAMP VIDE
+    if (!dateInput.value) {
+        if (alertEpuise) alertEpuise.classList.add('hidden');
+        submitBtn.disabled = true;
+        submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
+        submitBtn.innerHTML = 'Sélectionnez une date <i class="fa-solid fa-calendar-day ml-2 text-xl"></i>';
+        return;
+    }
     
     const dateSelectionnee = getFridayOfWeek(dateInput.value);
     
-    // Si le week-end est complet (2 jantes déjà réservées)
+    // 2. SÉCURITÉ : DATE INDISPONIBLE
     if (dateSelectionnee && unavailableRentalDates.includes(dateSelectionnee)) {
         if (alertEpuise) {
             alertEpuise.classList.remove('hidden');
             alertEpuise.classList.add('flex');
         }
-        // Bloquer l'ajout au panier !
         submitBtn.disabled = true;
         submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
+        submitBtn.innerHTML = 'Date indisponible <i class="fa-solid fa-ban ml-2 text-xl"></i>';
     } else {
+    // 3. TOUT EST OK : ON DÉBLOQUE
         if (alertEpuise) alertEpuise.classList.add('hidden');
-        // Débloquer le bouton
         submitBtn.disabled = false;
         submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+        submitBtn.innerHTML = 'Ajouter au panier <i class="fa-solid fa-cart-plus ml-2 text-xl"></i>';
     }
 }
 
 async function fetchUnavailableTestDates() {
     try {
-        // En attendant une liaison Google Sheet complète pour le test,
-        // on initialise la liste à vide. (Sera connecté plus tard si besoin)
         unavailableTestDates = []; 
         checkTestDateAvailability();
     } catch (error) {
@@ -1824,9 +1838,19 @@ function checkTestDateAvailability() {
     const submitBtn = document.querySelector('button[onclick="addToCart()"]');
     
     if (!dateInput || !submitBtn) return;
+
+    // 1. SÉCURITÉ : CHAMP VIDE
+    if (!dateInput.value) {
+        if (alertEpuise) alertEpuise.classList.add('hidden');
+        submitBtn.disabled = true;
+        submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
+        submitBtn.innerHTML = 'Sélectionnez une date <i class="fa-solid fa-calendar-day ml-2 text-xl"></i>';
+        return;
+    }
     
     const dateSelectionnee = getFridayOfWeek(dateInput.value);
     
+    // 2. SÉCURITÉ : DATE INDISPONIBLE
     if (dateSelectionnee && unavailableTestDates.includes(dateSelectionnee)) {
         if (alertEpuise) {
             alertEpuise.classList.remove('hidden');
@@ -1834,10 +1858,13 @@ function checkTestDateAvailability() {
         }
         submitBtn.disabled = true;
         submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
+        submitBtn.innerHTML = 'Date indisponible <i class="fa-solid fa-ban ml-2 text-xl"></i>';
     } else {
+    // 3. TOUT EST OK : ON DÉBLOQUE
         if (alertEpuise) alertEpuise.classList.add('hidden');
         submitBtn.disabled = false;
         submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+        submitBtn.innerHTML = 'Ajouter au panier <i class="fa-solid fa-cart-plus ml-2 text-xl"></i>';
     }
 }
 
