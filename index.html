@@ -1319,14 +1319,6 @@
                                 </div>
                                 <div class="text-brand-accent text-xl"><i class="fa-solid fa-handshake"></i></div>
                             </label>
-                            <label id="option-pay-textile" class="flex items-start gap-3 cursor-pointer p-3 border border-brand-accent rounded-md bg-yellow-50 hover:bg-yellow-100 transition hidden">
-                                <input type="radio" name="payment-method" value="acompte_textile" class="mt-1 text-brand-accent focus:ring-brand-accent" onchange="updateCartUI()">
-                                <div class="flex-grow">
-                                    <span class="block text-sm font-bold text-gray-900">Acompte 50% (Précommande)</span>
-                                    <span class="block text-xs text-gray-600 font-medium">Payez 50% aujourd'hui pour bloquer votre taille. Le solde sera à régler avant la livraison.</span>
-                                </div>
-                                <div class="text-brand-accent text-xl"><i class="fa-solid fa-hourglass-half"></i></div>
-                            </label>
                             <!-- Option 50/50 Métropole (Cachée par défaut) -->
                             <label id="option-pay-5050" class="flex items-start gap-3 cursor-pointer p-3 border border-gray-200 rounded-md bg-white hover:bg-gray-50 transition hidden">
                                 <input type="radio" name="payment-method" value="5050_metropole" class="mt-1 text-brand-accent focus:ring-brand-accent" onchange="updateCartUI()">
@@ -1364,8 +1356,11 @@
                         <span class="text-sm font-bold text-orange-500">+ <span id="cart-fees">0</span> €</span>
                     </div>
 
-                    <div class="flex justify-between items-end mb-6 pt-2 border-t border-gray-100">
-                        <span class="text-gray-900 font-black uppercase text-sm">Total</span>
+                    <div class="flex justify-between items-end mb-6 pt-2 border-t border-gray-100 relative">
+                        <div>
+                            <span class="text-gray-900 font-black uppercase text-sm block">Total</span>
+                            <span id="textile-acompte-msg" class="text-[10px] text-brand-accent font-bold hidden bg-yellow-50 px-2 py-1 rounded border border-yellow-200 mt-1">Acompte 50% requis : <span id="cart-acompte-total">0</span> €</span>
+                        </div>
                         <div class="text-right">
                             <span class="text-3xl font-black text-brand-main"><span id="cart-final-total">0</span> €</span>
                         </div>
