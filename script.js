@@ -12,6 +12,7 @@ let currentItemStatut = "";
 let unavailableTestDates = [];
 let isCurrentItemTestProgram = false;
 let isCurrentItemStockReady = false;
+let isCurrentItemTextile = false;
 
 let cart = [];
 let appliedPromo = null;
@@ -106,6 +107,21 @@ function addToCart() {
                 configText = `Week-end du : ${dateLoc} | GHOST 50mm Glossy, Moyeux RT240, Rayons T32`;
                 finalPrice = 50;
                 finalWeight = 978;
+			} else if (isCurrentItemTextile) {
+                const typeSelect = document.getElementById('config-textile-type');
+                const type = typeSelect ? typeSelect.value : "";
+                const coupeSelect = document.getElementById('config-textile-coupe');
+                const coupe = coupeSelect ? coupeSelect.value : "";
+                const colorSelect = document.getElementById('config-textile-couleur');
+                const color = colorSelect ? colorSelect.options[colorSelect.selectedIndex].text : "";
+                const sizeSelect = document.getElementById('config-textile-taille');
+                const size = sizeSelect ? sizeSelect.value : "";
+                const qteSelect = document.getElementById('config-textile-quantite');
+                const qte = qteSelect ? parseInt(qteSelect.value) : 1;
+                
+                configText = `Type : ${type} | Coupe : ${coupe} | Couleur : ${color} | Taille : ${size} | Quantité : ${qte}`;
+                finalPrice = 159 * qte;
+                finalWeight = "--";	
             } else if (titleLC.includes('manivelle')) {
                 const modeleEl = document.getElementById('config-modele-manivelle');
                 const modele = modeleEl ? modeleEl.options[modeleEl.selectedIndex].text : "";
@@ -241,7 +257,8 @@ function addToCart() {
             weight: finalWeight,
             config: configText,
             image: imgUrl,
-            isAccessory: isCurrentItemAccessory
+            isAccessory: isCurrentItemAccessory,
+			isTextile: isCurrentItemTextile
         };
 
         cart.push(item);
@@ -295,7 +312,10 @@ function updateCartUI() {
         } else if (paymentMethod === '5050_metropole') {
             checkoutBtn.className = "w-full bg-brand-main hover:bg-gray-800 transition-colors text-white font-bold py-4 rounded-xl shadow-md";
             checkoutBtn.innerHTML = 'Valider mon acompte de 50% <i class="fa-solid fa-percent ml-2 text-xl"></i>';
-        }
+        } else if (paymentMethod === 'acompte_textile') {
+            checkoutBtn.className = "w-full bg-brand-main hover:bg-gray-800 transition-colors text-white font-bold py-4 rounded-xl shadow-md";
+            checkoutBtn.innerHTML = 'Payer mon acompte (50%) <i class="fa-solid fa-lock ml-2 text-xl"></i>';
+		}
     }
 
     if (cart.length > 0) {
@@ -427,6 +447,22 @@ function updateCartUI() {
 
     const finalTotal = currentSubtotal + transactionFees;
     if (finalTotalEl) finalTotalEl.textContent = finalTotal % 1 === 0 ? finalTotal : finalTotal.toFixed(2);
+	const hasTextile = cart.some(item => item.isTextile || (item.config && item.config.includes('Coupe :')));
+    const optTextile = document.getElementById('option-pay-textile');
+    
+    if (optTextile) {
+        if (hasTextile) {
+            optTextile.classList.remove('hidden');
+            optTextile.classList.add('flex');
+            const currentChecked = document.querySelector('input[name="payment-method"]:checked');
+            if (currentChecked && currentChecked.value !== 'acompte_textile' && currentChecked.value !== 'card1x') {
+                optTextile.querySelector('input').checked = true;
+            }
+        } else {
+            optTextile.classList.add('hidden');
+            optTextile.classList.remove('flex');
+        }
+    }
 }
 
 function applyPromoCode() {
@@ -507,6 +543,9 @@ function submitOrder() {
     } else if (paymentMethodVal === '5050_metropole') {
         transactionFees = 0;
         paymentMethodName = "Paiement en 2X Karbòn Péi (Sans frais)";
+	} else if (paymentMethodVal === 'acompte_textile') {
+        transactionFees = 0;
+        paymentMethodName = "Acompte de 50% (Précommande Textile)";
     }
     
     transactionFees = Math.round(transactionFees * 100) / 100;
@@ -569,6 +608,8 @@ function submitOrder() {
             } else if(paymentMethodVal === '5050_metropole') {
                 const acompte = finalTotal / 2;
                 successPayText.textContent = "le récapitulatif pour effectuer ton premier versement (50%) et lancer la production à l'usine";
+			} else if(paymentMethodVal === 'acompte_textile') {
+                successPayText.textContent = "le lien sécurisé pour régler ton acompte de 50% et valider la production de ta tenue";
             }
         }
 
@@ -848,6 +889,7 @@ function openModal(index) {
 		const nomLC = item.Nom ? String(item.Nom).toLowerCase() : "";
         isCurrentItemAccessory = (item.Categorie && (String(item.Categorie).toLowerCase().includes('accessoire') || String(item.Categorie).toLowerCase().includes('composant')));
         isCurrentItemTestProgram = nomLC.includes('test') || nomLC.includes('essai');
+		isCurrentItemTextile = (item.Categorie && String(item.Categorie).toLowerCase().includes('textile')) || nomLC.includes('tenue') || nomLC.includes('combinaison');
 		isCurrentItemStockReady = nomLC.includes('prêt-à-rouler') || nomLC.includes('pret-a-rouler') || nomLC.includes('prêt à rouler') || nomLC.includes('pret a rouler');
         isCurrentItemWheelConfigurable = !isCurrentItemAccessory && !isCurrentItemTestProgram && !nomLC.includes('bâton') && !nomLC.includes('tri-spoke') && !nomLC.includes('lenticulaire') && !nomLC.includes('disc') && !nomLC.includes('manivelle');
 
@@ -926,6 +968,7 @@ function openModal(index) {
         const accessoryConfigContainer = document.getElementById('accessory-config-container');
         const specialWheelConfigContainer = document.getElementById('special-wheel-config-container');
         const testConfigContainer = document.getElementById('test-program-config-container');
+		const textileConfigContainer = document.getElementById('textile-config-container');
 		// FORCER LE MASQUAGE DES MENUS SPÉCIAUX POUR TOUS LES AUTRES PRODUITS
 		const blocRatchetSpecial = document.getElementById('bloc-ratchet-special');
 		if (blocRatchetSpecial) blocRatchetSpecial.style.display = 'none';
@@ -966,7 +1009,23 @@ function openModal(index) {
                 }
             }
             fetchUnavailableTestDates();
-            
+        } else if (isCurrentItemTextile) {
+            if(specJantesBox) specJantesBox.style.display = 'none';
+            if(configuratorSection) configuratorSection.style.display = 'block';
+            if(wheelConfigOptions) wheelConfigOptions.style.display = 'none';
+            if(manivellesConfigContainer) manivellesConfigContainer.style.display = 'none';
+            if(accessoryConfigContainer) accessoryConfigContainer.style.display = 'none';
+            if(specialWheelConfigContainer) specialWheelConfigContainer.style.display = 'none';
+            if(testConfigContainer) testConfigContainer.style.display = 'none';
+            if(textileConfigContainer) textileConfigContainer.style.display = 'block';
+            if(poidsMaxContainer) poidsMaxContainer.style.display = 'none';
+
+            const cPrice = document.getElementById('calc-price');
+            if(cPrice) cPrice.textContent = '159';
+            const cWeight = document.getElementById('calc-weight');
+            if(cWeight) cWeight.textContent = '--';
+            updateBadgeUI(false, "Précommande");
+            updateConfig();    
         } else if (nomLC.includes('manivelle')) {
             if(specJantesBox) specJantesBox.style.display = 'none';
             if(configuratorSection) configuratorSection.style.display = 'block';
@@ -1286,6 +1345,19 @@ function updateConfig() {
         toleranceSpan.textContent = (isCurrentItemAccessory || !isCurrentItemWheelConfigurable) ? '(+/- 5g)' : '(+/- 30g)';
     }
 
+	if (isCurrentItemTextile) {
+        const qteEl = document.getElementById('config-textile-quantite');
+        const qte = qteEl ? parseInt(qteEl.value) : 1;
+        const finalPrice = 159 * qte;
+        
+        const cPrice = document.getElementById('calc-price');
+        if(cPrice) cPrice.textContent = finalPrice > 0 ? finalPrice : '--';
+        if(cWeightSpan) cWeightSpan.textContent = '--';
+        
+        updateBadgeUI(false, "Précommande");
+        return; 
+    }
+	
     if (isCurrentItemAccessory) {
         const qteEl = document.getElementById('config-quantite');
         const qte = qteEl ? parseInt(qteEl.value) : 1;
@@ -1996,6 +2068,23 @@ function getFridayOfWeek(dateStr) {
     const month = String(d.getMonth() + 1).padStart(2, '0');
     const date = String(d.getDate()).padStart(2, '0');
     return `${year}-${month}-${date}`;
+}
+
+function openSizeGuide() {
+    const modal = document.getElementById('size-guide-modal');
+    if(modal) {
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        modal.style.zIndex = "9999";
+    }
+}
+
+function closeSizeGuide() {
+    const modal = document.getElementById('size-guide-modal');
+    if(modal) {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+    }
 }
 
 loadCatalogue();
