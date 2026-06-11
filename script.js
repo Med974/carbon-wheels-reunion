@@ -119,7 +119,7 @@ function addToCart() {
                 const qteSelect = document.getElementById('config-textile-quantite');
                 const qte = qteSelect ? parseInt(qteSelect.value) : 1;
                 
-                configText = `Type : ${type} | Coupe : ${coupe} | Couleur : ${color} | Taille : ${size} | Quantité : ${qte}`;
+                configText = `Type : ${type} | Coupe : ${coupe} | Couleur : ${color} | Taille : ${size} | Quantité : ${qte} (Tarif Lancement)`;
                 finalPrice = 159 * qte;
                 finalWeight = "--";	
             } else if (titleLC.includes('manivelle')) {
@@ -1027,8 +1027,8 @@ function openModal(index) {
             if(textileConfigContainer) textileConfigContainer.style.display = 'block';
             if(poidsMaxContainer) poidsMaxContainer.style.display = 'none';
 
-            const cPrice = document.getElementById('calc-price');
-            if(cPrice) cPrice.textContent = '159';
+			const cPrice = document.getElementById('calc-price');
+            if(cPrice) cPrice.innerHTML = '<span class="text-xl text-gray-400 line-through mr-2 font-medium">169€</span>159';
             const cWeight = document.getElementById('calc-weight');
             if(cWeight) cWeight.textContent = '--';
             updateBadgeUI(false, "Précommande");
@@ -1356,9 +1356,10 @@ function updateConfig() {
         const qteEl = document.getElementById('config-textile-quantite');
         const qte = qteEl ? parseInt(qteEl.value) : 1;
         const finalPrice = 159 * qte;
+        const basePrice = 169 * qte;
         
         const cPrice = document.getElementById('calc-price');
-        if(cPrice) cPrice.textContent = finalPrice > 0 ? finalPrice : '--';
+        if(cPrice) cPrice.innerHTML = `<span class="text-xl text-gray-400 line-through mr-2 font-medium">${basePrice}€</span>${finalPrice}`;
         if(cWeightSpan) cWeightSpan.textContent = '--';
         
         updateBadgeUI(false, "Précommande");
