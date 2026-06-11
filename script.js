@@ -112,8 +112,7 @@ function addToCart() {
                 const type = typeSelect ? typeSelect.value : "";
                 const coupeSelect = document.getElementById('config-textile-coupe');
                 const coupe = coupeSelect ? coupeSelect.value : "";
-                const colorSelect = document.getElementById('config-textile-couleur');
-                const color = colorSelect ? colorSelect.options[colorSelect.selectedIndex].text : "";
+                const color = "Couleur élue le 21/06 sur FB";
                 const sizeSelect = document.getElementById('config-textile-taille');
                 const size = sizeSelect ? sizeSelect.value : "";
                 const qteSelect = document.getElementById('config-textile-quantite');
