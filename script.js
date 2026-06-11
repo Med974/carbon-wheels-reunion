@@ -357,7 +357,7 @@ function updateCartUI() {
             const titleLC = item.title.toLowerCase();
             const isSpecialWheel = titleLC.includes('bâton') || titleLC.includes('tri-spoke') || titleLC.includes('lenticulaire') || titleLC.includes('disc');
             
-            if (!item.isAccessory && !isSpecialWheel) {
+            if (!item.isAccessory && !item.isTextile && !isSpecialWheel) {
                 discountAmount += 50;
             } else {
                 discountAmount += Math.round(item.price * 0.05);
@@ -896,7 +896,7 @@ function openModal(index) {
         const isSpecialWheel = nomLC.includes('bâton') || nomLC.includes('tri-spoke') || nomLC.includes('lenticulaire') || nomLC.includes('disc');
         
         const priceLabel = document.getElementById('modal-price-label');
-        if(priceLabel) priceLabel.textContent = (isCurrentItemAccessory || isSpecialWheel) ? 'Prix unitaire' : 'Prix (la paire)';
+        if(priceLabel) priceLabel.textContent = (isCurrentItemAccessory || isSpecialWheel || isCurrentItemTextile) ? 'Prix unitaire' : 'Prix (la paire)';
 
         const titleEl = document.getElementById('modal-title');
         if(titleEl) titleEl.textContent = item.Nom || "Produit";
@@ -1963,7 +1963,7 @@ function setDeliveryZone(zone) {
         let optionsModifiees = false;
         
         cart.forEach(item => {
-            if (item.config && !item.isAccessory) {
+            if (item.config && !item.isAccessory && !item.isTextile) {
                 const configOriginale = item.config;
                 
                 // Nettoyage chirurgical de la chaîne de texte des options interdites
