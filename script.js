@@ -317,10 +317,7 @@ function updateCartUI() {
         } else if (paymentMethod === '5050_metropole') {
             checkoutBtn.className = "w-full bg-brand-main hover:bg-gray-800 transition-colors text-white font-bold py-4 rounded-xl shadow-md";
             checkoutBtn.innerHTML = 'Valider mon acompte de 50% <i class="fa-solid fa-percent ml-2 text-xl"></i>';
-        } else if (paymentMethod === 'acompte_textile') {
-            checkoutBtn.className = "w-full bg-brand-main hover:bg-gray-800 transition-colors text-white font-bold py-4 rounded-xl shadow-md";
-            checkoutBtn.innerHTML = 'Payer mon acompte (50%) <i class="fa-solid fa-lock ml-2 text-xl"></i>';
-		}
+        } 
     }
 
     if (cart.length > 0) {
@@ -453,21 +450,52 @@ function updateCartUI() {
     const finalTotal = currentSubtotal + transactionFees;
     if (finalTotalEl) finalTotalEl.textContent = finalTotal % 1 === 0 ? finalTotal : finalTotal.toFixed(2);
 	const hasTextile = cart.some(item => item.isTextile || (item.config && item.config.includes('Coupe :')));
-    const optTextile = document.getElementById('option-pay-textile');
     
-    if (optTextile) {
-        if (hasTextile) {
-            optTextile.classList.remove('hidden');
-            optTextile.classList.add('flex');
-        } else {
-            optTextile.classList.add('hidden');
-            optTextile.classList.remove('flex');
-            // Si la tenue est retirée du panier, on repasse sur Virement par défaut
-            const currentChecked = document.querySelector('input[name="payment-method"]:checked');
-            if (currentChecked && currentChecked.value === 'acompte_textile') {
-                const virementRadio = document.querySelector('input[value="virement"]');
-                if (virementRadio) virementRadio.checked = true;
+    const radioCB = document.querySelector('input[value="card1x"]')?.parentElement;
+    const radio3x = document.querySelector('input[value="3x_pei"]')?.parentElement;
+    const radio5050 = document.getElementById('option-pay-5050');
+    
+    const acompteMsg = document.getElementById('textile-acompte-msg');
+    const acompteTotal = document.getElementById('cart-acompte-total');
+
+    if (hasTextile) {
+        // Cache la CB, le 3X et le 50/50 Métropole
+        if (radioCB) radioCB.classList.add('hidden');
+        if (radio3x) radio3x.classList.add('hidden');
+        if (radio5050) { radio5050.classList.add('hidden'); radio5050.classList.remove('flex'); }
+        
+        // Affiche l'alerte d'acompte sous le total
+        if (acompteMsg && acompteTotal) {
+            acompteMsg.classList.remove('hidden');
+            acompteMsg.classList.add('inline-block');
+            acompteTotal.textContent = (finalTotal / 2).toFixed(2).replace('.00', '');
+        }
+
+        // Force Virement ou Espèces si le client avait cliqué sur CB ou 3X avant
+        const currentChecked = document.querySelector('input[name="payment-method"]:checked');
+        if (currentChecked && currentChecked.value !== 'virement' && currentChecked.value !== 'especes') {
+            const virementRadio = document.querySelector('input[value="virement"]');
+            if (virementRadio) virementRadio.checked = true;
+        }
+
+        // Modifie le texte du bouton final
+        const newChecked = document.querySelector('input[name="payment-method"]:checked');
+        if (checkoutBtn && newChecked) {
+            if (newChecked.value === 'virement') {
+                checkoutBtn.innerHTML = 'Valider & Payer 50% par Virement <i class="fa-solid fa-paper-plane ml-2 text-xl"></i>';
+            } else if (newChecked.value === 'especes') {
+                checkoutBtn.innerHTML = 'Valider & Payer 50% en Espèces <i class="fa-solid fa-hand-holding-dollar ml-2 text-xl"></i>';
             }
+        }
+    } else {
+        // Restaure tout si on retire le vêtement du panier
+        if (radioCB) radioCB.classList.remove('hidden');
+        if (currentDeliveryZone === 'reunion' && radio3x) radio3x.classList.remove('hidden');
+        if (currentDeliveryZone === 'metropole' && radio5050) { radio5050.classList.remove('hidden'); radio5050.classList.add('flex'); }
+        
+        if (acompteMsg) {
+            acompteMsg.classList.add('hidden');
+            acompteMsg.classList.remove('inline-block');
         }
     }
 }
@@ -550,12 +578,13 @@ function submitOrder() {
     } else if (paymentMethodVal === '5050_metropole') {
         transactionFees = 0;
         paymentMethodName = "Paiement en 2X Karbòn Péi (Sans frais)";
-	} else if (paymentMethodVal === 'acompte_textile') {
-        transactionFees = 0;
-        paymentMethodName = "Acompte de 50% (Précommande Textile)";
-    }
-    
+	}
+	
     transactionFees = Math.round(transactionFees * 100) / 100;
+	const hasTextile = cart.some(item => item.isTextile || (item.config && item.config.includes('Coupe :')));
+    if (hasTextile) {
+        paymentMethodName += " (Précommande : Acompte 50%)";
+    }
     const finalTotal = currentSubtotal + transactionFees;
 
     if (appliedPromo) {
@@ -604,7 +633,9 @@ function submitOrder() {
         
         const successPayText = document.getElementById('success-payment-method');
         if (successPayText) {
-            if(paymentMethodVal === 'virement') {
+            if (hasTextile) {
+                successPayText.textContent = "le récapitulatif pour effectuer ton acompte de 50% et valider la production de ta tenue à l'usine";
+            } else if(paymentMethodVal === 'virement') {
                 successPayText.textContent = "le RIB pour finaliser la réservation";
             } else if(paymentMethodVal === 'especes') {
                 successPayText.textContent = "un message pour se voir afin de procéder au paiement en espèces";
@@ -613,10 +644,7 @@ function submitOrder() {
             } else if(paymentMethodVal === '3x_pei') {
                 successPayText.textContent = "le récapitulatif pour effectuer ton premier versement (50%) et lancer la production à l'usine";
             } else if(paymentMethodVal === '5050_metropole') {
-                const acompte = finalTotal / 2;
                 successPayText.textContent = "le récapitulatif pour effectuer ton premier versement (50%) et lancer la production à l'usine";
-			} else if(paymentMethodVal === 'acompte_textile') {
-                successPayText.textContent = "le lien sécurisé pour régler ton acompte de 50% et valider la production de ta tenue";
             }
         }
 
