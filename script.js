@@ -262,6 +262,11 @@ function addToCart() {
         };
 
         cart.push(item);
+		// Auto-sélectionner l'acompte si on ajoute une tenue
+        if (isCurrentItemTextile) {
+            const acompteRadio = document.querySelector('input[value="acompte_textile"]');
+            if (acompteRadio) acompteRadio.checked = true;
+        }
         updateCartUI();
         closeModal();
         toggleCart();
@@ -454,13 +459,15 @@ function updateCartUI() {
         if (hasTextile) {
             optTextile.classList.remove('hidden');
             optTextile.classList.add('flex');
-            const currentChecked = document.querySelector('input[name="payment-method"]:checked');
-            if (currentChecked && currentChecked.value !== 'acompte_textile' && currentChecked.value !== 'card1x') {
-                optTextile.querySelector('input').checked = true;
-            }
         } else {
             optTextile.classList.add('hidden');
             optTextile.classList.remove('flex');
+            // Si la tenue est retirée du panier, on repasse sur Virement par défaut
+            const currentChecked = document.querySelector('input[name="payment-method"]:checked');
+            if (currentChecked && currentChecked.value === 'acompte_textile') {
+                const virementRadio = document.querySelector('input[value="virement"]');
+                if (virementRadio) virementRadio.checked = true;
+            }
         }
     }
 }
