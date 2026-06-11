@@ -902,7 +902,7 @@ function openModal(index) {
         if(titleEl) titleEl.textContent = item.Nom || "Produit";
         
         const descEl = document.getElementById('modal-desc');
-        if(descEl) descEl.textContent = item.Description || "Sélectionnez vos options pour ajouter ce produit au panier.";
+        if(descEl) descEl.innerHTML = item.Description || "Sélectionnez vos options pour ajouter ce produit au panier.";
         
         const hauteurEl = document.getElementById('modal-hauteur');
         if(hauteurEl) hauteurEl.textContent = item.Hauteur || '-';
