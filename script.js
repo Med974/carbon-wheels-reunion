@@ -357,20 +357,28 @@ function updateCartUI() {
         
         if (appliedPromo === 'CCPIKARBON') {
             const titleLC = item.title.toLowerCase();
-            
-            // Classification chirurgicale des produits
             const isSpecialWheel = titleLC.includes('bâton') || titleLC.includes('tri-spoke') || titleLC.includes('lenticulaire') || titleLC.includes('disc');
             const isManivelle = titleLC.includes('manivelle');
             const isPetitAccessoire = titleLC.includes('pneu') || titleLC.includes('gp5000') || titleLC.includes('tpu') || titleLC.includes('chambre') || titleLC.includes('galfer') || titleLC.includes('disque') || titleLC.includes('plaquette') || titleLC.includes('bidon') || titleLC.includes('ahyka');
 
             if (item.isTextile) {
-                discountAmount += 10; // Niveau 1 : -10€ nets sur les tenues (159€ -> 149€)
+                discountAmount += 10;
             } else if (isSpecialWheel || isManivelle) {
-                discountAmount += 25; // Niveau 4 : -25€ nets sur les roues spéciales et manivelles (Ex: Capteurs, lenticulaires...)
+                discountAmount += 25;
             } else if (!item.isAccessory && !isSpecialWheel && !isManivelle) {
-                discountAmount += 50; // Niveau 2 : -50€ nets sur les paires de roues classiques
+                discountAmount += 50;
             } else if (item.isAccessory && isPetitAccessoire) {
-                discountAmount += Math.round(item.price * 0.08); // Niveau 3 : -8% uniquement sur les petits consommables
+                discountAmount += Math.round(item.price * 0.08);
+            }
+        } else if (appliedPromo === 'PAPA26') {
+            const titleLC = item.title.toLowerCase();
+            const isManivelle = titleLC.includes('manivelle');
+            const isPetitAccessoire = titleLC.includes('pneu') || titleLC.includes('gp5000') || titleLC.includes('tpu') || titleLC.includes('chambre') || titleLC.includes('galfer') || titleLC.includes('disque') || titleLC.includes('plaquette') || titleLC.includes('bidon') || titleLC.includes('ahyka');
+
+            if (!item.isAccessory && !isManivelle && !item.isTextile) {
+                discountAmount += 100; // -100€ pour une paire de roues
+            } else if (item.isAccessory && isPetitAccessoire) {
+                discountAmount += Math.round(item.price * 0.10); // -10% sur les accessoires
             }
         }
         
@@ -401,6 +409,14 @@ function updateCartUI() {
         }
     });
 
+	// Vérification post-boucle pour la promo PAPA26 sur les paniers de 500€ à 1000€ (sans roues)
+    if (appliedPromo === 'PAPA26') {
+        const hasRoues = cart.some(item => !item.isAccessory && !item.title.toLowerCase().includes('manivelle') && !item.isTextile);
+        if (!hasRoues && subtotal >= 500 && subtotal <= 1000) {
+            discountAmount += 50;
+        }
+    }
+	
     const promoInputContainer = document.getElementById('promo-input-container');
     const promoActiveContainer = document.getElementById('promo-active-container');
     const originalTotalEl = document.getElementById('cart-original-total');
@@ -512,10 +528,12 @@ function applyPromoCode() {
     const input = document.getElementById('promo-code');
     if(!input) return;
     const code = input.value.trim().toUpperCase();
-    if (code === 'CCPIKARBON') {
+    if (code === 'CCPIKARBON' || code === 'PAPA26') {
         appliedPromo = code;
         input.value = '';
         updateCartUI();
+    } else {
+        showCustomAlert("Code promo invalide ou expiré.");
     }
 }
 
