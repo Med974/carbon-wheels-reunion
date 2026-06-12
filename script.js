@@ -357,12 +357,20 @@ function updateCartUI() {
         
         if (appliedPromo === 'CCPIKARBON') {
             const titleLC = item.title.toLowerCase();
-            const isSpecialWheel = titleLC.includes('bâton') || titleLC.includes('tri-spoke') || titleLC.includes('lenticulaire') || titleLC.includes('disc');
             
-            if (!item.isAccessory && !item.isTextile && !isSpecialWheel) {
-                discountAmount += 50;
-            } else {
-                discountAmount += Math.round(item.price * 0.05);
+            // Classification chirurgicale des produits
+            const isSpecialWheel = titleLC.includes('bâton') || titleLC.includes('tri-spoke') || titleLC.includes('lenticulaire') || titleLC.includes('disc');
+            const isManivelle = titleLC.includes('manivelle');
+            const isPetitAccessoire = titleLC.includes('pneu') || titleLC.includes('gp5000') || titleLC.includes('tpu') || titleLC.includes('chambre') || titleLC.includes('galfer') || titleLC.includes('disque') || titleLC.includes('plaquette') || titleLC.includes('bidon') || titleLC.includes('ahyka');
+
+            if (item.isTextile) {
+                discountAmount += 10; // Niveau 1 : -10€ nets sur les tenues (159€ -> 149€)
+            } else if (isSpecialWheel || isManivelle) {
+                discountAmount += 25; // Niveau 4 : -25€ nets sur les roues spéciales et manivelles (Ex: Capteurs, lenticulaires...)
+            } else if (!item.isAccessory && !isSpecialWheel && !isManivelle) {
+                discountAmount += 50; // Niveau 2 : -50€ nets sur les paires de roues classiques
+            } else if (item.isAccessory && isPetitAccessoire) {
+                discountAmount += Math.round(item.price * 0.08); // Niveau 3 : -8% uniquement sur les petits consommables
             }
         }
         
