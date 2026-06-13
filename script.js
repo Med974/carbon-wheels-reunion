@@ -1030,6 +1030,7 @@ function openModal(index) {
         const specialWheelConfigContainer = document.getElementById('special-wheel-config-container');
         const testConfigContainer = document.getElementById('test-program-config-container');
 		const textileConfigContainer = document.getElementById('textile-config-container');
+		if (textileConfigContainer) textileConfigContainer.style.display = 'none';
 		// FORCER LE MASQUAGE DES MENUS SPÉCIAUX POUR TOUS LES AUTRES PRODUITS
 		const blocRatchetSpecial = document.getElementById('bloc-ratchet-special');
 		if (blocRatchetSpecial) blocRatchetSpecial.style.display = 'none';
