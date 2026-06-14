@@ -471,10 +471,9 @@ function updateCartUI() {
         }
     }
 
-    const finalTotal = currentSubtotal + transactionFees;
-    if (finalTotalEl) finalTotalEl.textContent = finalTotal % 1 === 0 ? finalTotal : finalTotal.toFixed(2);
-	const hasTextile = cart.some(item => item.isTextile || (item.config && item.config.includes('Coupe :')));
-    
+    const hasTextile = cart.some(item => item.isTextile || (item.config && item.config.includes('Coupe :')));
+    const isEligibleFor3X = finalTotal >= 899; // Le nouveau seuil d'éligibilité
+
     const radioCB = document.querySelector('input[value="card1x"]')?.parentElement;
     const radio3x = document.querySelector('input[value="3x_pei"]')?.parentElement;
     const radio5050 = document.getElementById('option-pay-5050');
@@ -482,44 +481,68 @@ function updateCartUI() {
     const acompteMsg = document.getElementById('textile-acompte-msg');
     const acompteTotal = document.getElementById('cart-acompte-total');
 
-    if (hasTextile) {
-        // Cache la CB, le 3X et le 50/50 Métropole
-        if (radioCB) radioCB.classList.add('hidden');
-        if (radio3x) radio3x.classList.add('hidden');
+    // 1. GESTION DU 3X (Réunion) et 50/50 (Métropole) selon le seuil de 899€
+    if (currentDeliveryZone === 'reunion') {
+        if (isEligibleFor3X) {
+            if (radio3x) radio3x.classList.remove('hidden');
+        } else {
+            if (radio3x) radio3x.classList.add('hidden');
+        }
         if (radio5050) { radio5050.classList.add('hidden'); radio5050.classList.remove('flex'); }
-        
-        // Affiche l'alerte d'acompte sous le total
+    } else { 
+        if (isEligibleFor3X) {
+            if (radio5050) { radio5050.classList.remove('hidden'); radio5050.classList.add('flex'); }
+        } else {
+            if (radio5050) { radio5050.classList.add('hidden'); radio5050.classList.remove('flex'); }
+        }
+        if (radio3x) radio3x.classList.add('hidden');
+    }
+
+    // 2. GESTION DU TEXTILE & ACOMPTE
+    if (hasTextile) {
+        // On affiche toujours l'alerte d'acompte (qui indique 50% du total)
         if (acompteMsg && acompteTotal) {
             acompteMsg.classList.remove('hidden');
             acompteMsg.classList.add('inline-block');
             acompteTotal.textContent = (finalTotal / 2).toFixed(2).replace('.00', '');
         }
 
-        // Force Virement ou Espèces si le client avait cliqué sur CB ou 3X avant
-        const currentChecked = document.querySelector('input[name="payment-method"]:checked');
-        if (currentChecked && currentChecked.value !== 'virement' && currentChecked.value !== 'especes') {
-            const virementRadio = document.querySelector('input[value="virement"]');
-            if (virementRadio) virementRadio.checked = true;
-        }
-
-        // Modifie le texte du bouton final
-        const newChecked = document.querySelector('input[name="payment-method"]:checked');
-        if (checkoutBtn && newChecked) {
-            if (newChecked.value === 'virement') {
-                checkoutBtn.innerHTML = 'Valider & Payer 50% par Virement <i class="fa-solid fa-paper-plane ml-2 text-xl"></i>';
-            } else if (newChecked.value === 'especes') {
-                checkoutBtn.innerHTML = 'Valider & Payer 50% en Espèces <i class="fa-solid fa-hand-holding-dollar ml-2 text-xl"></i>';
-            }
+        // Si panier < 899€ (ex: juste une tenue), on cache la CB pour forcer Virement/Espèces
+        if (!isEligibleFor3X && radioCB) {
+            radioCB.classList.add('hidden');
+        } else if (isEligibleFor3X && radioCB) {
+            radioCB.classList.remove('hidden');
         }
     } else {
-        // Restaure tout si on retire le vêtement du panier
-        if (radioCB) radioCB.classList.remove('hidden');
-        if (currentDeliveryZone === 'reunion' && radio3x) radio3x.classList.remove('hidden');
-        if (currentDeliveryZone === 'metropole' && radio5050) { radio5050.classList.remove('hidden'); radio5050.classList.add('flex'); }
-        
+        // Pas de textile : on cache le message d'acompte et on garantit que la CB est visible
         if (acompteMsg) {
             acompteMsg.classList.add('hidden');
             acompteMsg.classList.remove('inline-block');
+        }
+        if (radioCB) radioCB.classList.remove('hidden');
+    }
+
+    // 3. SÉCURITÉ : Réinitialiser la méthode de paiement si l'option choisie vient d'être cachée
+    const currentChecked = document.querySelector('input[name="payment-method"]:checked');
+    if (currentChecked) {
+        let needsReset = false;
+        if (currentChecked.value === '3x_pei' && (!isEligibleFor3X || currentDeliveryZone !== 'reunion')) needsReset = true;
+        if (currentChecked.value === '5050_metropole' && (!isEligibleFor3X || currentDeliveryZone !== 'metropole')) needsReset = true;
+        if (currentChecked.value === 'card1x' && hasTextile && !isEligibleFor3X) needsReset = true;
+
+        if (needsReset) {
+            const virementRadio = document.querySelector('input[value="virement"]');
+            if (virementRadio) virementRadio.checked = true;
+        }
+    }
+
+    // 4. TEXTE DU BOUTON FINAL (Mise à jour spécifique si acompte textile sur petit panier)
+    const finalChecked = document.querySelector('input[name="payment-method"]:checked');
+    if (checkoutBtn && finalChecked && hasTextile && !isEligibleFor3X) {
+        if (finalChecked.value === 'virement') {
+            checkoutBtn.innerHTML = 'Valider & Payer 50% par Virement <i class="fa-solid fa-paper-plane ml-2 text-xl"></i>';
+        } else if (finalChecked.value === 'especes') {
+            checkoutBtn.innerHTML = 'Valider & Payer 50% en Espèces <i class="fa-solid fa-hand-holding-dollar ml-2 text-xl"></i>';
         }
     }
 }
