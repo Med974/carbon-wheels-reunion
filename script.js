@@ -472,7 +472,8 @@ function updateCartUI() {
     }
 
     const hasTextile = cart.some(item => item.isTextile || (item.config && item.config.includes('Coupe :')));
-    const finalTotal = currentSubtotal + transactionFees; // <-- LA LIGNE MANQUANTE !
+    const finalTotal = currentSubtotal + transactionFees; 
+    if (finalTotalEl) finalTotalEl.textContent = finalTotal % 1 === 0 ? finalTotal : finalTotal.toFixed(2); // <-- MISE À JOUR DE L'AFFICHAGE !
     const isEligibleFor3X = finalTotal >= 899; // Le nouveau seuil d'éligibilité
 
     const radioCB = document.querySelector('input[value="card1x"]')?.parentElement;
