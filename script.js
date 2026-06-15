@@ -1668,14 +1668,44 @@ function updateConfig() {
     const bidonsSelect = document.getElementById('config-bidons');
     const tpuSelect = document.getElementById('config-tpu');
 
+    const optT52 = rayonSelect ? Array.from(rayonSelect.options).find(opt => opt.value === 'T52') : null;
     const optT52Interne = document.getElementById('opt-t52-interne');
+    
+    // 1. Calcul du texte/prix de base pour le T52 Interne selon le moyeu
+    let baseTextT52Interne = 'Carbone T52 + Écrous Internes';
     if (optT52Interne && moyeuSelect) {
         if (moyeuSelect.value === 'R2') {
             optT52Interne.setAttribute('data-price', '159');
-            optT52Interne.textContent = 'Carbone T52 + Écrous Internes [+159€]';
+            baseTextT52Interne = 'Carbone T52 + Écrous Internes [+159€]';
         } else {
             optT52Interne.setAttribute('data-price', '99');
-            optT52Interne.textContent = 'Carbone T52 + Écrous Internes [+99€]';
+            baseTextT52Interne = 'Carbone T52 + Écrous Internes [+99€]';
+        }
+    }
+
+    // 2. Gestion de l'incompatibilité avec les Freins à Patins
+    if (freinageSelect && freinageSelect.value === 'Patins') {
+        if (optT52) {
+            optT52.disabled = true;
+            optT52.textContent = 'Carbone T52 (Incompatible avec Patins)';
+        }
+        if (optT52Interne) {
+            optT52Interne.disabled = true;
+            optT52Interne.textContent = 'Carbone T52 (Incompatible avec Patins)';
+        }
+        // Sécurité : Si le client avait déjà cliqué sur T52, on le remet sur T33 par défaut
+        if (rayonSelect && (rayonSelect.value === 'T52' || rayonSelect.value === 'T52_interne')) {
+            rayonSelect.value = 'T33';
+        }
+    } else {
+        // On débloque si on repasse sur Disques
+        if (optT52) {
+            optT52.disabled = false;
+            optT52.textContent = 'Carbone T52 (5.2g)';
+        }
+        if (optT52Interne) {
+            optT52Interne.disabled = false;
+            optT52Interne.textContent = baseTextT52Interne;
         }
     }
     
