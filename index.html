@@ -1033,12 +1033,19 @@
                                 <option value="3XL">3XL (Homme uniquement)</option>
                             </select>
                         </div>
-                        <div class="mb-1">
+                        <div class="mb-3">
                             <label class="block text-xs font-bold text-gray-600 mb-1"><i class="fa-solid fa-hashtag text-brand-accent mr-1"></i> Quantité</label>
                             <select id="config-textile-quantite" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm font-semibold shadow-sm" onchange="updateConfig()">
                                 <option value="1">1</option>
                                 <option value="2">2</option>
                                 <option value="3">3</option>
+                            </select>
+                        </div>
+                        <div class="mb-1">
+                            <label class="block text-xs font-bold text-gray-600 mb-1"><i class="fa-solid fa-socks text-brand-accent mr-1"></i> Option Chaussettes Aéro</label>
+                            <select id="config-textile-chaussettes" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm font-semibold shadow-sm" onchange="updateConfig()">
+                                <option value="Sans chaussettes" selected>Non merci [+0€]</option>
+                                <option value="Avec chaussettes">Oui, ajouter les chaussettes AéroTech [+25€]</option>
                             </select>
                         </div>
                     </div>
@@ -1216,8 +1223,8 @@
                                 <label class="block text-xs font-bold text-gray-600 mb-1">14. Plaquettes Galfer (G1455)</label>
                                 <select id="config-plaquettes" class="w-full bg-white border border-green-300 rounded-lg px-3 py-2 text-sm font-semibold shadow-sm" onchange="updateConfig()">
                                     <option value="Aucun" data-price="0">Ne pas ajouter de plaquettes [+0€]</option>
-                                    <option value="2x Paires Plaquettes SHIMANO (Galfer FD496)" data-price="48">🛑 2x Paires SHIMANO (Galfer FD496) [+48€ au lieu de 58€]</option>
-                                    <option value="2x Paires Plaquettes SRAM (Galfer FD513)" data-price="48">🛑 2x Paires SRAM (Galfer FD513) [+48€ au lieu de 58€]</option>
+                                    <option value="2x Paires Plaquettes SHIMANO (Galfer FD496)" data-price="45">🛑 2x Paires SHIMANO (Galfer FD496) [+45€ au lieu de 50€]</option>
+                                    <option value="2x Paires Plaquettes SRAM (Galfer FD513)" data-price="45">🛑 2x Paires SRAM (Galfer FD513) [+45€ au lieu de 50€]</option>
                                 </select>
                                 <p class="text-[9px] text-green-700 mt-1 italic leading-tight"><i class="fa-solid fa-triangle-exclamation mr-1"></i>Recommandation mécanique : Des disques neufs exigent des plaquettes neuves pour ne pas les rayer.</p>
                             </div>                            
