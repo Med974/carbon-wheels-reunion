@@ -121,11 +121,19 @@ function addToCart() {
                 
                 const chaussettesSelect = document.getElementById('config-textile-chaussettes');
                 const hasChaussettes = chaussettesSelect && chaussettesSelect.selectedIndex > 0;
-                const chaussettesText = hasChaussettes ? ` | + Chaussettes Aéro` : "";
-                const chaussettesPrice = hasChaussettes ? 25 : 0;
+                
+                let chaussettesQte = 0;
+                let chaussettesText = "";
+                
+                if (hasChaussettes) {
+                    const sockQteEl = document.getElementById('config-chaussettes-quantite');
+                    chaussettesQte = sockQteEl ? parseInt(sockQteEl.value) : 1;
+                    chaussettesText = ` | + ${chaussettesQte}x Chaussettes Aéro`;
+                }
                 
                 configText = `Type : ${type} | Coupe : ${coupe} | Couleur : ${color} | Taille : ${size}${chaussettesText} | Quantité : ${qte} (Tarif Lancement)`;
-                finalPrice = (159 + chaussettesPrice) * qte;
+                // On calcule le prix des tenues d'un côté, et le prix des chaussettes de l'autre
+                finalPrice = (159 * qte) + (25 * chaussettesQte);
                 finalWeight = "--";
             } else if (titleLC.includes('manivelle')) {
                 const modeleEl = document.getElementById('config-modele-manivelle');
@@ -1450,10 +1458,24 @@ function updateConfig() {
         const qte = qteEl ? parseInt(qteEl.value) : 1;
         
         const chaussettesSelect = document.getElementById('config-textile-chaussettes');
-        const chaussettesPrice = chaussettesSelect && chaussettesSelect.selectedIndex > 0 ? 25 : 0;
+        const blocQuantiteSocks = document.getElementById('bloc-quantite-chaussettes');
+        
+        let chaussettesQte = 0;
+        
+        // Si le client dit "Oui" aux chaussettes
+        if (chaussettesSelect && chaussettesSelect.selectedIndex > 0) {
+            // On affiche le bloc de quantité
+            if (blocQuantiteSocks) blocQuantiteSocks.classList.remove('hidden');
+            const sockQteEl = document.getElementById('config-chaussettes-quantite');
+            chaussettesQte = sockQteEl ? parseInt(sockQteEl.value) : 1;
+        } else {
+            // Sinon on cache le bloc
+            if (blocQuantiteSocks) blocQuantiteSocks.classList.add('hidden');
+        }
 
-        const finalPrice = (159 + chaussettesPrice) * qte;
-        const basePrice = (169 + chaussettesPrice) * qte;
+        // On sépare bien les multiplications pour ne pas surfacturer le client
+        const finalPrice = (159 * qte) + (25 * chaussettesQte);
+        const basePrice = (169 * qte) + (25 * chaussettesQte);
         
         const cPrice = document.getElementById('calc-price');
         if(cPrice) cPrice.innerHTML = `<span class="text-xl text-gray-400 line-through mr-2 font-medium">${basePrice}€</span>${finalPrice}`;
