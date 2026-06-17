@@ -133,7 +133,7 @@ function addToCart() {
                 
                 configText = `Type : ${type} | Coupe : ${coupe} | Couleur : ${color} | Taille : ${size}${chaussettesText} | Quantité : ${qte} (Tarif Lancement)`;
                 // On calcule le prix des tenues d'un côté, et le prix des chaussettes de l'autre
-                finalPrice = (159 * qte) + (25 * chaussettesQte);
+                finalPrice = (159 * qte) + (29 * chaussettesQte);
                 finalWeight = "--";
             } else if (titleLC.includes('manivelle')) {
                 const modeleEl = document.getElementById('config-modele-manivelle');
@@ -1474,8 +1474,8 @@ function updateConfig() {
         }
 
         // On sépare bien les multiplications pour ne pas surfacturer le client
-        const finalPrice = (159 * qte) + (25 * chaussettesQte);
-        const basePrice = (169 * qte) + (25 * chaussettesQte);
+        const finalPrice = (159 * qte) + (29 * chaussettesQte);
+        const basePrice = (169 * qte) + (29 * chaussettesQte);
         
         const cPrice = document.getElementById('calc-price');
         if(cPrice) cPrice.innerHTML = `<span class="text-xl text-gray-400 line-through mr-2 font-medium">${basePrice}€</span>${finalPrice}`;
