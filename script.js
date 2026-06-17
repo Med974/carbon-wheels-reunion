@@ -119,9 +119,14 @@ function addToCart() {
                 const qteSelect = document.getElementById('config-textile-quantite');
                 const qte = qteSelect ? parseInt(qteSelect.value) : 1;
                 
-                configText = `Type : ${type} | Coupe : ${coupe} | Couleur : ${color} | Taille : ${size} | Quantité : ${qte} (Tarif Lancement)`;
-                finalPrice = 159 * qte;
-                finalWeight = "--";	
+                const chaussettesSelect = document.getElementById('config-textile-chaussettes');
+                const hasChaussettes = chaussettesSelect && chaussettesSelect.selectedIndex > 0;
+                const chaussettesText = hasChaussettes ? ` | + Chaussettes Aéro` : "";
+                const chaussettesPrice = hasChaussettes ? 25 : 0;
+                
+                configText = `Type : ${type} | Coupe : ${coupe} | Couleur : ${color} | Taille : ${size}${chaussettesText} | Quantité : ${qte} (Tarif Lancement)`;
+                finalPrice = (159 + chaussettesPrice) * qte;
+                finalWeight = "--";
             } else if (titleLC.includes('manivelle')) {
                 const modeleEl = document.getElementById('config-modele-manivelle');
                 const modele = modeleEl ? modeleEl.options[modeleEl.selectedIndex].text : "";
@@ -1443,8 +1448,12 @@ function updateConfig() {
 	if (isCurrentItemTextile) {
         const qteEl = document.getElementById('config-textile-quantite');
         const qte = qteEl ? parseInt(qteEl.value) : 1;
-        const finalPrice = 159 * qte;
-        const basePrice = 169 * qte;
+        
+        const chaussettesSelect = document.getElementById('config-textile-chaussettes');
+        const chaussettesPrice = chaussettesSelect && chaussettesSelect.selectedIndex > 0 ? 25 : 0;
+
+        const finalPrice = (159 + chaussettesPrice) * qte;
+        const basePrice = (169 + chaussettesPrice) * qte;
         
         const cPrice = document.getElementById('calc-price');
         if(cPrice) cPrice.innerHTML = `<span class="text-xl text-gray-400 line-through mr-2 font-medium">${basePrice}€</span>${finalPrice}`;
