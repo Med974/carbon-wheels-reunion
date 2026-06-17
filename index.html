@@ -1041,12 +1041,30 @@
                                 <option value="3">3</option>
                             </select>
                         </div>
-                        <div class="mb-1">
-                            <label class="block text-xs font-bold text-gray-600 mb-1"><i class="fa-solid fa-socks text-brand-accent mr-1"></i> Option Chaussettes Aéro</label>
-                            <select id="config-textile-chaussettes" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm font-semibold shadow-sm" onchange="updateConfig()">
-                                <option value="Sans chaussettes" selected>Non merci [+0€]</option>
-                                <option value="Avec chaussettes">Oui, ajouter les chaussettes AéroTech [+25€]</option>
-                            </select>
+                        <div class="mt-4 p-4 border-2 border-dashed border-gray-300 bg-white rounded-xl shadow-sm">
+                            <label class="block text-sm font-bold text-gray-800 mb-3">
+                                <i class="fa-solid fa-socks text-brand-accent mr-1"></i> Option Chaussettes Aéro
+                            </label>
+                            
+                            <div class="mb-3">
+                                <select id="config-textile-chaussettes" class="w-full bg-gray-50 border border-gray-300 rounded-lg px-3 py-2 text-sm font-semibold shadow-sm focus:ring-brand-accent focus:border-brand-accent" onchange="updateConfig()">
+                                    <option value="Sans chaussettes" selected>Non merci</option>
+                                    <option value="Avec chaussettes">Oui, ajouter des chaussettes AéroTech [+25€/paire]</option>
+                                </select>
+                            </div>
+
+                            <div id="bloc-quantite-chaussettes" class="hidden border-t border-gray-200 pt-3 mt-2">
+                                <label class="block text-xs font-bold text-gray-600 mb-1">
+                                    <i class="fa-solid fa-hashtag text-brand-accent mr-1"></i> Nombre de paires
+                                </label>
+                                <select id="config-chaussettes-quantite" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm font-semibold shadow-sm" onchange="updateConfig()">
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5">5</option>
+                                </select>
+                            </div>
                         </div>
                     </div>
                     <!-- BANNIÈRE STOCK IMMÉDIAT -->
