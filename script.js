@@ -375,10 +375,11 @@ function updateCartUI() {
             const isManivelle = titleLC.includes('manivelle');
             const isPetitAccessoire = titleLC.includes('pneu') || titleLC.includes('gp5000') || titleLC.includes('tpu') || titleLC.includes('chambre') || titleLC.includes('galfer') || titleLC.includes('disque') || titleLC.includes('plaquette') || titleLC.includes('bidon') || titleLC.includes('ahyka');
 
-            if (!item.isAccessory && !isManivelle && !item.isTextile) {
-                discountAmount += 100; // -100€ pour une paire de roues
+            // -100€ UNIQUEMENT si c'est un produit principal (roues) ET que le prix est de 1399€ ou plus (paire de roues)
+            if (!item.isAccessory && !isManivelle && !item.isTextile && item.price >= 1399) {
+                discountAmount += 100; 
             } else if (item.isAccessory && isPetitAccessoire) {
-                discountAmount += Math.round(item.price * 0.10); // -10% sur les accessoires
+                discountAmount += Math.round(item.price * 0.10); // -10% sur les petits accessoires
             }
         }
         
@@ -409,17 +410,20 @@ function updateCartUI() {
         }
     });
 
-	// Vérification post-boucle pour la promo PAPA26 sur les paniers de 500€ à 1000€ (sans roues)
-	if (appliedPromo === 'PAPA26') {
-        const hasRoues = cart.some(item => !item.isAccessory && !item.title.toLowerCase().includes('manivelle') && !item.isTextile);
-        if (!hasRoues) {
+	// Vérification post-boucle pour la promo PAPA26 (Paliers globaux)
+    if (appliedPromo === 'PAPA26') {
+        // On vérifie si le client a une PAIRE de roues (prix >= 1399) qui a déjà bénéficié des 100€
+        const hasPaireDeRoues = cart.some(item => !item.isAccessory && !item.title.toLowerCase().includes('manivelle') && !item.isTextile && item.price >= 1399);
+        
+        // Si le client n'a PAS de paire de roues à 1399€, on applique les réductions sur le total du panier
+        if (!hasPaireDeRoues) {
             if (subtotal >= 1000) {
-                discountAmount += 75; // -75€ pour les paniers de 1000€ et plus (sans roues)
+                discountAmount += 75;  // -75€ pour un panier de plus de 1000€ (ex: roue lenti seule + accessoires)
             } else if (subtotal >= 500) {
-                discountAmount += 50; // -50€ pour les paniers entre 500€ et 999.99€ (sans roues)
+                discountAmount += 50;  // -50€ pour un panier entre 500€ et 999.99€ (ex: roue lenti seule de 700€)
             }
         }
-    }
+    }}
 	
     const promoInputContainer = document.getElementById('promo-input-container');
     const promoActiveContainer = document.getElementById('promo-active-container');
