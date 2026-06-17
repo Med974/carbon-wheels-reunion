@@ -423,7 +423,7 @@ function updateCartUI() {
                 discountAmount += 50;  // -50€ pour un panier entre 500€ et 999.99€ (ex: roue lenti seule de 700€)
             }
         }
-    }}
+    }
 	
     const promoInputContainer = document.getElementById('promo-input-container');
     const promoActiveContainer = document.getElementById('promo-active-container');
