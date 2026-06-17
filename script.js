@@ -410,10 +410,14 @@ function updateCartUI() {
     });
 
 	// Vérification post-boucle pour la promo PAPA26 sur les paniers de 500€ à 1000€ (sans roues)
-    if (appliedPromo === 'PAPA26') {
+	if (appliedPromo === 'PAPA26') {
         const hasRoues = cart.some(item => !item.isAccessory && !item.title.toLowerCase().includes('manivelle') && !item.isTextile);
-        if (!hasRoues && subtotal >= 500 && subtotal <= 1000) {
-            discountAmount += 50;
+        if (!hasRoues) {
+            if (subtotal >= 1000) {
+                discountAmount += 75; // -75€ pour les paniers de 1000€ et plus (sans roues)
+            } else if (subtotal >= 500) {
+                discountAmount += 50; // -50€ pour les paniers entre 500€ et 999.99€ (sans roues)
+            }
         }
     }
 	
