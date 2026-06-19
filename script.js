@@ -530,10 +530,8 @@ function updateCartUI() {
             acompteTotal.textContent = (finalTotal / 2).toFixed(2).replace('.00', '');
         }
 
-        // Si panier < 899€ (ex: juste une tenue), on cache la CB pour forcer Virement/Espèces
-        if (!isEligibleFor3X && radioCB) {
-            radioCB.classList.add('hidden');
-        } else if (isEligibleFor3X && radioCB) {
+        // On laisse toujours l'option Carte Bancaire visible, même pour les petits paniers
+        if (radioCB) {
             radioCB.classList.remove('hidden');
         }
     } else {
@@ -551,7 +549,6 @@ function updateCartUI() {
         let needsReset = false;
         if (currentChecked.value === '3x_pei' && (!isEligibleFor3X || currentDeliveryZone !== 'reunion')) needsReset = true;
         if (currentChecked.value === '5050_metropole' && (!isEligibleFor3X || currentDeliveryZone !== 'metropole')) needsReset = true;
-        if (currentChecked.value === 'card1x' && hasTextile && !isEligibleFor3X) needsReset = true;
 
         if (needsReset) {
             const virementRadio = document.querySelector('input[value="virement"]');
