@@ -2029,10 +2029,26 @@ function checkDateAvailability() {
         submitBtn.innerHTML = 'Sélectionnez une date <i class="fa-solid fa-calendar-day ml-2 text-xl"></i>';
         return;
     }
-    
+
+	// 2. SÉCURITÉ : VÉRIFICATION DU JOUR DE LA SEMAINE
+    const selectedD = new Date(dateInput.value);
+    const day = selectedD.getDay();
+    if (day !== 5 && day !== 6 && day !== 0) { // Si ni Ven(5), ni Sam(6), ni Dim(0)
+        if (alertEpuise) {
+            alertEpuise.classList.remove('hidden');
+            alertEpuise.classList.add('flex');
+            const spanEl = alertEpuise.querySelector('span');
+            if (spanEl) spanEl.textContent = "Veuillez sélectionner un jour de week-end (Vendredi, Samedi ou Dimanche).";
+        }
+        submitBtn.disabled = true;
+        submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
+        submitBtn.innerHTML = 'Jour invalide <i class="fa-solid fa-ban ml-2 text-xl"></i>';
+        return;
+    }
+	
     const dateSelectionnee = getFridayOfWeek(dateInput.value);
     
-    // 2. SÉCURITÉ : DATE INDISPONIBLE
+    // 3. SÉCURITÉ : DATE INDISPONIBLE
     if (dateSelectionnee && unavailableRentalDates.includes(dateSelectionnee)) {
         if (alertEpuise) {
             alertEpuise.classList.remove('hidden');
@@ -2042,7 +2058,7 @@ function checkDateAvailability() {
         submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
         submitBtn.innerHTML = 'Date indisponible <i class="fa-solid fa-ban ml-2 text-xl"></i>';
     } else {
-    // 3. TOUT EST OK : ON DÉBLOQUE
+    // 4. TOUT EST OK : ON DÉBLOQUE
         if (alertEpuise) alertEpuise.classList.add('hidden');
         submitBtn.disabled = false;
         submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
@@ -2052,7 +2068,8 @@ function checkDateAvailability() {
 
 async function fetchUnavailableTestDates() {
     try {
-        unavailableTestDates = []; 
+        const response = await fetch(`${API_URL}?action=getUnavailableTestDates`);
+        unavailableTestDates = await response.json();
         checkTestDateAvailability();
     } catch (error) {
         console.error("Impossible de charger le calendrier d'essai :", error);
@@ -2076,10 +2093,26 @@ function checkTestDateAvailability() {
         submitBtn.innerHTML = 'Sélectionnez une date <i class="fa-solid fa-calendar-day ml-2 text-xl"></i>';
         return;
     }
-    
+
+	// 2. SÉCURITÉ : VÉRIFICATION DU JOUR DE LA SEMAINE
+    const selectedD = new Date(dateInput.value);
+    const day = selectedD.getDay();
+    if (day !== 5 && day !== 6 && day !== 0) {
+        if (alertEpuise) {
+            alertEpuise.classList.remove('hidden');
+            alertEpuise.classList.add('flex');
+            const spanEl = alertEpuise.querySelector('span');
+            if (spanEl) spanEl.textContent = "Veuillez sélectionner un jour de week-end (Vendredi, Samedi ou Dimanche).";
+        }
+        submitBtn.disabled = true;
+        submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
+        submitBtn.innerHTML = 'Jour invalide <i class="fa-solid fa-ban ml-2 text-xl"></i>';
+        return;
+    }
+	
     const dateSelectionnee = getFridayOfWeek(dateInput.value);
     
-    // 2. SÉCURITÉ : DATE INDISPONIBLE
+    // 3. SÉCURITÉ : DATE INDISPONIBLE
     if (dateSelectionnee && unavailableTestDates.includes(dateSelectionnee)) {
         if (alertEpuise) {
             alertEpuise.classList.remove('hidden');
@@ -2089,7 +2122,7 @@ function checkTestDateAvailability() {
         submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
         submitBtn.innerHTML = 'Date indisponible <i class="fa-solid fa-ban ml-2 text-xl"></i>';
     } else {
-    // 3. TOUT EST OK : ON DÉBLOQUE
+    // 4. TOUT EST OK : ON DÉBLOQUE
         if (alertEpuise) alertEpuise.classList.add('hidden');
         submitBtn.disabled = false;
         submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
