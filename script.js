@@ -1108,7 +1108,7 @@ function openModal(index) {
 			const dateInputTest = document.getElementById('config-date-test');
             if(dateInputTest) {
 				dateInputTest.value = "";
-                const dateDispoTest = "2026-07-25"; 
+                const dateDispoTest = "2026-06-30"; 
                 const aujourdhui = new Date().toISOString().split('T')[0];
                 if (aujourdhui < dateDispoTest) {
                     dateInputTest.min = dateDispoTest;
