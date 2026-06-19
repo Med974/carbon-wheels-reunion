@@ -969,7 +969,7 @@ function updateBadgeUI(isOriginalStatus, overrideStatus = null) {
     
     const statutLC = statusToDisplay.toLowerCase();
     
-    if (statutLC.includes('stock')) {
+    if (statutLC.includes('stock') || statutLC.includes('disponible')) {
         badge.className = 'text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide w-max bg-green-100 text-green-700 transition-colors duration-300';
         badge.innerHTML = '<i class="fa-solid fa-check mr-1"></i> En Stock Réunion';
     } else if (statutLC.includes('arrivage')) {
