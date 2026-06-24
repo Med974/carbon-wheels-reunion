@@ -1777,19 +1777,24 @@ function updateConfig() {
     
     const larIntEl = document.getElementById('modal-largeur-int');
     const larExtEl = document.getElementById('modal-largeur-ext');
+    const alerteLargeurPatins = document.getElementById('alerte-largeur-patins');
+    
     if (freinageSelect && larIntEl && larExtEl) {
         if (freinageSelect.value === 'Patins') {
             const largeurPatinsSelect = document.getElementById('config-largeur-patins');
             if (largeurPatinsSelect && largeurPatinsSelect.value.includes('25mm')) {
                 larIntEl.textContent = '18 mm';
                 larExtEl.textContent = '25 mm';
+                if (alerteLargeurPatins) alerteLargeurPatins.classList.add('hidden');
             } else {
                 larIntEl.textContent = '21 mm';
                 larExtEl.textContent = '28 mm';
+                if (alerteLargeurPatins) alerteLargeurPatins.classList.remove('hidden');
             }
         } else {
             larIntEl.textContent = '24 mm';
             larExtEl.textContent = '32 mm';
+            if (alerteLargeurPatins) alerteLargeurPatins.classList.add('hidden');
         }
     }
 
