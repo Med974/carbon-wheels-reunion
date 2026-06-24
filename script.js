@@ -1714,18 +1714,23 @@ function updateConfig() {
 	const colorSelect = document.getElementById('config-couleur-moyeu');
     const disquesSelect = document.getElementById('config-disques');
     const disquesContainer = document.getElementById('config-disques-container');
+    const plaquettesSelect = document.getElementById('config-plaquettes');
+    const plaquettesContainer = document.getElementById('config-plaquettes-container');
     const freinageSelect = document.getElementById('config-freinage');
     const largeurPatinsContainer = document.getElementById('config-largeur-patins-container');
 
-    // Masquer l'option disques et afficher la largeur si le client choisit des freins à patins
-    if (freinageSelect && disquesContainer) {
+    // Masquer les options disques/plaquettes et afficher la largeur si le client choisit des freins à patins
+    if (freinageSelect) {
         if (freinageSelect.value === 'Patins') {
-            disquesContainer.style.display = 'none';
+            if (disquesContainer) disquesContainer.classList.add('hidden');
             if (disquesSelect) disquesSelect.value = 'Aucun';
-            if (largeurPatinsContainer) largeurPatinsContainer.style.display = 'block';
+            if (plaquettesContainer) plaquettesContainer.classList.add('hidden');
+            if (plaquettesSelect) plaquettesSelect.value = 'Aucun';
+            if (largeurPatinsContainer) largeurPatinsContainer.classList.remove('hidden');
         } else {
-            disquesContainer.style.display = 'block';
-            if (largeurPatinsContainer) largeurPatinsContainer.style.display = 'none';
+            if (disquesContainer) disquesContainer.classList.remove('hidden');
+            if (plaquettesContainer) plaquettesContainer.classList.remove('hidden');
+            if (largeurPatinsContainer) largeurPatinsContainer.classList.add('hidden');
         }
     }
     const disquesPrice = disquesSelect && disquesSelect.selectedIndex >= 0 ? (parseInt(disquesSelect.options[disquesSelect.selectedIndex].getAttribute('data-price')) || 0) : 0;
@@ -1798,7 +1803,6 @@ function updateConfig() {
         }
     }
 
-	const plaquettesSelect = document.getElementById('config-plaquettes');
     const cassettesSelect = document.getElementById('config-cassettes');
     
     const msgRecoR2 = document.getElementById('msg-reco-r2');
