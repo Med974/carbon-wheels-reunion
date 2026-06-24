@@ -930,6 +930,7 @@ function updateHubOptions() {
         `;
         roulementsSelect.innerHTML = `
             <option value="Céramique SS" data-price="0">Céramique SS (Inclus avec RT240)</option>
+            <option value="Céramique TPI" data-price="79">Céramique TPI (Ultra-fluide) [+79€]</option>
         `;
         
         if (isHubChange) {
