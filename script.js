@@ -104,8 +104,12 @@ function addToCart() {
             if (isCurrentItemTestProgram) {
                 const dateEl = document.getElementById('config-date-test');
                 const dateLoc = dateEl && dateEl.value ? getFridayOfWeek(dateEl.value) : "Date non précisée";
-                configText = `Week-end du : ${dateLoc} | GHOST 50mm Glossy, Moyeux RT240, Rayons T32`;
-                finalPrice = 50;
+                const selectMontageTest = document.getElementById('config-montage-test');
+                const montageTextTest = selectMontageTest ? selectMontageTest.value : "Sans Montage";
+                const montagePriceTest = selectMontageTest && selectMontageTest.selectedIndex >= 0 ? (parseInt(selectMontageTest.options[selectMontageTest.selectedIndex].getAttribute('data-price')) || 0) : 0;
+
+                configText = `Week-end du : ${dateLoc} | GHOST 50mm Glossy, Moyeux RT240, Rayons T32 | Option : ${montageTextTest}`;
+                finalPrice = 50 + montagePriceTest;
                 finalWeight = 978;
 			} else if (isCurrentItemTextile) {
                 const typeSelect = document.getElementById('config-textile-type');
@@ -1097,13 +1101,16 @@ function openModal(index) {
             if(testConfigContainer) testConfigContainer.style.display = 'block';
             if(poidsMaxContainer) poidsMaxContainer.style.display = 'none';
             
+            const selectMontageTest = document.getElementById('config-montage-test');
+            if(selectMontageTest) selectMontageTest.value = "Sans Montage";
+
             const cPrice = document.getElementById('calc-price');
             if(cPrice) cPrice.textContent = 50;
             const cWeight = document.getElementById('calc-weight');
             if(cWeight) cWeight.textContent = currentBaseWeight > 0 ? currentBaseWeight : '978';
             updateBadgeUI(false, "Disponible à l'essai");
 
-			const dateInputTest = document.getElementById('config-date-test');
+            const dateInputTest = document.getElementById('config-date-test');
             if(dateInputTest) {
 				dateInputTest.value = "";
                 const dateDispoTest = "2026-06-30"; 
@@ -1676,6 +1683,19 @@ function updateConfig() {
         return; // On stoppe le calcul ici pour les roues spéciales !
     }
 
+	// --- GESTION DU PRIX DU PROGRAMME DE TEST ---
+    if (isCurrentItemTestProgram) {
+        const selectMontageTest = document.getElementById('config-montage-test');
+        const montagePriceTest = selectMontageTest && selectMontageTest.selectedIndex >= 0 ? (parseInt(selectMontageTest.options[selectMontageTest.selectedIndex].getAttribute('data-price')) || 0) : 0;
+        
+        let finalPrice = 50 + montagePriceTest;
+        
+        const cPrice = document.getElementById('calc-price');
+        if(cPrice) cPrice.textContent = finalPrice > 0 ? finalPrice : '--';
+        
+        return; // On stoppe le calcul ici
+    }
+	
     // Sécurité pour la suite du code (Roues classiques)
     if (!isCurrentItemWheelConfigurable) return; 
 
