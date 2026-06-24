@@ -969,6 +969,16 @@
                             <p class="text-[10px] text-gray-500 mt-1 italic leading-tight">Retrait le vendredi après-midi et retour le dimanche après midi ou lundi. (Essai possible en semaine, nous contacter)</p>
                         </div>
 
+                        <div class="mb-3">
+                            <label class="block text-xs font-bold text-gray-600 mb-1">
+                                <i class="fa-solid fa-screwdriver-wrench text-brand-accent mr-1"></i> Option de montage à l'atelier
+                            </label>
+                            <select id="config-montage-test" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm font-semibold shadow-sm" onchange="updateConfig()">
+                                <option value="Sans Montage" data-price="0" selected>Je monte mes propres disques et cassette (+0€)</option>
+                                <option value="Avec Montage (+30€)" data-price="30">Montage professionnel de mes disques et cassette à l'atelier (+30€)</option>
+                            </select>
+                        </div>
+
                         <!-- Alerte de stock épuisé -->
                         <div id="alert-test-epuisee" class="hidden items-start gap-3 bg-red-50 border border-red-200 text-red-800 p-3 rounded-xl mb-3 shadow-sm">
                             <i class="fa-solid fa-triangle-exclamation text-red-600 text-lg mt-0.5 animate-pulse"></i>
