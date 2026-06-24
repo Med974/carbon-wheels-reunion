@@ -1173,12 +1173,17 @@
                             </select>
                         </div>
 
+                        <!-- Nouveau sélecteur de largeur pour les freins à patins -->
                         <div id="config-largeur-patins-container" class="md:col-span-2 mb-3 hidden">
                             <label class="block text-xs font-bold text-gray-500 mb-1"><i class="fa-solid fa-arrows-left-right text-brand-accent mr-1"></i> Largeur de la jante (Spécifique Patins)</label>
                             <select id="config-largeur-patins" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm font-semibold shadow-sm" onchange="updateConfig()">
-                                <option value="25mm Ext. (18mm Int.)">25mm Ext. (18mm Int.)</option>
-                                <option value="28mm Ext. (21mm Int.)" selected>28mm Ext. (21mm Int.)</option>
+                                <option value="25mm Ext. (18mm Int.)">25mm Ext. (18mm Int.) - Standard</option>
+                                <option value="28mm Ext. (21mm Int.)" selected>28mm Ext. (21mm Int.) - Aéro & Confort</option>
                             </select>
+                            <div id="alerte-largeur-patins" class="hidden mt-2 p-2 bg-yellow-50 border border-yellow-200 rounded-lg flex items-start gap-2 text-[10px] text-yellow-800 leading-tight shadow-sm">
+                                <i class="fa-solid fa-triangle-exclamation text-brand-accent mt-0.5"></i>
+                                <span><strong>Tolérance Cadre / Étriers :</strong> Assurez-vous que votre cadre et vos freins acceptent une largeur de jante de 28mm. En cas de doute, privilégiez le standard 25mm.</span>
+                            </div>
                         </div>
 
                         <!-- ========================================== -->
