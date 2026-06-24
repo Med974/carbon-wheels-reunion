@@ -244,10 +244,16 @@ function addToCart() {
                 const disquesVal = document.getElementById('config-disques') ? document.getElementById('config-disques').value : "Aucun";
                 const disquesText = disquesVal !== 'Aucun' ? ` | + ${disquesVal}` : "";
                 
+                let largeurPatinsText = "";
+                if (freinage.includes("Patins")) {
+                    const lPatinsSelect = document.getElementById('config-largeur-patins');
+                    if (lPatinsSelect) largeurPatinsText = ` | Larg. ${lPatinsSelect.value.split(' -')[0]}`;
+                }
+
                 const colorEl = document.getElementById('config-couleur-moyeu');
                 const couleurMoyeu = (colorEl && colorEl.value) ? " (" + colorEl.value + ")" : "";
 
-                configText = `${moyeu}${couleurMoyeu} | Jantes ${jante} | ${rayon} | Ratchet ${ratchet} | Roulements ${roulements} | ${rouelibre} | ${finition} | Logos : ${logos} | ${freinage}${disquesText}`;
+                configText = `${moyeu}${couleurMoyeu} | Jantes ${jante} | ${rayon} | Ratchet ${ratchet} | Roulements ${roulements} | ${rouelibre} | ${finition} | Logos : ${logos} | ${freinage}${largeurPatinsText}${disquesText}`;
                 
                 // Ajout des accessoires optionnels (Étapes 10, 11, 12)
                 const addAccessoryToConfigText = (selectId) => {
@@ -1709,14 +1715,17 @@ function updateConfig() {
     const disquesSelect = document.getElementById('config-disques');
     const disquesContainer = document.getElementById('config-disques-container');
     const freinageSelect = document.getElementById('config-freinage');
+    const largeurPatinsContainer = document.getElementById('config-largeur-patins-container');
 
-    // Masquer l'option disques si le client choisit des freins à patins
+    // Masquer l'option disques et afficher la largeur si le client choisit des freins à patins
     if (freinageSelect && disquesContainer) {
         if (freinageSelect.value === 'Patins') {
             disquesContainer.style.display = 'none';
             if (disquesSelect) disquesSelect.value = 'Aucun';
+            if (largeurPatinsContainer) largeurPatinsContainer.style.display = 'block';
         } else {
             disquesContainer.style.display = 'block';
+            if (largeurPatinsContainer) largeurPatinsContainer.style.display = 'none';
         }
     }
     const disquesPrice = disquesSelect && disquesSelect.selectedIndex >= 0 ? (parseInt(disquesSelect.options[disquesSelect.selectedIndex].getAttribute('data-price')) || 0) : 0;
@@ -1770,8 +1779,14 @@ function updateConfig() {
     const larExtEl = document.getElementById('modal-largeur-ext');
     if (freinageSelect && larIntEl && larExtEl) {
         if (freinageSelect.value === 'Patins') {
-            larIntEl.textContent = '21 mm';
-            larExtEl.textContent = '28 mm';
+            const largeurPatinsSelect = document.getElementById('config-largeur-patins');
+            if (largeurPatinsSelect && largeurPatinsSelect.value.includes('25mm')) {
+                larIntEl.textContent = '18 mm';
+                larExtEl.textContent = '25 mm';
+            } else {
+                larIntEl.textContent = '21 mm';
+                larExtEl.textContent = '28 mm';
+            }
         } else {
             larIntEl.textContent = '24 mm';
             larExtEl.textContent = '32 mm';
