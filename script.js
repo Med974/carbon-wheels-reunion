@@ -2261,7 +2261,7 @@ function showCustomAlert(message) {
     const alertModal = document.getElementById('custom-alert-modal');
     const alertText = document.getElementById('custom-alert-text');
     if (alertModal && alertText) {
-        alertText.textContent = message;
+        alertText.innerHTML = message; // <-- On utilise innerHTML ici
         alertModal.classList.remove('hidden');
         alertModal.classList.add('flex');
     }
@@ -2317,6 +2317,37 @@ function closeSizeGuide() {
         modal.classList.add('hidden');
         modal.classList.remove('flex');
     }
+}
+
+// --- FONCTIONS D'INFORMATIONS DU CONFIGURATEUR ---
+
+function showInfoRayons() {
+    const texte = `
+        <div class="text-left space-y-3 text-gray-600 text-sm">
+            <p>Les rayons en carbone suppriment la flexion latérale : 100% de vos watts vont dans la route.</p>
+            <ul class="space-y-2">
+                <li><b class="text-gray-900">T32 (2.1g) :</b> Le plus léger. Profil fin. Maximise le gain de poids pour les purs grimpeurs.</li>
+                <li><b class="text-gray-900">T33 (3.2g) :</b> L'équilibre parfait entre profil aérodynamique et rigidité brutale. Idéal sur tous les terrains.</li>
+                <li><b class="text-gray-900">T40 (3.3g) :</b> Profil élargi. Coupe le vent de face de manière optimale pour les rouleurs.</li>
+                <li><b class="text-gray-900">T52 (5.2g) :</b> Rigidité maximale absolue. Conçu pour encaisser la puissance des purs sprinteurs et des pistards.</li>
+            </ul>
+        </div>
+    `;
+    showCustomAlert(texte);
+}
+
+function showInfoRatchet() {
+    const texte = `
+        <div class="text-left space-y-3 text-gray-600 text-sm">
+            <p>Le Ratchet est le système cranté dans le moyeu arrière qui s'enclenche quand vous pédalez (et qui fait le fameux bruit en roue libre).</p>
+            <ul class="space-y-2">
+                <li><b class="text-gray-900">45T (Engagement 8°) :</b> L'équilibre idéal. Réactivité excellente, friction minimale en roue libre, et grande durabilité. Bruit "bourdonnement" net.</li>
+                <li><b class="text-gray-900">54T (Engagement 6.6°) :</b> Standard sur nos moyeux RT240 ultra-légers.</li>
+                <li><b class="text-gray-900">72T (Engagement 5°) :</b> ⚡ Réactivité instantanée ! La puissance passe à la seconde où vous touchez la pédale (idéal pour les relances en bosse ou les critériums). Le bruit est plus aigu ("essaim d'abeilles").</li>
+            </ul>
+        </div>
+    `;
+    showCustomAlert(texte);
 }
 
 loadCatalogue();
