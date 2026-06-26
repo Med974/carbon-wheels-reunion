@@ -2369,22 +2369,6 @@ function showInfoRatchet() {
     showCustomAlert(texte);
 }
 
-function showPictureLockrings() {
-    // 1. On cherche la ligne du produit dans le catalogue chargé depuis le Sheet
-    const produitLockring = globalCatalogue.find(item => item.Nom && item.Nom.toLowerCase().includes('lockring'));
-    
-    // 2. Si on trouve le produit et qu'il a une image renseignée dans le Sheet
-    if (produitLockring && produitLockring.Image) {
-        const urlImage = produitLockring.Image.split(',')[0].trim();
-        
-        // 3. On appelle ta fonction existante pour l'afficher dans le cadre de gauche
-        changeModalMedia(urlImage);
-    } else {
-        // Sécurité si l'image n'est pas encore dans le Sheet ou s'il y a un bug de chargement
-        showCustomAlert("La photo des lockrings est en cours de chargement à l'atelier. Revenez dans un instant ! 🌋");
-    }
-}
-
 function showPictureGeneric(keyword) {
     // 1. Recherche du produit dans le catalogue complet rechargé du Sheets
     const produit = globalCatalogue.find(item => item.Nom && item.Nom.toLowerCase().includes(keyword.toLowerCase()));
