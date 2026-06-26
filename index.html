@@ -1272,7 +1272,12 @@
 
                             <div class="grid grid-cols-2 gap-3 mb-4">
                                 <div id="config-lockrings-container" class="col-span-2">
-                                    <label class="block text-xs font-bold text-gray-600 mb-1 truncate">16. Lockrings en couleur (Écrous de serrage Centerlock)</label>
+                                    <label class="block text-xs font-bold text-gray-600 mb-1 flex justify-between items-end truncate">
+                                        <span>16. Lockrings en couleur (Écrous de serrage)</span>
+                                        <button type="button" onclick="showPictureLockrings()" class="text-[10px] text-brand-accent hover:underline font-bold uppercase tracking-wider shrink-0 ml-2">
+                                            <i class="fa-solid fa-image mr-0.5"></i> Voir
+                                        </button>
+                                    </label>
                                     <select id="config-lockrings" class="w-full bg-white border border-green-300 rounded-lg px-2 py-2 text-xs font-semibold shadow-sm" onchange="updateConfig()">
                                         <option value="Aucun" data-price="0">Ne pas ajouter [+0€]</option>
                                         <option value="Paire Lockrings Rouges (CNC)" data-price="35">🔴 Paire Lockrings Rouges [+35€]</option>
