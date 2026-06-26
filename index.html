@@ -1200,7 +1200,10 @@
 
                             <div class="grid grid-cols-2 gap-3 mb-4">
                                 <div>
-                                    <label class="block text-xs font-bold text-gray-600 mb-1 truncate">10. Pneus GP5000</label>
+                                    <label class="block text-xs font-bold text-gray-600 mb-1 flex justify-between items-end truncate">
+                                        <span>10. Pneus GP5000</span>
+                                        <button type="button" onclick="showPictureGeneric('pneu')" class="text-[10px] text-brand-accent hover:underline font-bold uppercase tracking-wider shrink-0 ml-1"><i class="fa-solid fa-image mr-0.5"></i> Voir</button>
+                                    </label>
                                     <select id="config-pneus" class="w-full bg-white border border-green-300 rounded-lg px-2 py-2 text-xs font-semibold shadow-sm" onchange="updateConfig()">
                                         <option value="Aucun" data-price="0" selected>Ne pas ajouter [+0€]</option>
                                         <option value="2x Pneus Continental GP5000 (28mm)" data-price="115">🚴 2x GP5000 (28mm) [+115€]</option>
@@ -1209,7 +1212,10 @@
                                     </select>
                                 </div>
                                 <div>
-                                    <label class="block text-xs font-bold text-gray-600 mb-1 truncate">11. Kits Bidons Aéro</label>
+                                    <label class="block text-xs font-bold text-gray-600 mb-1 flex justify-between items-end truncate">
+                                        <span>11. Kits Bidons Aéro</span>
+                                        <button type="button" onclick="showPictureGeneric('bidon')" class="text-[10px] text-brand-accent hover:underline font-bold uppercase tracking-wider shrink-0 ml-1"><i class="fa-solid fa-image mr-0.5"></i> Voir</button>
+                                    </label>
                                     <select id="config-bidons" class="w-full bg-white border border-green-300 rounded-lg px-2 py-2 text-xs font-semibold shadow-sm" onchange="updateConfig()">
                                         <option value="Aucun" data-price="0" selected>Ne pas ajouter [+0€]</option>
                                         <option value="2x Kits Aéro (2 Bidons + 2 Porte-bidons)" data-price="69">💧 2x Kits [+69€]</option>
@@ -1219,7 +1225,10 @@
 
                             <div class="grid grid-cols-2 gap-3 mb-4">
                                 <div>
-                                    <label class="block text-xs font-bold text-gray-600 mb-1 truncate">12. Chambres TPU</label>
+                                    <label class="block text-xs font-bold text-gray-600 mb-1 flex justify-between items-end truncate">
+                                        <span>12. Chambres TPU</span>
+                                        <button type="button" onclick="showPictureGeneric('tpu')" class="text-[10px] text-brand-accent hover:underline font-bold uppercase tracking-wider shrink-0 ml-1"><i class="fa-solid fa-image mr-0.5"></i> Voir</button>
+                                    </label>
                                     <select id="config-tpu" class="w-full bg-white border border-green-300 rounded-lg px-2 py-2 text-xs font-semibold shadow-sm" onchange="updateConfig()">
                                         <option value="Aucun" data-price="0" selected>Ne pas ajouter [+0€]</option>                                
                                         <optgroup label="🎈 Valve 65mm (Profils 30 à 50mm)">
@@ -1234,18 +1243,21 @@
                                         </optgroup>
                                     </select>
                                 </div>
-                                <div id="config-disques-container mb-4">
-                                    <label class="block text-xs font-bold text-gray-600 mb-1 truncate">13. Disques de Freins</label>
+                                <div id="config-disques-container">
+                                    <label class="block text-xs font-bold text-gray-600 mb-1 flex justify-between items-end truncate">
+                                        <span>13. Disques de Freins</span>
+                                        <button type="button" onclick="showPictureGeneric('disque')" class="text-[10px] text-brand-accent hover:underline font-bold uppercase tracking-wider shrink-0 ml-1"><i class="fa-solid fa-image mr-0.5"></i> Voir</button>
+                                    </label>
                                     <select id="config-disques" class="w-full bg-white border border-green-300 rounded-lg px-2 py-2 text-xs font-semibold shadow-sm" onchange="updateConfig()">
                                         <option value="Aucun" data-price="0">Aucun disque [+0€]</option>
                                         <optgroup label="🌊 GALFER Road Wave">
-                                            <option value="2x Road Wave 140mm" data-price="119">Paire 140mm / 140mm [+119€]</option>
-                                            <option value="2x Road Wave 160mm" data-price="119">Paire 160mm / 160mm [+119€]</option>
+                                            <option value="2x Road Wave 140mm" data-price="119">Paire 140/140mm [+119€]</option>
+                                            <option value="2x Road Wave 160mm" data-price="119">Paire 160/160mm [+119€]</option>
                                             <option value="1x Road Wave 160mm + 1x Road Wave 140mm" data-price="119">Mixte 160/140mm [+119€]</option>
                                         </optgroup>
                                         <optgroup label="🦈 GALFER Disc Shark">
-                                            <option value="2x Disc Shark 140mm" data-price="159">Paire 140mm / 140mm [+159€]</option>
-                                            <option value="2x Disc Shark 160mm" data-price="159">Paire 160mm / 160mm [+159€]</option>
+                                            <option value="2x Disc Shark 140mm" data-price="159">Paire 140/140mm [+159€]</option>
+                                            <option value="2x Disc Shark 160mm" data-price="159">Paire 160/160mm [+159€]</option>
                                             <option value="1x Disc Shark 160mm + 1x Disc Shark 140mm" data-price="159">Mixte 160/140mm [+159€]</option>
                                         </optgroup>
                                     </select>
@@ -1254,7 +1266,10 @@
 
                             <div class="grid grid-cols-2 gap-3 mb-4">
                                 <div id="config-plaquettes-container">
-                                    <label class="block text-xs font-bold text-gray-600 mb-1 truncate">14. Plaquettes Galfer</label>
+                                    <label class="block text-xs font-bold text-gray-600 mb-1 flex justify-between items-end truncate">
+                                        <span>14. Plaquettes Galfer</span>
+                                        <button type="button" onclick="showPictureGeneric('plaquette')" class="text-[10px] text-brand-accent hover:underline font-bold uppercase tracking-wider shrink-0 ml-1"><i class="fa-solid fa-image mr-0.5"></i> Voir</button>
+                                    </label>
                                     <select id="config-plaquettes" class="w-full bg-white border border-green-300 rounded-lg px-2 py-2 text-xs font-semibold shadow-sm" onchange="updateConfig()">
                                         <option value="Aucun" data-price="0">Ne pas ajouter [+0€]</option>
                                         <option value="2x Paires Plaquettes SHIMANO (Galfer FD496)" data-price="45">🛑 SHIMANO [+45€]</option>
@@ -1262,7 +1277,10 @@
                                     </select>
                                 </div>
                                 <div id="config-housses-container">
-                                    <label class="block text-xs font-bold text-gray-600 mb-1 truncate">15. Housses Premium</label>
+                                    <label class="block text-xs font-bold text-gray-600 mb-1 flex justify-between items-end truncate">
+                                        <span>15. Housses Premium</span>
+                                        <button type="button" onclick="showPictureGeneric('housse')" class="text-[10px] text-brand-accent hover:underline font-bold uppercase tracking-wider shrink-0 ml-1"><i class="fa-solid fa-image mr-0.5"></i> Voir</button>
+                                    </label>
                                     <select id="config-housses" class="w-full bg-white border border-green-300 rounded-lg px-2 py-2 text-xs font-semibold shadow-sm" onchange="updateConfig()">
                                         <option value="Aucun" data-price="0">Ne pas ajouter [+0€]</option>
                                         <option value="2x Housses de transport individuelles (Paire)" data-price="59">🎒 Paire de housses [+59€]</option>
