@@ -861,7 +861,12 @@ function renderGrid(filterCategory) {
             `;
         }
 
-        let labelPrix = (isAccessory || isFixedPriceWheel) ? 'Prix unitaire' : 'Prix (la paire)';
+        let labelPrix = 'Prix (la paire)';
+        if (nomLC.includes('lockring')) {
+            labelPrix = 'Prix (la paire)';
+        } else if (cat.toLowerCase().includes('textile') || nomLC.includes('tenue') || nomLC.includes('combinaison') || isAccessory || isFixedPriceWheel) {
+            labelPrix = 'Prix unitaire';
+        }
 
         const cardHtml = `
             <div onclick="openModal(${index})" class="wheel-card bg-white rounded-xl shadow-md overflow-hidden border border-gray-100 flex flex-col relative group cursor-pointer">
@@ -1014,7 +1019,13 @@ function openModal(index) {
         const isSpecialWheel = nomLC.includes('bâton') || nomLC.includes('tri-spoke') || nomLC.includes('lenticulaire') || nomLC.includes('disc');
         
         const priceLabel = document.getElementById('modal-price-label');
-        if(priceLabel) priceLabel.textContent = (isCurrentItemAccessory || isSpecialWheel || isCurrentItemTextile) ? 'Prix unitaire' : 'Prix (la paire)';
+        if(priceLabel) {
+            if (nomLC.includes('lockring')) {
+                priceLabel.textContent = 'Prix (la paire)';
+            } else {
+                priceLabel.textContent = (isCurrentItemAccessory || isSpecialWheel || isCurrentItemTextile) ? 'Prix unitaire' : 'Prix (la paire)';
+            }
+        }
 
         const titleEl = document.getElementById('modal-title');
         if(titleEl) titleEl.textContent = item.Nom || "Produit";
@@ -1177,6 +1188,18 @@ function openModal(index) {
             const tailleSelect = document.getElementById('config-taille-pneu');
             const galferContainer = document.getElementById('galfer-config-container');
             
+            // Changement dynamique du label Taille -> Couleur
+            if (tailleContainer) {
+                const labelTaille = tailleContainer.querySelector('label');
+                if (labelTaille) {
+                    if (nomLC.includes('lockring')) {
+                        labelTaille.innerHTML = '<i class="fa-solid fa-palette text-brand-accent mr-1"></i> Couleur';
+                    } else {
+                        labelTaille.innerHTML = '<i class="fa-solid fa-ruler text-brand-accent mr-1"></i> Taille';
+                    }
+                }
+            }
+
             if (nomLC.includes('disque')) {
                 if(tailleContainer) tailleContainer.style.display = 'none';
                 if(galferContainer) galferContainer.style.display = 'block';
