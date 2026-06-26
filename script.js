@@ -385,7 +385,7 @@ function updateCartUI() {
             const titleLC = item.title.toLowerCase();
             const isSpecialWheel = titleLC.includes('bâton') || titleLC.includes('tri-spoke') || titleLC.includes('lenticulaire') || titleLC.includes('disc');
             const isManivelle = titleLC.includes('manivelle');
-            const isPetitAccessoire = titleLC.includes('pneu') || titleLC.includes('gp5000') || titleLC.includes('tpu') || titleLC.includes('chambre') || titleLC.includes('galfer') || titleLC.includes('disque') || titleLC.includes('plaquette') || titleLC.includes('bidon') || titleLC.includes('ahyka') || titleLC.includes('housse') || titleLC.includes('lockring');
+            const isPetitAccessoire = titleLC.includes('pneu') || titleLC.includes('gp5000') || titleLC.includes('tpu') || titleLC.includes('chambre') || titleLC.includes('galfer') || titleLC.includes('disque') || titleLC.includes('plaquette') || titleLC.includes('bidon') || titleLC.includes('ahyka') || titleLC.includes('housse') || titleLC.includes('lockring') || titleLC.includes('kit');
 
             if (item.isTextile) {
                 discountAmount += 10;
@@ -399,7 +399,7 @@ function updateCartUI() {
         } else if (appliedPromo === 'PAPA26') {
             const titleLC = item.title.toLowerCase();
             const isManivelle = titleLC.includes('manivelle');
-            const isPetitAccessoire = titleLC.includes('pneu') || titleLC.includes('gp5000') || titleLC.includes('tpu') || titleLC.includes('chambre') || titleLC.includes('galfer') || titleLC.includes('disque') || titleLC.includes('plaquette') || titleLC.includes('bidon') || titleLC.includes('ahyka') || titleLC.includes('housse') || titleLC.includes('lockring');
+            const isPetitAccessoire = titleLC.includes('pneu') || titleLC.includes('gp5000') || titleLC.includes('tpu') || titleLC.includes('chambre') || titleLC.includes('galfer') || titleLC.includes('disque') || titleLC.includes('plaquette') || titleLC.includes('bidon') || titleLC.includes('ahyka') || titleLC.includes('housse') || titleLC.includes('lockring') || titleLC.includes('kit');
 
             // -100€ UNIQUEMENT si c'est un produit principal (roues) ET que le prix est de 1399€ ou plus (paire de roues)
             if (!item.isAccessory && !isManivelle && !item.isTextile && item.price >= 1399) {
