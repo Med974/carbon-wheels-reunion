@@ -269,6 +269,7 @@ function addToCart() {
                 addAccessoryToConfigText('config-tpu');
 				addAccessoryToConfigText('config-plaquettes');
 				addAccessoryToConfigText('config-housses');
+				addAccessoryToConfigText('config-lockrings');
             }
         } else {
             configText = isCurrentItemAccessory ? "Accessoire" : "Modèle Standard";
@@ -383,7 +384,7 @@ function updateCartUI() {
             const titleLC = item.title.toLowerCase();
             const isSpecialWheel = titleLC.includes('bâton') || titleLC.includes('tri-spoke') || titleLC.includes('lenticulaire') || titleLC.includes('disc');
             const isManivelle = titleLC.includes('manivelle');
-            const isPetitAccessoire = titleLC.includes('pneu') || titleLC.includes('gp5000') || titleLC.includes('tpu') || titleLC.includes('chambre') || titleLC.includes('galfer') || titleLC.includes('disque') || titleLC.includes('plaquette') || titleLC.includes('bidon') || titleLC.includes('ahyka') || titleLC.includes('housse');
+            const isPetitAccessoire = titleLC.includes('pneu') || titleLC.includes('gp5000') || titleLC.includes('tpu') || titleLC.includes('chambre') || titleLC.includes('galfer') || titleLC.includes('disque') || titleLC.includes('plaquette') || titleLC.includes('bidon') || titleLC.includes('ahyka') || titleLC.includes('housse') || titleLC.includes('lockring');
 
             if (item.isTextile) {
                 discountAmount += 10;
@@ -397,7 +398,7 @@ function updateCartUI() {
         } else if (appliedPromo === 'PAPA26') {
             const titleLC = item.title.toLowerCase();
             const isManivelle = titleLC.includes('manivelle');
-            const isPetitAccessoire = titleLC.includes('pneu') || titleLC.includes('gp5000') || titleLC.includes('tpu') || titleLC.includes('chambre') || titleLC.includes('galfer') || titleLC.includes('disque') || titleLC.includes('plaquette') || titleLC.includes('bidon') || titleLC.includes('ahyka') || titleLC.includes('housse');
+            const isPetitAccessoire = titleLC.includes('pneu') || titleLC.includes('gp5000') || titleLC.includes('tpu') || titleLC.includes('chambre') || titleLC.includes('galfer') || titleLC.includes('disque') || titleLC.includes('plaquette') || titleLC.includes('bidon') || titleLC.includes('ahyka') || titleLC.includes('housse') || titleLC.includes('lockring');
 
             // -100€ UNIQUEMENT si c'est un produit principal (roues) ET que le prix est de 1399€ ou plus (paire de roues)
             if (!item.isAccessory && !isManivelle && !item.isTextile && item.price >= 1399) {
@@ -1248,6 +1249,8 @@ function openModal(index) {
             if(mTpu) mTpu.value = 'Aucun';
 			const mHousses = document.getElementById('config-housses');
             if(mHousses) mHousses.value = 'Aucun';
+			const mLockrings = document.getElementById('config-lockrings');
+            if(mLockrings) mLockrings.value = 'Aucun';
 
             const bannerStock = document.getElementById('stock-locked-banner');
 
@@ -1868,6 +1871,8 @@ function updateConfig() {
             if (tpuSelect) tpuSelect.value = 'Aucun';
             if (disquesSelect) disquesSelect.value = 'Aucun';
             if (plaquettesSelect) plaquettesSelect.value = 'Aucun';
+			if (houssesSelect) houssesSelect.value = 'Aucun';
+            const lockringsSelect = document.getElementById('config-lockrings');
             if (cassettesSelect) cassettesSelect.value = 'Aucune';
 			if (houssesSelect) houssesSelect.value = 'Aucun';
         } else {
@@ -1886,10 +1891,12 @@ function updateConfig() {
     const plaquettesPrice = plaquettesSelect && plaquettesSelect.selectedIndex >= 0 ? (parseInt(plaquettesSelect.options[plaquettesSelect.selectedIndex].getAttribute('data-price')) || 0) : 0;
 	
     const houssesPrice = getPrice(houssesSelect);
+    const lockringsSelect = document.getElementById('config-lockrings');
+    const lockringsPrice = getPrice(lockringsSelect);
     const pneusPrice = getPrice(pneusSelect);
     const bidonsPrice = getPrice(bidonsSelect);
     const tpuPrice = getPrice(tpuSelect);
-    const accessoiresPrice = pneusPrice + bidonsPrice + tpuPrice + houssesPrice;
+    const accessoiresPrice = pneusPrice + bidonsPrice + tpuPrice + houssesPrice + lockringsPrice;
     
     const hubWeight = moyeuSelect && moyeuSelect.selectedIndex >= 0 ? (parseInt(moyeuSelect.options[moyeuSelect.selectedIndex].getAttribute('data-hub-weight')) || 238) : 238;
     const spokeCount = moyeuSelect && moyeuSelect.selectedIndex >= 0 ? (parseInt(moyeuSelect.options[moyeuSelect.selectedIndex].getAttribute('data-spokes')) || 40) : 40;
@@ -2217,6 +2224,7 @@ function setDeliveryZone(zone) {
                     .replace(/ \| \+ 2x Disques Galfer Shark \[\+159€\]/g, "")
                     .replace(/ \| \+ 2x Housses de transport individuelles \(Paire\) \[\+59€\]/g, "")
                     .replace(/ \| \+ 1x Housse de transport individuelle \[\+35€\]/g, "")
+                    .replace(/ \| \+ Paire Lockrings [^|]+/g, "")
                     .replace(/ \| \+ Cassette [^|]+/g, "")
                     .replace(/ \| \+ Bidon [^|]+/g, "");
 
@@ -2231,7 +2239,8 @@ function setDeliveryZone(zone) {
                     if (configOriginale.includes('+70€')) item.price -= 70;
                     if (configOriginale.includes('+90€')) item.price -= 90;
                     if (configOriginale.includes('+59€')) item.price -= 59;
-                    if (configOriginale.includes('+35€')) item.price -= 35;
+                    if (configOriginale.includes('1x Housse')) item.price -= 35;
+                    if (configOriginale.includes('Paire Lockrings')) item.price -= 35;
                     
                     // Ajustement du poids visuel estimé
                     item.weight = "990"; // Poids standard de la Ghost 50 nue en jante UXL
