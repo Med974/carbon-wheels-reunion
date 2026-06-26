@@ -169,13 +169,14 @@ function addToCart() {
                     const tailleSelect = document.getElementById('config-galfer-taille');
                     const t = tailleSelect ? tailleSelect.value : "";
                     configText = `Modèle : ${m} | Taille : ${t} | Quantité : ${qte}`;
-                } else if (titleLC.includes('pneu') || titleLC.includes('gp5000') || titleLC.includes('tpu') || titleLC.includes('chambre') || titleLC.includes('plaquette')) {
+                } else if (titleLC.includes('pneu') || titleLC.includes('gp5000') || titleLC.includes('tpu') || titleLC.includes('chambre') || titleLC.includes('plaquette') || titleLC.includes('lockring')) {
                     const tailleEl = document.getElementById('config-taille-pneu');
                     const taille = tailleEl ? tailleEl.value : "";
-                    configText = `Option : ${taille} | Quantité : ${qte}`;
+                    const prefix = titleLC.includes('lockring') ? 'Couleur' : 'Option';
+                    configText = `${prefix} : ${taille} | Quantité : ${qte}`;
                 } else {
                     configText = `Quantité : ${qte}`;
-                } 
+                }
             } else if (titleLC.includes('bâton') || titleLC.includes('tri-spoke') || titleLC.includes('lenticulaire') || titleLC.includes('disc')) {
             if (currentLenticulaireMode === 'location') {
                 const dateEl = document.getElementById('config-date-location');
