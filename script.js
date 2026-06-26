@@ -2385,4 +2385,19 @@ function showPictureLockrings() {
     }
 }
 
+function showPictureGeneric(keyword) {
+    // 1. Recherche du produit dans le catalogue complet rechargé du Sheets
+    const produit = globalCatalogue.find(item => item.Nom && item.Nom.toLowerCase().includes(keyword.toLowerCase()));
+    
+    // 2. Si le produit est trouvé et contient un lien d'image
+    if (produit && produit.Image) {
+        const urlImage = produit.Image.split(',')[0].trim();
+        
+        // 3. On pousse la photo dans le grand bloc de gauche
+        changeModalMedia(urlImage);
+    } else {
+        showCustomAlert("La photo de cet accessoire est en cours de chargement à l'atelier. 🌋");
+    }
+}
+
 loadCatalogue();
