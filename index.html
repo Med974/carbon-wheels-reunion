@@ -1227,7 +1227,7 @@
                                 <div>
                                     <label class="block text-xs font-bold text-gray-600 mb-1 flex justify-between items-end truncate">
                                         <span>12. Chambres TPU</span>
-                                        <button type="button" onclick="showPictureGeneric('tpu')" class="text-[10px] text-brand-accent hover:underline font-bold uppercase tracking-wider shrink-0 ml-1"><i class="fa-solid fa-image mr-0.5"></i> Voir</button>
+                                        <button type="button" onclick="showPictureGeneric('chambre tpu')" class="text-[10px] text-brand-accent hover:underline font-bold uppercase tracking-wider shrink-0 ml-1"><i class="fa-solid fa-image mr-0.5"></i> Voir</button>
                                     </label>
                                     <select id="config-tpu" class="w-full bg-white border border-green-300 rounded-lg px-2 py-2 text-xs font-semibold shadow-sm" onchange="updateConfig()">
                                         <option value="Aucun" data-price="0" selected>Ne pas ajouter [+0€]</option>                                
@@ -1243,6 +1243,20 @@
                                         </optgroup>
                                     </select>
                                 </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-600 mb-1 flex justify-between items-end truncate">
+                                        <span>13. Kit Réparation TPU</span>
+                                        <button type="button" onclick="showPictureGeneric('kit')" class="text-[10px] text-brand-accent hover:underline font-bold uppercase tracking-wider shrink-0 ml-1"><i class="fa-solid fa-image mr-0.5"></i> Voir</button>
+                                    </label>
+                                    <select id="config-kit-tpu" class="w-full bg-white border border-green-300 rounded-lg px-2 py-2 text-xs font-semibold shadow-sm" onchange="updateConfig()">
+                                        <option value="Aucun" data-price="0" selected>Ne pas ajouter [+0€]</option>
+                                        <option value="Kit de réparation RideNow TPU" data-price="9">🛠️ Kit RideNow (Definitif) [+9€]</option>
+                                    </select>
+                                </div>
+                            </div>
+                                
+
+                            <div class="grid grid-cols-2 gap-3 mb-4">
                                 <div id="config-disques-container">
                                     <label class="block text-xs font-bold text-gray-600 mb-1 flex justify-between items-end truncate">
                                         <span>13. Disques de Freins</span>
@@ -1262,9 +1276,6 @@
                                         </optgroup>
                                     </select>
                                 </div>
-                            </div>
-
-                            <div class="grid grid-cols-2 gap-3 mb-4">
                                 <div id="config-plaquettes-container">
                                     <label class="block text-xs font-bold text-gray-600 mb-1 flex justify-between items-end truncate">
                                         <span>14. Plaquettes Galfer</span>
@@ -1276,22 +1287,12 @@
                                         <option value="2x Paires Plaquettes SRAM (Galfer FD513)" data-price="45">🛑 SRAM [+45€]</option>
                                     </select>
                                 </div>
-                                <div id="config-housses-container">
-                                    <label class="block text-xs font-bold text-gray-600 mb-1 flex justify-between items-end truncate">
-                                        <span>15. Housses</span>
-                                        <button type="button" onclick="showPictureGeneric('housse')" class="text-[10px] text-brand-accent hover:underline font-bold uppercase tracking-wider shrink-0 ml-1"><i class="fa-solid fa-image mr-0.5"></i> Voir</button>
-                                    </label>
-                                    <select id="config-housses" class="w-full bg-white border border-green-300 rounded-lg px-2 py-2 text-xs font-semibold shadow-sm" onchange="updateConfig()">
-                                        <option value="Aucun" data-price="0">Ne pas ajouter [+0€]</option>
-                                        <option value="2x Housses de transport individuelles (Paire)" data-price="59">🎒 Paire de housses [+59€]</option>
-                                    </select>
-                                </div>
                             </div>
 
                             <div class="grid grid-cols-2 gap-3 mb-4">
                                 <div id="config-lockrings-container" class="col-span-2">
                                     <label class="block text-xs font-bold text-gray-600 mb-1 flex justify-between items-end truncate">
-                                        <span>16. Lockrings en couleur</span>
+                                        <span>16. Lockrings</span>
                                         <button type="button" onclick="showPictureGeneric('lockring')" class="text-[10px] text-brand-accent hover:underline font-bold uppercase tracking-wider shrink-0 ml-2">
                                             <i class="fa-solid fa-image mr-0.5"></i> Voir
                                         </button>
@@ -1305,6 +1306,16 @@
                                         <option value="Paire Lockrings Roses (CNC)" data-price="35">🌸 Paire Lockrings Roses [+35€]</option>
                                         <option value="Paire Lockrings Argents (CNC)" data-price="35">⚪ Paire Lockrings Argents [+35€]</option>
                                         <option value="Paire Lockrings Noirs (CNC)" data-price="35">⚫ Paire Lockrings Noirs [+35€]</option>
+                                    </select>
+                                </div>
+                                <div id="config-housses-container">
+                                    <label class="block text-xs font-bold text-gray-600 mb-1 flex justify-between items-end truncate">
+                                        <span>15. Housses</span>
+                                        <button type="button" onclick="showPictureGeneric('housse')" class="text-[10px] text-brand-accent hover:underline font-bold uppercase tracking-wider shrink-0 ml-1"><i class="fa-solid fa-image mr-0.5"></i> Voir</button>
+                                    </label>
+                                    <select id="config-housses" class="w-full bg-white border border-green-300 rounded-lg px-2 py-2 text-xs font-semibold shadow-sm" onchange="updateConfig()">
+                                        <option value="Aucun" data-price="0">Ne pas ajouter [+0€]</option>
+                                        <option value="2x Housses de transport individuelles (Paire)" data-price="59">🎒 Paire de housses [+59€]</option>
                                     </select>
                                 </div>
                             </div>
