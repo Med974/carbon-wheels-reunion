@@ -267,6 +267,7 @@ function addToCart() {
                 addAccessoryToConfigText('config-pneus');
                 addAccessoryToConfigText('config-bidons');
                 addAccessoryToConfigText('config-tpu');
+				addAccessoryToConfigText('config-kit-tpu');
 				addAccessoryToConfigText('config-plaquettes');
 				addAccessoryToConfigText('config-housses');
 				addAccessoryToConfigText('config-lockrings');
@@ -1247,6 +1248,8 @@ function openModal(index) {
             if(mBidons) mBidons.value = 'Aucun';
             const mTpu = document.getElementById('config-tpu');
             if(mTpu) mTpu.value = 'Aucun';
+			const mKitTpu = document.getElementById('config-kit-tpu');
+            if(mKitTpu) mKitTpu.value = 'Aucun';
 			const mHousses = document.getElementById('config-housses');
             if(mHousses) mHousses.value = 'Aucun';
 			const mLockrings = document.getElementById('config-lockrings');
@@ -1745,6 +1748,8 @@ function updateConfig() {
     const bidonsSelect = document.getElementById('config-bidons');
     const tpuSelect = document.getElementById('config-tpu');
 	const houssesSelect = document.getElementById('config-housses');
+    const lockringsSelect = document.getElementById('config-lockrings');
+    const kitTpuSelect = document.getElementById('config-kit-tpu');
 
     const optT52 = rayonSelect ? Array.from(rayonSelect.options).find(opt => opt.value === 'T52') : null;
     const optT52Interne = document.getElementById('opt-t52-interne');
@@ -1872,9 +1877,8 @@ function updateConfig() {
             if (disquesSelect) disquesSelect.value = 'Aucun';
             if (plaquettesSelect) plaquettesSelect.value = 'Aucun';
 			if (houssesSelect) houssesSelect.value = 'Aucun';
-            const lockringsSelect = document.getElementById('config-lockrings');
-            if (cassettesSelect) cassettesSelect.value = 'Aucune';
-			if (houssesSelect) houssesSelect.value = 'Aucun';
+            if (lockringsSelect) lockringsSelect.value = 'Aucun';
+            if (kitTpuSelect) kitTpuSelect.value = 'Aucun';
         } else {
             greenBox.style.display = 'block';
         }
@@ -1891,12 +1895,12 @@ function updateConfig() {
     const plaquettesPrice = plaquettesSelect && plaquettesSelect.selectedIndex >= 0 ? (parseInt(plaquettesSelect.options[plaquettesSelect.selectedIndex].getAttribute('data-price')) || 0) : 0;
 	
     const houssesPrice = getPrice(houssesSelect);
-    const lockringsSelect = document.getElementById('config-lockrings');
     const lockringsPrice = getPrice(lockringsSelect);
+    const kitTpuPrice = getPrice(kitTpuSelect);
     const pneusPrice = getPrice(pneusSelect);
     const bidonsPrice = getPrice(bidonsSelect);
     const tpuPrice = getPrice(tpuSelect);
-    const accessoiresPrice = pneusPrice + bidonsPrice + tpuPrice + houssesPrice + lockringsPrice;
+    const accessoiresPrice = pneusPrice + bidonsPrice + tpuPrice + houssesPrice + lockringsPrice + kitTpuPrice;
     
     const hubWeight = moyeuSelect && moyeuSelect.selectedIndex >= 0 ? (parseInt(moyeuSelect.options[moyeuSelect.selectedIndex].getAttribute('data-hub-weight')) || 238) : 238;
     const spokeCount = moyeuSelect && moyeuSelect.selectedIndex >= 0 ? (parseInt(moyeuSelect.options[moyeuSelect.selectedIndex].getAttribute('data-spokes')) || 40) : 40;
@@ -2225,6 +2229,7 @@ function setDeliveryZone(zone) {
                     .replace(/ \| \+ 2x Housses de transport individuelles \(Paire\) \[\+59€\]/g, "")
                     .replace(/ \| \+ 1x Housse de transport individuelle \[\+35€\]/g, "")
                     .replace(/ \| \+ Paire Lockrings [^|]+/g, "")
+					.replace(/ \| \+ Kit de réparation RideNow TPU \[\+9€\]/g, "")
                     .replace(/ \| \+ Cassette [^|]+/g, "")
                     .replace(/ \| \+ Bidon [^|]+/g, "");
 
@@ -2241,6 +2246,7 @@ function setDeliveryZone(zone) {
                     if (configOriginale.includes('+59€')) item.price -= 59;
                     if (configOriginale.includes('1x Housse')) item.price -= 35;
                     if (configOriginale.includes('Paire Lockrings')) item.price -= 35;
+					if (configOriginale.includes('+9€')) item.price -= 9;
                     
                     // Ajustement du poids visuel estimé
                     item.weight = "990"; // Poids standard de la Ghost 50 nue en jante UXL
