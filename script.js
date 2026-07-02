@@ -1914,6 +1914,7 @@ function updateConfig() {
     const ratchetPrice = getPrice(ratchetSelect);
     const roulementsPrice = getPrice(roulementsSelect);
     const finitionPrice = getPrice(finitionSelect);
+	const jantePrice = getPrice(janteSelect);
 
     // --- AJOUT : ON RÉCUPÈRE LE PRIX DES PLAQUETTES ---
     const plaquettesPrice = plaquettesSelect && plaquettesSelect.selectedIndex >= 0 ? (parseInt(plaquettesSelect.options[plaquettesSelect.selectedIndex].getAttribute('data-price')) || 0) : 0;
@@ -1934,7 +1935,7 @@ function updateConfig() {
     
     const freinageWeight = freinageSelect && freinageSelect.value === 'Patins' ? 130 : 0;
 
-    const finalPrice = currentBasePrice + moyeuPrice + rayonPrice + finitionPrice + colorPrice + ratchetPrice + roulementsPrice + accessoiresPrice + disquesPrice + plaquettesPrice;
+    const finalPrice = currentBasePrice + moyeuPrice + rayonPrice + jantePrice + finitionPrice + colorPrice + ratchetPrice + roulementsPrice + accessoiresPrice + disquesPrice + plaquettesPrice;
     
     const baseComboWeight = 322; 
     const newComboWeight = hubWeight + (spokeCount * spokeWeight) + rimDiff + finitionWeight + freinageWeight;
