@@ -1343,7 +1343,7 @@ function openModal(index) {
                         <option value="Série STD" data-price="0" data-weight-diff="0">Série STD (Moyeu 36T) - 1150g [+0€]</option>
                         <option value="Série XL" data-price="100" data-weight-diff="-120">Série XL (Moyeu 36T) - 1030g [+100€]</option>
                         <option value="Série UXL" data-price="200" data-weight-diff="-230">Série UXL (Moyeu 54T) - 920g [+200€]</option>
-                        <option value="Série RUXL" data-price="250" data-weight-diff="-250">Série RUXL (Moyeu SSF) - 900g [+250€]</option>
+                        <option value="Série RUXL" data-price="300" data-weight-diff="-250">Série RUXL (Moyeu SSF) - 900g [+300€]</option>
                     `;
                 } else if (nomLC.includes('bâton') || nomLC.includes('tri-spoke')) {
                     gammeSelect.innerHTML = `
