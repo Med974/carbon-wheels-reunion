@@ -1845,12 +1845,20 @@ function updateConfig() {
     const t32Option = document.getElementById('opt-t32');
     const patinsOption = freinageSelect ? Array.from(freinageSelect.options).find(opt => opt.value === 'Patins') : null;
     const suxlOption = janteSelect ? Array.from(janteSelect.options).find(opt => opt.value === 'SUXL') : null;
+	const evoOption = document.getElementById('opt-evo');
 
     if (moyeuSelect && moyeuSelect.value === 'R2') {
         if(msgRecoR2) msgRecoR2.style.display = 'flex';
         if(t32Option) {
             t32Option.disabled = true;
             t32Option.textContent = 'Carbone T32 (Incompatible avec moyeu R2)';
+        }
+		if(evoOption) {
+            evoOption.disabled = true;
+            evoOption.textContent = 'EVO (Incompatible avec R2)';
+        }
+        if (janteSelect && janteSelect.value.includes('EVO')) {
+            janteSelect.value = 'SUXL';
         }
         if (rayonSelect && rayonSelect.value === 'T32') {
             rayonSelect.value = 'T33';
@@ -1871,6 +1879,10 @@ function updateConfig() {
         if(t32Option) {
             t32Option.disabled = false;
             t32Option.textContent = 'Carbone T32 (Aéro pur, 3.2 x 0.98mm - 2.1g)';
+        }
+		if(evoOption) {
+            evoOption.disabled = false;
+            evoOption.textContent = 'EVO (Trous Moulés) [+100€]';
         }
         if (suxlOption) {
             suxlOption.disabled = false;
