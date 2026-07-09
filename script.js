@@ -910,10 +910,12 @@ function updateHubOptions() {
     const isHubChange = (lastHubSelected !== "" && lastHubSelected !== currentHub);
     lastHubSelected = currentHub;
 
-    // Bascule automatiquement sur SUXL si on choisit un moyeu ultra-léger
+    // Bascule automatiquement sur SUXL et T32 si on choisit un moyeu ultra-léger
     const configJante = document.getElementById('config-jante');
-    if (isHubChange && configJante && (currentHub === 'RT240' || currentHub === 'RT220')) {
-        configJante.value = 'SUXL';
+    const configRayons = document.getElementById('config-rayons');
+    if (isHubChange && (currentHub === 'RT240' || currentHub === 'RT220')) {
+        if (configJante) configJante.value = 'SUXL';
+        if (configRayons) configRayons.value = 'T32';
     }
 
     const currentColor = colorSelect.value;
