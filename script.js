@@ -941,14 +941,14 @@ function updateHubOptions() {
 
     } else { 
         colorSelect.innerHTML = `
-            <option value="Argent" data-price="0">Argent (Standard RT240)</option>
+            <option value="Argent" data-price="0">Argent (Standard)</option>
             <option value="Noir" data-price="0">Noir</option>
         `;
         ratchetSelect.innerHTML = `
-            <option value="54T" data-price="0">54T (Inclus avec RT240)</option>
+            <option value="54T" data-price="0">54T (Inclus)</option>
         `;
         roulementsSelect.innerHTML = `
-            <option value="Céramique SS" data-price="0">Céramique SS (Inclus avec RT240)</option>
+            <option value="Céramique SS" data-price="0">Céramique SS (Inclus)</option>
             <option value="Céramique TPI" data-price="79">Céramique TPI (Ultra-fluide) [+79€]</option>
         `;
         
@@ -1777,16 +1777,19 @@ function updateConfig() {
 
     const optT52 = rayonSelect ? Array.from(rayonSelect.options).find(opt => opt.value === 'T52') : null;
     const optT52Interne = document.getElementById('opt-t52-interne');
+    const optT32Interne = document.getElementById('opt-t32-interne');
     
-    // 1. Calcul du texte/prix de base pour le T52 Interne selon le moyeu
-    let baseTextT52Interne = 'Carbone T52 + Écrous Internes';
-    if (optT52Interne && moyeuSelect) {
+    // 1. Calcul du texte dynamique pour les écrous internes selon le moyeu
+    let baseTextT52Interne = 'T52 + Internes';
+    let baseTextT32Interne = 'T32 + Internes';
+    
+    if (moyeuSelect) {
         if (moyeuSelect.value === 'R2') {
-            optT52Interne.setAttribute('data-price', '159');
-            baseTextT52Interne = 'Carbone T52 + Écrous Internes [+159€]';
+            if (optT52Interne) { optT52Interne.setAttribute('data-price', '159'); baseTextT52Interne = 'T52 + Internes [+159€]'; }
+            if (optT32Interne) { optT32Interne.setAttribute('data-price', '228'); baseTextT32Interne = 'T32 + Internes [+228€ sur R2]'; }
         } else {
-            optT52Interne.setAttribute('data-price', '99');
-            baseTextT52Interne = 'Carbone T52 + Écrous Internes [+99€]';
+            if (optT52Interne) { optT52Interne.setAttribute('data-price', '99'); baseTextT52Interne = 'T52 + Internes [+99€]'; }
+            if (optT32Interne) { optT32Interne.setAttribute('data-price', '99'); baseTextT32Interne = 'T32 + Internes [+99€]'; }
         }
     }
 
@@ -1847,54 +1850,54 @@ function updateConfig() {
     const suxlOption = janteSelect ? Array.from(janteSelect.options).find(opt => opt.value === 'SUXL') : null;
 	const evoOption = document.getElementById('opt-evo');
 
+    // === GESTION DES INCOMPATIBILITÉS PAR MOYEU ===
     if (moyeuSelect && moyeuSelect.value === 'R2') {
         if(msgRecoR2) msgRecoR2.style.display = 'flex';
-        if(t32Option) {
-            t32Option.disabled = true;
-            t32Option.textContent = 'Carbone T32 (Incompatible avec moyeu R2)';
+        // Le T32 est permis, facturé 69€ de plus (via attribut data-price)
+        if(t32Option) { 
+            t32Option.disabled = false; 
+            t32Option.textContent = 'Carbone T32 [+69€ sur R2]'; 
+            t32Option.setAttribute('data-price', '69'); 
         }
-		if(evoOption) {
-            evoOption.disabled = true;
-            evoOption.textContent = 'EVO (Incompatible avec R2)';
-        }
-        if (janteSelect && janteSelect.value.includes('EVO')) {
-            janteSelect.value = 'SUXL';
-        }
-        if (rayonSelect && rayonSelect.value === 'T32') {
-            rayonSelect.value = 'T33';
-        }
-        if (suxlOption) {
-            suxlOption.disabled = true;
-            suxlOption.textContent = 'SUXL (Incompatible avec moyeu R2)';
-        }
-        if (janteSelect && janteSelect.value === 'SUXL') {
-            janteSelect.value = 'UXL';
-        }
-        if (patinsOption) {
-            patinsOption.disabled = false;
-            patinsOption.textContent = 'Freins à Patins (Bande Haute Température)';
-        }
-    } else {
+        
+		if(evoOption) { evoOption.disabled = true; evoOption.textContent = 'EVO (Incompatible avec R2)'; }
+        if (janteSelect && janteSelect.value.includes('EVO')) janteSelect.value = 'SUXL';
+        
+        if (suxlOption) { suxlOption.disabled = true; suxlOption.textContent = 'SUXL (Incompatible avec moyeu R2)'; }
+        if (janteSelect && janteSelect.value === 'SUXL') janteSelect.value = 'UXL';
+        
+        if (patinsOption) { patinsOption.disabled = false; patinsOption.textContent = 'Freins à Patins (Bande Haute Température)'; }
+        
+    } else if (moyeuSelect && moyeuSelect.value === 'RT220') {
         if(msgRecoR2) msgRecoR2.style.display = 'none';
-        if(t32Option) {
-            t32Option.disabled = false;
-            t32Option.textContent = 'Carbone T32 (Aéro pur, 3.2 x 0.98mm - 2.1g)';
+        if(t32Option) { 
+            t32Option.disabled = false; 
+            t32Option.textContent = 'Carbone T32 (2.1g)'; 
+            t32Option.setAttribute('data-price', '0'); 
         }
-		if(evoOption) {
-            evoOption.disabled = false;
-            evoOption.textContent = 'EVO (Trous Moulés) [+100€]';
+        
+        // RT220 incompatible avec EVO
+        if(evoOption) { evoOption.disabled = true; evoOption.textContent = 'EVO (Incompatible avec RT220)'; }
+        if (janteSelect && janteSelect.value.includes('EVO')) janteSelect.value = 'SUXL';
+        
+        if (suxlOption) { suxlOption.disabled = false; suxlOption.textContent = 'SUXL (Super Ultra-Light)'; }
+        if (patinsOption) { patinsOption.disabled = true; patinsOption.textContent = 'Freins à Patins (Incompatible avec RT220)'; }
+        if (freinageSelect && freinageSelect.value === 'Patins') freinageSelect.value = 'Disques';
+        
+    } else {
+        // RT240
+        if(msgRecoR2) msgRecoR2.style.display = 'none';
+        if(t32Option) { 
+            t32Option.disabled = false; 
+            t32Option.textContent = 'Carbone T32 (2.1g)'; 
+            t32Option.setAttribute('data-price', '0'); 
         }
-        if (suxlOption) {
-            suxlOption.disabled = false;
-            suxlOption.textContent = 'SUXL (Super Ultra-Light)';
-        }
-        if (patinsOption) {
-            patinsOption.disabled = true;
-            patinsOption.textContent = 'Freins à Patins (Incompatible avec RT240)';
-        }
-        if (freinageSelect && freinageSelect.value === 'Patins') {
-            freinageSelect.value = 'Disques';
-        }
+        
+		if(evoOption) { evoOption.disabled = false; evoOption.textContent = 'EVO (Trous Moulés) [+100€]'; }
+        if (suxlOption) { suxlOption.disabled = false; suxlOption.textContent = 'SUXL (Super Ultra-Light)'; }
+        
+        if (patinsOption) { patinsOption.disabled = true; patinsOption.textContent = 'Freins à Patins (Incompatible avec RT240)'; }
+        if (freinageSelect && freinageSelect.value === 'Patins') freinageSelect.value = 'Disques';
     }
     
     const getPrice = (el) => {
