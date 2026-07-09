@@ -221,7 +221,8 @@
                 
                 <div class="flex gap-2 overflow-x-auto no-scrollbar w-full md:w-auto pb-2">
                     <button onclick="filterCatalogue('Tout')" class="filter-btn active px-4 py-2 rounded-full border border-gray-300 text-sm font-bold whitespace-nowrap">Tout voir</button>
-                    <button onclick="filterCatalogue('Roues')" class="filter-btn px-4 py-2 rounded-full border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 text-sm font-bold whitespace-nowrap">Roues Carbone</button>
+                    <button onclick="filterCatalogue('Roues Route')" class="filter-btn px-4 py-2 rounded-full border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 text-sm font-bold whitespace-nowrap">Roues Carbone</button>
+                    <button onclick="filterCatalogue('Roues VTT')" class="filter-btn px-4 py-2 rounded-full border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 text-sm font-bold whitespace-nowrap">VTT & Gravel</button>
                     <button onclick="filterCatalogue('Accessoires')" class="filter-btn px-4 py-2 rounded-full border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 text-sm font-bold whitespace-nowrap">Accessoires</button>
                     <button onclick="filterCatalogue('Textile')" class="filter-btn px-4 py-2 rounded-full border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 text-sm font-bold whitespace-nowrap">Textile</button>
                     <button onclick="filterCatalogue('Composants')" class="filter-btn px-4 py-2 rounded-full border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 text-sm font-bold whitespace-nowrap">Composants</button>
@@ -1094,6 +1095,7 @@
                                 <label class="block text-xs font-bold text-gray-500 mb-1 truncate">1. Moyeu (Hub)</label>
                                 <select id="config-moyeu" class="w-full bg-white border border-gray-300 rounded-lg px-2 py-2 text-xs font-semibold border-brand-accent shadow-sm" onchange="updateHubOptions(); updateConfig()">
                                     <option value="RT240" data-price="0" data-hub-weight="238" data-spokes="40">DFS RT240 (Ultra-léger)</option>
+                                    <option value="RT220" data-price="179" data-hub-weight="221" data-spokes="40">DFS RT220 (Extrême-léger) [+179€]</option>
                                     <option value="R2" data-price="0" data-hub-weight="285" data-spokes="45" selected>DFS R2 (Recommandé)</option>
                                 </select>
                             </div>
@@ -1123,6 +1125,7 @@
                                     <option value="T33" data-price="0" data-spoke-weight="3.2" selected>Carbone T33 (3.2g)</option>
                                     <option value="T40" data-price="0" data-spoke-weight="3.3">Carbone T40 (3.3g)</option>
                                     <option value="T52" data-price="0" data-spoke-weight="5.2">Carbone T52 (5.2g)</option>
+                                    <option id="opt-t32-interne" value="T32_interne" data-price="0" data-spoke-weight="2.1">T32 + Internes</option>
                                     <option id="opt-t52-interne" value="T52_interne" data-price="0" data-spoke-weight="5.2">T52 + Internes</option>
                                 </select>
                             </div>
