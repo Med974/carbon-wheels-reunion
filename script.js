@@ -822,11 +822,12 @@ function renderGrid(filterCategory) {
         const nomLC = item.Nom.toLowerCase();
         const isFixedPriceWheel = nomLC.includes('bâton') || nomLC.includes('tri-spoke') || nomLC.includes('lenticulaire') || nomLC.includes('disc');
         const isAccessory = cat.toLowerCase().includes('accessoire') || cat.toLowerCase().includes('composant');
+        const isTestProgram = nomLC.includes('essai') || nomLC.includes('test');
 
         let imageUrl = item.Image ? item.Image.split(',')[0].trim() : 'https://images.unsplash.com/photo-1511994298241-608e28f14fde?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80';
         let prixAffiche = 'Sur devis';
         if (item.Prix) {
-            prixAffiche = (isAccessory || isFixedPriceWheel) ? `${item.Prix} €` : `Dès ${item.Prix} €`;
+            prixAffiche = (isAccessory || isFixedPriceWheel || isTestProgram) ? `${item.Prix} €` : `Dès ${item.Prix} €`;
         }
         
         let statutBadge = '';
@@ -855,7 +856,7 @@ function renderGrid(filterCategory) {
                 specLigne = ``; 
             }
         } else {
-            let weightPrefix = isFixedPriceWheel ? '' : 'Dès ';
+            let weightPrefix = (isFixedPriceWheel || isTestProgram) ? '' : 'Dès ';
             specLigne = `
                 <span class="flex items-center"><i class="fa-solid fa-arrows-up-down text-brand-accent mr-1.5"></i> ${item.Hauteur || '-'}</span>
                 ${item.Poids ? `<span class="text-gray-300">|</span><span class="flex items-center"><i class="fa-solid fa-weight-scale text-brand-accent mr-1.5"></i> ${weightPrefix}${item.Poids} g</span>` : ''}
@@ -865,6 +866,8 @@ function renderGrid(filterCategory) {
         let labelPrix = 'Prix (la paire)';
         if (nomLC.includes('lockring')) {
             labelPrix = 'Prix (la paire)';
+        } else if (isTestProgram) {
+            labelPrix = 'Prix';
         } else if (cat.toLowerCase().includes('textile') || nomLC.includes('tenue') || nomLC.includes('combinaison') || isAccessory || isFixedPriceWheel) {
             labelPrix = 'Prix unitaire';
         }
