@@ -910,6 +910,12 @@ function updateHubOptions() {
     const isHubChange = (lastHubSelected !== "" && lastHubSelected !== currentHub);
     lastHubSelected = currentHub;
 
+    // Bascule automatiquement sur SUXL si on choisit un moyeu ultra-léger
+    const configJante = document.getElementById('config-jante');
+    if (isHubChange && configJante && (currentHub === 'RT240' || currentHub === 'RT220')) {
+        configJante.value = 'SUXL';
+    }
+
     const currentColor = colorSelect.value;
     const currentRatchet = ratchetSelect.value;
     const currentRoulements = roulementsSelect.value;
@@ -1961,8 +1967,16 @@ function updateConfig() {
     if(cWeightSpan) cWeightSpan.textContent = finalWeight > 0 ? finalWeight : '--';
     
     const poidsMaxSpan = document.getElementById('modal-poids-max');
-    if (poidsMaxSpan && janteSelect) {
-        poidsMaxSpan.textContent = janteSelect.value === 'UXL' ? '120 kg' : '90 kg';
+    if (poidsMaxSpan && moyeuSelect && janteSelect) {
+        let maxWeight = '90 kg'; // Sécurité par défaut (RT220)
+        if (moyeuSelect.value === 'R2') {
+            maxWeight = '120 kg';
+        } else if (moyeuSelect.value === 'RT240') {
+            maxWeight = janteSelect.value.includes('EVO') ? '110 kg' : '100 kg';
+        } else if (moyeuSelect.value === 'RT220') {
+            maxWeight = '90 kg';
+        }
+        poidsMaxSpan.textContent = maxWeight;
     }
 
     let isStockConfig = true;
