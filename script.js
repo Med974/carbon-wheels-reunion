@@ -1580,7 +1580,22 @@ function updateConfig() {
         }
 
         // --- GESTION DES ROUES VTT (APEX) ---
-	    if (titleLC.includes('apex') || titleLC.includes('vtt') || titleLC.includes('mtb')) {
+	    const isMTB = titleLC.includes('apex') || titleLC.includes('vtt') || titleLC.includes('mtb');
+	    const mtbContainer = document.getElementById('mtb-config-container');
+	    const roadContainer = document.getElementById('wheel-config-options');
+	    
+	    // Bascule stricte de l'affichage entre Route et VTT
+	    if (mtbContainer && roadContainer) {
+	        if (isMTB) {
+	            mtbContainer.classList.remove('hidden');
+	            roadContainer.classList.add('hidden');
+	        } else {
+	            mtbContainer.classList.add('hidden');
+	            roadContainer.classList.remove('hidden');
+	        }
+	    }
+	
+	    if (isMTB) {
 	        const mtbMoyeuSelect = document.getElementById('config-mtb-moyeu');
 	        const mtbJanteSelect = document.getElementById('config-mtb-jante');
 	        const mtbCouleurSelect = document.getElementById('config-mtb-couleur'); // Pour le DMB2
@@ -1634,6 +1649,15 @@ function updateConfig() {
 	                mtbFinalPrice += 49;
 	            }
 	        }
+	
+	        // Ajout dynamique du prix des accessoires sélectionnés (Pneus, Disques, etc.) pour les VTT
+	        const accessSelects = document.querySelectorAll('#green-accessory-box select');
+	        accessSelects.forEach(select => {
+	            if (select.value !== 'Aucun' && select.selectedIndex >= 0) {
+	                const priceOpt = parseInt(select.options[select.selectedIndex].getAttribute('data-price')) || 0;
+	                mtbFinalPrice += priceOpt;
+	            }
+	        });
 	        
 	        const cPrice = document.getElementById('calc-price');
 	        if(cPrice) cPrice.textContent = mtbFinalPrice;
