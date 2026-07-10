@@ -1631,104 +1631,6 @@ function updateConfig() {
             if (blocQuantiteSocks) blocQuantiteSocks.classList.add('hidden');
         }
 
-        // --- GESTION DES ROUES VTT (APEX) ---
-        const isMTB = titleLC.includes('apex') || titleLC.includes('vtt') || titleLC.includes('mtb');
-        const mtbContainer = document.getElementById('mtb-config-container');
-        const roadContainer = document.getElementById('wheel-config-options');
-        
-        // Bascule stricte de l'affichage entre Route et VTT
-        if (mtbContainer && roadContainer) {
-            if (isMTB) {
-                mtbContainer.classList.remove('hidden');
-                roadContainer.classList.add('hidden');
-            } else {
-                mtbContainer.classList.add('hidden');
-                roadContainer.classList.remove('hidden');
-            }
-        }
-
-        if (isMTB) {
-            const mtbMoyeuSelect = document.getElementById('config-mtb-moyeu');
-            const mtbJanteSelect = document.getElementById('config-mtb-jante');
-            const mtbCouleurSelect = document.getElementById('config-mtb-couleur');
-            const mtbRatchetSelect = document.getElementById('config-mtb-ratchet');
-            const mtbDmb2Options = document.getElementById('mtb-dmb2-options');
-            
-            // On cache les specs Route
-            const specBox = document.getElementById('spec-jantes-box');
-            if (specBox) specBox.style.display = 'none';
-            
-            let mtbFinalPrice = parseInt(currentBasePrice) || 0; // Sécurisation du prix de base
-            let mtbFinalWeight = parseInt(currentBaseWeight) || 0;
-            
-            if (mtbMoyeuSelect && mtbJanteSelect) {
-                const mtbHub = mtbMoyeuSelect.value;
-                
-                // Affichage conditionnel DMB2
-                if (mtbDmb2Options) {
-                    if (mtbHub === 'DMB2') {
-                        mtbDmb2Options.classList.remove('hidden');
-                        mtbDmb2Options.style.display = 'grid';
-                    } else {
-                        mtbDmb2Options.classList.add('hidden');
-                        mtbDmb2Options.style.display = 'none';
-                    }
-                }
-                
-                // Incompatibilité DMT1 + XL
-                const optXL = Array.from(mtbJanteSelect.options).find(opt => opt.value === 'XL');
-                if (mtbHub === 'DMT1') {
-                    if(optXL) { optXL.disabled = true; optXL.textContent = 'XL (Incompatible DMT1)'; }
-                    if (mtbJanteSelect.value === 'XL') mtbJanteSelect.value = 'UXL';
-                } else {
-                    if(optXL) { optXL.disabled = false; optXL.textContent = 'XL (Standard)'; }
-                }
-
-                // 1. CALCUL DU PRIX (Logique 100% identique à la Route)
-                const mtbMoyeuPrice = getPrice(mtbMoyeuSelect);
-                const mtbJantePrice = getPrice(mtbJanteSelect);
-                let mtbRatchetPrice = 0;
-                let mtbCouleurPrice = 0;
-                
-                if (mtbHub === 'DMB2') {
-                    mtbRatchetPrice = getPrice(mtbRatchetSelect);
-                    mtbCouleurPrice = getPrice(mtbCouleurSelect);
-                }
-
-                // 2. CALCUL DES ACCESSOIRES (Pneus, Disques, etc.)
-                let mtbAccPrice = 0;
-                const accessSelects = document.querySelectorAll('#green-accessory-box select');
-                accessSelects.forEach(select => {
-                    if (!select.disabled && select.value !== 'Aucun') {
-                        mtbAccPrice += getPrice(select);
-                    }
-                });
-
-                // ADDITION FINALE MASSIVE
-                mtbFinalPrice = mtbFinalPrice + mtbMoyeuPrice + mtbJantePrice + mtbRatchetPrice + mtbCouleurPrice + mtbAccPrice;
-
-                // 3. CALCUL DU POIDS
-                const mtbRim = mtbJanteSelect.value;
-                if (mtbHub === 'DMB1' || mtbHub === 'DMC1') {
-                    mtbFinalWeight = mtbRim === 'UXL' ? 1205 : 1360;
-                } else if (mtbHub === 'DMB2') {
-                    mtbFinalWeight = mtbRim === 'UXL' ? 1225 : 1380;
-                } else if (mtbHub === 'DMT1') {
-                    mtbFinalWeight = 1035; 
-                }
-            }
-
-            // MISE À JOUR DE L'AFFICHAGE
-            const cPrice = document.getElementById('calc-price');
-            if(cPrice) cPrice.textContent = mtbFinalPrice;
-            
-            const cWeightSpan = document.getElementById('calc-weight');
-            if(cWeightSpan) cWeightSpan.textContent = mtbFinalWeight;
-            
-            updateBadgeUI(true); 
-            return; // On stoppe l'exécution ici pour ignorer la Route
-        }
-
         // On sépare bien les multiplications pour ne pas surfacturer le client
         const finalPrice = (159 * qte) + (29 * chaussettesQte);
         const basePrice = (169 * qte) + (29 * chaussettesQte);
@@ -1740,7 +1642,102 @@ function updateConfig() {
         updateBadgeUI(false, "Précommande");
         return; 
     }
-	
+
+    // --- GESTION DES ROUES VTT (APEX) ---
+    const isMTB = titleLC.includes('apex') || titleLC.includes('vtt') || titleLC.includes('mtb');
+    const mtbContainer = document.getElementById('mtb-config-container');
+    const roadContainer = document.getElementById('wheel-config-options');
+    
+    // Bascule stricte de l'affichage entre Route et VTT
+    if (mtbContainer && roadContainer) {
+        if (isMTB) {
+            mtbContainer.classList.remove('hidden');
+            roadContainer.classList.add('hidden');
+        } else {
+            mtbContainer.classList.add('hidden');
+            roadContainer.classList.remove('hidden');
+        }
+    }
+
+    if (isMTB) {
+        const mtbMoyeuSelect = document.getElementById('config-mtb-moyeu');
+        const mtbJanteSelect = document.getElementById('config-mtb-jante');
+        const mtbCouleurSelect = document.getElementById('config-mtb-couleur'); // Pour le DMB2
+        const mtbRatchetSelect = document.getElementById('config-mtb-ratchet'); // Pour le DMB2
+        const mtbDmb2Options = document.getElementById('mtb-dmb2-options');
+        
+        // On cache la largeur/hauteur Route car les specs VTT sont différentes
+        const specBox = document.getElementById('spec-jantes-box');
+        if (specBox) specBox.style.display = 'none';
+        
+        let mtbFinalPrice = currentBasePrice;
+        let mtbFinalWeight = currentBaseWeight;
+        
+        if (mtbMoyeuSelect && mtbJanteSelect) {
+            const mtbHub = mtbMoyeuSelect.value;
+
+            // GESTION UI DMB2 (Affichage couleurs/ratchet)
+            if (mtbDmb2Options) {
+                if (mtbHub === 'DMB2') {
+                    mtbDmb2Options.classList.remove('hidden');
+                } else {
+                    mtbDmb2Options.classList.add('hidden');
+                }
+            }
+            
+            // GESTION DMT1 (Jante XL Incompatible avec rayons carbone)
+            const optXL = Array.from(mtbJanteSelect.options).find(opt => opt.value === 'XL');
+            if (mtbHub === 'DMT1') {
+                if(optXL) { optXL.disabled = true; optXL.textContent = 'XL (Incompatible avec DMT1)'; }
+                if (mtbJanteSelect.value === 'XL') mtbJanteSelect.value = 'UXL'; // Force UXL
+            } else {
+                if(optXL) { optXL.disabled = false; optXL.textContent = 'XL (Standard)'; }
+            }
+
+            const mtbRim = mtbJanteSelect.value;
+            
+            // Tarification dynamique basée sur le prix du sheet (currentBasePrice)
+            let hubPrice = getPrice(mtbMoyeuSelect);
+            let rimPrice = getPrice(mtbJanteSelect);
+            
+            mtbFinalPrice = currentBasePrice + hubPrice + rimPrice;
+
+            // Poids selon Moyeu + Jante
+            if (mtbHub === 'DMB1' || mtbHub === 'DMC1') {
+                mtbFinalWeight = mtbRim === 'UXL' ? 1205 : 1360;
+            } else if (mtbHub === 'DMB2') {
+                mtbFinalWeight = mtbRim === 'UXL' ? 1225 : 1380;
+            } else if (mtbHub === 'DMT1') {
+                mtbFinalWeight = 1035; // Poids plume rayon carbone
+            }
+            
+            // Gestion du Ratchet si DMB2
+            if (mtbHub === 'DMB2' && mtbRatchetSelect && mtbRatchetSelect.value === '72T') {
+                mtbFinalPrice += 49;
+            }
+        }
+
+        // Ajout dynamique du prix des accessoires sélectionnés (Pneus, Disques, etc.) pour les VTT
+        const accessSelects = document.querySelectorAll('#green-accessory-box select');
+        accessSelects.forEach(select => {
+            if (select.value !== 'Aucun' && select.selectedIndex >= 0 && !select.disabled) {
+                const priceOpt = getPrice(select);
+                mtbFinalPrice += priceOpt;
+            }
+        });
+        
+        const cPrice = document.getElementById('calc-price');
+        if(cPrice) cPrice.textContent = mtbFinalPrice > 0 ? mtbFinalPrice : currentBasePrice; // Force le calcul !
+        const cWeightSpan = document.getElementById('calc-weight');
+        if(cWeightSpan) cWeightSpan.textContent = mtbFinalWeight > 0 ? mtbFinalWeight : currentBaseWeight;
+        
+        updateBadgeUI(true); // Gère les labels "En stock" etc
+        return; // STOPE L'EXECUTION ICI POUR LES VTT - LE BUG ETAIT LA AVANT
+    }
+
+	// ==========================================
+	// --- SUITE : LOGIQUE POUR LES ACCESSOIRES ---
+	// ==========================================
     if (isCurrentItemAccessory) {
         const qteEl = document.getElementById('config-quantite');
         const qte = qteEl ? parseInt(qteEl.value) : 1;
@@ -1847,7 +1844,9 @@ function updateConfig() {
         return; 
     }
 
-    // --- GESTION DU PRIX DES ROUES SPÉCIALES (BÂTONS / LENTICULAIRES) ---
+	// ==========================================
+	// --- SUITE : LOGIQUE POUR LES ROUES SPÉCIALES ---
+	// ==========================================
     const isSpecialWheel = titleLC.includes('bâton') || titleLC.includes('tri-spoke') || titleLC.includes('lenticulaire') || titleLC.includes('disc');
     
     if (isSpecialWheel) {
@@ -1934,7 +1933,9 @@ function updateConfig() {
         return; // On stoppe le calcul ici pour les roues spéciales !
     }
 
-	// --- GESTION DU PRIX DU PROGRAMME DE TEST ---
+	// ==========================================
+	// --- SUITE : LOGIQUE POUR LES ROUES ROUTE ---
+	// ==========================================
     if (isCurrentItemTestProgram) {
         const selectMontageTest = document.getElementById('config-montage-test');
         const montagePriceTest = selectMontageTest && selectMontageTest.selectedIndex >= 0 ? (parseInt(selectMontageTest.options[selectMontageTest.selectedIndex].getAttribute('data-price')) || 0) : 0;
@@ -2197,7 +2198,6 @@ function updateConfig() {
 
     updateBadgeUI(isStockConfig);
 }
-
 // --- Logique du Menu Mobile ---
 const btnMenu = document.getElementById('mobile-menu-btn');
 const menuMobile = document.getElementById('mobile-menu');
