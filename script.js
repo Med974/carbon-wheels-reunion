@@ -204,7 +204,27 @@ function addToCart() {
                 const mtbRL = mtbRouelibreSelect ? mtbRouelibreSelect.value : 'Shimano MicroSpline';
                 const mtbAxe = mtbAxeSelect ? mtbAxeSelect.value : 'Boost (15x110 / 12x148)';
                 
-                configText = `Moyeu ${mtbMoyeuText}${extraMtbOptions}Jante ${mtbJanteText} | ${mtbFinition} | Logo: ${mtbLogo} | Corps: ${mtbRL} | Axes: ${mtbAxe}`;
+                const mtbLargeurSelect = document.getElementById('config-mtb-largeur');
+                const mtbLargeurText = mtbLargeurSelect ? mtbLargeurSelect.value.split(' (')[0] : '';
+                
+                configText = `Moyeu ${mtbMoyeuText}${extraMtbOptions}Jante ${mtbJanteText} | Largeur : ${mtbLargeurText} | ${mtbFinition} | Logos : ${mtbLogo} | Corps : ${mtbRL} | Axes : ${mtbAxe}`;
+
+                // On ajoute les accessoires (boite verte) à la config VTT
+                const addMtbAccessoryToConfig = (selectId) => {
+                    const selectEl = document.getElementById(selectId);
+                    if (selectEl && selectEl.value !== 'Aucun' && !selectEl.disabled) {
+                        const accPrice = parseInt(selectEl.options[selectEl.selectedIndex].getAttribute('data-price')) || 0;
+                        configText += ` | + ${selectEl.value} [+${accPrice}€]`;
+                    }
+                };
+                
+                addMtbAccessoryToConfig('config-pneus');
+                addMtbAccessoryToConfig('config-bidons');
+                addMtbAccessoryToConfig('config-tpu');
+                addMtbAccessoryToConfig('config-kit-tpu');
+                addMtbAccessoryToConfig('config-plaquettes');
+                addMtbAccessoryToConfig('config-housses');
+                addMtbAccessoryToConfig('config-lockrings');
 
             } else if (titleLC.includes('bâton') || titleLC.includes('tri-spoke') || titleLC.includes('lenticulaire') || titleLC.includes('disc')) {
             if (currentLenticulaireMode === 'location') {
@@ -1286,6 +1306,8 @@ function openModal(index) {
             if(poidsMaxContainer) poidsMaxContainer.style.display = 'block';
 			if(specialWheelConfigContainer) specialWheelConfigContainer.style.display = 'none';
             if(testConfigContainer) testConfigContainer.style.display = 'none';
+            const mtbConfigContainer = document.getElementById('mtb-config-container');
+            if (mtbConfigContainer) mtbConfigContainer.style.display = 'none';
             
             const optUxl = document.getElementById('opt-uxl');
             if (optUxl) {
@@ -1653,16 +1675,16 @@ function updateConfig() {
 	        // Ajout dynamique du prix des accessoires sélectionnés (Pneus, Disques, etc.) pour les VTT
 	        const accessSelects = document.querySelectorAll('#green-accessory-box select');
 	        accessSelects.forEach(select => {
-	            if (select.value !== 'Aucun' && select.selectedIndex >= 0) {
+	            if (select.value !== 'Aucun' && select.selectedIndex >= 0 && !select.disabled) {
 	                const priceOpt = parseInt(select.options[select.selectedIndex].getAttribute('data-price')) || 0;
 	                mtbFinalPrice += priceOpt;
 	            }
 	        });
 	        
 	        const cPrice = document.getElementById('calc-price');
-	        if(cPrice) cPrice.textContent = mtbFinalPrice;
+	        if(cPrice) cPrice.textContent = mtbFinalPrice > 0 ? mtbFinalPrice : currentBasePrice; // Force le calcul !
 	        const cWeightSpan = document.getElementById('calc-weight');
-	        if(cWeightSpan) cWeightSpan.textContent = mtbFinalWeight;
+	        if(cWeightSpan) cWeightSpan.textContent = mtbFinalWeight > 0 ? mtbFinalWeight : currentBaseWeight;
 	        
 	        updateBadgeUI(true); // Gère les labels "En stock" etc
 	        return; // Stoppe le script ici pour ne pas calculer les options Route
