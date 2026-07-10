@@ -922,13 +922,24 @@
                             </div>
                         </div>
                         
-                        <div class="mb-2">
-                            <label class="block text-xs font-bold text-gray-500 mb-1">Logos</label>
-                            <select id="config-mtb-logo" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm font-semibold shadow-sm" onchange="updateConfig()">
-                                <option value="Petit logo noir" selected>Logo Noir (Furtif)</option>
-                                <option value="Petit logo blanc">Petit Blanc</option>
-                                <option value="Gros logo blanc">Gros Blanc</option>
-                            </select>
+                        <div class="grid grid-cols-2 gap-3 mb-3">
+                            <div>
+                                <label class="block text-xs font-bold text-gray-500 mb-1">Largeur Jante (Int/Ext)</label>
+                                <select id="config-mtb-largeur" class="w-full bg-white border border-gray-300 rounded-lg px-2 py-2 text-xs font-semibold shadow-sm" onchange="updateConfig()">
+                                    <option value="30mm Ext / 24mm Int" selected>30mm Ext / 24mm Int (XC)</option>
+                                    <option value="33mm Ext / 27mm Int">33mm Ext / 27mm Int (XC/Trail)</option>
+                                    <option value="35mm Ext / 29mm Int">35mm Ext / 29mm Int (All-Mountain)</option>
+                                    <option value="36mm Ext / 30mm Int">36mm Ext / 30mm Int (Enduro)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-gray-500 mb-1">Logos</label>
+                                <select id="config-mtb-logo" class="w-full bg-white border border-gray-300 rounded-lg px-2 py-2 text-xs font-semibold shadow-sm" onchange="updateConfig()">
+                                    <option value="Petit logo noir" selected>Logo Noir (Furtif)</option>
+                                    <option value="Petit logo blanc">Petit Blanc</option>
+                                    <option value="Gros logo blanc">Gros Blanc</option>
+                                </select>
+                            </div>
                         </div>
                     </div>
 
