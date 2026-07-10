@@ -1590,6 +1590,12 @@ function updateConfig() {
     const titleEl = document.getElementById('modal-title');
     const titleLC = titleEl ? titleEl.textContent.toLowerCase() : "";
 
+    // 💡 Déclaration globale de getPrice pour que VTT, Accessoires et Route puissent l'utiliser !
+    const getPrice = (el) => {
+        if(!el || el.selectedIndex < 0) return 0;
+        return parseInt(el.options[el.selectedIndex].getAttribute('data-price')) || 0;
+    };
+
     const cWeightSpan = document.getElementById('calc-weight');
     if (cWeightSpan && cWeightSpan.parentElement && cWeightSpan.parentElement.parentElement) {
         const weightBlock = cWeightSpan.parentElement.parentElement;
@@ -2084,11 +2090,6 @@ function updateConfig() {
         if (patinsOption) { patinsOption.disabled = true; patinsOption.textContent = 'Freins à Patins (Incompatible avec RT240)'; }
         if (freinageSelect && freinageSelect.value === 'Patins') freinageSelect.value = 'Disques';
     }
-    
-    const getPrice = (el) => {
-        if(!el || el.selectedIndex < 0) return 0;
-        return parseInt(el.options[el.selectedIndex].getAttribute('data-price')) || 0;
-    };
 
     const greenBox = document.getElementById('green-accessory-box');
     if (greenBox) {
