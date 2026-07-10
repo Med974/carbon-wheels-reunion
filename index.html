@@ -852,6 +852,86 @@
                         </div>
                     </div>
 
+                    <div id="mtb-config-container" class="mb-3 hidden bg-gray-50 p-4 rounded-xl border border-gray-200">
+                        <div class="mb-3">
+                            <label class="block text-xs font-bold text-gray-500 mb-1"><i class="fa-solid fa-gear text-brand-accent mr-1"></i> Moyeu VTT (Hub)</label>
+                            <div class="flex items-center justify-between mb-1">
+                                <select id="config-mtb-moyeu" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm font-semibold shadow-sm" onchange="updateConfig()">
+                                    <option value="DMB1" data-price="0">DMB1 (Standard 6-Trous) - 325g</option>
+                                    <option value="DMC1" data-price="0">DMC1 (Centerlock) - 310g</option>
+                                    <option value="DMT1" data-price="180">DMT1 (Rayons Carbone) - 290g [+180€]</option>
+                                    <option value="DMB2" data-price="100">DMB2 (Performance, SSF) - 299g [+100€]</option>
+                                </select>
+                                <button type="button" onclick="showInfoMtbHubs()" class="text-[10px] text-brand-accent hover:underline font-bold uppercase tracking-wider shrink-0 ml-2"><i class="fa-solid fa-circle-info mr-0.5"></i> Infos</button>
+                            </div>
+                        </div>
+
+                        <div id="mtb-dmb2-options" class="grid grid-cols-2 gap-3 mb-3 hidden">
+                            <div>
+                                <label class="block text-xs font-bold text-gray-500 mb-1"><i class="fa-solid fa-palette text-brand-accent mr-1"></i> Couleur (DMB2)</label>
+                                <select id="config-mtb-couleur" class="w-full bg-white border border-gray-300 rounded-lg px-2 py-2 text-xs font-semibold shadow-sm" onchange="updateConfig()">
+                                    <option value="Noir">Noir</option>
+                                    <option value="Rouge">Rouge</option>
+                                    <option value="Bleu">Bleu</option>
+                                    <option value="Violet">Violet</option>
+                                    <option value="Or">Or</option>
+                                    <option value="Argent">Argent</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-gray-500 mb-1">Ratchet</label>
+                                <select id="config-mtb-ratchet" class="w-full bg-white border border-gray-300 rounded-lg px-2 py-2 text-xs font-semibold shadow-sm" onchange="updateConfig()">
+                                    <option value="45T" data-price="0">45T (Standard)</option>
+                                    <option value="72T" data-price="49">72T [+49€]</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-3 mb-3">
+                            <div>
+                                <label class="block text-xs font-bold text-gray-500 mb-1">Type de Jante</label>
+                                <select id="config-mtb-jante" class="w-full bg-white border border-gray-300 rounded-lg px-2 py-2 text-xs font-semibold shadow-sm" onchange="updateConfig()">
+                                    <option value="XL" data-price="0">XL (Standard)</option>
+                                    <option value="UXL" data-price="40">UXL (Ultra-Light) [+40€]</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-gray-500 mb-1">Corps roue libre</label>
+                                <select id="config-mtb-rouelibre" class="w-full bg-white border border-gray-300 rounded-lg px-2 py-2 text-xs font-semibold shadow-sm" onchange="updateConfig()">
+                                    <option value="Shimano HG" selected>Shimano HG</option>
+                                    <option value="Shimano MicroSpline">MicroSpline (MS)</option>
+                                    <option value="SRAM XD">SRAM XD</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-3 mb-3">
+                            <div>
+                                <label class="block text-xs font-bold text-gray-500 mb-1">Axes (Boost par défaut)</label>
+                                <select id="config-mtb-axe" class="w-full bg-white border border-gray-300 rounded-lg px-2 py-2 text-xs font-semibold shadow-sm" onchange="updateConfig()">
+                                    <option value="Boost (15x110 / 12x148)" selected>Boost (15x110 / 12x148)</option>
+                                    <option value="Non-Boost (15x100 / 12x142)">Non-Boost (15x100 / 12x142)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-gray-500 mb-1">Finition</label>
+                                <select id="config-mtb-finition" class="w-full bg-white border border-gray-300 rounded-lg px-2 py-2 text-xs font-semibold shadow-sm" onchange="updateConfig()">
+                                    <option value="UD Matte">UD Matte</option>
+                                    <option value="Glossy Black" selected>Glossy Black</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-2">
+                            <label class="block text-xs font-bold text-gray-500 mb-1">Logos</label>
+                            <select id="config-mtb-logo" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm font-semibold shadow-sm" onchange="updateConfig()">
+                                <option value="Petit logo noir" selected>Logo Noir (Furtif)</option>
+                                <option value="Petit logo blanc">Petit Blanc</option>
+                                <option value="Gros logo blanc">Gros Blanc</option>
+                            </select>
+                        </div>
+                    </div>
+
                     <!-- NOUVEAU BLOC : OPTIONS ROUES SPÉCIALES (Bâtons / Lenticulaire) -->
                     <div id="special-wheel-config-container" class="mb-3 hidden bg-gray-50 p-4 rounded-xl border border-gray-200">
                         <!-- Sélecteur de Mode : Achat vs Location -->
