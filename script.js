@@ -209,7 +209,7 @@ function addToCart() {
                 
                 configText = `Moyeu ${mtbMoyeuText}${extraMtbOptions}Jante ${mtbJanteText} | Largeur : ${mtbLargeurText} | ${mtbFinition} | Logos : ${mtbLogo} | Corps : ${mtbRL} | Axes : ${mtbAxe}`;
 
-                // On ajoute les accessoires (boite verte) à la config VTT
+                // Ajout dynamique des accessoires VTT au résumé
                 const addMtbAccessoryToConfig = (selectId) => {
                     const selectEl = document.getElementById(selectId);
                     if (selectEl && selectEl.value !== 'Aucun' && !selectEl.disabled) {
@@ -217,7 +217,6 @@ function addToCart() {
                         configText += ` | + ${selectEl.value} [+${accPrice}€]`;
                     }
                 };
-                
                 addMtbAccessoryToConfig('config-pneus');
                 addMtbAccessoryToConfig('config-bidons');
                 addMtbAccessoryToConfig('config-tpu');
@@ -1654,15 +1653,22 @@ function updateConfig() {
 	
 	            const mtbRim = mtbJanteSelect.value;
 	            
-	            // Tarification et poids selon Moyeu + Jante
+	            // Tarification dynamique basée sur le prix du sheet (currentBasePrice)
+	            let hubPrice = parseInt(mtbMoyeuSelect.options[mtbMoyeuSelect.selectedIndex].getAttribute('data-price')) || 0;
+	            if (hubPrice === 0) { // Sécurité si l'attribut HTML data-price n'est pas encore renseigné
+	                if (mtbHub === 'DMB2') hubPrice = 100;
+	                if (mtbHub === 'DMT1') hubPrice = 180;
+	            }
+	            let rimPrice = (mtbRim === 'UXL') ? 40 : 0; // UXL coûte 40€ de plus
+	            
+	            mtbFinalPrice = currentBasePrice + hubPrice + rimPrice;
+	
+	            // Poids selon Moyeu + Jante
 	            if (mtbHub === 'DMB1' || mtbHub === 'DMC1') {
-	                mtbFinalPrice = mtbRim === 'UXL' ? 1259 : 1219;
 	                mtbFinalWeight = mtbRim === 'UXL' ? 1205 : 1360;
 	            } else if (mtbHub === 'DMB2') {
-	                mtbFinalPrice = mtbRim === 'UXL' ? 1359 : 1319;
 	                mtbFinalWeight = mtbRim === 'UXL' ? 1225 : 1380;
 	            } else if (mtbHub === 'DMT1') {
-	                mtbFinalPrice = 1399; // UXL uniquement
 	                mtbFinalWeight = 1035; // Poids plume rayon carbone
 	            }
 	            
