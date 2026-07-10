@@ -1633,7 +1633,20 @@ function updateConfig() {
 
         // --- GESTION DES ROUES VTT (APEX) ---
         const isMTB = titleLC.includes('apex') || titleLC.includes('vtt') || titleLC.includes('mtb');
+        const mtbContainer = document.getElementById('mtb-config-container');
+        const roadContainer = document.getElementById('wheel-config-options');
         
+        // Bascule stricte de l'affichage entre Route et VTT
+        if (mtbContainer && roadContainer) {
+            if (isMTB) {
+                mtbContainer.classList.remove('hidden');
+                roadContainer.classList.add('hidden');
+            } else {
+                mtbContainer.classList.add('hidden');
+                roadContainer.classList.remove('hidden');
+            }
+        }
+
         if (isMTB) {
             const mtbMoyeuSelect = document.getElementById('config-mtb-moyeu');
             const mtbJanteSelect = document.getElementById('config-mtb-jante');
@@ -1641,42 +1654,61 @@ function updateConfig() {
             const mtbRatchetSelect = document.getElementById('config-mtb-ratchet');
             const mtbDmb2Options = document.getElementById('mtb-dmb2-options');
             
-            // On cache la largeur/hauteur Route car les specs VTT sont différentes
+            // On cache les specs Route
             const specBox = document.getElementById('spec-jantes-box');
             if (specBox) specBox.style.display = 'none';
             
-            let mtbFinalPrice = currentBasePrice; // Prix de base (ex: 1219€ du Sheet)
-            let mtbFinalWeight = currentBaseWeight;
+            let mtbFinalPrice = parseInt(currentBasePrice) || 0; // Sécurisation du prix de base
+            let mtbFinalWeight = parseInt(currentBaseWeight) || 0;
             
             if (mtbMoyeuSelect && mtbJanteSelect) {
                 const mtbHub = mtbMoyeuSelect.value;
-
-                // Affichage ou Masquage des options DMB2
+                
+                // Affichage conditionnel DMB2
                 if (mtbDmb2Options) {
                     if (mtbHub === 'DMB2') {
+                        mtbDmb2Options.classList.remove('hidden');
                         mtbDmb2Options.style.display = 'grid';
                     } else {
+                        mtbDmb2Options.classList.add('hidden');
                         mtbDmb2Options.style.display = 'none';
                     }
                 }
                 
-                // DMT1 Incompatible avec jante XL
+                // Incompatibilité DMT1 + XL
                 const optXL = Array.from(mtbJanteSelect.options).find(opt => opt.value === 'XL');
                 if (mtbHub === 'DMT1') {
                     if(optXL) { optXL.disabled = true; optXL.textContent = 'XL (Incompatible DMT1)'; }
-                    if (mtbJanteSelect.value === 'XL') mtbJanteSelect.value = 'UXL'; // Force UXL
+                    if (mtbJanteSelect.value === 'XL') mtbJanteSelect.value = 'UXL';
                 } else {
                     if(optXL) { optXL.disabled = false; optXL.textContent = 'XL (Standard)'; }
                 }
 
-                const mtbRim = mtbJanteSelect.value;
+                // 1. CALCUL DU PRIX (Logique 100% identique à la Route)
+                const mtbMoyeuPrice = getPrice(mtbMoyeuSelect);
+                const mtbJantePrice = getPrice(mtbJanteSelect);
+                let mtbRatchetPrice = 0;
+                let mtbCouleurPrice = 0;
                 
-                // Tarification 100% Dynamique
-                let hubPrice = parseInt(mtbMoyeuSelect.options[mtbMoyeuSelect.selectedIndex].getAttribute('data-price')) || 0;
-                let rimPrice = (mtbRim === 'UXL') ? 40 : 0; // UXL coûte 40€ de plus
-                mtbFinalPrice = currentBasePrice + hubPrice + rimPrice;
+                if (mtbHub === 'DMB2') {
+                    mtbRatchetPrice = getPrice(mtbRatchetSelect);
+                    mtbCouleurPrice = getPrice(mtbCouleurSelect);
+                }
 
-                // Ajustement Poids
+                // 2. CALCUL DES ACCESSOIRES (Pneus, Disques, etc.)
+                let mtbAccPrice = 0;
+                const accessSelects = document.querySelectorAll('#green-accessory-box select');
+                accessSelects.forEach(select => {
+                    if (!select.disabled && select.value !== 'Aucun') {
+                        mtbAccPrice += getPrice(select);
+                    }
+                });
+
+                // ADDITION FINALE MASSIVE
+                mtbFinalPrice = mtbFinalPrice + mtbMoyeuPrice + mtbJantePrice + mtbRatchetPrice + mtbCouleurPrice + mtbAccPrice;
+
+                // 3. CALCUL DU POIDS
+                const mtbRim = mtbJanteSelect.value;
                 if (mtbHub === 'DMB1' || mtbHub === 'DMC1') {
                     mtbFinalWeight = mtbRim === 'UXL' ? 1205 : 1360;
                 } else if (mtbHub === 'DMB2') {
@@ -1684,28 +1716,17 @@ function updateConfig() {
                 } else if (mtbHub === 'DMT1') {
                     mtbFinalWeight = 1035; 
                 }
-                
-                if (mtbHub === 'DMB2' && mtbRatchetSelect && mtbRatchetSelect.value === '72T') {
-                    mtbFinalPrice += 49;
-                }
             }
 
-            // Ajout dynamique du prix des Accessoires Verts (Pneus, Disques, etc.) pour les VTT
-            const accessSelects = document.querySelectorAll('#green-accessory-box select');
-            accessSelects.forEach(select => {
-                if (select.value !== 'Aucun' && select.selectedIndex >= 0 && !select.disabled) {
-                    const priceOpt = parseInt(select.options[select.selectedIndex].getAttribute('data-price')) || 0;
-                    mtbFinalPrice += priceOpt;
-                }
-            });
-            
+            // MISE À JOUR DE L'AFFICHAGE
             const cPrice = document.getElementById('calc-price');
-            if(cPrice) cPrice.textContent = mtbFinalPrice > 0 ? mtbFinalPrice : currentBasePrice;
+            if(cPrice) cPrice.textContent = mtbFinalPrice;
+            
             const cWeightSpan = document.getElementById('calc-weight');
-            if(cWeightSpan) cWeightSpan.textContent = mtbFinalWeight > 0 ? mtbFinalWeight : currentBaseWeight;
+            if(cWeightSpan) cWeightSpan.textContent = mtbFinalWeight;
             
             updateBadgeUI(true); 
-            return; // Arrête la fonction ici (ne calcule pas les prix des options de Route !)
+            return; // On stoppe l'exécution ici pour ignorer la Route
         }
 
         // On sépare bien les multiplications pour ne pas surfacturer le client
