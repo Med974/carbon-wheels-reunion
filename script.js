@@ -1585,6 +1585,7 @@ function updateConfig() {
 	        const mtbJanteSelect = document.getElementById('config-mtb-jante');
 	        const mtbCouleurSelect = document.getElementById('config-mtb-couleur'); // Pour le DMB2
 	        const mtbRatchetSelect = document.getElementById('config-mtb-ratchet'); // Pour le DMB2
+	        const mtbDmb2Options = document.getElementById('mtb-dmb2-options');
 	        
 	        // On cache la largeur/hauteur Route car les specs VTT sont différentes
 	        const specBox = document.getElementById('spec-jantes-box');
@@ -1595,16 +1596,33 @@ function updateConfig() {
 	        
 	        if (mtbMoyeuSelect && mtbJanteSelect) {
 	            const mtbHub = mtbMoyeuSelect.value;
+	
+	            // GESTION UI DMB2 (Affichage couleurs/ratchet)
+	            if (mtbDmb2Options) {
+	                if (mtbHub === 'DMB2') {
+	                    mtbDmb2Options.classList.remove('hidden');
+	                } else {
+	                    mtbDmb2Options.classList.add('hidden');
+	                }
+	            }
+	            
+	            // GESTION DMT1 (Jante XL Incompatible avec rayons carbone)
+	            const optXL = Array.from(mtbJanteSelect.options).find(opt => opt.value === 'XL');
+	            if (mtbHub === 'DMT1') {
+	                if(optXL) { optXL.disabled = true; optXL.textContent = 'XL (Incompatible avec DMT1)'; }
+	                if (mtbJanteSelect.value === 'XL') mtbJanteSelect.value = 'UXL'; // Force UXL
+	            } else {
+	                if(optXL) { optXL.disabled = false; optXL.textContent = 'XL (Standard)'; }
+	            }
+	
 	            const mtbRim = mtbJanteSelect.value;
 	            
 	            // Tarification et poids selon Moyeu + Jante
 	            if (mtbHub === 'DMB1' || mtbHub === 'DMC1') {
 	                mtbFinalPrice = mtbRim === 'UXL' ? 1259 : 1219;
-	                // Logique Poids : Base XL = 1360g. UXL = -155g
 	                mtbFinalWeight = mtbRim === 'UXL' ? 1205 : 1360;
 	            } else if (mtbHub === 'DMB2') {
 	                mtbFinalPrice = mtbRim === 'UXL' ? 1359 : 1319;
-	                // Poids DMB2 estimé (comme R2 route + costaud) : +20g par rapport au DMB1
 	                mtbFinalWeight = mtbRim === 'UXL' ? 1225 : 1380;
 	            } else if (mtbHub === 'DMT1') {
 	                mtbFinalPrice = 1399; // UXL uniquement
@@ -2526,6 +2544,21 @@ function showInfoRatchet() {
                 <li><b class="text-gray-900">45T (Engagement 8°) :</b> L'équilibre idéal. Réactivité excellente, friction minimale en roue libre, et grande durabilité. Bruit "bourdonnement" net.</li>
                 <li><b class="text-gray-900">54T (Engagement 6.6°) :</b> Standard sur nos moyeux RT240 ultra-légers.</li>
                 <li><b class="text-gray-900">72T (Engagement 5°) :</b> ⚡ Réactivité instantanée ! La puissance passe à la seconde où vous touchez la pédale (idéal pour les relances en bosse ou les critériums). Le bruit est plus aigu ("essaim d'abeilles").</li>
+            </ul>
+        </div>
+    `;
+    showCustomAlert(texte);
+}
+
+function showInfoMtbHubs() {
+    const texte = `
+        <div class="text-left space-y-3 text-gray-600 text-sm">
+            <p>Notre gamme de moyeux VTT (DFS APEX) :</p>
+            <ul class="space-y-2">
+                <li><b class="text-gray-900">DMB1 (6-Trous) :</b> Le standard robuste. Alliage 6061 forgé, roulements S&S. (Ratchet 36T/54T).</li>
+                <li><b class="text-gray-900">DMC1 (Centerlock) :</b> Même conception que le DMB1 mais format Centerlock (Shimano). Poids légèrement réduit (310g).</li>
+                <li><b class="text-gray-900">DMT1 (Rayons Carbone) :</b> Notre fleuron Ultra-Light. Usiné pour nos rayons carbones (T33/T40/T52). Allège drastiquement la roue.</li>
+                <li><b class="text-gray-900">DMB2 (SSF System) :</b> L'équivalent VTT de notre fameux R2. Roulements surdimensionnés, ratchet haute réactivité (45T/72T) et coloris au choix.</li>
             </ul>
         </div>
     `;
