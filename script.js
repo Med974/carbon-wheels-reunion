@@ -882,8 +882,15 @@ function renderFastTrackCards() {
 }
 
 function openFastTrackConfig(series, height, type, finish, logo) {
-    // 1. Trouver l'index de la Ghost correspondante dans le catalogue
-    const ghostIndex = globalCatalogue.findIndex(p => p.Nom && p.Nom.toLowerCase().includes(`ghost ${height}`));
+    // 1. Trouver l'index de la Ghost correspondante dans le catalogue (On s'assure de ne pas ouvrir le test/essai)
+    const ghostIndex = globalCatalogue.findIndex(p => {
+        if (!p.Nom) return false;
+        const n = p.Nom.toLowerCase();
+        // On exclut explicitement les modèles d'essai
+        if (n.includes('test') || n.includes('essai')) return false;
+        return n.includes(`ghost ${height}`);
+    });
+
     if (ghostIndex === -1) {
         showCustomAlert("Ce profil n'est plus au catalogue.");
         return;
