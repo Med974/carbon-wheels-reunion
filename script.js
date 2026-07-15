@@ -825,9 +825,101 @@ async function loadFactoryStock() {
     try {
         const response = await fetch(`${API_URL}?action=getFactoryStock`);
         factoryStock = await response.json();
+        renderFastTrackCards(); // Génère les cartes d'accueil
     } catch (error) {
         console.error("Erreur de chargement du stock usine :", error);
     }
+}
+
+function renderFastTrackCards() {
+    const container = document.getElementById('fast-track-cards-container');
+    const section = document.getElementById('stock-usine-coupe-file');
+    if (!container) return;
+
+    container.innerHTML = '';
+    const inStockItems = factoryStock.filter(item => parseInt(item.Stock) > 0);
+
+    if (inStockItems.length === 0) {
+        if (section) section.style.display = 'none';
+        return;
+    }
+
+    if (section) section.style.display = 'block';
+
+    inStockItems.forEach(item => {
+        const isLastPair = parseInt(item.Stock) === 1;
+        const badgeClass = isLastPair ? 'bg-orange-100 text-orange-700 border-orange-200' : 'bg-green-100 text-green-700 border-green-200';
+        const badgeText = isLastPair ? '🚨 Dernière paire !' : `✅ ${item.Stock} Paires dispo`;
+        
+        const isPulse = item.Series === 'PULSE';
+        const displayName = `GHOST ${item["Rim height"]}mm`;
+        const hubName = isPulse ? 'Moyeu R2' : 'Moyeu RT240';
+        
+        let logoName = 'Noir Furtif';
+        if (item["Logo Color"] === 'Big White') logoName = 'Gros Blanc';
+        else if (item["Logo Color"] === 'White') logoName = 'Petit Blanc';
+        
+        const finishName = item.Finish === 'Glossy' ? 'Glossy Black' : 'UD Matte';
+
+        const cardHTML = `
+            <div class="bg-gray-50 rounded-xl shadow-sm border border-gray-200 p-5 flex flex-col hover:shadow-md transition-all duration-300 hover:-translate-y-1 relative overflow-hidden group">
+                <div class="absolute top-0 right-0 w-16 h-16 bg-gradient-to-bl from-green-200 to-transparent opacity-50 rounded-bl-full z-0"></div>
+                <span class="text-[10px] font-black px-2 py-1 rounded border ${badgeClass} w-max mb-3 relative z-10">${badgeText}</span>
+                <h4 class="font-black text-gray-900 text-lg mb-1 relative z-10">${displayName}</h4>
+                <p class="text-xs font-bold text-brand-accent mb-3 relative z-10">${hubName}</p>
+                <ul class="text-xs text-gray-500 space-y-1.5 mb-5 flex-grow relative z-10">
+                    <li><i class="fa-solid fa-check text-green-500 mr-1"></i> Jante : ${item["Rim Type"]}</li>
+                    <li><i class="fa-solid fa-check text-green-500 mr-1"></i> Finition : ${finishName}</li>
+                    <li><i class="fa-solid fa-check text-green-500 mr-1"></i> Logos : ${logoName}</li>
+                </ul>
+                <button onclick="openFastTrackConfig('${item.Series}', '${item["Rim height"]}', '${item["Rim Type"]}', '${item.Finish}', '${item["Logo Color"]}')" class="w-full bg-brand-main text-white text-xs font-bold py-2.5 rounded-lg hover:bg-gray-800 transition-colors relative z-10 shadow-sm">
+                    Configurer cette paire <i class="fa-solid fa-arrow-right ml-1"></i>
+                </button>
+            </div>
+        `;
+        container.insertAdjacentHTML('beforeend', cardHTML);
+    });
+}
+
+function openFastTrackConfig(series, height, type, finish, logo) {
+    // 1. Trouver l'index de la Ghost correspondante dans le catalogue
+    const ghostIndex = globalCatalogue.findIndex(p => p.Nom && p.Nom.toLowerCase().includes(`ghost ${height}`));
+    if (ghostIndex === -1) {
+        showCustomAlert("Ce profil n'est plus au catalogue.");
+        return;
+    }
+
+    // 2. Ouvrir le modal
+    openModal(ghostIndex);
+
+    // 3. Appliquer les options usine via un timeout pour laisser le DOM se construire
+    setTimeout(() => {
+        const mHub = document.getElementById('config-moyeu');
+        if (mHub) mHub.value = series === 'PULSE' ? 'R2' : 'RT240';
+        updateHubOptions(); // Met à jour les sous-menus du moyeu lié (céramique, ratchet...)
+
+        const mJante = document.getElementById('config-jante');
+        if (mJante) mJante.value = type;
+
+        const mFinition = document.getElementById('config-finition');
+        if (mFinition) mFinition.value = finish === 'Glossy' ? 'Glossy Black' : 'UD Matte';
+
+        const mLogos = document.getElementById('config-logos');
+        if (mLogos) {
+            if (logo === 'Black') mLogos.value = 'Petit logo noir';
+            else if (logo === 'Big White') mLogos.value = 'Gros logo blanc';
+            else if (logo === 'White') mLogos.value = 'Petit logo blanc';
+        }
+
+        // 4. Mettre à jour l'UI (qui fera apparaître la bannière verte de stock !)
+        updateConfig();
+        
+        // 5. Scroller en douceur jusqu'au configurateur pour montrer au client
+        const configSection = document.getElementById('configurator-section');
+        if (configSection) {
+            configSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    }, 150);
 }
 
 async function loadCatalogue() {
