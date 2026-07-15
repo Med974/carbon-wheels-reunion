@@ -2219,8 +2219,13 @@ function updateConfig() {
     let isFastTrack = false;
 
     if (isCurrentItemWheelConfigurable && factoryStock.length > 0) {
-        // 1. On traduit les choix du site vers le langage du tableau usine
-        const seriesMatch = titleLC.includes('ghost') ? 'GHOST' : (titleLC.includes('pulse') ? 'PULSE' : '');
+        // Traduction intelligente : Si Ghost + Moyeu R2 = PULSE pour l'usine
+        let seriesMatch = '';
+        if (titleLC.includes('ghost')) {
+            const currentHub = document.getElementById('config-moyeu') ? document.getElementById('config-moyeu').value : '';
+            seriesMatch = (currentHub === 'R2') ? 'PULSE' : 'GHOST';
+        }
+        
         const heightMatch = titleLC.match(/\d{2}/) ? titleLC.match(/\d{2}/)[0] : '';
         const typeMatch = janteSelect ? janteSelect.value : '';
         
