@@ -13,6 +13,7 @@ let unavailableTestDates = [];
 let isCurrentItemTestProgram = false;
 let isCurrentItemStockReady = false;
 let isCurrentItemTextile = false;
+let factoryStock = [];
 
 let cart = [];
 let appliedPromo = null;
@@ -820,8 +821,18 @@ function closeSuccessAndReset() {
     toggleCart();
 }
 
+async function loadFactoryStock() {
+    try {
+        const response = await fetch(`${API_URL}?action=getFactoryStock`);
+        factoryStock = await response.json();
+    } catch (error) {
+        console.error("Erreur de chargement du stock usine :", error);
+    }
+}
+
 async function loadCatalogue() {
     try {
+        loadFactoryStock(); // NOUVEAU : Charge le stock usine (Fast-Track) en arrière-plan
         const response = await fetch(API_URL);
         globalCatalogue = await response.json();
         const loader = document.getElementById('loading-message');
@@ -1171,6 +1182,10 @@ function openModal(index) {
 		// MASQUAGE DE LA BANNIÈRE STOCK PAR DÉFAUT À CHAQUE OUVERTURE
 		const mainBannerStock = document.getElementById('stock-locked-banner');
 		if (mainBannerStock) mainBannerStock.classList.add('hidden');
+		const bannerFastTrack = document.getElementById('fast-track-banner');
+		if (bannerFastTrack) bannerFastTrack.classList.add('hidden');
+		const badgeFastTrack = document.getElementById('modal-fasttrack');
+		if (badgeFastTrack) badgeFastTrack.classList.add('hidden');
 		
 		if (isCurrentItemTestProgram) {
             if(specJantesBox) specJantesBox.style.display = 'none';
@@ -2195,6 +2210,63 @@ function updateConfig() {
     const logoSelect = document.getElementById('config-logos');
     if (logoSelect && logoSelect.value !== 'Petit logo noir') isStockConfig = false;
     if (freinageSelect && freinageSelect.value !== 'Disques') isStockConfig = false; 
+
+    // ==========================================
+    // NOUVEAU : LOGIQUE FAST-TRACK (STOCK USINE)
+    // ==========================================
+    const badgeFastTrack = document.getElementById('modal-fasttrack');
+    const bannerFastTrack = document.getElementById('fast-track-banner');
+    let isFastTrack = false;
+
+    if (isCurrentItemWheelConfigurable && factoryStock.length > 0) {
+        // 1. On traduit les choix du site vers le langage du tableau usine
+        const seriesMatch = titleLC.includes('ghost') ? 'GHOST' : (titleLC.includes('pulse') ? 'PULSE' : '');
+        const heightMatch = titleLC.match(/\d{2}/) ? titleLC.match(/\d{2}/)[0] : '';
+        const typeMatch = janteSelect ? janteSelect.value : '';
+        
+        let logoMatch = '';
+        if (logoSelect) {
+            if (logoSelect.value === 'Petit logo noir') logoMatch = 'Black';
+            else if (logoSelect.value === 'Gros logo blanc') logoMatch = 'Big White';
+            else if (logoSelect.value === 'Petit logo blanc') logoMatch = 'White';
+        }
+
+        let finishMatch = '';
+        if (finitionSelect) {
+            finishMatch = finitionSelect.value === 'Glossy Black' ? 'Glossy' : 'UD Matte';
+        }
+
+        // 2. On cherche une correspondance exacte dans le tableau avec du stock
+        const inStock = factoryStock.find(row => 
+            row.Series === seriesMatch && 
+            String(row["Rim height"]) === heightMatch && 
+            row["Rim Type"] === typeMatch && 
+            row["Logo Color"] === logoMatch && 
+            row.Finish === finishMatch &&
+            parseInt(row.Stock) > 0
+        );
+
+        if (inStock) {
+            isFastTrack = true;
+        }
+    }
+
+    // 3. Affichage dynamique
+    if (badgeFastTrack) {
+        if (isFastTrack) { 
+            badgeFastTrack.classList.remove('hidden'); 
+            badgeFastTrack.classList.add('inline-flex', 'items-center'); 
+        } else { 
+            badgeFastTrack.classList.add('hidden'); 
+            badgeFastTrack.classList.remove('inline-flex', 'items-center'); 
+        }
+    }
+    
+    if (bannerFastTrack) {
+        if (isFastTrack) bannerFastTrack.classList.remove('hidden');
+        else bannerFastTrack.classList.add('hidden');
+    }
+    // ==========================================
 
     updateBadgeUI(isStockConfig);
 }
