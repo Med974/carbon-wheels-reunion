@@ -2836,4 +2836,79 @@ function showPictureGeneric(keyword) {
     }
 }
 
+// ==========================================
+// CALCULATEUR DE PRESSION PRO - KARBÒN PÉI
+// ==========================================
+
+function calculatePressure() {
+    // 1. Récupération des données du formulaire
+    const totalWeight = parseFloat(document.getElementById('calc-weight-sys').value);
+    const weightDistFront = parseFloat(document.getElementById('calc-dist').value) / 100;
+    const weightDistRear = 1 - weightDistFront;
+    const statedWidth = parseFloat(document.getElementById('calc-tire').value);
+    const internalRim = parseFloat(document.getElementById('calc-rim-int').value);
+    const externalRim = parseFloat(document.getElementById('calc-rim-ext').value);
+    const setupType = document.getElementById('calc-type').value;
+    const surface = document.getElementById('calc-surface').value;
+
+    // 2. Calcul du WAM (Width As Measured) - La vraie largeur du pneu
+    // Formule empirique : un pneu s'élargit d'environ 0.4mm pour chaque mm de jante interne au-dessus du standard ETRO de 19mm.
+    let wam = statedWidth + ((internalRim - 19) * 0.4);
+
+    // 3. Vérification Aérodynamique (Règle des 105%)
+    const aeroWarning = document.getElementById('aero-warning');
+    if (wam > externalRim) {
+        aeroWarning.innerHTML = `<strong><i class="fa-solid fa-wind"></i> Alerte Aérodynamique :</strong> Votre pneu mesurera en réalité environ <strong>${wam.toFixed(1)} mm</strong> une fois gonflé sur cette jante. C'est plus large que votre jante externe (${externalRim} mm). L'air ne s'écoulera pas de manière fluide (effet parachute). Considérez un pneu plus fin pour optimiser vos Watts.`;
+        aeroWarning.classList.remove('hidden');
+    } else {
+        aeroWarning.classList.add('hidden');
+    }
+
+    // 4. Calcul de l'impédance de base (Formule Berto modernisée)
+    // On calcule la charge par roue, divisée par la largeur réelle, multipliée par notre coefficient d'écrasement idéal.
+    let frontPressureBar = ((totalWeight * weightDistFront) / wam) * 1.48;
+    let rearPressureBar = ((totalWeight * weightDistRear) / wam) * 1.48;
+
+    // 5. Modificateurs selon le type de montage (Carcasse)
+    let setupModifier = 0;
+    if (setupType === 'tubeless') {
+        setupModifier = -0.3; // Le Tubeless permet de baisser la pression sans risque de pincement
+    } else if (setupType === 'tpu') {
+        setupModifier = -0.1; // Le TPU est rigide mais résistant, on baisse légèrement pour le confort
+    } else if (setupType === 'butyl') {
+        setupModifier = +0.2; // Chambre classique : on surgonfle légèrement pour éviter les crevaisons par pincement
+    }
+
+    frontPressureBar += setupModifier;
+    rearPressureBar += setupModifier;
+
+    // 6. Modificateurs selon la surface de roulage (Résistance au roulement)
+    let surfaceModifier = 1.0;
+    if (surface === 'neuf') {
+        surfaceModifier = 1.05; // Billard : on augmente la pression pour le rendement pur
+    } else if (surface === 'gravel') {
+        surfaceModifier = 0.75; // Chemin/VTT : on chute la pression drastiquement pour l'adhérence
+    } // "standard" reste à 1.0
+
+    frontPressureBar *= surfaceModifier;
+    rearPressureBar *= surfaceModifier;
+    
+    // Sécurité : Ne jamais descendre sous 2.5 Bars pour un vélo de route classique dans ce calculateur
+    frontPressureBar = Math.max(frontPressureBar, 2.5);
+    rearPressureBar = Math.max(rearPressureBar, 2.5);
+
+    // 7. Affichage des résultats (Conversion Bar -> PSI : 1 Bar = 14.5038 PSI)
+    document.getElementById('res-front-bar').innerText = frontPressureBar.toFixed(2);
+    document.getElementById('res-front-psi').innerText = (frontPressureBar * 14.5038).toFixed(0);
+
+    document.getElementById('res-rear-bar').innerText = rearPressureBar.toFixed(2);
+    document.getElementById('res-rear-psi').innerText = (rearPressureBar * 14.5038).toFixed(0);
+
+    // Afficher la section des résultats avec une petite animation
+    const resultsDiv = document.getElementById('pressure-results');
+    resultsDiv.classList.remove('hidden');
+    resultsDiv.classList.add('animate-pulse');
+    setTimeout(() => resultsDiv.classList.remove('animate-pulse'), 500);
+}
+
 loadCatalogue();
