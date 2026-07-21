@@ -2866,13 +2866,14 @@ function calculatePressure() {
         aeroWarning.classList.add('hidden');
     }
 
-    // 4. Calcul de la pression de base (Ajusté Profil Coursier)
+    // 4. Calcul de la pression de base (Ciblage parfait entre SRAM et Silca)
+    // On utilise la répartition brute sélectionnée par le client.
     let frontLoad = totalWeight * weightDistFront;
     let rearLoad = totalWeight * weightDistRear;
 
-    // Formule empirique durcie avec un coefficient de 1.32 pour retrouver la plage 4.5 - 5.0 Bars
-    let frontPressureBar = (frontLoad / 10) * (28 / wam) * 1.32;
-    let rearPressureBar = (rearLoad / 10) * (28 / wam) * 1.32;
+    // Nouvelle équation avec constante (+1.4) pour resserrer l'écart Av/Ar sans fausser la répartition
+    let frontPressureBar = ((frontLoad * 2.4) / wam) + 1.4;
+    let rearPressureBar = ((rearLoad * 2.4) / wam) + 1.4;
 
     // 5. Modificateurs selon le type de montage (Carcasse)
     if (setupType === 'tubeless') {
