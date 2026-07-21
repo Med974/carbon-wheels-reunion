@@ -2851,57 +2851,58 @@ function calculatePressure() {
     const setupType = document.getElementById('calc-type').value;
     const surface = document.getElementById('calc-surface').value;
 
-    // 2. Calcul du WAM (Width As Measured) - La vraie largeur du pneu
-    // Formule empirique : un pneu s'élargit d'environ 0.4mm pour chaque mm de jante interne au-dessus du standard ETRO de 19mm.
+    if (isNaN(totalWeight) || totalWeight <= 0) return;
+
+    // 2. Calcul du WAM (Width As Measured) - La largeur réelle du pneu
+    // Règle générale : le pneu s'élargit de ~0.4mm pour chaque 1mm de jante interne au-delà du standard 19mm.
     let wam = statedWidth + ((internalRim - 19) * 0.4);
 
     // 3. Vérification Aérodynamique (Règle des 105%)
     const aeroWarning = document.getElementById('aero-warning');
     if (wam > externalRim) {
-        aeroWarning.innerHTML = `<strong><i class="fa-solid fa-wind"></i> Alerte Aérodynamique :</strong> Votre pneu mesurera en réalité environ <strong>${wam.toFixed(1)} mm</strong> une fois gonflé sur cette jante. C'est plus large que votre jante externe (${externalRim} mm). L'air ne s'écoulera pas de manière fluide (effet parachute). Considérez un pneu plus fin pour optimiser vos Watts.`;
+        aeroWarning.innerHTML = `<strong><i class="fa-solid fa-wind"></i> Alerte Aérodynamique :</strong> Votre pneu mesurera en réalité environ <strong>${wam.toFixed(1)} mm</strong> (WAM) sur cette jante. C'est plus large que votre jante externe (${externalRim} mm). L'air ne s'écoulera pas de manière fluide. Considérez un pneu plus fin pour optimiser l'aéro.`;
         aeroWarning.classList.remove('hidden');
     } else {
         aeroWarning.classList.add('hidden');
     }
 
-    // 4. Calcul de l'impédance de base (Modèle Silca/SRAM adapté)
-    // On calcule la charge par roue (kg), ajustée par la largeur réelle (WAM) avec un coefficient calibré pour les jantes modernes.
-    let frontPressureBar = ((totalWeight * weightDistFront) / 10) * (28 / wam) * 1.15;
-    let rearPressureBar = ((totalWeight * weightDistRear) / 10) * (28 / wam) * 1.15;
+    // 4. Calcul de la pression de base (Aligné sur les standards SRAM / Silca)
+    let frontLoad = totalWeight * weightDistFront;
+    let rearLoad = totalWeight * weightDistRear;
+
+    // Formule empirique ajustée pour correspondre aux benchmarks Pro Tour
+    let frontPressureBar = (frontLoad / 10) * (28 / wam) * 1.05;
+    let rearPressureBar = (rearLoad / 10) * (28 / wam) * 1.05;
 
     // 5. Modificateurs selon le type de montage (Carcasse)
-    let setupModifier = 0;
     if (setupType === 'tubeless') {
-        setupModifier = -0.3; // Tubeless : permet de baisser la pression sans risque de pincement
+        frontPressureBar -= 0.30; 
+        rearPressureBar -= 0.30;
     } else if (setupType === 'tpu') {
-        setupModifier = -0.15; // TPU : rigide mais très léger, on lisse pour le confort
+        frontPressureBar -= 0.15; 
+        rearPressureBar -= 0.15;
     } else if (setupType === 'butyl') {
-        setupModifier = +0.2; // Butyl : on surgonfle légèrement pour éviter les pincements
+        frontPressureBar += 0.15; 
+        rearPressureBar += 0.15;
     }
-
-    frontPressureBar += setupModifier;
-    rearPressureBar += setupModifier;
 
     // 6. Modificateurs selon la surface de roulage
-    let surfaceModifier = 1.0;
     if (surface === 'neuf') {
-        surfaceModifier = 1.05; // Bitume parfait : rendement
+        frontPressureBar *= 1.03; // Rendement maximal
+        rearPressureBar *= 1.03;
     } else if (surface === 'gravel') {
-        surfaceModifier = 0.70; // Gravel/VTT : adhérence maximale
+        frontPressureBar *= 0.70; // Chute pour le confort et l'adhérence VTT/Gravel
+        rearPressureBar *= 0.70;
     }
 
-    frontPressureBar *= surfaceModifier;
-    rearPressureBar *= surfaceModifier;
-    
-    // Sécurité basse corrigée (adaptée aux gros ballons modernes)
+    // Sécurité basse : Ne pas descendre sous 1.8 Bar pour éviter le déjantage
     frontPressureBar = Math.max(frontPressureBar, 1.8);
     rearPressureBar = Math.max(rearPressureBar, 1.8);
 
-    // 7. Affichage des résultats (Uniquement en Bars)
+    // 7. Affichage UI
     document.getElementById('res-front-bar').innerText = frontPressureBar.toFixed(2);
     document.getElementById('res-rear-bar').innerText = rearPressureBar.toFixed(2);
 
-    // Afficher la section des résultats avec une petite animation
     const resultsDiv = document.getElementById('pressure-results');
     resultsDiv.classList.remove('hidden');
     resultsDiv.classList.add('animate-pulse');
