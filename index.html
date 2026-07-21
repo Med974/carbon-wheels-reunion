@@ -66,7 +66,7 @@
                 <a href="javascript:void(0)" onclick="navigateTo('catalogue')" class="hidden md:inline-block text-sm text-gray-300 hover:text-white transition font-medium">Catalogue</a>
                 <a href="javascript:void(0)" onclick="navigateTo('guide-performance')" class="hidden lg:inline-block text-sm text-brand-accent font-bold hover:text-yellow-300 transition">Guide Performance</a>
                 <a href="javascript:void(0)" onclick="navigateTo('technologie')" class="hidden lg:inline-block text-sm text-gray-300 hover:text-white transition font-medium">Moyeu R2</a>
-                
+                <a href="javascript:void(0)" onclick="navigateTo('calculateur')" class="hidden lg:inline-block text-sm text-brand-accent font-bold hover:text-yellow-300 transition">Pression Pneus</a>
                 <a href="javascript:void(0)" onclick="navigateTo('faq')" class="hidden xl:inline-block text-sm text-gray-300 hover:text-white transition font-medium">F.A.Q</a>
                 <a href="javascript:void(0)" onclick="showWarranty()" class="hidden md:inline-block text-sm text-gray-300 hover:text-white transition font-medium">Garanties & SAV</a>
                 
@@ -93,6 +93,7 @@
             <a href="javascript:void(0)" onclick="navigateTo('catalogue'); closeMobileMenu()" class="text-gray-300 hover:text-white font-medium text-lg border-b border-gray-800 pb-3 flex items-center justify-between">Catalogue <i class="fa-solid fa-chevron-right text-sm text-gray-600"></i></a>
             <a href="javascript:void(0)" onclick="navigateTo('guide-performance'); closeMobileMenu()" class="text-brand-accent font-bold hover:text-yellow-300 text-lg border-b border-gray-800 pb-3 flex items-center justify-between">Guide Performance <i class="fa-solid fa-chevron-right text-sm text-yellow-800"></i></a>
             <a href="javascript:void(0)" onclick="navigateTo('technologie'); closeMobileMenu()" class="text-gray-300 hover:text-white font-medium text-lg border-b border-gray-800 pb-3 flex items-center justify-between">Technologie (Moyeu R2) <i class="fa-solid fa-chevron-right text-sm text-gray-600"></i></a>
+            <a href="javascript:void(0)" onclick="navigateTo('calculateur'); closeMobileMenu()" class="text-brand-accent font-bold hover:text-yellow-300 text-lg border-b border-gray-800 pb-3 flex items-center justify-between">Calculateur Pression <i class="fa-solid fa-chevron-right text-sm text-yellow-800"></i></a>
             <a href="javascript:void(0)" onclick="navigateTo('faq'); closeMobileMenu()" class="text-gray-300 hover:text-white font-medium text-lg border-b border-gray-800 pb-3 flex items-center justify-between">Foire Aux Questions <i class="fa-solid fa-chevron-right text-sm text-gray-600"></i></a>
             <a href="javascript:void(0)" onclick="showWarranty(); closeMobileMenu()" class="text-gray-300 hover:text-white font-medium text-lg flex items-center justify-between">Garanties & SAV <i class="fa-solid fa-chevron-right text-sm text-gray-600"></i></a>
         </div>
@@ -417,6 +418,102 @@
                         <div class="absolute -bottom-6 -left-6 bg-brand-main text-white p-6 rounded-2xl shadow-2xl hidden md:block border-l-4 border-brand-accent">
                             <div class="text-3xl font-black text-brand-accent leading-none">74mm</div>
                             <div class="text-[10px] uppercase font-bold tracking-widest text-gray-400 mt-1">Diamètre Flasque</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION CALCULATEUR DE PRESSION -->
+        <section id="calculateur" class="bg-white py-20 border-t border-gray-200">
+            <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-12">
+                    <span class="text-brand-accent font-bold tracking-wider text-sm uppercase mb-2 block">Optimisation Marginale</span>
+                    <h2 class="text-3xl md:text-4xl font-black text-gray-900 mb-4">Calculateur de Pression Pro</h2>
+                    <p class="text-gray-500">Ajustez votre pression au Watt près selon votre matériel et nos surfaces locales.</p>
+                </div>
+                <div class="bg-gray-50 p-6 md:p-8 rounded-2xl shadow-sm border border-gray-100">
+                    <form id="pressure-form" class="space-y-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-sm font-bold text-gray-700 mb-1">Poids Système (Cycliste + Vélo + Équipement)</label>
+                                <div class="flex">
+                                    <input type="number" id="calc-weight-sys" value="80" class="w-full bg-white border border-gray-300 rounded-l-lg px-4 py-2 focus:ring-brand-accent outline-none" required>
+                                    <span class="bg-gray-200 border border-l-0 border-gray-300 rounded-r-lg px-4 py-2 font-bold text-gray-700">kg</span>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-bold text-gray-700 mb-1">Répartition des masses (Av/Ar)</label>
+                                <select id="calc-dist" class="w-full bg-white border border-gray-300 rounded-lg px-4 py-2 focus:ring-brand-accent outline-none">
+                                    <option value="48">48% / 52% (Route Standard)</option>
+                                    <option value="46">46% / 54% (Gravel / VTT)</option>
+                                    <option value="50">50% / 50% (Chrono / Tri)</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 border-t border-gray-200 pt-6">
+                            <div>
+                                <label class="block text-sm font-bold text-gray-700 mb-1">Section Pneu</label>
+                                <select id="calc-tire" class="w-full bg-white border border-gray-300 rounded-lg px-4 py-2 focus:ring-brand-accent outline-none">
+                                    <option value="25">25 mm</option>
+                                    <option value="28" selected>28 mm</option>
+                                    <option value="30">30 mm</option>
+                                    <option value="32">32 mm</option>
+                                    <option value="40">40 mm (Gravel)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-bold text-gray-700 mb-1">Largeur interne</label>
+                                <select id="calc-rim-int" class="w-full bg-white border border-gray-300 rounded-lg px-4 py-2 focus:ring-brand-accent outline-none">
+                                    <option value="21">21 mm</option>
+                                    <option value="23">23 mm</option>
+                                    <option value="24" selected>24 mm (Série GHOST)</option>
+                                    <option value="25">25 mm</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-bold text-gray-700 mb-1">Largeur externe</label>
+                                <input type="number" id="calc-rim-ext" value="32" class="w-full bg-white border border-gray-300 rounded-lg px-4 py-2 focus:ring-brand-accent outline-none" required>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 border-t border-gray-200 pt-6">
+                            <div>
+                                <label class="block text-sm font-bold text-gray-700 mb-1">Type de montage</label>
+                                <select id="calc-type" class="w-full bg-white border border-gray-300 rounded-lg px-4 py-2 focus:ring-brand-accent outline-none">
+                                    <option value="tubeless">Tubeless</option>
+                                    <option value="tpu" selected>Chambre TPU</option>
+                                    <option value="butyl">Chambre Butyl</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-bold text-gray-700 mb-1">Surface de roulage</label>
+                                <select id="calc-surface" class="w-full bg-white border border-gray-300 rounded-lg px-4 py-2 focus:ring-brand-accent outline-none">
+                                    <option value="neuf">Bitume Neuf</option>
+                                    <option value="standard" selected>Bitume (Route standard)</option>
+                                    <option value="gravel">Gravel / VTT</option>
+                                </select>
+                            </div>
+                        </div>
+                        <button type="button" onclick="calculatePressure()" class="w-full bg-brand-main text-white font-bold py-3 px-4 rounded-lg hover:bg-gray-800 transition-colors shadow-md mt-6">
+                            Calculer mes pressions
+                        </button>
+                    </form>
+                    <!-- Résultats -->
+                    <div id="pressure-results" class="hidden mt-8">
+                        <div id="aero-warning" class="hidden mb-4 p-4 bg-yellow-50 border-l-4 border-brand-accent text-sm text-yellow-800 shadow-sm"></div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm text-center relative overflow-hidden">
+                                <div class="absolute top-0 left-0 w-full h-1 bg-gray-400"></div>
+                                <span class="block text-xs font-black text-gray-500 uppercase tracking-widest mb-2">Pneu Avant</span>
+                                <div class="text-4xl font-black text-brand-main mb-1"><span id="res-front-bar">--</span><span class="text-lg text-gray-500 font-bold ml-1">Bar</span></div>
+                                <span id="res-front-psi" class="block text-sm text-gray-400 font-medium">-- PSI</span>
+                            </div>
+                            <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm text-center relative overflow-hidden">
+                                <div class="absolute top-0 left-0 w-full h-1 bg-brand-accent"></div>
+                                <span class="block text-xs font-black text-gray-500 uppercase tracking-widest mb-2">Pneu Arrière</span>
+                                <div class="text-4xl font-black text-brand-main mb-1"><span id="res-rear-bar">--</span><span class="text-lg text-gray-500 font-bold ml-1">Bar</span></div>
+                                <span id="res-rear-psi" class="block text-sm text-gray-400 font-medium">-- PSI</span>
+                            </div>
                         </div>
                     </div>
                 </div>
