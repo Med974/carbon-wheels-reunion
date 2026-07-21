@@ -2866,13 +2866,13 @@ function calculatePressure() {
         aeroWarning.classList.add('hidden');
     }
 
-    // 4. Calcul de la pression de base (Aligné sur les standards SRAM / Silca)
+    // 4. Calcul de la pression de base (Ajusté Profil Coursier)
     let frontLoad = totalWeight * weightDistFront;
     let rearLoad = totalWeight * weightDistRear;
 
-    // Formule empirique ajustée pour correspondre aux benchmarks Pro Tour
-    let frontPressureBar = (frontLoad / 10) * (28 / wam) * 1.05;
-    let rearPressureBar = (rearLoad / 10) * (28 / wam) * 1.05;
+    // Formule empirique durcie avec un coefficient de 1.32 pour retrouver la plage 4.5 - 5.0 Bars
+    let frontPressureBar = (frontLoad / 10) * (28 / wam) * 1.32;
+    let rearPressureBar = (rearLoad / 10) * (28 / wam) * 1.32;
 
     // 5. Modificateurs selon le type de montage (Carcasse)
     if (setupType === 'tubeless') {
