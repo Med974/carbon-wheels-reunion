@@ -2864,45 +2864,42 @@ function calculatePressure() {
         aeroWarning.classList.add('hidden');
     }
 
-    // 4. Calcul de l'impédance de base (Formule Berto modernisée)
-    // On calcule la charge par roue, divisée par la largeur réelle, multipliée par notre coefficient d'écrasement idéal.
-    let frontPressureBar = ((totalWeight * weightDistFront) / wam) * 1.48;
-    let rearPressureBar = ((totalWeight * weightDistRear) / wam) * 1.48;
+    // 4. Calcul de l'impédance de base (Modèle Silca/SRAM adapté)
+    // On calcule la charge par roue (kg), ajustée par la largeur réelle (WAM) avec un coefficient calibré pour les jantes modernes.
+    let frontPressureBar = ((totalWeight * weightDistFront) / 10) * (28 / wam) * 1.15;
+    let rearPressureBar = ((totalWeight * weightDistRear) / 10) * (28 / wam) * 1.15;
 
     // 5. Modificateurs selon le type de montage (Carcasse)
     let setupModifier = 0;
     if (setupType === 'tubeless') {
-        setupModifier = -0.3; // Le Tubeless permet de baisser la pression sans risque de pincement
+        setupModifier = -0.3; // Tubeless : permet de baisser la pression sans risque de pincement
     } else if (setupType === 'tpu') {
-        setupModifier = -0.1; // Le TPU est rigide mais résistant, on baisse légèrement pour le confort
+        setupModifier = -0.15; // TPU : rigide mais très léger, on lisse pour le confort
     } else if (setupType === 'butyl') {
-        setupModifier = +0.2; // Chambre classique : on surgonfle légèrement pour éviter les crevaisons par pincement
+        setupModifier = +0.2; // Butyl : on surgonfle légèrement pour éviter les pincements
     }
 
     frontPressureBar += setupModifier;
     rearPressureBar += setupModifier;
 
-    // 6. Modificateurs selon la surface de roulage (Résistance au roulement)
+    // 6. Modificateurs selon la surface de roulage
     let surfaceModifier = 1.0;
     if (surface === 'neuf') {
-        surfaceModifier = 1.05; // Billard : on augmente la pression pour le rendement pur
+        surfaceModifier = 1.05; // Bitume parfait : rendement
     } else if (surface === 'gravel') {
-        surfaceModifier = 0.75; // Chemin/VTT : on chute la pression drastiquement pour l'adhérence
-    } // "standard" reste à 1.0
+        surfaceModifier = 0.70; // Gravel/VTT : adhérence maximale
+    }
 
     frontPressureBar *= surfaceModifier;
     rearPressureBar *= surfaceModifier;
     
-    // Sécurité : Ne jamais descendre sous 2.5 Bars pour un vélo de route classique dans ce calculateur
-    frontPressureBar = Math.max(frontPressureBar, 2.5);
-    rearPressureBar = Math.max(rearPressureBar, 2.5);
+    // Sécurité basse corrigée (adaptée aux gros ballons modernes)
+    frontPressureBar = Math.max(frontPressureBar, 1.8);
+    rearPressureBar = Math.max(rearPressureBar, 1.8);
 
-    // 7. Affichage des résultats (Conversion Bar -> PSI : 1 Bar = 14.5038 PSI)
+    // 7. Affichage des résultats (Uniquement en Bars)
     document.getElementById('res-front-bar').innerText = frontPressureBar.toFixed(2);
-    document.getElementById('res-front-psi').innerText = (frontPressureBar * 14.5038).toFixed(0);
-
     document.getElementById('res-rear-bar').innerText = rearPressureBar.toFixed(2);
-    document.getElementById('res-rear-psi').innerText = (rearPressureBar * 14.5038).toFixed(0);
 
     // Afficher la section des résultats avec une petite animation
     const resultsDiv = document.getElementById('pressure-results');
