@@ -916,15 +916,37 @@
                         </select>
 
                         <!-- Choix de la denture (caché par défaut) -->
-                        <div id="config-denture-container" style="display: none;" class="mb-3">
+                        <div id="config-denture-container" class="mb-3 hidden">
                             <label class="block text-xs font-bold text-gray-500 mb-1"><i class="fa-solid fa-cogs text-brand-accent mr-1"></i> Denture des Plateaux</label>
                             <select id="config-denture-manivelle" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm font-semibold shadow-sm" onchange="updateConfig()">
-                                <option value="46/33">46/33 (Grimpette / SRAM 12v)</option>
-                                <option value="48/35">48/35 (Polyvalent / SRAM 12v)</option>
-                                <option value="50/34" selected>50/34 (Grimpeur / Cyclo)</option>
-                                <option value="52/36">52/36 (Vallonné / Polyvalent)</option>
-                                <option value="53/39">53/39 (Classique Pro)</option>
-                                <option value="54/40">54/40 (Plat / Coursier Aéro)</option>
+                                <option value="Shimano 50/34" selected>Shimano 50/34 (Sur Commande)</option>
+                                <option value="Shimano 52/36">Shimano 52/36 (Sur Commande)</option>
+                                <option value="Shimano 53/39">Shimano 53/39 (Sur Commande)</option>
+                                <option value="Shimano 54/40">Shimano 54/40 (Sur Commande)</option>
+                                <option value="SRAM 46/33">SRAM 46/33 (Sur Commande)</option>
+                                <option value="SRAM 48/35">SRAM 48/35 (Sur Commande)</option>
+                            </select>
+                        </div>
+
+                        <!-- Choix du Design Pass Quest (caché par défaut) -->
+                        <div id="config-look-plateaux-container" class="mb-3 hidden">
+                            <label class="block text-xs font-bold text-gray-500 mb-1"><i class="fa-solid fa-paint-brush text-brand-accent mr-1"></i> Design des Plateaux</label>
+                            <select id="config-look-plateaux" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm font-semibold shadow-sm" onchange="updateConfig()">
+                                <option value="Full Black" selected>Full Black (Furtif)</option>
+                                <option value="Devil Smiley">Devil Smiley 😈</option>
+                                <option value="Checkerboard">Checkerboard (Damier)</option>
+                                <option value="Aluminium">Aluminium Brut</option>
+                            </select>
+                        </div>
+
+                        <!-- Choix de la Visserie (caché par défaut) -->
+                        <div id="config-visserie-container" class="mb-3 hidden">
+                            <label class="block text-xs font-bold text-gray-500 mb-1"><i class="fa-solid fa-gem text-brand-accent mr-1"></i> Visserie Titane (Option)</label>
+                            <select id="config-visserie-plateaux" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm font-semibold shadow-sm" onchange="updateConfig()">
+                                <option value="Visserie Standard" data-price="0" selected>Inclus : Visserie Standard [+0€]</option>
+                                <option value="Visserie Titane Noire" data-price="15">Titane : Noir [+15€]</option>
+                                <option value="Visserie Titane Argent" data-price="15">Titane : Argent [+15€]</option>
+                                <option value="Visserie Titane Rose/Bleu" data-price="15">Titane : Rose/Bleu (Oil Slick) [+15€]</option>
                             </select>
                         </div>
                     </div>
