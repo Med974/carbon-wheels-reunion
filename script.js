@@ -152,14 +152,18 @@ function addToCart() {
                 const plateauxEl = document.getElementById('config-plateaux-manivelle');
                 const plateaux = plateauxEl ? plateauxEl.value : "";
                 
-                let dentureText = "";
+                let dentureText = "", lookText = "", visserieText = "";
                 const dentureContainer = document.getElementById('config-denture-container');
-                if (dentureContainer && dentureContainer.style.display !== 'none') {
+                if (dentureContainer && dentureContainer.style.display !== 'none' && !dentureContainer.classList.contains('hidden')) {
                     const dentureEl = document.getElementById('config-denture-manivelle');
                     if (dentureEl) dentureText = ` | Denture : ${dentureEl.value}`;
+                    const lookEl = document.getElementById('config-look-plateaux');
+                    if (lookEl) lookText = ` | Design : ${lookEl.value}`;
+                    const visserieEl = document.getElementById('config-visserie-plateaux');
+                    if (visserieEl && visserieEl.selectedIndex > 0) visserieText = ` | ${visserieEl.options[visserieEl.selectedIndex].text.split(' [+')[0]}`;
                 }
                 
-                configText = `${modele} | Longueur : ${longueur} | Finition : ${finition} | ${logo} | Plateaux : ${plateaux}${dentureText}`;
+                configText = `${modele} | Longueur : ${longueur} | Finition : ${finition} | ${logo} | Plateaux : ${plateaux}${dentureText}${lookText}${visserieText}`;
                 
             } else if (isCurrentItemAccessory) {
                 const qteEl = document.getElementById('config-quantite');
@@ -1901,20 +1905,35 @@ function updateConfig() {
                 plateauxPrice = parseInt(plateauxSelect.options[plateauxSelect.selectedIndex].getAttribute('data-price')) || 0;
                 plateauxWeight = parseInt(plateauxSelect.options[plateauxSelect.selectedIndex].getAttribute('data-weight')) || 0;
                 
-                // Afficher/Cacher le choix de la denture selon l'option sélectionnée
+                // Afficher/Cacher les choix des plateaux (Denture, Look, Visserie)
                 const selectedPlateauxValue = plateauxSelect.value;
-                if (dentureContainer) {
-                    // On n'affiche la denture QUE s'il choisit un "Pack Complet" ou le "Capteur + Plateaux"
-                    if (selectedPlateauxValue.includes('Pack Complet') || selectedPlateauxValue.includes('Capteur XCADEY + Plateaux')) {
-                        dentureContainer.style.display = 'block';
-                    } else {
-                        dentureContainer.style.display = 'none';
+                const lookContainer = document.getElementById('config-look-plateaux-container');
+                const visserieContainer = document.getElementById('config-visserie-container');
+                let visseriePrice = 0;
+                
+                if (selectedPlateauxValue.includes('Pack Complet') || selectedPlateauxValue.includes('Capteur XCADEY + Plateaux')) {
+                    if (dentureContainer) { dentureContainer.style.display = 'block'; dentureContainer.classList.remove('hidden'); }
+                    if (lookContainer) { lookContainer.style.display = 'block'; lookContainer.classList.remove('hidden'); }
+                    if (visserieContainer) { 
+                        visserieContainer.style.display = 'block'; 
+                        visserieContainer.classList.remove('hidden'); 
+                        const visserieSelect = document.getElementById('config-visserie-plateaux');
+                        if (visserieSelect && visserieSelect.selectedIndex > 0) visseriePrice = parseInt(visserieSelect.options[visserieSelect.selectedIndex].getAttribute('data-price')) || 0;
+                    }
+                } else {
+                    if (dentureContainer) { dentureContainer.style.display = 'none'; dentureContainer.classList.add('hidden'); }
+                    if (lookContainer) { lookContainer.style.display = 'none'; lookContainer.classList.add('hidden'); }
+                    if (visserieContainer) { 
+                        visserieContainer.style.display = 'none'; 
+                        visserieContainer.classList.add('hidden'); 
+                        const visserieSelect = document.getElementById('config-visserie-plateaux');
+                        if (visserieSelect) visserieSelect.selectedIndex = 0;
                     }
                 }
             }
             
             // Nouveau calcul du prix
-            finalPrice = (currentBasePrice + plateauxPrice) * qte;
+            finalPrice = (currentBasePrice + plateauxPrice + visseriePrice) * qte;
             
             // Mise à jour des specs (Poids, Q-Factor, Axe)
             if (modeleSelect && modeleSelect.selectedIndex >= 0) {
