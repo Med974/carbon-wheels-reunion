@@ -960,6 +960,35 @@
                             <label class="block text-xs font-bold text-gray-500 mb-1"><i class="fa-solid fa-ruler text-brand-accent mr-1"></i> Taille</label>
                             <select id="config-taille-pneu" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm font-semibold" onchange="updateConfig()"></select>
                         </div>
+
+                        <!-- NOUVEAU BLOC : PLATEAUX SEULS ET PACKS (Totalement indépendant) -->
+                        <div id="config-plateaux-seuls-container" class="mt-4 hidden">
+                            <label class="block text-xs font-bold text-gray-500 mb-1"><i class="fa-solid fa-cogs text-brand-accent mr-1"></i> Denture des Plateaux</label>
+                            <select id="config-denture-plateaux-seuls" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm font-semibold shadow-sm mb-3" onchange="updateConfig()">
+                                <option value="Shimano 50/34" selected>Shimano 50/34</option>
+                                <option value="Shimano 52/36">Shimano 52/36</option>
+                                <option value="Shimano 53/39">Shimano 53/39</option>
+                                <option value="Shimano 54/40">Shimano 54/40</option>
+                                <option value="SRAM 46/33">SRAM 46/33</option>
+                                <option value="SRAM 48/35">SRAM 48/35</option>
+                            </select>
+
+                            <label class="block text-xs font-bold text-gray-500 mb-1"><i class="fa-solid fa-paint-brush text-brand-accent mr-1"></i> Design des Plateaux</label>
+                            <select id="config-look-plateaux-seuls" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm font-semibold shadow-sm mb-3" onchange="updateConfig()">
+                                <option value="Full Black" selected>Full Black (Furtif)</option>
+                                <option value="Devil Smiley">Devil Smiley 😈</option>
+                                <option value="Checkerboard">Checkerboard (Damier)</option>
+                                <option value="Aluminium">Aluminium Brut</option>
+                            </select>
+
+                            <label class="block text-xs font-bold text-gray-500 mb-1"><i class="fa-solid fa-gem text-brand-accent mr-1"></i> Visserie Titane (Option)</label>
+                            <select id="config-visserie-plateaux-seuls" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm font-semibold shadow-sm" onchange="updateConfig()">
+                                <option value="Visserie Standard" data-price="0" selected>Inclus : Visserie Standard [+0€]</option>
+                                <option value="Visserie Titane Noire" data-price="15">Titane : Noir [+15€]</option>
+                                <option value="Visserie Titane Argent" data-price="15">Titane : Argent [+15€]</option>
+                                <option value="Visserie Titane Rose/Bleu" data-price="15">Titane : Rose/Bleu (Oil Slick) [+15€]</option>
+                            </select>
+                        </div>
                     </div>
 
                     <div id="mtb-config-container" class="mb-3 hidden bg-gray-50 p-4 rounded-xl border border-gray-200">
