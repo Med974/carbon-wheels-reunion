@@ -161,10 +161,18 @@ function addToCart() {
                 
                 configText = `${modele} | Longueur : ${longueur} | Finition : ${finition} | ${logo} | Plateaux : ${plateaux}${dentureText}`;
                 
-            } else if (isCurrentItemAccessory) {
+            } else if (isCurrentItemAccessory || titleLC.includes('plateaux pass quest') || titleLC.includes('pack étoile') || titleLC.includes('pack pro')) {
                 const qteEl = document.getElementById('config-quantite');
                 const qte = qteEl ? parseInt(qteEl.value) : 1;
-                if (titleLC.includes('disque')) {
+                if (titleLC.includes('plateaux pass quest') || titleLC.includes('pack étoile') || titleLC.includes('pack pro')) {
+                    const dentureEl = document.getElementById('config-denture-plateaux-seuls');
+                    const denture = dentureEl ? dentureEl.value : "";
+                    const lookEl = document.getElementById('config-look-plateaux-seuls');
+                    const look = lookEl ? lookEl.value : "";
+                    const visserieEl = document.getElementById('config-visserie-plateaux-seuls');
+                    const visserie = (visserieEl && visserieEl.selectedIndex > 0) ? ` | ${visserieEl.options[visserieEl.selectedIndex].text.split(' [+')[0]}` : "";
+                    configText = `Denture : ${denture} | Design : ${look}${visserie} | Quantité : ${qte}`;
+                } else if (titleLC.includes('disque')) {
                     const modeleSelect = document.getElementById('config-galfer-modele');
                     const m = modeleSelect ? modeleSelect.options[modeleSelect.selectedIndex].text.split(' [+')[0] : "";
                     const tailleSelect = document.getElementById('config-galfer-taille');
@@ -1348,6 +1356,27 @@ function openModal(index) {
             const cWeight = document.getElementById('calc-weight');
             if(cWeight) cWeight.textContent = currentBaseWeight > 0 ? currentBaseWeight : '--';
             updateBadgeUI(true);
+        } else if (nomLC.includes('plateaux pass quest') || nomLC.includes('pack étoile') || nomLC.includes('pack pro')) {
+            if(specJantesBox) specJantesBox.style.display = 'none';
+            if(configuratorSection) configuratorSection.style.display = 'block';
+            if(wheelConfigOptions) wheelConfigOptions.style.display = 'none';
+            if(manivellesConfigContainer) manivellesConfigContainer.style.display = 'none';
+            if(accessoryConfigContainer) accessoryConfigContainer.style.display = 'block';
+            if(specialWheelConfigContainer) specialWheelConfigContainer.style.display = 'none';
+            if(testConfigContainer) testConfigContainer.style.display = 'none';
+            if(poidsMaxContainer) poidsMaxContainer.style.display = 'none';
+            
+            const plateauxSeulsCont = document.getElementById('config-plateaux-seuls-container');
+            if(plateauxSeulsCont) { plateauxSeulsCont.style.display = 'block'; plateauxSeulsCont.classList.remove('hidden'); }
+            const tailleContainer = document.getElementById('config-taille-pneu-container');
+            if(tailleContainer) { tailleContainer.style.display = 'none'; tailleContainer.classList.add('hidden'); }
+            const galferContainer = document.getElementById('galfer-config-container');
+            if(galferContainer) galferContainer.style.display = 'none';
+            
+            const qteEl = document.getElementById('config-quantite');
+            if(qteEl) qteEl.value = '1';
+            
+            updateConfig();
 		} else if (isCurrentItemAccessory) {
             if(specJantesBox) specJantesBox.style.display = 'none';
             if(configuratorSection) configuratorSection.style.display = 'block';
@@ -1356,6 +1385,8 @@ function openModal(index) {
 			if(specialWheelConfigContainer) specialWheelConfigContainer.style.display = 'none';
             if(testConfigContainer) testConfigContainer.style.display = 'none';
             if(poidsMaxContainer) poidsMaxContainer.style.display = 'none';
+            const plateauxSeulsCont = document.getElementById('config-plateaux-seuls-container');
+            if(plateauxSeulsCont) plateauxSeulsCont.style.display = 'none';
             
             if(accessoryConfigContainer) accessoryConfigContainer.style.display = 'block';
             
@@ -1850,13 +1881,20 @@ function updateConfig() {
     }
 
 	// ==========================================
-	// --- SUITE : LOGIQUE POUR LES ACCESSOIRES ---
+	// --- SUITE : LOGIQUE POUR LES ACCESSOIRES ET PLATEAUX SEULS ---
 	// ==========================================
-    if (isCurrentItemAccessory) {
+    if (isCurrentItemAccessory || titleLC.includes('plateaux pass quest') || titleLC.includes('pack étoile') || titleLC.includes('pack pro')) {
         const qteEl = document.getElementById('config-quantite');
         const qte = qteEl ? parseInt(qteEl.value) : 1;
         
-        let finalPrice = currentBasePrice * qte;
+        let unitPrice = currentBasePrice;
+        if (titleLC.includes('plateaux pass quest') || titleLC.includes('pack étoile') || titleLC.includes('pack pro')) {
+            const visserieEl = document.getElementById('config-visserie-plateaux-seuls');
+            if (visserieEl && visserieEl.selectedIndex > 0) {
+                unitPrice += parseInt(visserieEl.options[visserieEl.selectedIndex].getAttribute('data-price')) || 0;
+            }
+        }
+        let finalPrice = unitPrice * qte;
         
         if (titleLC.includes('bidon') || titleLC.includes('ahyka')) {
             const pairs = Math.floor(qte / 2);
