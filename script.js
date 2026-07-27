@@ -177,11 +177,13 @@ function addToCart() {
                 if (titleLC.includes('plateaux pass quest') || titleLC.includes('pack étoile') || titleLC.includes('pack pro')) {
                     const dentureEl = document.getElementById('config-denture-plateaux-seuls');
                     const denture = dentureEl ? dentureEl.value : "";
+                    const vitesseEl = document.getElementById('config-vitesse-plateaux-seuls');
+                    const vitesse = vitesseEl ? vitesseEl.value : "";
                     const lookEl = document.getElementById('config-look-plateaux-seuls');
                     const look = lookEl ? lookEl.value : "";
                     const visserieEl = document.getElementById('config-visserie-plateaux-seuls');
                     const visserie = (visserieEl && visserieEl.selectedIndex > 0) ? ` | ${visserieEl.options[visserieEl.selectedIndex].text.split(' [+')[0]}` : "";
-                    configText = `Denture : ${denture} | Design : ${look}${visserie} | Quantité : ${qte}`;
+                    configText = `Denture : ${denture} | Vitesses : ${vitesse} | Design : ${look}${visserie} | Quantité : ${qte}`;
                 } else if (titleLC.includes('disque')) {
                     const modeleSelect = document.getElementById('config-galfer-modele');
                     const m = modeleSelect ? modeleSelect.options[modeleSelect.selectedIndex].text.split(' [+')[0] : "";
@@ -757,7 +759,7 @@ function submitOrder() {
         email: emailClient, 
         telephone: telClient, 
         adresse: adresseClient,
-        produits: produitsPourFichier.join(" + "), 
+        produits: produitsPourFichier.join(" || "),
         factureNoms: factureNoms.join("\n\n"), 
         facturePrix: facturePrix.join("\n\n"), 
         total: finalTotal % 1 === 0 ? finalTotal : finalTotal.toFixed(2),

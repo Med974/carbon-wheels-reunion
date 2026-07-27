@@ -984,6 +984,12 @@
                                 <option value="SRAM 48/35">SRAM 48/35</option>
                             </select>
 
+                            <label class="block text-xs font-bold text-gray-500 mb-1"><i class="fa-solid fa-gears text-brand-accent mr-1"></i> Nombre de Vitesses</label>
+                            <select id="config-vitesse-plateaux-seuls" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm font-semibold shadow-sm mb-3" onchange="updateConfig()">
+                                <option value="11V" data-price="0" selected>11 Vitesses (110BCD standard)</option>
+                                <option value="12V" data-price="0">12 Vitesses (X110BCD)</option>
+                            </select>
+
                             <label class="block text-xs font-bold text-gray-500 mb-1"><i class="fa-solid fa-paint-brush text-brand-accent mr-1"></i> Design des Plateaux</label>
                             <select id="config-look-plateaux-seuls" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm font-semibold shadow-sm mb-3" onchange="updateConfig()">
                                 <option value="Full Black" selected>Full Black (Furtif)</option>
