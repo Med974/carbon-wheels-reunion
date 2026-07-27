@@ -21,6 +21,16 @@ let discountAmount = 0;
 
 let lastHubSelected = "";
 
+function escapeHtml(value) {
+    if (value === null || value === undefined) return '';
+    return String(value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+}
+
 function navigateTo(sectionId) {
     document.getElementById('view-warranty').classList.add('hidden');
     document.getElementById('view-home').classList.remove('hidden');
@@ -483,11 +493,11 @@ function updateCartUI() {
             div.innerHTML = `
                 <button onclick="removeFromCart(${item.id})" class="absolute -top-2 -right-2 bg-red-100 text-red-600 rounded-full w-6 h-6 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition shadow hover:bg-red-200"><i class="fa-solid fa-xmark"></i></button>
                 <div class="w-16 h-16 bg-gray-50 rounded-lg flex-shrink-0 flex items-center justify-center p-1 border border-gray-100 overflow-hidden">
-                    <img src="${item.image}" class="w-full h-full object-contain">
+                    <img src="${escapeHtml(item.image)}" class="w-full h-full object-contain">
                 </div>
                 <div class="flex-grow">
-                    <h5 class="font-bold text-gray-900 text-sm leading-tight mb-1">${item.title}</h5>
-                    <p class="text-[10px] text-gray-500 mb-2 font-medium bg-gray-50 p-1 rounded inline-block">${item.config}</p>
+                    <h5 class="font-bold text-gray-900 text-sm leading-tight mb-1">${escapeHtml(item.title)}</h5>
+                    <p class="text-[10px] text-gray-500 mb-2 font-medium bg-gray-50 p-1 rounded inline-block">${escapeHtml(item.config)}</p>
                     <div class="flex justify-between items-center">
                         ${weightDisplay}
                         <span class="font-black text-brand-accent ml-auto">${item.price} €</span>
@@ -861,10 +871,10 @@ function renderFastTrackCards() {
     inStockItems.forEach(item => {
         const isLastPair = parseInt(item.Stock) === 1;
         const badgeClass = isLastPair ? 'bg-orange-100 text-orange-700 border-orange-200' : 'bg-green-100 text-green-700 border-green-200';
-        const badgeText = isLastPair ? '🚨 Dernière paire !' : `✅ ${item.Stock} Paires dispo`;
-        
+        const badgeText = isLastPair ? '🚨 Dernière paire !' : `✅ ${parseInt(item.Stock) || 0} Paires dispo`;
+
         const isPulse = item.Series === 'PULSE';
-        const displayName = `GHOST ${item["Rim height"]}mm`;
+        const displayName = `GHOST ${escapeHtml(item["Rim height"])}mm`;
         const hubName = isPulse ? 'Moyeu R2' : 'Moyeu RT240';
         
         let logoName = 'Noir Furtif';
@@ -880,11 +890,11 @@ function renderFastTrackCards() {
                 <h4 class="font-black text-gray-900 text-lg mb-1 relative z-10">${displayName}</h4>
                 <p class="text-xs font-bold text-brand-accent mb-3 relative z-10">${hubName}</p>
                 <ul class="text-xs text-gray-500 space-y-1.5 mb-5 flex-grow relative z-10">
-                    <li><i class="fa-solid fa-check text-green-500 mr-1"></i> Jante : ${item["Rim Type"]}</li>
+                    <li><i class="fa-solid fa-check text-green-500 mr-1"></i> Jante : ${escapeHtml(item["Rim Type"])}</li>
                     <li><i class="fa-solid fa-check text-green-500 mr-1"></i> Finition : ${finishName}</li>
                     <li><i class="fa-solid fa-check text-green-500 mr-1"></i> Logos : ${logoName}</li>
                 </ul>
-                <button onclick="openFastTrackConfig('${item.Series}', '${item["Rim height"]}', '${item["Rim Type"]}', '${item.Finish}', '${item["Logo Color"]}')" class="w-full bg-brand-main text-white text-xs font-bold py-2.5 rounded-lg hover:bg-gray-800 transition-colors relative z-10 shadow-sm">
+                <button onclick="openFastTrackConfig('${escapeHtml(item.Series)}', '${escapeHtml(item["Rim height"])}', '${escapeHtml(item["Rim Type"])}', '${escapeHtml(item.Finish)}', '${escapeHtml(item["Logo Color"])}')" class="w-full bg-brand-main text-white text-xs font-bold py-2.5 rounded-lg hover:bg-gray-800 transition-colors relative z-10 shadow-sm">
                     Configurer cette paire <i class="fa-solid fa-arrow-right ml-1"></i>
                 </button>
             </div>
@@ -1013,7 +1023,7 @@ function renderGrid(filterCategory) {
             } else if (statutLC.includes('arrivage')) {
                 statutBadge += `<span class="absolute top-4 left-4 bg-blue-500 text-white text-xs font-bold px-3 py-1 rounded shadow-md z-10"><i class="fa-solid fa-truck-fast mr-1"></i> Arrivage en cours</span>`;
             } else {
-                statutBadge += `<span class="absolute top-4 left-4 bg-orange-500 text-white text-xs font-bold px-3 py-1 rounded shadow-md z-10"><i class="fa-solid fa-plane mr-1"></i> ${item.Statut}</span>`;
+                statutBadge += `<span class="absolute top-4 left-4 bg-orange-500 text-white text-xs font-bold px-3 py-1 rounded shadow-md z-10"><i class="fa-solid fa-plane mr-1"></i> ${escapeHtml(item.Statut)}</span>`;
             }
         }
 
@@ -1046,13 +1056,13 @@ function renderGrid(filterCategory) {
             <div onclick="openModal(${index})" class="wheel-card bg-white rounded-xl shadow-md overflow-hidden border border-gray-100 flex flex-col relative group cursor-pointer">
                 ${statutBadge}
                 <div class="overflow-hidden h-64 bg-gray-50 flex items-center justify-center p-4 relative">
-                    <img src="${imageUrl}" alt="${item.Nom}" class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500">
+                    <img src="${escapeHtml(imageUrl)}" alt="${escapeHtml(item.Nom)}" class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500">
                     <div class="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition flex items-center justify-center">
                         <span class="bg-brand-main text-white text-sm font-bold px-5 py-2 rounded-full shadow-lg transform translate-y-4 group-hover:translate-y-0 transition"><i class="fa-solid fa-eye mr-2"></i>Voir le produit</span>
                     </div>
                 </div>
                 <div class="p-6 flex flex-col flex-grow text-center">
-                    <h4 class="text-xl font-black text-gray-900 mb-2">${item.Nom}</h4>
+                    <h4 class="text-xl font-black text-gray-900 mb-2">${escapeHtml(item.Nom)}</h4>
                     <div class="flex justify-center items-center gap-3 text-sm text-gray-600 mb-4 font-medium">
                         ${specLigne}
                     </div>
@@ -1320,13 +1330,7 @@ function openModal(index) {
             const dateInputTest = document.getElementById('config-date-test');
             if(dateInputTest) {
 				dateInputTest.value = "";
-                const dateDispoTest = "2026-06-30"; 
-                const aujourdhui = new Date().toISOString().split('T')[0];
-                if (aujourdhui < dateDispoTest) {
-                    dateInputTest.min = dateDispoTest;
-                } else {
-                    dateInputTest.min = aujourdhui;
-                }
+                dateInputTest.min = new Date().toISOString().split('T')[0];
             }
             fetchUnavailableTestDates();
         } else if (isCurrentItemTextile) {
@@ -2480,16 +2484,7 @@ function setLenticulaireMode(mode) {
     // Configurer le calendrier de location
     const dateInput = document.getElementById('config-date-location');
     if (dateInput) {
-        // Date de livraison de la 1ère roue : vendredi 26 juin 2026
-        const dateDispoInitiale = "2026-06-26"; 
-        const aujourdhui = new Date().toISOString().split('T')[0];
-        
-        // Si aujourd'hui est avant la livraison, la date minimale est le 26 juin 2026
-        if (aujourdhui < dateDispoInitiale) {
-            dateInput.min = dateDispoInitiale;
-        } else {
-            dateInput.min = aujourdhui;
-        }
+        dateInput.min = new Date().toISOString().split('T')[0];
     }
     
     if (mode === 'location') {
@@ -2701,46 +2696,57 @@ function setDeliveryZone(zone) {
         const radio5050 = document.querySelector('input[name="payment-method"][value="5050_metropole"]');
         if (radio3x && radio3x.checked && radio5050) radio5050.checked = true;
         
-        // --- CORRECTION MAJEURE : NETTOYAGE DU CONTENU DE LA CONFIGURATION ---
+        // --- NETTOYAGE DU CONTENU DE LA CONFIGURATION ---
+        // Règles génériques par mot-clé plutôt que par texte/prix exact : ça reste
+        // valable même si les libellés ou tarifs des options changent dans l'index.html.
         let optionsModifiees = false;
-        
+
+        // Catégories dont le prix est visible dans le texte, ex: " | + 2x TPU 65mm [+25€]".
+        // Le prix est capturé directement dans le texte, donc pas besoin de le lister à la main.
+        const reglesAvecPrixVisible = [
+            / \| \+ [^|]*Pneus Continental GP5000[^|]*\[\+(\d+)€\]/g,
+            / \| \+ [^|]*Kits? Aéro[^|]*\[\+(\d+)€\]/g,
+            / \| \+ \d+x Chambres TPU \d+mm \[\+(\d+)€\]/g,
+            / \| \+ Kit de réparation RideNow TPU \[\+(\d+)€\]/g,
+            / \| \+ [^|]*Paires? Plaquettes (?:SHIMANO|SRAM)[^|]*\[\+(\d+)€\]/g,
+            / \| \+ [^|]*Housses? de transport[^|]*\[\+(\d+)€\]/g,
+            / \| \+ Paire Lockrings [^|]*\[\+(\d+)€\]/g,
+        ];
+
+        // Catégories où le prix n'apparaît pas dans le texte (ex: disques de frein) :
+        // le tarif est déduit du mot-clé plutôt que du texte.
+        const reglesSansPrixVisible = [
+            { regex: / \| \+ [^|]*Road Wave[^|]*/g, prix: 119 },
+            { regex: / \| \+ [^|]*Disc Shark[^|]*/g, prix: 159 },
+        ];
+
         cart.forEach(item => {
             if (item.config && !item.isAccessory && !item.isTextile) {
                 const configOriginale = item.config;
-                
-                // Nettoyage chirurgical de la chaîne de texte des options interdites
+                let montantRetire = 0;
+
+                reglesAvecPrixVisible.forEach(regex => {
+                    item.config = item.config.replace(regex, (match, prixCapture) => {
+                        montantRetire += parseInt(prixCapture) || 0;
+                        return "";
+                    });
+                });
+
+                reglesSansPrixVisible.forEach(({ regex, prix }) => {
+                    item.config = item.config.replace(regex, (match) => {
+                        montantRetire += prix;
+                        return "";
+                    });
+                });
+
+                // Catégories génériques sans prix associé (cassette du client, etc.)
                 item.config = item.config
-                    .replace(/ \| \+ 2x Pneus Continental GP5000 \(Mixte 28\/30\) \[\+115€\]/g, "")
-                    .replace(/ \| \+ 2x Pneus Continental GP5000 \(30mm\) \[\+115€\]/g, "")
-                    .replace(/ \| \+ 2x Pneus Continental GP5000 \(28mm\) \[\+115€\]/g, "")
-                    .replace(/ \| \+ 2x Chambres TPU 65mm \[\+25€\]/g, "")
-                    .replace(/ \| \+ 2x Paires Plaquettes SRAM \(Galfer FD513\) \[\+48€\]/g, "")
-                    .replace(/ \| \+ 1x Disc Shark 160mm \[\+89€\]/g, "")
-                    .replace(/ \| \+ 1x Disc Shark 140mm \[\+70€\]/g, "")
-                    .replace(/ \| \+ 2x Disques Galfer Fixed Wave \[\+90€\]/g, "")
-                    .replace(/ \| \+ 2x Disques Galfer Shark \[\+159€\]/g, "")
-                    .replace(/ \| \+ 2x Housses de transport individuelles \(Paire\) \[\+59€\]/g, "")
-                    .replace(/ \| \+ 1x Housse de transport individuelle \[\+35€\]/g, "")
-                    .replace(/ \| \+ Paire Lockrings [^|]+/g, "")
-					.replace(/ \| \+ Kit de réparation RideNow TPU \[\+9€\]/g, "")
                     .replace(/ \| \+ Cassette [^|]+/g, "")
                     .replace(/ \| \+ Bidon [^|]+/g, "");
 
                 if (item.config !== configOriginale) {
                     optionsModifiees = true;
-                    // Recalcul du prix de base de la jante nue en fonction des composants restants
-                    if (configOriginale.includes('+115€')) item.price -= 115;
-                    if (configOriginale.includes('+25€')) item.price -= 25;
-                    if (configOriginale.includes('+48€')) item.price -= 48;
-                    if (configOriginale.includes('+159€')) item.price -= 159;
-                    if (configOriginale.includes('+89€')) item.price -= 89;
-                    if (configOriginale.includes('+70€')) item.price -= 70;
-                    if (configOriginale.includes('+90€')) item.price -= 90;
-                    if (configOriginale.includes('+59€')) item.price -= 59;
-                    if (configOriginale.includes('1x Housse')) item.price -= 35;
-                    if (configOriginale.includes('Paire Lockrings')) item.price -= 35;
-					if (configOriginale.includes('+9€')) item.price -= 9;
-                    
+                    item.price -= montantRetire;
                     // Ajustement du poids visuel estimé
                     item.weight = "990"; // Poids standard de la Ghost 50 nue en jante UXL
                 }
