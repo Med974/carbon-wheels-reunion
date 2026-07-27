@@ -183,6 +183,10 @@ function addToCart() {
                     const taille = tailleEl ? tailleEl.value : "";
                     const prefix = titleLC.includes('lockring') ? 'Couleur' : 'Option';
                     configText = `${prefix} : ${taille} | Quantité : ${qte}`;
+                } else if (titleLC.includes('pompe')) {
+                    const modeleEl = document.getElementById('config-minipompe-modele');
+                    const modele = modeleEl ? modeleEl.options[modeleEl.selectedIndex].text.split(' [+')[0] : "";
+                    configText = `Modèle : ${modele} | Quantité : ${qte}`;
                 } else {
                     configText = `Quantité : ${qte}`;
                 }
@@ -1372,10 +1376,12 @@ function openModal(index) {
             if(tailleContainer) { tailleContainer.style.display = 'none'; tailleContainer.classList.add('hidden'); }
             const galferContainer = document.getElementById('galfer-config-container');
             if(galferContainer) galferContainer.style.display = 'none';
-            
+            const minipompeContainer = document.getElementById('minipompe-config-container');
+            if(minipompeContainer) minipompeContainer.style.display = 'none';
+
             const qteEl = document.getElementById('config-quantite');
             if(qteEl) qteEl.value = '1';
-            
+
             updateConfig();
 		} else if (isCurrentItemAccessory) {
             if(specJantesBox) specJantesBox.style.display = 'none';
@@ -1393,7 +1399,8 @@ function openModal(index) {
             const tailleContainer = document.getElementById('config-taille-pneu-container');
             const tailleSelect = document.getElementById('config-taille-pneu');
             const galferContainer = document.getElementById('galfer-config-container');
-            
+            const minipompeContainer = document.getElementById('minipompe-config-container');
+
             // Changement dynamique du label Taille -> Couleur
             if (tailleContainer) {
                 const labelTaille = tailleContainer.querySelector('label');
@@ -1409,9 +1416,15 @@ function openModal(index) {
             if (nomLC.includes('disque')) {
                 if(tailleContainer) tailleContainer.style.display = 'none';
                 if(galferContainer) galferContainer.style.display = 'block';
+                if(minipompeContainer) minipompeContainer.style.display = 'none';
+            } else if (nomLC.includes('pompe')) {
+                if(tailleContainer) tailleContainer.style.display = 'none';
+                if(galferContainer) galferContainer.style.display = 'none';
+                if(minipompeContainer) minipompeContainer.style.display = 'block';
             } else if(tailleContainer && tailleSelect) {
                 if(galferContainer) galferContainer.style.display = 'none';
-                
+                if(minipompeContainer) minipompeContainer.style.display = 'none';
+
                 if (item.Variantes) {
                     tailleSelect.innerHTML = '';
                     const variantesList = item.Variantes.split(',');
@@ -1925,7 +1938,18 @@ function updateConfig() {
             }
         }
         // ----------------------------------------------
-        
+
+        // --- GESTION DYNAMIQUE DE LA MINI POMPE RIDENOW ---
+        if (titleLC.includes('pompe')) {
+            const modeleSelect = document.getElementById('config-minipompe-modele');
+            let unitPrice = currentBasePrice;
+            if (modeleSelect && modeleSelect.selectedIndex >= 0) {
+                unitPrice = currentBasePrice + (parseInt(modeleSelect.options[modeleSelect.selectedIndex].getAttribute('data-price')) || 0);
+            }
+            finalPrice = unitPrice * qte;
+        }
+        // ----------------------------------------------
+
         // --- GESTION DYNAMIQUE DES MANIVELLES ---
         if (titleLC.includes('manivelle')) {
             const modeleSelect = document.getElementById('config-modele-manivelle');
