@@ -1437,6 +1437,16 @@
                             </div>
                         </div>
 
+                        <div class="mb-4">
+                            <label class="block text-xs font-bold text-gray-600 mb-1">
+                                <span>10. Option de montage à l'atelier</span>
+                            </label>
+                            <select id="config-montage-roue" class="w-full bg-white border border-gray-300 rounded-lg px-2 py-2 text-xs font-semibold shadow-sm" onchange="updateConfig()">
+                                <option value="Sans Montage" data-price="0" selected>Je monte mes propres disques et cassette (+0€)</option>
+                                <option value="Avec Montage (+30€)" data-price="30">Montage professionnel de mes disques et cassette à l'atelier (+30€)</option>
+                            </select>
+                        </div>
+
                         <div id="config-largeur-patins-container" class="hidden mb-4">
                             <label class="block text-xs font-bold text-gray-500 mb-1"><i class="fa-solid fa-arrows-left-right text-brand-accent mr-1"></i> Largeur jante (Spécifique Patins)</label>
                             <select id="config-largeur-patins" class="w-full bg-white border border-gray-300 rounded-lg px-2 py-2 text-xs font-semibold shadow-sm" onchange="updateConfig()">
@@ -1450,7 +1460,7 @@
                         </div>
 
                         <!-- ========================================== -->
-                        <!-- DÉBUT DE L'ENCART VERT ACCESSOIRES (10-14) -->
+                        <!-- DÉBUT DE L'ENCART VERT ACCESSOIRES (11-18) -->
                         <!-- ========================================== -->
                         <div id="green-accessory-box" class="md:col-span-2 bg-green-50 border border-green-200 rounded-xl p-4 mb-3 shadow-sm">
                             
@@ -1464,7 +1474,7 @@
                             <div class="grid grid-cols-2 gap-3 mb-4">
                                 <div>
                                     <label class="block text-xs font-bold text-gray-600 mb-1 flex justify-between items-end truncate">
-                                        <span>10. Pneus GP5000</span>
+                                        <span>11. Pneus GP5000</span>
                                         <button type="button" onclick="showPictureGeneric('pneu')" class="text-[10px] text-brand-accent hover:underline font-bold uppercase tracking-wider shrink-0 ml-1"><i class="fa-solid fa-image mr-0.5"></i> Voir</button>
                                     </label>
                                     <select id="config-pneus" class="w-full bg-white border border-green-300 rounded-lg px-2 py-2 text-xs font-semibold shadow-sm" onchange="updateConfig()">
@@ -1476,7 +1486,7 @@
                                 </div>
                                 <div>
                                     <label class="block text-xs font-bold text-gray-600 mb-1 flex justify-between items-end truncate">
-                                        <span>11. Kits Bidons Aéro</span>
+                                        <span>12. Kits Bidons Aéro</span>
                                         <button type="button" onclick="showPictureGeneric('bidon')" class="text-[10px] text-brand-accent hover:underline font-bold uppercase tracking-wider shrink-0 ml-1"><i class="fa-solid fa-image mr-0.5"></i> Voir</button>
                                     </label>
                                     <select id="config-bidons" class="w-full bg-white border border-green-300 rounded-lg px-2 py-2 text-xs font-semibold shadow-sm" onchange="updateConfig()">
@@ -1489,7 +1499,7 @@
                             <div class="grid grid-cols-2 gap-3 mb-4">
                                 <div>
                                     <label class="block text-xs font-bold text-gray-600 mb-1 flex justify-between items-end truncate">
-                                        <span>12. Chambres TPU</span>
+                                        <span>13. Chambres TPU</span>
                                         <button type="button" onclick="showPictureGeneric('chambre tpu')" class="text-[10px] text-brand-accent hover:underline font-bold uppercase tracking-wider shrink-0 ml-1"><i class="fa-solid fa-image mr-0.5"></i> Voir</button>
                                     </label>
                                     <select id="config-tpu" class="w-full bg-white border border-green-300 rounded-lg px-2 py-2 text-xs font-semibold shadow-sm" onchange="updateConfig()">
@@ -1508,7 +1518,7 @@
                                 </div>
                                 <div>
                                     <label class="block text-xs font-bold text-gray-600 mb-1 flex justify-between items-end truncate">
-                                        <span>13. Kit Réparation TPU</span>
+                                        <span>14. Kit Réparation TPU</span>
                                         <button type="button" onclick="showPictureGeneric('réparation')" class="text-[10px] text-brand-accent hover:underline font-bold uppercase tracking-wider shrink-0 ml-1"><i class="fa-solid fa-image mr-0.5"></i> Voir</button>
                                     </label>
                                     <select id="config-kit-tpu" class="w-full bg-white border border-green-300 rounded-lg px-2 py-2 text-xs font-semibold shadow-sm" onchange="updateConfig()">
@@ -1522,7 +1532,7 @@
                             <div class="grid grid-cols-2 gap-3 mb-4">
                                 <div id="config-disques-container">
                                     <label class="block text-xs font-bold text-gray-600 mb-1 flex justify-between items-end truncate">
-                                        <span>14. Disques de Freins</span>
+                                        <span>15. Disques de Freins</span>
                                         <button type="button" onclick="showPictureGeneric('disque')" class="text-[10px] text-brand-accent hover:underline font-bold uppercase tracking-wider shrink-0 ml-1"><i class="fa-solid fa-image mr-0.5"></i> Voir</button>
                                     </label>
                                     <select id="config-disques" class="w-full bg-white border border-green-300 rounded-lg px-2 py-2 text-xs font-semibold shadow-sm" onchange="updateConfig()">
@@ -1541,7 +1551,7 @@
                                 </div>
                                 <div id="config-plaquettes-container">
                                     <label class="block text-xs font-bold text-gray-600 mb-1 flex justify-between items-end truncate">
-                                        <span>15. Plaquettes Galfer</span>
+                                        <span>16. Plaquettes Galfer</span>
                                         <button type="button" onclick="showPictureGeneric('plaquette')" class="text-[10px] text-brand-accent hover:underline font-bold uppercase tracking-wider shrink-0 ml-1"><i class="fa-solid fa-image mr-0.5"></i> Voir</button>
                                     </label>
                                     <select id="config-plaquettes" class="w-full bg-white border border-green-300 rounded-lg px-2 py-2 text-xs font-semibold shadow-sm" onchange="updateConfig()">
@@ -1555,7 +1565,7 @@
                             <div class="grid grid-cols-2 gap-3 mb-4">
                                 <div id="config-lockrings-container">
                                     <label class="block text-xs font-bold text-gray-600 mb-1 flex justify-between items-end truncate">
-                                        <span>16. Lockrings</span>
+                                        <span>17. Lockrings</span>
                                         <button type="button" onclick="showPictureGeneric('lockring')" class="text-[10px] text-brand-accent hover:underline font-bold uppercase tracking-wider shrink-0 ml-2">
                                             <i class="fa-solid fa-image mr-0.5"></i> Voir
                                         </button>
@@ -1573,7 +1583,7 @@
                                 </div>
                                 <div id="config-housses-container">
                                     <label class="block text-xs font-bold text-gray-600 mb-1 flex justify-between items-end truncate">
-                                        <span>17. Housses</span>
+                                        <span>18. Housses</span>
                                         <button type="button" onclick="showPictureGeneric('housse')" class="text-[10px] text-brand-accent hover:underline font-bold uppercase tracking-wider shrink-0 ml-1"><i class="fa-solid fa-image mr-0.5"></i> Voir</button>
                                     </label>
                                     <select id="config-housses" class="w-full bg-white border border-green-300 rounded-lg px-2 py-2 text-xs font-semibold shadow-sm" onchange="updateConfig()">

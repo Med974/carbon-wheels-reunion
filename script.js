@@ -317,7 +317,11 @@ function addToCart() {
                 const freinage = getSelectText('config-freinage') || "Disques";
                 const disquesVal = document.getElementById('config-disques') ? document.getElementById('config-disques').value : "Aucun";
                 const disquesText = disquesVal !== 'Aucun' ? ` | + ${disquesVal}` : "";
-                
+
+                const montageRoueEl = document.getElementById('config-montage-roue');
+                const montageRoueVal = montageRoueEl ? montageRoueEl.value : "Sans Montage";
+                const montageRoueText = ` | Montage : ${montageRoueVal}`;
+
                 let largeurPatinsText = "";
                 if (freinage.includes("Patins")) {
                     const lPatinsSelect = document.getElementById('config-largeur-patins');
@@ -327,7 +331,7 @@ function addToCart() {
                 const colorEl = document.getElementById('config-couleur-moyeu');
                 const couleurMoyeu = (colorEl && colorEl.value) ? " (" + colorEl.value + ")" : "";
 
-                configText = `${moyeu}${couleurMoyeu} | Jantes ${jante} | ${rayon} | Ratchet ${ratchet} | Roulements ${roulements} | ${rouelibre} | ${finition} | Logos : ${logos} | ${freinage}${largeurPatinsText}${disquesText}`;
+                configText = `${moyeu}${couleurMoyeu} | Jantes ${jante} | ${rayon} | Ratchet ${ratchet} | Roulements ${roulements} | ${rouelibre} | ${finition} | Logos : ${logos} | ${freinage}${largeurPatinsText}${disquesText}${montageRoueText}`;
                 
                 // Ajout des accessoires optionnels (Étapes 10, 11, 12)
                 const addAccessoryToConfigText = (selectId) => {
@@ -2168,6 +2172,7 @@ function updateConfig() {
     const tpuSelect = document.getElementById('config-tpu');
 	const houssesSelect = document.getElementById('config-housses');
     const lockringsSelect = document.getElementById('config-lockrings');
+    const montageRoueSelect = document.getElementById('config-montage-roue');
     const kitTpuSelect = document.getElementById('config-kit-tpu');
 
     const optT52 = rayonSelect ? Array.from(rayonSelect.options).find(opt => opt.value === 'T52') : null;
@@ -2330,7 +2335,8 @@ function updateConfig() {
     const pneusPrice = getPrice(pneusSelect);
     const bidonsPrice = getPrice(bidonsSelect);
     const tpuPrice = getPrice(tpuSelect);
-    const accessoiresPrice = pneusPrice + bidonsPrice + tpuPrice + houssesPrice + lockringsPrice + kitTpuPrice;
+    const montageRouePrice = getPrice(montageRoueSelect);
+    const accessoiresPrice = pneusPrice + bidonsPrice + tpuPrice + houssesPrice + lockringsPrice + kitTpuPrice + montageRouePrice;
     
     const hubWeight = moyeuSelect && moyeuSelect.selectedIndex >= 0 ? (parseInt(moyeuSelect.options[moyeuSelect.selectedIndex].getAttribute('data-hub-weight')) || 238) : 238;
     const spokeCount = moyeuSelect && moyeuSelect.selectedIndex >= 0 ? (parseInt(moyeuSelect.options[moyeuSelect.selectedIndex].getAttribute('data-spokes')) || 40) : 40;
