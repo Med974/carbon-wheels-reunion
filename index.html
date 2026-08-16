@@ -1230,11 +1230,31 @@
                         <div class="mb-3 bg-brand-main text-white p-3 rounded-xl text-xs">
                             <strong class="block mb-1 text-brand-accent uppercase tracking-wider"><i class="fa-solid fa-cogs mr-1"></i> Configuration Fixe à l'essai :</strong>
                             <ul class="space-y-1">
-                                <li><i class="fa-solid fa-check text-green-400 mr-1"></i> GHOST 50mm, Finition Glossy, Logos blancs</li>
+                                <li><i class="fa-solid fa-check text-green-400 mr-1"></i> Finition Glossy, Logos blancs</li>
                                 <li><i class="fa-solid fa-check text-green-400 mr-1"></i> Moyeux ultra-légers DFS RT240</li>
                                 <li><i class="fa-solid fa-check text-green-400 mr-1"></i> Rayons aéro Carbone T32 (2.1g)</li>
-                                <li><i class="fa-solid fa-check text-green-400 mr-1"></i> Freins à Disques (Centerlock) / Corps Shimano HG</li>
+                                <li><i class="fa-solid fa-check text-green-400 mr-1"></i> Freins à Disques (Centerlock)</li>
                             </ul>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="block text-xs font-bold text-gray-600 mb-1">
+                                <i class="fa-solid fa-arrows-up-down text-brand-accent mr-1"></i> Modèle de la paire d'essai
+                            </label>
+                            <select id="config-modele-test" class="w-full bg-white border border-brand-accent rounded-lg px-3 py-2 text-sm font-semibold shadow-sm" onchange="updateConfig()">
+                                <option value="GHOST 50mm (Paire)" data-weight="978" selected>GHOST 50mm (Paire) — 978g</option>
+                                <option value="GHOST 60mm AV / 65mm AR (Paire)" data-weight="1092">GHOST 60mm AV / 65mm AR (Paire) — 1092g</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="block text-xs font-bold text-gray-600 mb-1">
+                                <i class="fa-solid fa-gears text-brand-accent mr-1"></i> Corps de roue libre
+                            </label>
+                            <select id="config-corps-test" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm font-semibold shadow-sm" onchange="updateConfig()">
+                                <option value="Shimano HG" selected>Shimano HG</option>
+                                <option value="SRAM XDR">SRAM XDR</option>
+                            </select>
                         </div>
 
                         <div class="mb-3">

@@ -119,9 +119,16 @@ function addToCart() {
                 const montageTextTest = selectMontageTest ? selectMontageTest.value : "Sans Montage";
                 const montagePriceTest = selectMontageTest && selectMontageTest.selectedIndex >= 0 ? (parseInt(selectMontageTest.options[selectMontageTest.selectedIndex].getAttribute('data-price')) || 0) : 0;
 
-                configText = `Week-end du : ${dateLoc} | GHOST 50mm Glossy, Moyeux RT240, Rayons T32 | Option : ${montageTextTest}`;
+                const selectModeleTest = document.getElementById('config-modele-test');
+                const modeleTextTest = selectModeleTest ? selectModeleTest.value : "GHOST 50mm (Paire)";
+                const modeleWeightTest = selectModeleTest && selectModeleTest.selectedIndex >= 0 ? (parseInt(selectModeleTest.options[selectModeleTest.selectedIndex].getAttribute('data-weight')) || 978) : 978;
+
+                const selectCorpsTest = document.getElementById('config-corps-test');
+                const corpsTextTest = selectCorpsTest ? selectCorpsTest.value : "Shimano HG";
+
+                configText = `Week-end du : ${dateLoc} | ${modeleTextTest}, Glossy, Moyeux RT240, Rayons T32 | Corps : ${corpsTextTest} | Option : ${montageTextTest}`;
                 finalPrice = 50 + montagePriceTest;
-                finalWeight = 978;
+                finalWeight = modeleWeightTest;
 			} else if (isCurrentItemTextile) {
                 const typeSelect = document.getElementById('config-textile-type');
                 const type = typeSelect ? typeSelect.value : "";
@@ -1322,6 +1329,10 @@ function openModal(index) {
             
             const selectMontageTest = document.getElementById('config-montage-test');
             if(selectMontageTest) selectMontageTest.value = "Sans Montage";
+            const selectModeleTest = document.getElementById('config-modele-test');
+            if(selectModeleTest) selectModeleTest.selectedIndex = 0;
+            const selectCorpsTest = document.getElementById('config-corps-test');
+            if(selectCorpsTest) selectCorpsTest.value = "Shimano HG";
 
             const cPrice = document.getElementById('calc-price');
             if(cPrice) cPrice.textContent = 50;
@@ -2121,12 +2132,16 @@ function updateConfig() {
     if (isCurrentItemTestProgram) {
         const selectMontageTest = document.getElementById('config-montage-test');
         const montagePriceTest = selectMontageTest && selectMontageTest.selectedIndex >= 0 ? (parseInt(selectMontageTest.options[selectMontageTest.selectedIndex].getAttribute('data-price')) || 0) : 0;
-        
+
+        const selectModeleTest = document.getElementById('config-modele-test');
+        const modeleWeightTest = selectModeleTest && selectModeleTest.selectedIndex >= 0 ? (parseInt(selectModeleTest.options[selectModeleTest.selectedIndex].getAttribute('data-weight')) || 978) : 978;
+
         let finalPrice = 50 + montagePriceTest;
-        
+
         const cPrice = document.getElementById('calc-price');
         if(cPrice) cPrice.textContent = finalPrice > 0 ? finalPrice : '--';
-        
+        if(cWeightSpan) cWeightSpan.textContent = modeleWeightTest;
+
         return; // On stoppe le calcul ici
     }
 	
