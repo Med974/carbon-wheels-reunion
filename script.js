@@ -195,10 +195,6 @@ function addToCart() {
                     const taille = tailleEl ? tailleEl.value : "";
                     const prefix = titleLC.includes('lockring') ? 'Couleur' : 'Option';
                     configText = `${prefix} : ${taille} | Quantité : ${qte}`;
-                } else if (titleLC.includes('pompe')) {
-                    const modeleEl = document.getElementById('config-minipompe-modele');
-                    const modele = modeleEl ? modeleEl.options[modeleEl.selectedIndex].text.split(' [+')[0] : "";
-                    configText = `Modèle : ${modele} | Quantité : ${qte}`;
                 } else {
                     configText = `Quantité : ${qte}`;
                 }
