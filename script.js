@@ -262,9 +262,11 @@ function addToCart() {
                 const montageText = selectMontage ? selectMontage.value : "Sans Montage";
                 const montagePrice = selectMontage && selectMontage.selectedIndex >= 0 ? (parseInt(selectMontage.options[selectMontage.selectedIndex].getAttribute('data-price')) || 0) : 0;
 
+                const tarifBase = getLentiTarifDynamique(dateEl ? dateEl.value : "");
+
                 finalTitle = `${title} (Location Week-end)`;
-                configText = `Week-end du : ${dateLoc} | Freins à Disques | Roue libre : ${rl} | Option : ${montageText}`;
-                finalPrice = 75 + montagePrice; // Tarif promo Tri Tour : 75€ + option de montage
+                configText = `Week-end du : ${dateLoc} | Freins à Disques | Roue libre : ${rl} | Tarif : ${tarifBase}€ | Option : ${montageText}`;
+                finalPrice = tarifBase + montagePrice; // Tarif dégressif selon proximité de la date + option de montage
             } else {
                     const freinEl = document.getElementById('config-freinage-special');
                     const rlEl = document.getElementById('config-rouelibre-special');
@@ -2055,8 +2057,10 @@ function updateConfig() {
         if (currentLenticulaireMode === 'location') {
             const selectMontage = document.getElementById('config-montage-location');
             const montagePrice = selectMontage && selectMontage.selectedIndex >= 0 ? (parseInt(selectMontage.options[selectMontage.selectedIndex].getAttribute('data-price')) || 0) : 0;
-            
-            finalPrice = 75 + montagePrice; // Tarif promo Tri Tour : 75€ + option de montage
+            const dateElLive = document.getElementById('config-date-location');
+            const tarifBaseLive = getLentiTarifDynamique(dateElLive ? dateElLive.value : "");
+
+            finalPrice = tarifBaseLive + montagePrice; // Tarif dégressif selon proximité de la date + option de montage
             finalWeight = 980; // Poids fixe de ta jante de location
             updateBadgeUI(false, "Disponible à la location");
         } else {
@@ -2825,6 +2829,26 @@ function closeCustomAlert() {
 }
 
 // Normalise n'importe quelle date du week-end (Ven, Sam, Dim) au Vendredi de ce même week-end
+// Tarif dégressif de location des roues lenticulaires selon la proximité de la date choisie
+// (calculée par rapport au vendredi du week-end sélectionné, aujourd'hui inclus) :
+//   > 14 jours avant  -> 100€
+//   entre 7 et 14 jours -> 75€
+//   < 7 jours -> 50€
+function getLentiTarifDynamique(dateInputValue) {
+    if (!dateInputValue) return 100;
+    const friday = getFridayOfWeek(dateInputValue);
+    if (!friday) return 100;
+    const parts = friday.split('-');
+    const eventDate = new Date(parts[0], parts[1] - 1, parts[2]);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    eventDate.setHours(0, 0, 0, 0);
+    const daysUntil = Math.round((eventDate - today) / (1000 * 60 * 60 * 24));
+    if (daysUntil > 14) return 100;
+    if (daysUntil > 7) return 75;
+    return 50; // à 7 jours pile ou moins
+}
+
 function getFridayOfWeek(dateStr) {
     if (!dateStr) return "";
     const parts = dateStr.split('-');
