@@ -264,7 +264,7 @@ function addToCart() {
 
                 finalTitle = `${title} (Location Week-end)`;
                 configText = `Week-end du : ${dateLoc} | Freins à Disques | Roue libre : ${rl} | Option : ${montageText}`;
-                finalPrice = 100 + montagePrice; // Prix de base de 100€ + option de montage
+                finalPrice = 75 + montagePrice; // Tarif promo Tri Tour : 75€ + option de montage
             } else {
                     const freinEl = document.getElementById('config-freinage-special');
                     const rlEl = document.getElementById('config-rouelibre-special');
@@ -2056,7 +2056,7 @@ function updateConfig() {
             const selectMontage = document.getElementById('config-montage-location');
             const montagePrice = selectMontage && selectMontage.selectedIndex >= 0 ? (parseInt(selectMontage.options[selectMontage.selectedIndex].getAttribute('data-price')) || 0) : 0;
             
-            finalPrice = 100 + montagePrice; // Tarif de base de 100€ + option de montage
+            finalPrice = 75 + montagePrice; // Tarif promo Tri Tour : 75€ + option de montage
             finalWeight = 980; // Poids fixe de ta jante de location
             updateBadgeUI(false, "Disponible à la location");
         } else {
