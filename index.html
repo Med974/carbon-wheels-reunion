@@ -1241,7 +1241,7 @@
                             <label class="block text-xs font-bold text-gray-600 mb-1">
                                 <i class="fa-solid fa-arrows-up-down text-brand-accent mr-1"></i> Modèle de la paire d'essai
                             </label>
-                            <select id="config-modele-test" class="w-full bg-white border border-brand-accent rounded-lg px-3 py-2 text-sm font-semibold shadow-sm" onchange="updateConfig()">
+                            <select id="config-modele-test" class="w-full bg-white border border-brand-accent rounded-lg px-3 py-2 text-sm font-semibold shadow-sm" onchange="updateConfig(); checkTestDateAvailability();">
                                 <option value="GHOST 50mm (Paire)" data-weight="978" selected>GHOST 50mm (Paire) — 978g</option>
                                 <option value="GHOST 60mm AV / 65mm AR (Paire)" data-weight="1092">GHOST 60mm AV / 65mm AR (Paire) — 1092g</option>
                             </select>

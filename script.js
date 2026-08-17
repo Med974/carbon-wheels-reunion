@@ -9,7 +9,7 @@ let currentBaseWeight = 0;
 let isCurrentItemAccessory = false;
 let isCurrentItemWheelConfigurable = false;
 let currentItemStatut = "";
-let unavailableTestDates = [];
+let unavailableTestDates = { "50": [], "6065": [] };
 let isCurrentItemTestProgram = false;
 let isCurrentItemStockReady = false;
 let isCurrentItemTextile = false;
@@ -2677,9 +2677,15 @@ function checkTestDateAvailability() {
     }
 	
     const dateSelectionnee = getFridayOfWeek(dateInput.value);
-    
-    // 3. SÉCURITÉ : DATE INDISPONIBLE
-    if (dateSelectionnee && unavailableTestDates.includes(dateSelectionnee)) {
+
+    // Détermine quel pool de dispo consulter selon le modèle choisi (2 paires distinctes)
+    const selectModeleTest = document.getElementById('config-modele-test');
+    const modeleValTest = selectModeleTest ? selectModeleTest.value : "GHOST 50mm (Paire)";
+    const modeleKeyTest = modeleValTest.indexOf('60') !== -1 ? '6065' : '50';
+    const listeIndispoModele = (unavailableTestDates && unavailableTestDates[modeleKeyTest]) ? unavailableTestDates[modeleKeyTest] : [];
+
+    // 3. SÉCURITÉ : DATE INDISPONIBLE (pour le modèle sélectionné)
+    if (dateSelectionnee && listeIndispoModele.includes(dateSelectionnee)) {
         if (alertEpuise) {
             alertEpuise.classList.remove('hidden');
             alertEpuise.classList.add('flex');
