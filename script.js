@@ -774,7 +774,7 @@ function submitOrder() {
         total: finalTotal % 1 === 0 ? finalTotal : finalTotal.toFixed(2),
         promo: appliedPromo || "Aucun",
         statutPaiement: "En attente via " + paymentMethodName,
-        statutLivraison: "À traiter"
+        statutLivraison: "En attente"
     };
 
     fetch(API_URL, {
