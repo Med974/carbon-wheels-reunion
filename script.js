@@ -3,6 +3,7 @@ const API_URL = 'https://script.google.com/macros/s/AKfycbwi5uRAIjQ2vjbL7h9_LWAU
 let globalCatalogue = [];
 let currentLenticulaireMode = "achat"; // "achat" ou "location"
 let unavailableRentalDates = []; // Liste des dates bloquées renvoyées par le Sheet
+let rentalDatesLoaded = false; // true une fois la 1ère réponse de l'API reçue (évite d'afficher "disponible" par défaut le temps du chargement)
 let currentDeliveryZone = "reunion"; // "reunion" ou "metropole"
 let currentBasePrice = 0;
 let currentBaseWeight = 0;
@@ -10,6 +11,7 @@ let isCurrentItemAccessory = false;
 let isCurrentItemWheelConfigurable = false;
 let currentItemStatut = "";
 let unavailableTestDates = { "50": [], "6065": [] };
+let testDatesLoaded = false; // idem que rentalDatesLoaded, pour le programme d'essai
 let isCurrentItemTestProgram = false;
 let isCurrentItemStockReady = false;
 let isCurrentItemTextile = false;
@@ -2581,9 +2583,12 @@ function setLenticulaireMode(mode) {
 }
 
 async function fetchUnavailableDates() {
+    rentalDatesLoaded = false;
+    renderLocationCalendar(); // affiche l'état "chargement" pendant l'appel
     try {
         const response = await fetch(`${API_URL}?action=getUnavailableDates`);
         unavailableRentalDates = await response.json();
+        rentalDatesLoaded = true;
         checkDateAvailability(); // Vérifie la date sélectionnée
     } catch (error) {
         console.error("Impossible de charger le calendrier de location :", error);
@@ -2628,6 +2633,16 @@ function checkDateAvailability() {
         return;
     }
 
+    // 2bis. SÉCURITÉ : DISPONIBILITÉS PAS ENCORE CHARGÉES (évite d'autoriser l'ajout au panier
+    // avant d'avoir reçu la vraie liste des dates réservées depuis le Sheet)
+    if (!rentalDatesLoaded) {
+        if (alertEpuise) alertEpuise.classList.add('hidden');
+        submitBtn.disabled = true;
+        submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
+        submitBtn.innerHTML = 'Vérification des disponibilités... <i class="fa-solid fa-spinner ml-2 text-xl"></i>';
+        return;
+    }
+
     const dateSelectionnee = getSlotAnchor(dateInput.value, slotType);
 
     // 3. SÉCURITÉ : DATE INDISPONIBLE
@@ -2649,9 +2664,12 @@ function checkDateAvailability() {
 }
 
 async function fetchUnavailableTestDates() {
+    testDatesLoaded = false;
+    renderTestCalendar(); // affiche l'état "chargement" pendant l'appel
     try {
         const response = await fetch(`${API_URL}?action=getUnavailableTestDates`);
         unavailableTestDates = await response.json();
+        testDatesLoaded = true;
         checkTestDateAvailability();
     } catch (error) {
         console.error("Impossible de charger le calendrier d'essai :", error);
@@ -2693,6 +2711,16 @@ function checkTestDateAvailability() {
         submitBtn.disabled = true;
         submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
         submitBtn.innerHTML = 'Jour invalide <i class="fa-solid fa-ban ml-2 text-xl"></i>';
+        return;
+    }
+
+    // 2bis. SÉCURITÉ : DISPONIBILITÉS PAS ENCORE CHARGÉES (évite d'autoriser l'ajout au panier
+    // avant d'avoir reçu la vraie liste des dates réservées depuis le Sheet)
+    if (!testDatesLoaded) {
+        if (alertEpuise) alertEpuise.classList.add('hidden');
+        submitBtn.disabled = true;
+        submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
+        submitBtn.innerHTML = 'Vérification des disponibilités... <i class="fa-solid fa-spinner ml-2 text-xl"></i>';
         return;
     }
 
@@ -2913,6 +2941,7 @@ function renderMiniCalendar(opts) {
     const dateInput = document.getElementById(opts.dateInputId);
     const slotSelect = document.getElementById(opts.slotSelectId);
     const slotType = slotSelect ? slotSelect.value : 'VenDim';
+    const isLoaded = opts.isLoaded ? opts.isLoaded() : true;
     const unavailableList = opts.getUnavailableList ? (opts.getUnavailableList() || []) : [];
     const selectedValue = dateInput ? dateInput.value : "";
 
@@ -2935,12 +2964,19 @@ function renderMiniCalendar(opts) {
         let stateClass = "kcal-disabled";
         let clickable = false;
         if (validDay) {
-            const anchor = getSlotAnchor(dStr, slotType);
-            if (anchor && unavailableList.indexOf(anchor) !== -1) {
-                stateClass = "kcal-booked";
+            // Tant que les disponibilités ne sont pas encore chargées depuis le Sheet, on affiche
+            // un état neutre "chargement" (non cliquable) plutôt que de présumer "disponible" par
+            // défaut : sinon une date déjà réservée apparaît brièvement en vert le temps de l'appel.
+            if (!isLoaded) {
+                stateClass = "kcal-loading";
             } else {
-                stateClass = "kcal-available";
-                clickable = true;
+                const anchor = getSlotAnchor(dStr, slotType);
+                if (anchor && unavailableList.indexOf(anchor) !== -1) {
+                    stateClass = "kcal-booked";
+                } else {
+                    stateClass = "kcal-available";
+                    clickable = true;
+                }
             }
         }
         if (dStr === selectedValue) stateClass += " kcal-selected";
@@ -2955,10 +2991,10 @@ function renderMiniCalendar(opts) {
         </div>
         <div class="kcal-grid kcal-grid-header">${JOURS_COURTS_FR.map(j => `<div class="kcal-daylabel">${j}</div>`).join('')}</div>
         <div class="kcal-grid">${cellsHtml}</div>
-        <div class="kcal-legend">
+        ${isLoaded ? `<div class="kcal-legend">
             <span><i class="kcal-dot kcal-dot-available"></i> Disponible</span>
             <span><i class="kcal-dot kcal-dot-booked"></i> Complet</span>
-        </div>`;
+        </div>` : `<div class="kcal-legend"><span>⏳ Chargement des disponibilités...</span></div>`}`;
 
     container.querySelectorAll('.kcal-nav').forEach(function (btn) {
         btn.addEventListener('click', function () {
@@ -2985,6 +3021,7 @@ function renderLocationCalendar() {
         containerId: 'calendar-location',
         dateInputId: 'config-date-location',
         slotSelectId: 'config-creneau-location',
+        isLoaded: function () { return rentalDatesLoaded; },
         getUnavailableList: function () { return unavailableRentalDates; },
         onSelect: function () { checkDateAvailability(); updateConfig(); }
     });
@@ -2995,6 +3032,7 @@ function renderTestCalendar() {
         containerId: 'calendar-test',
         dateInputId: 'config-date-test',
         slotSelectId: 'config-creneau-test',
+        isLoaded: function () { return testDatesLoaded; },
         getUnavailableList: function () {
             const sel = document.getElementById('config-modele-test');
             const modeleVal = sel ? sel.value : "GHOST 50mm (Paire)";
