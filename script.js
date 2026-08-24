@@ -2592,7 +2592,9 @@ async function fetchUnavailableDates() {
 
 function checkDateAvailability() {
     if (currentLenticulaireMode !== 'location') return;
-    
+
+    renderLocationCalendar();
+
     const dateInput = document.getElementById('config-date-location');
     const alertEpuise = document.getElementById('alert-location-epuisee');
     const submitBtn = document.querySelector('button[onclick="addToCart()"]');
@@ -2658,7 +2660,9 @@ async function fetchUnavailableTestDates() {
 
 function checkTestDateAvailability() {
     if (!isCurrentItemTestProgram) return;
-    
+
+    renderTestCalendar();
+
     const dateInput = document.getElementById('config-date-test');
     const alertEpuise = document.getElementById('alert-test-epuisee');
     const submitBtn = document.querySelector('button[onclick="addToCart()"]');
@@ -2879,6 +2883,126 @@ function getSlotAnchor(dateStr, slotType) {
     const month = String(d.getMonth() + 1).padStart(2, '0');
     const date = String(d.getDate()).padStart(2, '0');
     return `${year}-${month}-${date}`;
+}
+
+// =========================================================================
+// MINI-CALENDRIER VISUEL (location + essai) : remplace le champ date natif du navigateur (qui ne
+// permet pas d'afficher les dates déjà réservées). Lit les listes déjà récupérées côté client
+// (unavailableRentalDates / unavailableTestDates) pour griser/barrer les dates complètes, et
+// n'active que les jours valides pour le créneau actuellement sélectionné. Le champ <input
+// type="date"> d'origine est conservé caché : il continue de porter la valeur sélectionnée, toute
+// la logique en aval (checkDateAvailability, updateConfig, etc.) n'a donc pas besoin de changer.
+// =========================================================================
+const MOIS_FR = ["Janvier","Février","Mars","Avril","Mai","Juin","Juillet","Août","Septembre","Octobre","Novembre","Décembre"];
+const JOURS_COURTS_FR = ["Lun","Mar","Mer","Jeu","Ven","Sam","Dim"];
+const calendarState = {}; // { [containerId]: { year, month } }, month = 0-11
+
+function kcalPad2(n) { return String(n).padStart(2, '0'); }
+function kcalDateStr(y, m, d) { return `${y}-${kcalPad2(m + 1)}-${kcalPad2(d)}`; }
+
+function renderMiniCalendar(opts) {
+    const container = document.getElementById(opts.containerId);
+    if (!container) return;
+
+    if (!calendarState[opts.containerId]) {
+        const today = new Date();
+        calendarState[opts.containerId] = { year: today.getFullYear(), month: today.getMonth() };
+    }
+    const state = calendarState[opts.containerId];
+
+    const dateInput = document.getElementById(opts.dateInputId);
+    const slotSelect = document.getElementById(opts.slotSelectId);
+    const slotType = slotSelect ? slotSelect.value : 'VenDim';
+    const unavailableList = opts.getUnavailableList ? (opts.getUnavailableList() || []) : [];
+    const selectedValue = dateInput ? dateInput.value : "";
+
+    const now = new Date();
+    const todayStr = kcalDateStr(now.getFullYear(), now.getMonth(), now.getDate());
+
+    const firstOfMonth = new Date(state.year, state.month, 1);
+    let startOffset = firstOfMonth.getDay() - 1; // grille démarre un Lundi
+    if (startOffset < 0) startOffset = 6;
+    const daysInMonth = new Date(state.year, state.month + 1, 0).getDate();
+
+    let cellsHtml = "";
+    for (let i = 0; i < startOffset; i++) {
+        cellsHtml += `<div class="kcal-cell kcal-empty"></div>`;
+    }
+    for (let day = 1; day <= daysInMonth; day++) {
+        const dStr = kcalDateStr(state.year, state.month, day);
+        const isPast = dStr < todayStr;
+        const validDay = !isPast && isValidSlotDay(dStr, slotType);
+        let stateClass = "kcal-disabled";
+        let clickable = false;
+        if (validDay) {
+            const anchor = getSlotAnchor(dStr, slotType);
+            if (anchor && unavailableList.indexOf(anchor) !== -1) {
+                stateClass = "kcal-booked";
+            } else {
+                stateClass = "kcal-available";
+                clickable = true;
+            }
+        }
+        if (dStr === selectedValue) stateClass += " kcal-selected";
+        cellsHtml += `<div class="kcal-cell ${stateClass}"${clickable ? ` data-date="${dStr}"` : ''}>${day}</div>`;
+    }
+
+    container.innerHTML =
+        `<div class="kcal-header">
+            <button type="button" class="kcal-nav" data-nav="-1">&lsaquo;</button>
+            <span class="kcal-month-label">${MOIS_FR[state.month]} ${state.year}</span>
+            <button type="button" class="kcal-nav" data-nav="1">&rsaquo;</button>
+        </div>
+        <div class="kcal-grid kcal-grid-header">${JOURS_COURTS_FR.map(j => `<div class="kcal-daylabel">${j}</div>`).join('')}</div>
+        <div class="kcal-grid">${cellsHtml}</div>
+        <div class="kcal-legend">
+            <span><i class="kcal-dot kcal-dot-available"></i> Disponible</span>
+            <span><i class="kcal-dot kcal-dot-booked"></i> Complet</span>
+        </div>`;
+
+    container.querySelectorAll('.kcal-nav').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            const dir = parseInt(btn.getAttribute('data-nav'), 10);
+            state.month += dir;
+            if (state.month < 0) { state.month = 11; state.year--; }
+            if (state.month > 11) { state.month = 0; state.year++; }
+            renderMiniCalendar(opts);
+        });
+    });
+
+    container.querySelectorAll('.kcal-cell[data-date]').forEach(function (cell) {
+        cell.addEventListener('click', function () {
+            const dStr = cell.getAttribute('data-date');
+            if (dateInput) dateInput.value = dStr;
+            renderMiniCalendar(opts);
+            if (opts.onSelect) opts.onSelect();
+        });
+    });
+}
+
+function renderLocationCalendar() {
+    renderMiniCalendar({
+        containerId: 'calendar-location',
+        dateInputId: 'config-date-location',
+        slotSelectId: 'config-creneau-location',
+        getUnavailableList: function () { return unavailableRentalDates; },
+        onSelect: function () { checkDateAvailability(); updateConfig(); }
+    });
+}
+
+function renderTestCalendar() {
+    renderMiniCalendar({
+        containerId: 'calendar-test',
+        dateInputId: 'config-date-test',
+        slotSelectId: 'config-creneau-test',
+        getUnavailableList: function () {
+            const sel = document.getElementById('config-modele-test');
+            const modeleVal = sel ? sel.value : "GHOST 50mm (Paire)";
+            const key = modeleVal.indexOf('60') !== -1 ? '6065' : '50';
+            return (unavailableTestDates && unavailableTestDates[key]) ? unavailableTestDates[key] : [];
+        },
+        onSelect: function () { checkTestDateAvailability(); updateConfig(); }
+    });
 }
 
 // Tarif dégressif de location des roues lenticulaires selon la proximité de la date choisie

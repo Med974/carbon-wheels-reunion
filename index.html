@@ -85,6 +85,27 @@
         /* Animation du panier latéral */
         .cart-closed { transform: translateX(100%); transition: transform 0.3s ease-in-out; }
         .cart-open { transform: translateX(0); transition: transform 0.3s ease-in-out; }
+
+        /* Mini-calendrier de réservation (location/essai roues) */
+        .kcal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
+        .kcal-month-label { font-size: 12px; font-weight: 700; color: #1f2937; text-transform: capitalize; }
+        .kcal-nav { width: 24px; height: 24px; border-radius: 6px; border: 1px solid #e5e7eb; background: #fff; color: #374151; font-size: 14px; line-height: 1; cursor: pointer; }
+        .kcal-nav:hover { background: #f3f4f6; }
+        .kcal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; }
+        .kcal-grid-header { margin-bottom: 3px; }
+        .kcal-daylabel { text-align: center; font-size: 9px; font-weight: 700; color: #9ca3af; text-transform: uppercase; }
+        .kcal-cell { aspect-ratio: 1 / 1; display: flex; align-items: center; justify-content: center; font-size: 11px; border-radius: 6px; }
+        .kcal-empty { visibility: hidden; }
+        .kcal-disabled { color: #d1d5db; }
+        .kcal-booked { color: #f87171; text-decoration: line-through; background: #fef2f2; }
+        .kcal-available { color: #065f46; background: #ecfdf5; cursor: pointer; font-weight: 600; border: 1px solid transparent; }
+        .kcal-available:hover { border-color: #10b981; }
+        .kcal-selected { background: #0f172a !important; color: #fff !important; font-weight: 700; }
+        .kcal-legend { display: flex; gap: 12px; margin-top: 6px; font-size: 9px; color: #6b7280; }
+        .kcal-legend span { display: inline-flex; align-items: center; gap: 4px; }
+        .kcal-dot { width: 7px; height: 7px; border-radius: 3px; display: inline-block; }
+        .kcal-dot-available { background: #10b981; }
+        .kcal-dot-booked { background: #f87171; }
     </style>
 </head>
 <body class="bg-gray-100 text-gray-800 font-sans selection:bg-brand-accent selection:text-white relative">
@@ -1195,7 +1216,8 @@
                                 <label class="block text-xs font-bold text-gray-600 mb-1">
                                     <i class="fa-solid fa-calendar-days text-brand-accent mr-1"></i> Date dans ce créneau
                                 </label>
-                                <input type="date" id="config-date-location" class="w-full bg-white border border-brand-accent rounded-lg px-3 py-2 text-sm font-semibold shadow-sm" onchange="checkDateAvailability(); updateConfig();">
+                                <input type="date" id="config-date-location" class="hidden" onchange="checkDateAvailability(); updateConfig();">
+                                <div id="calendar-location" class="bg-white border border-gray-200 rounded-lg p-2 shadow-sm"></div>
                                 <p class="text-[10px] text-gray-500 mt-1 italic leading-tight">Remise en fin d'après-midi (~18h) le 1er jour du créneau, retour avant 18h le dernier jour, à l'atelier de Saint-Paul.</p>
                             </div>
 
@@ -1277,7 +1299,8 @@
                             <label class="block text-xs font-bold text-gray-600 mb-1">
                                 <i class="fa-solid fa-calendar-days text-brand-accent mr-1"></i> Date dans ce créneau
                             </label>
-                            <input type="date" id="config-date-test" class="w-full bg-white border border-brand-accent rounded-lg px-3 py-2 text-sm font-semibold shadow-sm" onchange="checkTestDateAvailability(); updateConfig();">
+                            <input type="date" id="config-date-test" class="hidden" onchange="checkTestDateAvailability(); updateConfig();">
+                            <div id="calendar-test" class="bg-white border border-gray-200 rounded-lg p-2 shadow-sm"></div>
                             <p class="text-[10px] text-gray-500 mt-1 italic leading-tight">Remise en fin d'après-midi (~18h) le 1er jour du créneau, retour avant 18h le dernier jour.</p>
                         </div>
 
