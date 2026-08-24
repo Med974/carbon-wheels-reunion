@@ -102,6 +102,7 @@
         .kcal-available { color: #065f46; background: #ecfdf5; cursor: pointer; font-weight: 600; border: 1px solid transparent; }
         .kcal-available:hover { border-color: #10b981; }
         .kcal-selected { background: #0f172a !important; color: #fff !important; font-weight: 700; }
+        .kcal-selected-info { margin-top: 8px; padding: 6px 10px; background: #ecfdf5; border: 1px solid #a7f3d0; border-radius: 8px; font-size: 11px; color: #065f46; }
         .kcal-legend { display: flex; gap: 12px; margin-top: 6px; font-size: 9px; color: #6b7280; }
         .kcal-legend span { display: inline-flex; align-items: center; gap: 4px; }
         .kcal-dot { width: 7px; height: 7px; border-radius: 3px; display: inline-block; }
@@ -1207,19 +1208,11 @@
                             <!-- 1. Le calendrier de réservation -->
                             <div class="mb-3">
                                 <label class="block text-xs font-bold text-gray-600 mb-1">
-                                    <i class="fa-solid fa-calendar-week text-brand-accent mr-1"></i> Créneau souhaité
-                                </label>
-                                <select id="config-creneau-location" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm font-semibold shadow-sm mb-2" onchange="checkDateAvailability(); updateConfig();">
-                                    <option value="VenDim" selected>Vendredi soir → Dimanche soir</option>
-                                    <option value="LunMer">Lundi soir → Mercredi soir</option>
-                                    <option value="MerVen">Mercredi soir → Vendredi soir</option>
-                                </select>
-                                <label class="block text-xs font-bold text-gray-600 mb-1">
-                                    <i class="fa-solid fa-calendar-days text-brand-accent mr-1"></i> Date dans ce créneau
+                                    <i class="fa-solid fa-calendar-days text-brand-accent mr-1"></i> Choisis ta date de début (Lundi, Mercredi ou Vendredi)
                                 </label>
                                 <input type="date" id="config-date-location" class="hidden" onchange="checkDateAvailability(); updateConfig();">
                                 <div id="calendar-location" class="bg-white border border-gray-200 rounded-lg p-2 shadow-sm"></div>
-                                <p class="text-[10px] text-gray-500 mt-1 italic leading-tight">Remise en fin d'après-midi (~18h) le 1er jour du créneau, retour avant 18h le dernier jour, à l'atelier de Saint-Paul.</p>
+                                <p class="text-[10px] text-gray-500 mt-1 italic leading-tight">Créneaux de 2 jours/2 nuits (Lun→Mer, Mer→Ven ou Ven→Dim). Remise en fin d'après-midi (~18h) le jour de début, retour avant 18h le dernier jour, à l'atelier de Saint-Paul.</p>
                             </div>
 
                             <!-- 2. Option de Montage Cassette & Disque -->
@@ -1290,19 +1283,11 @@
 
                         <div class="mb-3">
                             <label class="block text-xs font-bold text-gray-600 mb-1">
-                                <i class="fa-solid fa-calendar-week text-brand-accent mr-1"></i> Créneau souhaité
-                            </label>
-                            <select id="config-creneau-test" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm font-semibold shadow-sm mb-2" onchange="checkTestDateAvailability(); updateConfig();">
-                                <option value="VenDim" selected>Vendredi soir → Dimanche soir</option>
-                                <option value="LunMer">Lundi soir → Mercredi soir</option>
-                                <option value="MerVen">Mercredi soir → Vendredi soir</option>
-                            </select>
-                            <label class="block text-xs font-bold text-gray-600 mb-1">
-                                <i class="fa-solid fa-calendar-days text-brand-accent mr-1"></i> Date dans ce créneau
+                                <i class="fa-solid fa-calendar-days text-brand-accent mr-1"></i> Choisis ta date de début (Lundi, Mercredi ou Vendredi)
                             </label>
                             <input type="date" id="config-date-test" class="hidden" onchange="checkTestDateAvailability(); updateConfig();">
                             <div id="calendar-test" class="bg-white border border-gray-200 rounded-lg p-2 shadow-sm"></div>
-                            <p class="text-[10px] text-gray-500 mt-1 italic leading-tight">Remise en fin d'après-midi (~18h) le 1er jour du créneau, retour avant 18h le dernier jour.</p>
+                            <p class="text-[10px] text-gray-500 mt-1 italic leading-tight">Créneaux de 2 jours/2 nuits (Lun→Mer, Mer→Ven ou Ven→Dim). Remise en fin d'après-midi (~18h) le jour de début, retour avant 18h le dernier jour.</p>
                         </div>
 
                         <div class="mb-3">

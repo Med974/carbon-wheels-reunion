@@ -116,10 +116,9 @@ function addToCart() {
         if (isCurrentItemWheelConfigurable || (configSection && configSection.style.display !== 'none')) {
             if (isCurrentItemTestProgram) {
                 const dateEl = document.getElementById('config-date-test');
-                const slotSelectTest = document.getElementById('config-creneau-test');
-                const slotTypeTest = slotSelectTest ? slotSelectTest.value : 'VenDim';
-                const dateLoc = dateEl && dateEl.value ? getSlotAnchor(dateEl.value, slotTypeTest) : "Date non précisée";
-                const slotLabelTest = SLOT_DEFS[slotTypeTest] ? SLOT_DEFS[slotTypeTest].label : "Vendredi → Dimanche";
+                const slotTypeTest = dateEl && dateEl.value ? inferSlotType(dateEl.value) : null;
+                const dateLoc = slotTypeTest ? getSlotAnchor(dateEl.value, slotTypeTest) : "Date non précisée";
+                const slotLabelTest = slotTypeTest && SLOT_DEFS[slotTypeTest] ? SLOT_DEFS[slotTypeTest].label : "Vendredi → Dimanche";
                 const selectMontageTest = document.getElementById('config-montage-test');
                 const montageTextTest = selectMontageTest ? selectMontageTest.value : "Sans Montage";
                 const montagePriceTest = selectMontageTest && selectMontageTest.selectedIndex >= 0 ? (parseInt(selectMontageTest.options[selectMontageTest.selectedIndex].getAttribute('data-price')) || 0) : 0;
@@ -261,10 +260,9 @@ function addToCart() {
             } else if (titleLC.includes('bâton') || titleLC.includes('tri-spoke') || titleLC.includes('lenticulaire') || titleLC.includes('disc')) {
             if (currentLenticulaireMode === 'location') {
                 const dateEl = document.getElementById('config-date-location');
-                const slotSelectLoc = document.getElementById('config-creneau-location');
-                const slotTypeLoc = slotSelectLoc ? slotSelectLoc.value : 'VenDim';
-                const dateLoc = dateEl && dateEl.value ? getSlotAnchor(dateEl.value, slotTypeLoc) : "Date non précisée";
-                const slotLabelLoc = SLOT_DEFS[slotTypeLoc] ? SLOT_DEFS[slotTypeLoc].label : "Vendredi → Dimanche";
+                const slotTypeLoc = dateEl && dateEl.value ? inferSlotType(dateEl.value) : null;
+                const dateLoc = slotTypeLoc ? getSlotAnchor(dateEl.value, slotTypeLoc) : "Date non précisée";
+                const slotLabelLoc = slotTypeLoc && SLOT_DEFS[slotTypeLoc] ? SLOT_DEFS[slotTypeLoc].label : "Vendredi → Dimanche";
                 const rl = document.getElementById('config-rouelibre-special').value;
                 const selectMontage = document.getElementById('config-montage-location');
                 const montageText = selectMontage ? selectMontage.value : "Sans Montage";
@@ -2066,8 +2064,7 @@ function updateConfig() {
             const selectMontage = document.getElementById('config-montage-location');
             const montagePrice = selectMontage && selectMontage.selectedIndex >= 0 ? (parseInt(selectMontage.options[selectMontage.selectedIndex].getAttribute('data-price')) || 0) : 0;
             const dateElLive = document.getElementById('config-date-location');
-            const slotSelectLive = document.getElementById('config-creneau-location');
-            const slotTypeLive = slotSelectLive ? slotSelectLive.value : 'VenDim';
+            const slotTypeLive = dateElLive && dateElLive.value ? inferSlotType(dateElLive.value) : null;
             const tarifBaseLive = getLentiTarifDynamique(dateElLive ? dateElLive.value : "", slotTypeLive);
 
             finalPrice = tarifBaseLive + montagePrice; // Tarif dégressif selon proximité de la date + option de montage
@@ -2603,10 +2600,6 @@ function checkDateAvailability() {
     const dateInput = document.getElementById('config-date-location');
     const alertEpuise = document.getElementById('alert-location-epuisee');
     const submitBtn = document.querySelector('button[onclick="addToCart()"]');
-    
-    const slotSelect = document.getElementById('config-creneau-location');
-    const slotType = slotSelect ? slotSelect.value : 'VenDim';
-    const slotDef = SLOT_DEFS[slotType] || SLOT_DEFS['VenDim'];
 
     if (!dateInput || !submitBtn) return;
 
@@ -2619,13 +2612,14 @@ function checkDateAvailability() {
         return;
     }
 
-	// 2. SÉCURITÉ : VÉRIFICATION DU JOUR DE LA SEMAINE (selon le créneau choisi)
-    if (!isValidSlotDay(dateInput.value, slotType)) {
+	// 2. SÉCURITÉ : VÉRIFICATION DU JOUR DE LA SEMAINE (le créneau est déterminé par le jour choisi)
+    const slotType = inferSlotType(dateInput.value);
+    if (!slotType) {
         if (alertEpuise) {
             alertEpuise.classList.remove('hidden');
             alertEpuise.classList.add('flex');
             const spanEl = alertEpuise.querySelector('span');
-            if (spanEl) spanEl.textContent = `Veuillez sélectionner un jour du créneau "${slotDef.label}".`;
+            if (spanEl) spanEl.textContent = `Merci de choisir un Lundi, Mercredi ou Vendredi (jour de début du créneau).`;
         }
         submitBtn.disabled = true;
         submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
@@ -2684,10 +2678,6 @@ function checkTestDateAvailability() {
     const dateInput = document.getElementById('config-date-test');
     const alertEpuise = document.getElementById('alert-test-epuisee');
     const submitBtn = document.querySelector('button[onclick="addToCart()"]');
-    
-    const slotSelectTest = document.getElementById('config-creneau-test');
-    const slotTypeTest = slotSelectTest ? slotSelectTest.value : 'VenDim';
-    const slotDefTest = SLOT_DEFS[slotTypeTest] || SLOT_DEFS['VenDim'];
 
     if (!dateInput || !submitBtn) return;
 
@@ -2700,13 +2690,14 @@ function checkTestDateAvailability() {
         return;
     }
 
-	// 2. SÉCURITÉ : VÉRIFICATION DU JOUR DE LA SEMAINE (selon le créneau choisi)
-    if (!isValidSlotDay(dateInput.value, slotTypeTest)) {
+	// 2. SÉCURITÉ : VÉRIFICATION DU JOUR DE LA SEMAINE (le créneau est déterminé par le jour choisi)
+    const slotTypeTest = inferSlotType(dateInput.value);
+    if (!slotTypeTest) {
         if (alertEpuise) {
             alertEpuise.classList.remove('hidden');
             alertEpuise.classList.add('flex');
             const spanEl = alertEpuise.querySelector('span');
-            if (spanEl) spanEl.textContent = `Veuillez sélectionner un jour du créneau "${slotDefTest.label}".`;
+            if (spanEl) spanEl.textContent = `Merci de choisir un Lundi, Mercredi ou Vendredi (jour de début du créneau).`;
         }
         submitBtn.disabled = true;
         submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
@@ -2889,6 +2880,21 @@ function isoWeekday(jsDay) {
     return jsDay === 0 ? 7 : jsDay; // JS: 0=Dimanche..6=Samedi -> ISO: 1=Lundi..7=Dimanche
 }
 
+// Détermine le créneau à partir du jour de semaine d'une date : Lundi -> LunMer, Mercredi -> MerVen,
+// Vendredi -> VenDim. Retourne null pour les autres jours (Mar/Jeu/Sam/Dim) : ce ne sont jamais des
+// jours de DÉBUT de créneau, donc jamais sélectionnables directement dans le calendrier. Un jour de
+// début détermine à lui seul le créneau : pas besoin de le demander séparément au client.
+function inferSlotType(dateStr) {
+    if (!dateStr) return null;
+    const parts = dateStr.split('-');
+    const d = new Date(parts[0], parts[1] - 1, parts[2]);
+    const iso = isoWeekday(d.getDay());
+    if (iso === 1) return 'LunMer';
+    if (iso === 3) return 'MerVen';
+    if (iso === 5) return 'VenDim';
+    return null;
+}
+
 // Une date est valide pour un créneau donné si son jour de semaine tombe dans les jours couverts
 // par ce créneau (ex: Mercredi et Jeudi sont valides pour "MerVen", pas pour "LunMer").
 function isValidSlotDay(dateStr, slotType) {
@@ -2939,8 +2945,6 @@ function renderMiniCalendar(opts) {
     const state = calendarState[opts.containerId];
 
     const dateInput = document.getElementById(opts.dateInputId);
-    const slotSelect = document.getElementById(opts.slotSelectId);
-    const slotType = slotSelect ? slotSelect.value : 'VenDim';
     const isLoaded = opts.isLoaded ? opts.isLoaded() : true;
     const unavailableList = opts.getUnavailableList ? (opts.getUnavailableList() || []) : [];
     const selectedValue = dateInput ? dateInput.value : "";
@@ -2960,7 +2964,10 @@ function renderMiniCalendar(opts) {
     for (let day = 1; day <= daysInMonth; day++) {
         const dStr = kcalDateStr(state.year, state.month, day);
         const isPast = dStr < todayStr;
-        const validDay = !isPast && isValidSlotDay(dStr, slotType);
+        // Le créneau est déterminé directement par le jour de la semaine cliqué (Lun/Mer/Ven) :
+        // pas de sélecteur de créneau séparé, cf. inferSlotType.
+        const slotType = inferSlotType(dStr);
+        const validDay = !isPast && slotType !== null;
         let stateClass = "kcal-disabled";
         let clickable = false;
         if (validDay) {
@@ -2983,6 +2990,19 @@ function renderMiniCalendar(opts) {
         cellsHtml += `<div class="kcal-cell ${stateClass}"${clickable ? ` data-date="${dStr}"` : ''}>${day}</div>`;
     }
 
+    // Récapitulatif du créneau une fois une date de début choisie, puisqu'il n'y a plus de
+    // sélecteur de créneau séparé pour le confirmer visuellement.
+    let selectedInfoHtml = '';
+    const selSlot = inferSlotType(selectedValue);
+    if (selSlot) {
+        const parts = selectedValue.split('-');
+        const startD = new Date(parts[0], parts[1] - 1, parts[2]);
+        const endD = new Date(startD);
+        endD.setDate(endD.getDate() + 2);
+        const fmtShort = (d) => `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}`;
+        selectedInfoHtml = `<div class="kcal-selected-info">✅ Créneau : <strong>${SLOT_DEFS[selSlot].label}</strong> (${fmtShort(startD)} → ${fmtShort(endD)})</div>`;
+    }
+
     container.innerHTML =
         `<div class="kcal-header">
             <button type="button" class="kcal-nav" data-nav="-1">&lsaquo;</button>
@@ -2991,6 +3011,7 @@ function renderMiniCalendar(opts) {
         </div>
         <div class="kcal-grid kcal-grid-header">${JOURS_COURTS_FR.map(j => `<div class="kcal-daylabel">${j}</div>`).join('')}</div>
         <div class="kcal-grid">${cellsHtml}</div>
+        ${selectedInfoHtml}
         ${isLoaded ? `<div class="kcal-legend">
             <span><i class="kcal-dot kcal-dot-available"></i> Disponible</span>
             <span><i class="kcal-dot kcal-dot-booked"></i> Complet</span>
@@ -3020,7 +3041,6 @@ function renderLocationCalendar() {
     renderMiniCalendar({
         containerId: 'calendar-location',
         dateInputId: 'config-date-location',
-        slotSelectId: 'config-creneau-location',
         isLoaded: function () { return rentalDatesLoaded; },
         getUnavailableList: function () { return unavailableRentalDates; },
         onSelect: function () { checkDateAvailability(); updateConfig(); }
@@ -3031,7 +3051,6 @@ function renderTestCalendar() {
     renderMiniCalendar({
         containerId: 'calendar-test',
         dateInputId: 'config-date-test',
-        slotSelectId: 'config-creneau-test',
         isLoaded: function () { return testDatesLoaded; },
         getUnavailableList: function () {
             const sel = document.getElementById('config-modele-test');
