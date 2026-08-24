@@ -1185,10 +1185,18 @@
                             <!-- 1. Le calendrier de réservation -->
                             <div class="mb-3">
                                 <label class="block text-xs font-bold text-gray-600 mb-1">
-                                    <i class="fa-solid fa-calendar-days text-brand-accent mr-1"></i> Date de votre week-end de course
+                                    <i class="fa-solid fa-calendar-week text-brand-accent mr-1"></i> Créneau souhaité
+                                </label>
+                                <select id="config-creneau-location" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm font-semibold shadow-sm mb-2" onchange="checkDateAvailability(); updateConfig();">
+                                    <option value="VenDim" selected>Vendredi soir → Dimanche soir</option>
+                                    <option value="LunMer">Lundi soir → Mercredi soir</option>
+                                    <option value="MerVen">Mercredi soir → Vendredi soir</option>
+                                </select>
+                                <label class="block text-xs font-bold text-gray-600 mb-1">
+                                    <i class="fa-solid fa-calendar-days text-brand-accent mr-1"></i> Date dans ce créneau
                                 </label>
                                 <input type="date" id="config-date-location" class="w-full bg-white border border-brand-accent rounded-lg px-3 py-2 text-sm font-semibold shadow-sm" onchange="checkDateAvailability(); updateConfig();">
-                                <p class="text-[10px] text-gray-500 mt-1 italic leading-tight">Retrait le vendredi après-midi et retour le lundi matin à l'atelier de Saint-Paul.</p>
+                                <p class="text-[10px] text-gray-500 mt-1 italic leading-tight">Remise en fin d'après-midi (~18h) le 1er jour du créneau, retour avant 18h le dernier jour, à l'atelier de Saint-Paul.</p>
                             </div>
 
                             <!-- 2. Option de Montage Cassette & Disque -->
@@ -1206,8 +1214,8 @@
                             <div id="alert-location-epuisee" class="hidden items-start gap-3 bg-red-50 border border-red-200 text-red-800 p-3 rounded-xl mb-3 shadow-sm">
                                 <i class="fa-solid fa-triangle-exclamation text-red-600 text-lg mt-0.5 animate-pulse"></i>
                                 <div>
-                                    <strong class="text-xs block">Week-end indisponible !</strong>
-                                    <span class="text-[10px] leading-tight block">Nos 2 roues lenticulaires de flotte sont déjà réservées pour cette date. Veuillez choisir un autre week-end.</span>
+                                    <strong class="text-xs block">Créneau indisponible !</strong>
+                                    <span class="text-[10px] leading-tight block">Nos 2 roues lenticulaires de flotte sont déjà réservées pour ce créneau. Veuillez choisir une autre date ou un autre créneau.</span>
                                 </div>
                             </div>
 
@@ -1259,10 +1267,18 @@
 
                         <div class="mb-3">
                             <label class="block text-xs font-bold text-gray-600 mb-1">
-                                <i class="fa-solid fa-calendar-days text-brand-accent mr-1"></i> Date de votre week-end d'essai
+                                <i class="fa-solid fa-calendar-week text-brand-accent mr-1"></i> Créneau souhaité
+                            </label>
+                            <select id="config-creneau-test" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm font-semibold shadow-sm mb-2" onchange="checkTestDateAvailability(); updateConfig();">
+                                <option value="VenDim" selected>Vendredi soir → Dimanche soir</option>
+                                <option value="LunMer">Lundi soir → Mercredi soir</option>
+                                <option value="MerVen">Mercredi soir → Vendredi soir</option>
+                            </select>
+                            <label class="block text-xs font-bold text-gray-600 mb-1">
+                                <i class="fa-solid fa-calendar-days text-brand-accent mr-1"></i> Date dans ce créneau
                             </label>
                             <input type="date" id="config-date-test" class="w-full bg-white border border-brand-accent rounded-lg px-3 py-2 text-sm font-semibold shadow-sm" onchange="checkTestDateAvailability(); updateConfig();">
-                            <p class="text-[10px] text-gray-500 mt-1 italic leading-tight">Retrait le vendredi après-midi et retour le dimanche après midi ou lundi. (Essai possible en semaine, nous contacter)</p>
+                            <p class="text-[10px] text-gray-500 mt-1 italic leading-tight">Remise en fin d'après-midi (~18h) le 1er jour du créneau, retour avant 18h le dernier jour.</p>
                         </div>
 
                         <div class="mb-3">
@@ -1279,15 +1295,15 @@
                         <div id="alert-test-epuisee" class="hidden items-start gap-3 bg-red-50 border border-red-200 text-red-800 p-3 rounded-xl mb-3 shadow-sm">
                             <i class="fa-solid fa-triangle-exclamation text-red-600 text-lg mt-0.5 animate-pulse"></i>
                             <div>
-                                <strong class="text-xs block">Week-end indisponible !</strong>
-                                <span class="text-[10px] leading-tight block">Notre paire d'essai est déjà réservée pour cette date. Veuillez choisir un autre week-end.</span>
+                                <strong class="text-xs block">Créneau indisponible !</strong>
+                                <span class="text-[10px] leading-tight block">Notre paire d'essai est déjà réservée pour ce créneau. Veuillez choisir une autre date ou un autre créneau.</span>
                             </div>
                         </div>
 
                         <div class="bg-green-50 border border-green-200 rounded-xl p-3 text-[11px] text-green-800">
                             <strong class="block mb-1 uppercase tracking-wider text-green-900"><i class="fa-solid fa-handshake mr-1"></i> Le Deal & Conditions :</strong>
                             <ul class="space-y-1 list-disc list-inside">
-                                <li>Forfait de <strong>50 €</strong> pour le week-end complet.</li>
+                                <li>Forfait de <strong>50 €</strong> pour le créneau complet (2 jours/2 nuits).</li>
                                 <li><strong>100% Déductible</strong> de votre facture si vous achetez une paire neuve dans les 2 mois !</li>
                                 <li>Chèque de caution requis au retrait (non encaissé) et pièce d'identité valide.</li>
                                 <li>Signature du contrat de location simplifié à l'atelier.</li>

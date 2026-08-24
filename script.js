@@ -114,7 +114,10 @@ function addToCart() {
         if (isCurrentItemWheelConfigurable || (configSection && configSection.style.display !== 'none')) {
             if (isCurrentItemTestProgram) {
                 const dateEl = document.getElementById('config-date-test');
-                const dateLoc = dateEl && dateEl.value ? getFridayOfWeek(dateEl.value) : "Date non précisée";
+                const slotSelectTest = document.getElementById('config-creneau-test');
+                const slotTypeTest = slotSelectTest ? slotSelectTest.value : 'VenDim';
+                const dateLoc = dateEl && dateEl.value ? getSlotAnchor(dateEl.value, slotTypeTest) : "Date non précisée";
+                const slotLabelTest = SLOT_DEFS[slotTypeTest] ? SLOT_DEFS[slotTypeTest].label : "Vendredi → Dimanche";
                 const selectMontageTest = document.getElementById('config-montage-test');
                 const montageTextTest = selectMontageTest ? selectMontageTest.value : "Sans Montage";
                 const montagePriceTest = selectMontageTest && selectMontageTest.selectedIndex >= 0 ? (parseInt(selectMontageTest.options[selectMontageTest.selectedIndex].getAttribute('data-price')) || 0) : 0;
@@ -126,7 +129,7 @@ function addToCart() {
                 const selectCorpsTest = document.getElementById('config-corps-test');
                 const corpsTextTest = selectCorpsTest ? selectCorpsTest.value : "Shimano HG";
 
-                configText = `Week-end du : ${dateLoc} | ${modeleTextTest}, Glossy, Moyeux RT240, Rayons T32 | Corps : ${corpsTextTest} | Option : ${montageTextTest}`;
+                configText = `Créneau du : ${dateLoc} (${slotLabelTest}) | ${modeleTextTest}, Glossy, Moyeux RT240, Rayons T32 | Corps : ${corpsTextTest} | Option : ${montageTextTest}`;
                 finalPrice = 50 + montagePriceTest;
                 finalWeight = modeleWeightTest;
 			} else if (isCurrentItemTextile) {
@@ -256,16 +259,19 @@ function addToCart() {
             } else if (titleLC.includes('bâton') || titleLC.includes('tri-spoke') || titleLC.includes('lenticulaire') || titleLC.includes('disc')) {
             if (currentLenticulaireMode === 'location') {
                 const dateEl = document.getElementById('config-date-location');
-                const dateLoc = dateEl && dateEl.value ? getFridayOfWeek(dateEl.value) : "Date non précisée";
+                const slotSelectLoc = document.getElementById('config-creneau-location');
+                const slotTypeLoc = slotSelectLoc ? slotSelectLoc.value : 'VenDim';
+                const dateLoc = dateEl && dateEl.value ? getSlotAnchor(dateEl.value, slotTypeLoc) : "Date non précisée";
+                const slotLabelLoc = SLOT_DEFS[slotTypeLoc] ? SLOT_DEFS[slotTypeLoc].label : "Vendredi → Dimanche";
                 const rl = document.getElementById('config-rouelibre-special').value;
                 const selectMontage = document.getElementById('config-montage-location');
                 const montageText = selectMontage ? selectMontage.value : "Sans Montage";
                 const montagePrice = selectMontage && selectMontage.selectedIndex >= 0 ? (parseInt(selectMontage.options[selectMontage.selectedIndex].getAttribute('data-price')) || 0) : 0;
 
-                const tarifBase = getLentiTarifDynamique(dateEl ? dateEl.value : "");
+                const tarifBase = getLentiTarifDynamique(dateEl ? dateEl.value : "", slotTypeLoc);
 
-                finalTitle = `${title} (Location Week-end)`;
-                configText = `Week-end du : ${dateLoc} | Freins à Disques | Roue libre : ${rl} | Tarif : ${tarifBase}€ | Option : ${montageText}`;
+                finalTitle = `${title} (Location ${slotLabelLoc})`;
+                configText = `Créneau du : ${dateLoc} (${slotLabelLoc}) | Freins à Disques | Roue libre : ${rl} | Tarif : ${tarifBase}€ | Option : ${montageText}`;
                 finalPrice = tarifBase + montagePrice; // Tarif dégressif selon proximité de la date + option de montage
             } else {
                     const freinEl = document.getElementById('config-freinage-special');
@@ -2058,7 +2064,9 @@ function updateConfig() {
             const selectMontage = document.getElementById('config-montage-location');
             const montagePrice = selectMontage && selectMontage.selectedIndex >= 0 ? (parseInt(selectMontage.options[selectMontage.selectedIndex].getAttribute('data-price')) || 0) : 0;
             const dateElLive = document.getElementById('config-date-location');
-            const tarifBaseLive = getLentiTarifDynamique(dateElLive ? dateElLive.value : "");
+            const slotSelectLive = document.getElementById('config-creneau-location');
+            const slotTypeLive = slotSelectLive ? slotSelectLive.value : 'VenDim';
+            const tarifBaseLive = getLentiTarifDynamique(dateElLive ? dateElLive.value : "", slotTypeLive);
 
             finalPrice = tarifBaseLive + montagePrice; // Tarif dégressif selon proximité de la date + option de montage
             finalWeight = 980; // Poids fixe de ta jante de location
@@ -2589,6 +2597,10 @@ function checkDateAvailability() {
     const alertEpuise = document.getElementById('alert-location-epuisee');
     const submitBtn = document.querySelector('button[onclick="addToCart()"]');
     
+    const slotSelect = document.getElementById('config-creneau-location');
+    const slotType = slotSelect ? slotSelect.value : 'VenDim';
+    const slotDef = SLOT_DEFS[slotType] || SLOT_DEFS['VenDim'];
+
     if (!dateInput || !submitBtn) return;
 
     // 1. SÉCURITÉ : CHAMP VIDE
@@ -2600,24 +2612,22 @@ function checkDateAvailability() {
         return;
     }
 
-	// 2. SÉCURITÉ : VÉRIFICATION DU JOUR DE LA SEMAINE
-    const selectedD = new Date(dateInput.value);
-    const day = selectedD.getDay();
-    if (day !== 5 && day !== 6 && day !== 0) { // Si ni Ven(5), ni Sam(6), ni Dim(0)
+	// 2. SÉCURITÉ : VÉRIFICATION DU JOUR DE LA SEMAINE (selon le créneau choisi)
+    if (!isValidSlotDay(dateInput.value, slotType)) {
         if (alertEpuise) {
             alertEpuise.classList.remove('hidden');
             alertEpuise.classList.add('flex');
             const spanEl = alertEpuise.querySelector('span');
-            if (spanEl) spanEl.textContent = "Veuillez sélectionner un jour de week-end (Vendredi, Samedi ou Dimanche).";
+            if (spanEl) spanEl.textContent = `Veuillez sélectionner un jour du créneau "${slotDef.label}".`;
         }
         submitBtn.disabled = true;
         submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
         submitBtn.innerHTML = 'Jour invalide <i class="fa-solid fa-ban ml-2 text-xl"></i>';
         return;
     }
-	
-    const dateSelectionnee = getFridayOfWeek(dateInput.value);
-    
+
+    const dateSelectionnee = getSlotAnchor(dateInput.value, slotType);
+
     // 3. SÉCURITÉ : DATE INDISPONIBLE
     if (dateSelectionnee && unavailableRentalDates.includes(dateSelectionnee)) {
         if (alertEpuise) {
@@ -2653,6 +2663,10 @@ function checkTestDateAvailability() {
     const alertEpuise = document.getElementById('alert-test-epuisee');
     const submitBtn = document.querySelector('button[onclick="addToCart()"]');
     
+    const slotSelectTest = document.getElementById('config-creneau-test');
+    const slotTypeTest = slotSelectTest ? slotSelectTest.value : 'VenDim';
+    const slotDefTest = SLOT_DEFS[slotTypeTest] || SLOT_DEFS['VenDim'];
+
     if (!dateInput || !submitBtn) return;
 
     // 1. SÉCURITÉ : CHAMP VIDE
@@ -2664,23 +2678,21 @@ function checkTestDateAvailability() {
         return;
     }
 
-	// 2. SÉCURITÉ : VÉRIFICATION DU JOUR DE LA SEMAINE
-    const selectedD = new Date(dateInput.value);
-    const day = selectedD.getDay();
-    if (day !== 5 && day !== 6 && day !== 0) {
+	// 2. SÉCURITÉ : VÉRIFICATION DU JOUR DE LA SEMAINE (selon le créneau choisi)
+    if (!isValidSlotDay(dateInput.value, slotTypeTest)) {
         if (alertEpuise) {
             alertEpuise.classList.remove('hidden');
             alertEpuise.classList.add('flex');
             const spanEl = alertEpuise.querySelector('span');
-            if (spanEl) spanEl.textContent = "Veuillez sélectionner un jour de week-end (Vendredi, Samedi ou Dimanche).";
+            if (spanEl) spanEl.textContent = `Veuillez sélectionner un jour du créneau "${slotDefTest.label}".`;
         }
         submitBtn.disabled = true;
         submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
         submitBtn.innerHTML = 'Jour invalide <i class="fa-solid fa-ban ml-2 text-xl"></i>';
         return;
     }
-	
-    const dateSelectionnee = getFridayOfWeek(dateInput.value);
+
+    const dateSelectionnee = getSlotAnchor(dateInput.value, slotTypeTest);
 
     // Détermine quel pool de dispo consulter selon le modèle choisi (2 paires distinctes)
     const selectModeleTest = document.getElementById('config-modele-test');
@@ -2828,17 +2840,58 @@ function closeCustomAlert() {
     }
 }
 
-// Normalise n'importe quelle date du week-end (Ven, Sam, Dim) au Vendredi de ce même week-end
+// =========================================================================
+// CRÉNEAUX DE LOCATION/ESSAI EN SEMAINE (depuis l'ouverture aux 3 créneaux hebdomadaires) :
+// chaque créneau dure 2 jours/2 nuits, remise au client en fin d'après-midi/soir (~18h) du
+// jour de début, retour avant 18h le dernier jour. Le "jour d'ancrage" (anchorIso, en jour ISO
+// 1=Lundi..7=Dimanche) est le jour de DÉBUT du créneau, utilisé comme date de référence pour le
+// stock et le tarif dégressif.
+// =========================================================================
+const SLOT_DEFS = {
+    "LunMer": { anchorIso: 1, validIso: [1, 2, 3], label: "Lundi → Mercredi" },
+    "MerVen": { anchorIso: 3, validIso: [3, 4, 5], label: "Mercredi → Vendredi" },
+    "VenDim": { anchorIso: 5, validIso: [5, 6, 7], label: "Vendredi → Dimanche" }
+};
+
+function isoWeekday(jsDay) {
+    return jsDay === 0 ? 7 : jsDay; // JS: 0=Dimanche..6=Samedi -> ISO: 1=Lundi..7=Dimanche
+}
+
+// Une date est valide pour un créneau donné si son jour de semaine tombe dans les jours couverts
+// par ce créneau (ex: Mercredi et Jeudi sont valides pour "MerVen", pas pour "LunMer").
+function isValidSlotDay(dateStr, slotType) {
+    if (!dateStr || !SLOT_DEFS[slotType]) return false;
+    const parts = dateStr.split('-');
+    const d = new Date(parts[0], parts[1] - 1, parts[2]);
+    return SLOT_DEFS[slotType].validIso.indexOf(isoWeekday(d.getDay())) !== -1;
+}
+
+// Ramène n'importe quelle date valide pour le créneau donné à la date de DÉBUT de ce créneau
+// (ex: Jeudi -> Mercredi de la même semaine pour "MerVen"). Retourne "" si le jour ne correspond
+// pas au créneau choisi.
+function getSlotAnchor(dateStr, slotType) {
+    if (!isValidSlotDay(dateStr, slotType)) return "";
+    const parts = dateStr.split('-');
+    const d = new Date(parts[0], parts[1] - 1, parts[2]);
+    const def = SLOT_DEFS[slotType];
+    d.setDate(d.getDate() - (isoWeekday(d.getDay()) - def.anchorIso));
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const date = String(d.getDate()).padStart(2, '0');
+    return `${year}-${month}-${date}`;
+}
+
 // Tarif dégressif de location des roues lenticulaires selon la proximité de la date choisie
-// (calculée par rapport au vendredi du week-end sélectionné, aujourd'hui inclus) :
+// (calculée par rapport au jour de DÉBUT du créneau sélectionné, aujourd'hui inclus), identique
+// quel que soit le créneau (Lun->Mer / Mer->Ven / Ven->Dim) :
 //   > 14 jours avant  -> 100€
 //   entre 7 et 14 jours -> 75€
 //   < 7 jours -> 50€
-function getLentiTarifDynamique(dateInputValue) {
+function getLentiTarifDynamique(dateInputValue, slotType) {
     if (!dateInputValue) return 100;
-    const friday = getFridayOfWeek(dateInputValue);
-    if (!friday) return 100;
-    const parts = friday.split('-');
+    const anchor = getSlotAnchor(dateInputValue, slotType || 'VenDim');
+    if (!anchor) return 100;
+    const parts = anchor.split('-');
     const eventDate = new Date(parts[0], parts[1] - 1, parts[2]);
     const today = new Date();
     today.setHours(0, 0, 0, 0);
@@ -2849,6 +2902,7 @@ function getLentiTarifDynamique(dateInputValue) {
     return 50; // à 7 jours pile ou moins
 }
 
+// Conservée pour compatibilité (plus utilisée par le nouveau flux créneaux, cf. getSlotAnchor).
 function getFridayOfWeek(dateStr) {
     if (!dateStr) return "";
     const parts = dateStr.split('-');
