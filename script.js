@@ -3065,22 +3065,20 @@ function renderTestCalendar() {
 // Tarif dégressif de location des roues lenticulaires selon la proximité de la date choisie
 // (calculée par rapport au jour de DÉBUT du créneau sélectionné, aujourd'hui inclus), identique
 // quel que soit le créneau (Lun->Mer / Mer->Ven / Ven->Dim) :
-//   > 14 jours avant  -> 100€
-//   entre 7 et 14 jours -> 75€
-//   < 7 jours -> 50€
+//   > 14 jours avant -> 75€
+//   14 jours ou moins -> 50€
 function getLentiTarifDynamique(dateInputValue, slotType) {
-    if (!dateInputValue) return 100;
+    if (!dateInputValue) return 75;
     const anchor = getSlotAnchor(dateInputValue, slotType || 'VenDim');
-    if (!anchor) return 100;
+    if (!anchor) return 75;
     const parts = anchor.split('-');
     const eventDate = new Date(parts[0], parts[1] - 1, parts[2]);
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     eventDate.setHours(0, 0, 0, 0);
     const daysUntil = Math.round((eventDate - today) / (1000 * 60 * 60 * 24));
-    if (daysUntil > 14) return 100;
-    if (daysUntil > 7) return 75;
-    return 50; // à 7 jours pile ou moins
+    if (daysUntil > 14) return 75;
+    return 50; // à 14 jours ou moins de la date de location
 }
 
 // Conservée pour compatibilité (plus utilisée par le nouveau flux créneaux, cf. getSlotAnchor).
