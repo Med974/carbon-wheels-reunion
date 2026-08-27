@@ -16,6 +16,12 @@ let isCurrentItemTestProgram = false;
 let isCurrentItemStockReady = false;
 let isCurrentItemTextile = false;
 let factoryStock = [];
+let isCurrentItemAeroplugLocation = false;
+let unavailableAeroplugDates = { "50": [], "6065": [] }; // "50" = SL8/Roval Rapide, "6065" = Trek Madone
+let aeroplugDatesLoaded = false;
+let isCurrentItemEvocLocation = false;
+let unavailableEvocPeriods = []; // [{start:"YYYY-MM-DD", end:"YYYY-MM-DD"}, ...]
+let evocPeriodsLoaded = false;
 
 let cart = [];
 let appliedPromo = null;
@@ -133,6 +139,31 @@ function addToCart() {
                 configText = `Créneau du : ${dateLoc} (${slotLabelTest}) | ${modeleTextTest}, Glossy, Moyeux RT240, Rayons T32 | Corps : ${corpsTextTest} | Option : ${montageTextTest}`;
                 finalPrice = 50 + montagePriceTest;
                 finalWeight = modeleWeightTest;
+            } else if (isCurrentItemAeroplugLocation) {
+                const dateElAero = document.getElementById('config-date-aeroplug');
+                const slotTypeAero = dateElAero && dateElAero.value ? inferSlotType(dateElAero.value) : null;
+                const dateLocAero = slotTypeAero ? getSlotAnchor(dateElAero.value, slotTypeAero) : "Date non précisée";
+                const slotLabelAero = slotTypeAero && SLOT_DEFS[slotTypeAero] ? SLOT_DEFS[slotTypeAero].label : "Vendredi → Dimanche";
+                const selectModeleAero = document.getElementById('config-modele-aeroplug');
+                const modeleTextAero = selectModeleAero ? selectModeleAero.value : "Specialized Tarmac SL8 (Roval Rapide)";
+
+                configText = `Créneau du : ${dateLocAero} (${slotLabelAero}) | Modèle : ${modeleTextAero}`;
+                finalPrice = 50;
+                finalWeight = "--";
+            } else if (isCurrentItemEvocLocation) {
+                const startElEvoc = document.getElementById('config-date-evoc-debut');
+                const endElEvoc = document.getElementById('config-date-evoc-fin');
+                const startValEvoc = startElEvoc ? startElEvoc.value : "";
+                const endValEvoc = endElEvoc ? endElEvoc.value : "";
+                let nbJoursEvoc = 0;
+                if (startValEvoc && endValEvoc) {
+                    nbJoursEvoc = Math.round((new Date(endValEvoc) - new Date(startValEvoc)) / (1000 * 60 * 60 * 24)) + 1;
+                }
+                const tarifEvoc = nbJoursEvoc > 0 ? getTarifEvoc(nbJoursEvoc) : 45;
+
+                configText = `Location du : ${startValEvoc || "Date non précisée"} au ${endValEvoc || "Date non précisée"} (${nbJoursEvoc} jours)`;
+                finalPrice = tarifEvoc;
+                finalWeight = "--";
 			} else if (isCurrentItemTextile) {
                 const typeSelect = document.getElementById('config-textile-type');
                 const type = typeSelect ? typeSelect.value : "";
@@ -1223,8 +1254,10 @@ function openModal(index) {
         isCurrentItemTestProgram = nomLC.includes('test') || nomLC.includes('essai');
 		isCurrentItemTextile = (item.Categorie && String(item.Categorie).toLowerCase().includes('textile')) || nomLC.includes('tenue') || nomLC.includes('combinaison');
         isCurrentItemStockReady = nomLC.includes('prêt-à-rouler') || nomLC.includes('pret-a-rouler') || nomLC.includes('prêt à rouler') || nomLC.includes('pret a rouler');
+        isCurrentItemAeroplugLocation = nomLC.includes('aeroplug');
+        isCurrentItemEvocLocation = nomLC.includes('evoc');
         const isMtbWheel = nomLC.includes('apex') || nomLC.includes('vtt') || nomLC.includes('mtb');
-        isCurrentItemWheelConfigurable = !isCurrentItemAccessory && !isCurrentItemTestProgram && !nomLC.includes('bâton') && !nomLC.includes('tri-spoke') && !nomLC.includes('lenticulaire') && !nomLC.includes('disc') && !nomLC.includes('manivelle') && !isMtbWheel;
+        isCurrentItemWheelConfigurable = !isCurrentItemAccessory && !isCurrentItemTestProgram && !isCurrentItemAeroplugLocation && !isCurrentItemEvocLocation && !nomLC.includes('bâton') && !nomLC.includes('tri-spoke') && !nomLC.includes('lenticulaire') && !nomLC.includes('disc') && !nomLC.includes('manivelle') && !isMtbWheel;
 
         const isSpecialWheel = nomLC.includes('bâton') || nomLC.includes('tri-spoke') || nomLC.includes('lenticulaire') || nomLC.includes('disc');
         
@@ -1309,6 +1342,10 @@ function openModal(index) {
         const testConfigContainer = document.getElementById('test-program-config-container');
 		const textileConfigContainer = document.getElementById('textile-config-container');
 		if (textileConfigContainer) textileConfigContainer.style.display = 'none';
+		const aeroplugConfigContainer = document.getElementById('aeroplug-config-container');
+		if (aeroplugConfigContainer) aeroplugConfigContainer.style.display = 'none';
+		const evocConfigContainer = document.getElementById('evoc-config-container');
+		if (evocConfigContainer) evocConfigContainer.style.display = 'none';
 		// FORCER LE MASQUAGE DES MENUS SPÉCIAUX POUR TOUS LES AUTRES PRODUITS
 		const blocRatchetSpecial = document.getElementById('bloc-ratchet-special');
 		if (blocRatchetSpecial) blocRatchetSpecial.style.display = 'none';
@@ -1354,6 +1391,54 @@ function openModal(index) {
                 dateInputTest.min = new Date().toISOString().split('T')[0];
             }
             fetchUnavailableTestDates();
+        } else if (isCurrentItemAeroplugLocation) {
+            if(specJantesBox) specJantesBox.style.display = 'none';
+            if(configuratorSection) configuratorSection.style.display = 'block';
+            if(wheelConfigOptions) wheelConfigOptions.style.display = 'none';
+            if(manivellesConfigContainer) manivellesConfigContainer.style.display = 'none';
+            if(accessoryConfigContainer) accessoryConfigContainer.style.display = 'none';
+            if(specialWheelConfigContainer) specialWheelConfigContainer.style.display = 'none';
+            if(testConfigContainer) testConfigContainer.style.display = 'none';
+            if(aeroplugConfigContainer) aeroplugConfigContainer.style.display = 'block';
+            if(poidsMaxContainer) poidsMaxContainer.style.display = 'none';
+
+            const selectModeleAeroplug = document.getElementById('config-modele-aeroplug');
+            if(selectModeleAeroplug) selectModeleAeroplug.selectedIndex = 0;
+
+            const cPriceAero = document.getElementById('calc-price');
+            if(cPriceAero) cPriceAero.textContent = 50;
+            const cWeightAero = document.getElementById('calc-weight');
+            if(cWeightAero) cWeightAero.textContent = '--';
+            updateBadgeUI(false, "Disponible à la location");
+
+            const dateInputAero = document.getElementById('config-date-aeroplug');
+            if(dateInputAero) dateInputAero.value = "";
+            fetchUnavailableAeroplugDates();
+        } else if (isCurrentItemEvocLocation) {
+            if(specJantesBox) specJantesBox.style.display = 'none';
+            if(configuratorSection) configuratorSection.style.display = 'block';
+            if(wheelConfigOptions) wheelConfigOptions.style.display = 'none';
+            if(manivellesConfigContainer) manivellesConfigContainer.style.display = 'none';
+            if(accessoryConfigContainer) accessoryConfigContainer.style.display = 'none';
+            if(specialWheelConfigContainer) specialWheelConfigContainer.style.display = 'none';
+            if(testConfigContainer) testConfigContainer.style.display = 'none';
+            if(evocConfigContainer) evocConfigContainer.style.display = 'block';
+            if(poidsMaxContainer) poidsMaxContainer.style.display = 'none';
+
+            const cPriceEvoc = document.getElementById('calc-price');
+            if(cPriceEvoc) cPriceEvoc.textContent = 45;
+            const cWeightEvoc = document.getElementById('calc-weight');
+            if(cWeightEvoc) cWeightEvoc.textContent = '--';
+            updateBadgeUI(false, "Disponible à la location");
+
+            const dateDebutEvocEl = document.getElementById('config-date-evoc-debut');
+            const dateFinEvocEl = document.getElementById('config-date-evoc-fin');
+            const todayStrEvoc = new Date().toISOString().split('T')[0];
+            if(dateDebutEvocEl) { dateDebutEvocEl.value = ""; dateDebutEvocEl.min = todayStrEvoc; }
+            if(dateFinEvocEl) { dateFinEvocEl.value = ""; dateFinEvocEl.min = todayStrEvoc; }
+            const evocPriceInfo = document.getElementById('evoc-price-info');
+            if(evocPriceInfo) evocPriceInfo.textContent = "";
+            fetchUnavailableEvocPeriods();
         } else if (isCurrentItemTextile) {
             if(specJantesBox) specJantesBox.style.display = 'none';
             if(configuratorSection) configuratorSection.style.display = 'block';
@@ -1690,7 +1775,7 @@ function openModal(index) {
         }
 
 		const submitBtn = document.querySelector('button[onclick="addToCart()"]');
-        if ((isCurrentItemAccessory || isCurrentItemTestProgram) && currentDeliveryZone === 'metropole') {
+        if ((isCurrentItemAccessory || isCurrentItemTestProgram || isCurrentItemAeroplugLocation || isCurrentItemEvocLocation) && currentDeliveryZone === 'metropole') {
             if (submitBtn) {
                 submitBtn.disabled = true;
                 submitBtn.className = "w-full bg-gray-300 text-gray-500 font-bold py-3 rounded-xl flex justify-center items-center gap-3 cursor-not-allowed shrink-0";
@@ -2741,6 +2826,191 @@ function checkTestDateAvailability() {
     }
 }
 
+// =========================================================================
+// LOCATION KIT AEROPLUG + PROLONGATEURS : même mécanique que le programme d'essai (créneaux
+// Lun/Mer/Ven, calendrier visuel, 2 pools distincts par vélo compatible), tarif fixe 50€ (pas de
+// dégressif contrairement à la roue lenticulaire).
+// =========================================================================
+async function fetchUnavailableAeroplugDates() {
+    aeroplugDatesLoaded = false;
+    renderAeroplugCalendar();
+    try {
+        const response = await fetch(`${API_URL}?action=getUnavailableAeroplugDates`);
+        unavailableAeroplugDates = await response.json();
+        aeroplugDatesLoaded = true;
+        checkAeroplugDateAvailability();
+    } catch (error) {
+        console.error("Impossible de charger le calendrier Aeroplug :", error);
+    }
+}
+
+function renderAeroplugCalendar() {
+    renderMiniCalendar({
+        containerId: 'calendar-aeroplug',
+        dateInputId: 'config-date-aeroplug',
+        isLoaded: function () { return aeroplugDatesLoaded; },
+        getUnavailableList: function () {
+            const sel = document.getElementById('config-modele-aeroplug');
+            const modeleVal = sel ? sel.value : "";
+            const key = modeleVal.indexOf('Madone') !== -1 ? '6065' : '50';
+            return (unavailableAeroplugDates && unavailableAeroplugDates[key]) ? unavailableAeroplugDates[key] : [];
+        },
+        onSelect: function () { checkAeroplugDateAvailability(); updateConfig(); }
+    });
+}
+
+function checkAeroplugDateAvailability() {
+    if (!isCurrentItemAeroplugLocation) return;
+
+    renderAeroplugCalendar();
+
+    const dateInput = document.getElementById('config-date-aeroplug');
+    const alertEpuise = document.getElementById('alert-aeroplug-epuisee');
+    const submitBtn = document.querySelector('button[onclick="addToCart()"]');
+
+    if (!dateInput || !submitBtn) return;
+
+    if (!dateInput.value) {
+        if (alertEpuise) alertEpuise.classList.add('hidden');
+        submitBtn.disabled = true;
+        submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
+        submitBtn.innerHTML = 'Sélectionnez une date <i class="fa-solid fa-calendar-day ml-2 text-xl"></i>';
+        return;
+    }
+
+    const slotTypeAero = inferSlotType(dateInput.value);
+    if (!slotTypeAero) {
+        if (alertEpuise) {
+            alertEpuise.classList.remove('hidden');
+            alertEpuise.classList.add('flex');
+            const spanEl = alertEpuise.querySelector('span');
+            if (spanEl) spanEl.textContent = `Merci de choisir un Lundi, Mercredi ou Vendredi (jour de début du créneau).`;
+        }
+        submitBtn.disabled = true;
+        submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
+        submitBtn.innerHTML = 'Jour invalide <i class="fa-solid fa-ban ml-2 text-xl"></i>';
+        return;
+    }
+
+    if (!aeroplugDatesLoaded) {
+        if (alertEpuise) alertEpuise.classList.add('hidden');
+        submitBtn.disabled = true;
+        submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
+        submitBtn.innerHTML = 'Vérification des disponibilités... <i class="fa-solid fa-spinner ml-2 text-xl"></i>';
+        return;
+    }
+
+    const dateSelectionneeAero = getSlotAnchor(dateInput.value, slotTypeAero);
+    const selectModeleAero = document.getElementById('config-modele-aeroplug');
+    const modeleValAero = selectModeleAero ? selectModeleAero.value : "";
+    const modeleKeyAero = modeleValAero.indexOf('Madone') !== -1 ? '6065' : '50';
+    const listeIndispoAero = (unavailableAeroplugDates && unavailableAeroplugDates[modeleKeyAero]) ? unavailableAeroplugDates[modeleKeyAero] : [];
+
+    if (dateSelectionneeAero && listeIndispoAero.includes(dateSelectionneeAero)) {
+        if (alertEpuise) { alertEpuise.classList.remove('hidden'); alertEpuise.classList.add('flex'); }
+        submitBtn.disabled = true;
+        submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
+        submitBtn.innerHTML = 'Date indisponible <i class="fa-solid fa-ban ml-2 text-xl"></i>';
+    } else {
+        if (alertEpuise) alertEpuise.classList.add('hidden');
+        submitBtn.disabled = false;
+        submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+        submitBtn.innerHTML = 'Ajouter au panier <i class="fa-solid fa-cart-plus ml-2 text-xl"></i>';
+    }
+}
+
+// =========================================================================
+// LOCATION VALISE EVOC : réservation par plage de dates libre (pas de créneau fixe), 1 seule
+// valise disponible. Tarif dégressif par palier selon le nombre de jours.
+// =========================================================================
+function getTarifEvoc(nbJours) {
+    if (nbJours <= 7) return 45;
+    if (nbJours <= 10) return 60;
+    if (nbJours <= 14) return 75;
+    return 75 + (nbJours - 14) * 5; // au-delà de 2 semaines : +5€/jour supplémentaire
+}
+
+async function fetchUnavailableEvocPeriods() {
+    evocPeriodsLoaded = false;
+    try {
+        const response = await fetch(`${API_URL}?action=getUnavailableEvocPeriods`);
+        unavailableEvocPeriods = await response.json();
+        evocPeriodsLoaded = true;
+        checkEvocDateAvailability();
+    } catch (error) {
+        console.error("Impossible de charger les périodes de location EVOC :", error);
+    }
+}
+
+function checkEvocDateAvailability() {
+    if (!isCurrentItemEvocLocation) return;
+
+    const startEl = document.getElementById('config-date-evoc-debut');
+    const endEl = document.getElementById('config-date-evoc-fin');
+    const alertEpuise = document.getElementById('alert-evoc-epuisee');
+    const submitBtn = document.querySelector('button[onclick="addToCart()"]');
+    const priceInfo = document.getElementById('evoc-price-info');
+    const cPriceEvoc = document.getElementById('calc-price');
+
+    if (!startEl || !endEl || !submitBtn) return;
+
+    if (!startEl.value || !endEl.value) {
+        if (alertEpuise) alertEpuise.classList.add('hidden');
+        submitBtn.disabled = true;
+        submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
+        submitBtn.innerHTML = 'Sélectionnez vos dates <i class="fa-solid fa-calendar-day ml-2 text-xl"></i>';
+        if (priceInfo) priceInfo.textContent = "";
+        return;
+    }
+
+    const startD = new Date(startEl.value);
+    const endD = new Date(endEl.value);
+
+    if (endD < startD) {
+        if (alertEpuise) {
+            alertEpuise.classList.remove('hidden');
+            alertEpuise.classList.add('flex');
+            const spanEl = alertEpuise.querySelector('span');
+            if (spanEl) spanEl.textContent = "La date de fin doit être après la date de début.";
+        }
+        submitBtn.disabled = true;
+        submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
+        submitBtn.innerHTML = 'Dates invalides <i class="fa-solid fa-ban ml-2 text-xl"></i>';
+        return;
+    }
+
+    const nbJours = Math.round((endD - startD) / (1000 * 60 * 60 * 24)) + 1; // inclusif
+    const tarif = getTarifEvoc(nbJours);
+    if (priceInfo) priceInfo.textContent = nbJours + " jour(s) — Tarif : " + tarif + "€";
+    if (cPriceEvoc) cPriceEvoc.textContent = tarif;
+
+    if (!evocPeriodsLoaded) {
+        if (alertEpuise) alertEpuise.classList.add('hidden');
+        submitBtn.disabled = true;
+        submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
+        submitBtn.innerHTML = 'Vérification des disponibilités... <i class="fa-solid fa-spinner ml-2 text-xl"></i>';
+        return;
+    }
+
+    const chevauchement = unavailableEvocPeriods.some(function (p) {
+        const pStart = new Date(p.start);
+        const pEnd = new Date(p.end);
+        return startD <= pEnd && pStart <= endD;
+    });
+
+    if (chevauchement) {
+        if (alertEpuise) { alertEpuise.classList.remove('hidden'); alertEpuise.classList.add('flex'); }
+        submitBtn.disabled = true;
+        submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
+        submitBtn.innerHTML = 'Période indisponible <i class="fa-solid fa-ban ml-2 text-xl"></i>';
+    } else {
+        if (alertEpuise) alertEpuise.classList.add('hidden');
+        submitBtn.disabled = false;
+        submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+        submitBtn.innerHTML = 'Ajouter au panier <i class="fa-solid fa-cart-plus ml-2 text-xl"></i>';
+    }
+}
+
 function setDeliveryZone(zone) {
     currentDeliveryZone = zone;
     const btnReunion = document.getElementById('zone-reunion');
@@ -2820,7 +3090,8 @@ function setDeliveryZone(zone) {
 		// Filtrage des accessoires commandés seuls (hors jantes) et des programmes d'essai
         let hadTestsOrAcc = false;
         cart = cart.filter(item => {
-            const isTest = item.title.toLowerCase().includes('test') || item.title.toLowerCase().includes('essai');
+            const titleLCFilter = item.title.toLowerCase();
+            const isTest = titleLCFilter.includes('test') || titleLCFilter.includes('essai') || titleLCFilter.includes('aeroplug') || titleLCFilter.includes('evoc');
             if (item.isAccessory || isTest) {
                 hadTestsOrAcc = true;
                 return false;
