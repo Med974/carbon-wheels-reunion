@@ -1426,7 +1426,7 @@ function openModal(index) {
             if(poidsMaxContainer) poidsMaxContainer.style.display = 'none';
 
             const cPriceEvoc = document.getElementById('calc-price');
-            if(cPriceEvoc) cPriceEvoc.textContent = 45;
+            if(cPriceEvoc) cPriceEvoc.textContent = 50;
             const cWeightEvoc = document.getElementById('calc-weight');
             if(cWeightEvoc) cWeightEvoc.textContent = '--';
             updateBadgeUI(false, "Disponible à la location");
@@ -2924,10 +2924,10 @@ function checkAeroplugDateAvailability() {
 // valise disponible. Tarif dégressif par palier selon le nombre de jours.
 // =========================================================================
 function getTarifEvoc(nbJours) {
-    if (nbJours <= 7) return 45;
-    if (nbJours <= 10) return 60;
+    if (nbJours <= 7) return 50;
     if (nbJours <= 14) return 75;
-    return 75 + (nbJours - 14) * 5; // au-delà de 2 semaines : +5€/jour supplémentaire
+    if (nbJours <= 21) return 100;
+    return 100 + Math.ceil((nbJours - 21) / 7) * 25; // au-delà de 3 semaines : +25€ par semaine entamée
 }
 
 async function fetchUnavailableEvocPeriods() {
