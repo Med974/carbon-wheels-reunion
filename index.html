@@ -1400,6 +1400,38 @@
                             </ul>
                         </div>
                     </div>
+                    <div id="yoeleo-config-container" class="mb-3 hidden bg-gray-50 p-4 rounded-xl border border-gray-200">
+                        <div class="mb-3 bg-brand-main text-white p-3 rounded-xl text-xs">
+                            <strong class="block mb-1 text-brand-accent uppercase tracking-wider"><i class="fa-solid fa-cogs mr-1"></i> Uniquement en location :</strong>
+                            <p class="leading-relaxed text-gray-300">Ces roues Yoeleo 88 ne sont pas à la vente, uniquement disponibles à la location. Corps de roue libre : <strong class="text-white">Shimano HG</strong>.</p>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="block text-xs font-bold text-gray-600 mb-1">
+                                <i class="fa-solid fa-calendar-days text-brand-accent mr-1"></i> Choisis ta date de début (Lundi, Mercredi ou Vendredi)
+                            </label>
+                            <input type="date" id="config-date-yoeleo" class="hidden" onchange="checkYoeleoDateAvailability(); updateConfig();">
+                            <div id="calendar-yoeleo" class="bg-white border border-gray-200 rounded-lg p-2 shadow-sm"></div>
+                            <p class="text-[10px] text-gray-500 mt-1 italic leading-tight">Créneaux de 2 jours/2 nuits (Lun→Mer, Mer→Ven ou Ven→Dim). Remise en fin d'après-midi (~18h) le jour de début, retour avant 18h le dernier jour.</p>
+                        </div>
+
+                        <!-- Alerte de stock épuisé -->
+                        <div id="alert-yoeleo-epuisee" class="hidden items-start gap-3 bg-red-50 border border-red-200 text-red-800 p-3 rounded-xl mb-3 shadow-sm">
+                            <i class="fa-solid fa-triangle-exclamation text-red-600 text-lg mt-0.5 animate-pulse"></i>
+                            <div>
+                                <strong class="text-xs block">Créneau indisponible !</strong>
+                                <span class="text-[10px] leading-tight block">Notre paire Yoeleo 88 est déjà réservée pour ce créneau. Veuillez choisir une autre date.</span>
+                            </div>
+                        </div>
+
+                        <div class="bg-green-50 border border-green-200 rounded-xl p-3 text-[11px] text-green-800">
+                            <strong class="block mb-1 uppercase tracking-wider text-green-900"><i class="fa-solid fa-circle-info mr-1"></i> Conditions :</strong>
+                            <ul class="space-y-1 list-disc list-inside">
+                                <li>Chèque de caution (non encaissé) au retrait et pièce d'identité valide.</li>
+                                <li>Signature du contrat de location simplifié à l'atelier.</li>
+                            </ul>
+                        </div>
+                    </div>
                     <div id="textile-config-container" class="mb-3 hidden bg-gray-50 p-4 rounded-xl border border-gray-200">
                         <div class="mb-4 bg-brand-main text-white p-3 rounded-xl text-xs shadow-sm">
                             <strong class="block mb-1 text-brand-accent uppercase tracking-wider"><i class="fa-solid fa-star mr-1"></i> Édition Limitée - Précommande</strong>

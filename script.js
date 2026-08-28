@@ -22,6 +22,9 @@ let aeroplugDatesLoaded = false;
 let isCurrentItemEvocLocation = false;
 let unavailableEvocPeriods = []; // [{start:"YYYY-MM-DD", end:"YYYY-MM-DD"}, ...]
 let evocPeriodsLoaded = false;
+let isCurrentItemYoeleoLocation = false;
+let unavailableYoeleoDates = []; // 1 seule paire disponible : liste plate d'ancres indisponibles
+let yoeleoDatesLoaded = false;
 
 let cart = [];
 let appliedPromo = null;
@@ -164,6 +167,15 @@ function addToCart() {
                 configText = `Location du : ${startValEvoc || "Date non précisée"} au ${endValEvoc || "Date non précisée"} (${nbJoursEvoc} jours)`;
                 finalPrice = tarifEvoc;
                 finalWeight = "--";
+            } else if (isCurrentItemYoeleoLocation) {
+                const dateElYoeleo = document.getElementById('config-date-yoeleo');
+                const slotTypeYoeleo = dateElYoeleo && dateElYoeleo.value ? inferSlotType(dateElYoeleo.value) : null;
+                const dateLocYoeleo = slotTypeYoeleo ? getSlotAnchor(dateElYoeleo.value, slotTypeYoeleo) : "Date non précisée";
+                const slotLabelYoeleo = slotTypeYoeleo && SLOT_DEFS[slotTypeYoeleo] ? SLOT_DEFS[slotTypeYoeleo].label : "Vendredi → Dimanche";
+
+                configText = `Créneau du : ${dateLocYoeleo} (${slotLabelYoeleo}) | Corps : Shimano HG`;
+                finalPrice = currentBasePrice > 0 ? currentBasePrice : 50;
+                finalWeight = currentBaseWeight > 0 ? currentBaseWeight : "--";
 			} else if (isCurrentItemTextile) {
                 const typeSelect = document.getElementById('config-textile-type');
                 const type = typeSelect ? typeSelect.value : "";
@@ -1256,8 +1268,9 @@ function openModal(index) {
         isCurrentItemStockReady = nomLC.includes('prêt-à-rouler') || nomLC.includes('pret-a-rouler') || nomLC.includes('prêt à rouler') || nomLC.includes('pret a rouler');
         isCurrentItemAeroplugLocation = nomLC.includes('aeroplug');
         isCurrentItemEvocLocation = nomLC.includes('evoc');
+        isCurrentItemYoeleoLocation = nomLC.includes('yoeleo');
         const isMtbWheel = nomLC.includes('apex') || nomLC.includes('vtt') || nomLC.includes('mtb');
-        isCurrentItemWheelConfigurable = !isCurrentItemAccessory && !isCurrentItemTestProgram && !isCurrentItemAeroplugLocation && !isCurrentItemEvocLocation && !nomLC.includes('bâton') && !nomLC.includes('tri-spoke') && !nomLC.includes('lenticulaire') && !nomLC.includes('disc') && !nomLC.includes('manivelle') && !isMtbWheel;
+        isCurrentItemWheelConfigurable = !isCurrentItemAccessory && !isCurrentItemTestProgram && !isCurrentItemAeroplugLocation && !isCurrentItemEvocLocation && !isCurrentItemYoeleoLocation && !nomLC.includes('bâton') && !nomLC.includes('tri-spoke') && !nomLC.includes('lenticulaire') && !nomLC.includes('disc') && !nomLC.includes('manivelle') && !isMtbWheel;
 
         const isSpecialWheel = nomLC.includes('bâton') || nomLC.includes('tri-spoke') || nomLC.includes('lenticulaire') || nomLC.includes('disc');
         
@@ -1346,6 +1359,8 @@ function openModal(index) {
 		if (aeroplugConfigContainer) aeroplugConfigContainer.style.display = 'none';
 		const evocConfigContainer = document.getElementById('evoc-config-container');
 		if (evocConfigContainer) evocConfigContainer.style.display = 'none';
+		const yoeleoConfigContainer = document.getElementById('yoeleo-config-container');
+		if (yoeleoConfigContainer) yoeleoConfigContainer.style.display = 'none';
 		// FORCER LE MASQUAGE DES MENUS SPÉCIAUX POUR TOUS LES AUTRES PRODUITS
 		const blocRatchetSpecial = document.getElementById('bloc-ratchet-special');
 		if (blocRatchetSpecial) blocRatchetSpecial.style.display = 'none';
@@ -1439,6 +1454,26 @@ function openModal(index) {
             const evocPriceInfo = document.getElementById('evoc-price-info');
             if(evocPriceInfo) evocPriceInfo.textContent = "";
             fetchUnavailableEvocPeriods();
+        } else if (isCurrentItemYoeleoLocation) {
+            if(specJantesBox) specJantesBox.style.display = 'none';
+            if(configuratorSection) configuratorSection.style.display = 'block';
+            if(wheelConfigOptions) wheelConfigOptions.style.display = 'none';
+            if(manivellesConfigContainer) manivellesConfigContainer.style.display = 'none';
+            if(accessoryConfigContainer) accessoryConfigContainer.style.display = 'none';
+            if(specialWheelConfigContainer) specialWheelConfigContainer.style.display = 'none';
+            if(testConfigContainer) testConfigContainer.style.display = 'none';
+            if(yoeleoConfigContainer) yoeleoConfigContainer.style.display = 'block';
+            if(poidsMaxContainer) poidsMaxContainer.style.display = 'none';
+
+            const cPriceYoeleo = document.getElementById('calc-price');
+            if(cPriceYoeleo) cPriceYoeleo.textContent = currentBasePrice > 0 ? currentBasePrice : '--';
+            const cWeightYoeleo = document.getElementById('calc-weight');
+            if(cWeightYoeleo) cWeightYoeleo.textContent = currentBaseWeight > 0 ? currentBaseWeight : '--';
+            updateBadgeUI(false, "Disponible à la location");
+
+            const dateInputYoeleo = document.getElementById('config-date-yoeleo');
+            if(dateInputYoeleo) dateInputYoeleo.value = "";
+            fetchUnavailableYoeleoDates();
         } else if (isCurrentItemTextile) {
             if(specJantesBox) specJantesBox.style.display = 'none';
             if(configuratorSection) configuratorSection.style.display = 'block';
@@ -1775,7 +1810,7 @@ function openModal(index) {
         }
 
 		const submitBtn = document.querySelector('button[onclick="addToCart()"]');
-        if ((isCurrentItemAccessory || isCurrentItemTestProgram || isCurrentItemAeroplugLocation || isCurrentItemEvocLocation) && currentDeliveryZone === 'metropole') {
+        if ((isCurrentItemAccessory || isCurrentItemTestProgram || isCurrentItemAeroplugLocation || isCurrentItemEvocLocation || isCurrentItemYoeleoLocation) && currentDeliveryZone === 'metropole') {
             if (submitBtn) {
                 submitBtn.disabled = true;
                 submitBtn.className = "w-full bg-gray-300 text-gray-500 font-bold py-3 rounded-xl flex justify-center items-center gap-3 cursor-not-allowed shrink-0";
@@ -3011,6 +3046,90 @@ function checkEvocDateAvailability() {
     }
 }
 
+// =========================================================================
+// LOCATION ROUES YOELEO 88 : uniquement en location (pas d'achat), 1 seule paire disponible.
+// Même mécanique de créneaux/calendrier que les autres locations, tarif fixe = celui du Sheet
+// (currentBasePrice), corps de roue libre fixe en Shimano HG.
+// =========================================================================
+async function fetchUnavailableYoeleoDates() {
+    yoeleoDatesLoaded = false;
+    renderYoeleoCalendar();
+    try {
+        const response = await fetch(`${API_URL}?action=getUnavailableYoeleoDates`);
+        unavailableYoeleoDates = await response.json();
+        yoeleoDatesLoaded = true;
+        checkYoeleoDateAvailability();
+    } catch (error) {
+        console.error("Impossible de charger le calendrier Yoeleo 88 :", error);
+    }
+}
+
+function renderYoeleoCalendar() {
+    renderMiniCalendar({
+        containerId: 'calendar-yoeleo',
+        dateInputId: 'config-date-yoeleo',
+        isLoaded: function () { return yoeleoDatesLoaded; },
+        getUnavailableList: function () { return unavailableYoeleoDates; },
+        onSelect: function () { checkYoeleoDateAvailability(); updateConfig(); }
+    });
+}
+
+function checkYoeleoDateAvailability() {
+    if (!isCurrentItemYoeleoLocation) return;
+
+    renderYoeleoCalendar();
+
+    const dateInput = document.getElementById('config-date-yoeleo');
+    const alertEpuise = document.getElementById('alert-yoeleo-epuisee');
+    const submitBtn = document.querySelector('button[onclick="addToCart()"]');
+
+    if (!dateInput || !submitBtn) return;
+
+    if (!dateInput.value) {
+        if (alertEpuise) alertEpuise.classList.add('hidden');
+        submitBtn.disabled = true;
+        submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
+        submitBtn.innerHTML = 'Sélectionnez une date <i class="fa-solid fa-calendar-day ml-2 text-xl"></i>';
+        return;
+    }
+
+    const slotTypeYoeleo = inferSlotType(dateInput.value);
+    if (!slotTypeYoeleo) {
+        if (alertEpuise) {
+            alertEpuise.classList.remove('hidden');
+            alertEpuise.classList.add('flex');
+            const spanEl = alertEpuise.querySelector('span');
+            if (spanEl) spanEl.textContent = `Merci de choisir un Lundi, Mercredi ou Vendredi (jour de début du créneau).`;
+        }
+        submitBtn.disabled = true;
+        submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
+        submitBtn.innerHTML = 'Jour invalide <i class="fa-solid fa-ban ml-2 text-xl"></i>';
+        return;
+    }
+
+    if (!yoeleoDatesLoaded) {
+        if (alertEpuise) alertEpuise.classList.add('hidden');
+        submitBtn.disabled = true;
+        submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
+        submitBtn.innerHTML = 'Vérification des disponibilités... <i class="fa-solid fa-spinner ml-2 text-xl"></i>';
+        return;
+    }
+
+    const dateSelectionneeYoeleo = getSlotAnchor(dateInput.value, slotTypeYoeleo);
+
+    if (dateSelectionneeYoeleo && unavailableYoeleoDates.includes(dateSelectionneeYoeleo)) {
+        if (alertEpuise) { alertEpuise.classList.remove('hidden'); alertEpuise.classList.add('flex'); }
+        submitBtn.disabled = true;
+        submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
+        submitBtn.innerHTML = 'Date indisponible <i class="fa-solid fa-ban ml-2 text-xl"></i>';
+    } else {
+        if (alertEpuise) alertEpuise.classList.add('hidden');
+        submitBtn.disabled = false;
+        submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+        submitBtn.innerHTML = 'Ajouter au panier <i class="fa-solid fa-cart-plus ml-2 text-xl"></i>';
+    }
+}
+
 function setDeliveryZone(zone) {
     currentDeliveryZone = zone;
     const btnReunion = document.getElementById('zone-reunion');
@@ -3091,7 +3210,7 @@ function setDeliveryZone(zone) {
         let hadTestsOrAcc = false;
         cart = cart.filter(item => {
             const titleLCFilter = item.title.toLowerCase();
-            const isTest = titleLCFilter.includes('test') || titleLCFilter.includes('essai') || titleLCFilter.includes('aeroplug') || titleLCFilter.includes('evoc');
+            const isTest = titleLCFilter.includes('test') || titleLCFilter.includes('essai') || titleLCFilter.includes('aeroplug') || titleLCFilter.includes('evoc') || titleLCFilter.includes('yoeleo');
             if (item.isAccessory || isTest) {
                 hadTestsOrAcc = true;
                 return false;
