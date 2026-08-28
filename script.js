@@ -1063,11 +1063,12 @@ function renderGrid(filterCategory) {
         const isFixedPriceWheel = nomLC.includes('bâton') || nomLC.includes('tri-spoke') || nomLC.includes('lenticulaire') || nomLC.includes('disc');
         const isAccessory = cat.toLowerCase().includes('accessoire') || cat.toLowerCase().includes('composant');
         const isTestProgram = nomLC.includes('essai') || nomLC.includes('test');
+        const isFixedPriceLocation = nomLC.includes('yoeleo') || nomLC.includes('aeroplug');
 
         let imageUrl = item.Image ? item.Image.split(',')[0].trim() : 'https://images.unsplash.com/photo-1511994298241-608e28f14fde?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80';
         let prixAffiche = 'Sur devis';
         if (item.Prix) {
-            prixAffiche = (isAccessory || isFixedPriceWheel || isTestProgram) ? `${item.Prix} €` : `Dès ${item.Prix} €`;
+            prixAffiche = (isAccessory || isFixedPriceWheel || isTestProgram || isFixedPriceLocation) ? `${item.Prix} €` : `Dès ${item.Prix} €`;
         }
         
         let statutBadge = '';
