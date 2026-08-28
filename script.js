@@ -1107,7 +1107,7 @@ function renderGrid(filterCategory) {
         let labelPrix = 'Prix (la paire)';
         if (nomLC.includes('lockring')) {
             labelPrix = 'Prix (la paire)';
-        } else if (isTestProgram) {
+        } else if (isTestProgram || nomLC.includes('evoc') || nomLC.includes('aeroplug')) {
             labelPrix = 'Prix';
         } else if (cat.toLowerCase().includes('textile') || nomLC.includes('tenue') || nomLC.includes('combinaison') || isAccessory || isFixedPriceWheel) {
             labelPrix = 'Prix unitaire';
