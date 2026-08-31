@@ -343,10 +343,13 @@ function addToCart() {
 	                    stickerText = ` | Sticker : ${stickerEl.value}`;
 	                }
 	                
+	                const montageSpecialEl = document.getElementById('config-montage-special');
+	                const montageSpecialText = montageSpecialEl ? ` | Montage : ${montageSpecialEl.value}` : "";
+
 	                if (titleLC.includes('bâton') || titleLC.includes('tri-spoke')) {
-	                    configText = `${gamme} | ${frein}`;
+	                    configText = `${gamme} | ${frein}${montageSpecialText}`;
 	                } else {
-	                    configText = `${gamme}${ratchetText}${largeurText}${stickerText} | ${frein} | Roue Libre : ${rl}`;
+	                    configText = `${gamme}${ratchetText}${largeurText}${stickerText} | ${frein} | Roue Libre : ${rl}${montageSpecialText}`;
 	                }
                 }
 			} else {
@@ -2194,8 +2197,11 @@ function updateConfig() {
         } else {
             gammePrice = gammeSelect && gammeSelect.selectedIndex >= 0 ? (parseInt(gammeSelect.options[gammeSelect.selectedIndex].getAttribute('data-price')) || 0) : 0;
             gammeWeightDiff = gammeSelect && gammeSelect.selectedIndex >= 0 ? (parseInt(gammeSelect.options[gammeSelect.selectedIndex].getAttribute('data-weight-diff')) || 0) : 0;
-            
-            finalPrice = currentBasePrice + gammePrice;
+
+            const selectMontageSpecial = document.getElementById('config-montage-special');
+            const montageSpecialPrice = selectMontageSpecial && selectMontageSpecial.selectedIndex >= 0 ? (parseInt(selectMontageSpecial.options[selectMontageSpecial.selectedIndex].getAttribute('data-price')) || 0) : 0;
+
+            finalPrice = currentBasePrice + gammePrice + montageSpecialPrice;
             finalWeight = currentBaseWeight + gammeWeightDiff;
         }
 
@@ -2631,6 +2637,7 @@ function setLenticulaireMode(mode) {
     const selectFreinage = document.getElementById('config-freinage-special');
 	const selectLargeur = document.getElementById('config-largeur-special');
     const selectSticker = document.getElementById('config-sticker-lenticulaire');
+    const blocMontageSpecial = document.getElementById('bloc-montage-special');
     
     // Configurer le calendrier de location
     const dateInput = document.getElementById('config-date-location');
@@ -2645,7 +2652,10 @@ function setLenticulaireMode(mode) {
         
         // Afficher l'encart complet de location (date + conditions)
         if (blocLocationDetails) blocLocationDetails.style.display = 'block';
-        
+
+        // Le montage à l'atelier a déjà sa propre option dans l'encart de location (config-montage-location)
+        if (blocMontageSpecial) blocMontageSpecial.style.display = 'none';
+
         // Verrouiller la gamme sur la version de ta flotte de location (Série STD)
         if (blocGamme) {
             blocGamme.value = "Série XL";
@@ -2685,6 +2695,7 @@ function setLenticulaireMode(mode) {
         if (selectSticker) selectSticker.disabled = false;
 		const selectMontage = document.getElementById('config-montage-location');
         if (selectMontage) selectMontage.value = "Sans Montage";
+        if (blocMontageSpecial) blocMontageSpecial.style.display = 'block';
         
         // Masquer l'alerte d'indisponibilité si elle était affichée
         const alertEpuise = document.getElementById('alert-location-epuisee');

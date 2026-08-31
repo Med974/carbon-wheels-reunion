@@ -1207,6 +1207,16 @@
                                 <option value="72T" data-price="49">72T (Haute réactivité) [+49€]</option>
                             </select>
                         </div>
+                        <div id="bloc-montage-special" class="mb-3">
+                            <label class="block text-xs font-bold text-gray-600 mb-1">
+                                <i class="fa-solid fa-screwdriver-wrench text-brand-accent mr-1"></i> Option de montage à l'atelier
+                            </label>
+                            <select id="config-montage-special" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm font-semibold shadow-sm" onchange="updateConfig()">
+                                <option value="Sans Montage" data-price="0" selected>Je monte mes propres disques et cassette (+0€)</option>
+                                <option value="Avec Montage (+30€)" data-price="30">Montage professionnel de mes disques et cassette à l'atelier (+30€)</option>
+                            </select>
+                        </div>
+
                         <!-- Encart spécifique à la location (Calendrier + Montage + Conditions + Alerte de stock) -->
                         <div id="bloc-location-details" class="mb-3" style="display: none;">
                             
