@@ -469,6 +469,9 @@ function updateCartUI() {
         } else if (paymentMethod === 'especes') {
             checkoutBtn.className = "w-full bg-green-600 hover:bg-green-700 transition-colors text-white font-bold py-4 rounded-xl shadow-md";
             checkoutBtn.innerHTML = 'Valider (Paiement en Espèces) <i class="fa-solid fa-hand-holding-dollar ml-2 text-xl"></i>';
+        } else if (paymentMethod === 'wero') {
+            checkoutBtn.className = "w-full bg-purple-600 hover:bg-purple-700 transition-colors text-white font-bold py-4 rounded-xl shadow-md";
+            checkoutBtn.innerHTML = 'Valider (Paiement Wero) <i class="fa-solid fa-mobile-screen-button ml-2 text-xl"></i>';
         } else if (paymentMethod === 'card1x') {
             checkoutBtn.className = "w-full bg-[#635BFF] hover:bg-[#524be0] transition-colors text-white font-bold py-4 rounded-xl shadow-md";
             checkoutBtn.innerHTML = 'Valider (Paiement Stripe) <i class="fa-solid fa-lock ml-2 text-xl"></i>';
@@ -648,6 +651,17 @@ function updateCartUI() {
     const radioCB = document.querySelector('input[value="card1x"]')?.parentElement;
     const radio3x = document.querySelector('input[value="3x_pei"]')?.parentElement;
     const radio5050 = document.getElementById('option-pay-5050');
+    const optionWero = document.getElementById('option-pay-wero');
+
+    // Wero : uniquement proposé pour les paiements de moins de 500€ (virement instantané via
+    // mon numéro de téléphone perso, pas adapté aux gros montants).
+    if (optionWero) {
+        if (finalTotal > 0 && finalTotal < 500) {
+            optionWero.classList.remove('hidden');
+        } else {
+            optionWero.classList.add('hidden');
+        }
+    }
     
     const acompteMsg = document.getElementById('textile-acompte-msg');
     const acompteTotal = document.getElementById('cart-acompte-total');
@@ -697,6 +711,7 @@ function updateCartUI() {
         let needsReset = false;
         if (currentChecked.value === '3x_pei' && (!isEligibleFor3X || currentDeliveryZone !== 'reunion')) needsReset = true;
         if (currentChecked.value === '5050_metropole' && (!isEligibleFor3X || currentDeliveryZone !== 'metropole')) needsReset = true;
+        if (currentChecked.value === 'wero' && !(finalTotal > 0 && finalTotal < 500)) needsReset = true;
 
         if (needsReset) {
             const virementRadio = document.querySelector('input[value="virement"]');
@@ -789,6 +804,9 @@ function submitOrder() {
     } else if (paymentMethodVal === 'especes') {
                 transactionFees = 0;
                 paymentMethodName = "Espèces (À la commande)";
+    } else if (paymentMethodVal === 'wero') {
+        transactionFees = 0;
+        paymentMethodName = "Wero";
     } else if (paymentMethodVal === '3x_pei') {
         transactionFees = 0;
         paymentMethodName = "Paiement en 3X Karbòn Péi (Sans frais)";
@@ -856,6 +874,8 @@ function submitOrder() {
                 successPayText.textContent = "le RIB pour finaliser la réservation";
             } else if(paymentMethodVal === 'especes') {
                 successPayText.textContent = "un message pour se voir afin de procéder au paiement en espèces";
+            } else if(paymentMethodVal === 'wero') {
+                successPayText.textContent = "mon numéro de téléphone pour effectuer le virement Wero";
             } else if(paymentMethodVal === 'card1x') {
                 successPayText.textContent = "le lien Stripe sécurisé pour le paiement par carte";
             } else if(paymentMethodVal === '3x_pei') {

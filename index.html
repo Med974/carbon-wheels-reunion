@@ -1882,6 +1882,14 @@
                                 </div>
                                 <i class="fa-solid fa-money-bill-wave text-2xl text-green-600"></i>
                             </label>
+                            <label id="option-pay-wero" class="flex items-start gap-3 cursor-pointer p-3 border border-gray-200 rounded-md bg-white hover:bg-gray-50 transition hidden">
+                                <input type="radio" name="payment-method" value="wero" class="mt-1 text-brand-main focus:ring-brand-main" onchange="updateCartUI()">
+                                <div class="flex-grow">
+                                    <span class="block text-sm font-bold text-gray-900">Wero</span>
+                                    <span class="block text-xs text-gray-500 font-medium">Virement instantané gratuit, directement vers mon numéro de téléphone.</span>
+                                </div>
+                                <i class="fa-solid fa-mobile-screen-button text-2xl text-purple-600"></i>
+                            </label>
                             <label class="flex items-start gap-3 cursor-pointer p-3 border border-gray-200 rounded-md bg-white hover:bg-gray-50 transition">
                                 <input type="radio" name="payment-method" value="card1x" class="mt-1 text-brand-main focus:ring-brand-main" onchange="updateCartUI()">
                                 <div class="flex-grow">
