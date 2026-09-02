@@ -1775,15 +1775,15 @@ function openModal(index) {
                 gammeSelect.innerHTML = '';
                 if (nomLC.includes('lenticulaire') || nomLC.includes('disc')) {
                     gammeSelect.innerHTML = `
-                        <option value="Série STD" data-price="0" data-weight-diff="0">Série STD (Moyeu 36T) - 1150g [+0€]</option>
-                        <option value="Série XL" data-price="100" data-weight-diff="-120">Série XL (Moyeu 36T) - 1030g [+100€]</option>
-                        <option value="Série UXL" data-price="200" data-weight-diff="-230">Série UXL (Moyeu 54T) - 920g [+200€]</option>
-                        <option value="Série RUXL" data-price="300" data-weight-diff="-250">Série RUXL (Moyeu SSF) - 900g [+300€]</option>
+                        <option value="Série STD" data-price="0" data-weight-diff="250">Série STD (Moyeu 36T) - 1150g [+0€]</option>
+                        <option value="Série XL" data-price="100" data-weight-diff="130">Série XL (Moyeu 36T) - 1030g [+100€]</option>
+                        <option value="Série UXL" data-price="200" data-weight-diff="20">Série UXL (Moyeu 54T) - 920g [+200€]</option>
+                        <option value="Série RUXL" data-price="300" data-weight-diff="0">Série RUXL (Moyeu SSF) - 900g [+300€]</option>
                     `;
                 } else if (nomLC.includes('bâton') || nomLC.includes('tri-spoke')) {
                     gammeSelect.innerHTML = `
-                        <option value="Série STD" data-price="0" data-weight-diff="0">Série STD - 880g [+0€]</option>
-                        <option value="Série XL" data-price="100" data-weight-diff="-80">Série XL (Ultra-Léger) - 800g [+100€]</option>
+                        <option value="Série STD" data-price="0" data-weight-diff="80">Série STD - 880g [+0€]</option>
+                        <option value="Série XL" data-price="100" data-weight-diff="0">Série XL (Ultra-Léger) - 800g [+100€]</option>
                     `;
                 }
             }
