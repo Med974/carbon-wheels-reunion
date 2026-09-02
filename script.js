@@ -224,7 +224,28 @@ function addToCart() {
                 }
                 
                 configText = `${modele} | Longueur : ${longueur} | Finition : ${finition} | ${logo} | Plateaux : ${plateaux}${dentureText}`;
-                
+
+            } else if (titleLC.includes('pédalier')) {
+                const modeleEl = document.getElementById('config-modele-manivelle');
+                const modele = modeleEl ? modeleEl.options[modeleEl.selectedIndex].text : "";
+                const longueurEl = document.getElementById('config-longueur-manivelle');
+                const longueur = longueurEl ? longueurEl.value : "";
+                const finitionEl = document.getElementById('config-finition-manivelle');
+                const finition = finitionEl ? finitionEl.value : "";
+                const logoEl = document.getElementById('config-logo-manivelle');
+                const logo = logoEl ? logoEl.value : "";
+
+                const dentureEl = document.getElementById('config-denture-plateaux-seuls');
+                const denture = dentureEl ? dentureEl.value : "";
+                const vitesseEl = document.getElementById('config-vitesse-plateaux-seuls');
+                const vitesse = vitesseEl ? vitesseEl.value : "";
+                const lookEl = document.getElementById('config-look-plateaux-seuls');
+                const look = lookEl ? lookEl.value : "";
+                const visserieEl = document.getElementById('config-visserie-plateaux-seuls');
+                const visserie = (visserieEl && visserieEl.selectedIndex > 0) ? ` | ${visserieEl.options[visserieEl.selectedIndex].text.split(' [+')[0]}` : "";
+
+                configText = `${modele} | Longueur : ${longueur} | Finition : ${finition} | ${logo} | Capteur XCADEY + Plateaux inclus | Denture : ${denture} | Vitesses : ${vitesse} | Design : ${look}${visserie}`;
+
             } else if (isCurrentItemAccessory || titleLC.includes('plateaux pass quest') || titleLC.includes('pack étoile') || titleLC.includes('pack pro')) {
                 const qteEl = document.getElementById('config-quantite');
                 const qte = qteEl ? parseInt(qteEl.value) : 1;
@@ -1552,6 +1573,43 @@ function openModal(index) {
             if(qteEl) qteEl.value = '1';
 
             updateConfig();
+        } else if (nomLC.includes('pédalier')) {
+            // Pack Pédalier Complet = Manivelles + Capteur XCADEY + Plateaux, tout configurable
+            // d'un coup : on affiche à la fois le configurateur manivelles (modèle/longueur/finition/
+            // logo) ET le configurateur plateaux/capteur complet (denture/vitesses/design/visserie),
+            // en cachant le choix "Étoile, Plateaux & Capteur" de la config manivelles seule (ici le
+            // pack est toujours inclus, ce n'est plus une option à choisir).
+            if(specJantesBox) specJantesBox.style.display = 'none';
+            if(configuratorSection) configuratorSection.style.display = 'block';
+            if(wheelConfigOptions) wheelConfigOptions.style.display = 'none';
+            if(manivellesConfigContainer) manivellesConfigContainer.style.display = 'block';
+            if(accessoryConfigContainer) accessoryConfigContainer.style.display = 'block';
+            if(specialWheelConfigContainer) specialWheelConfigContainer.style.display = 'none';
+            if(testConfigContainer) testConfigContainer.style.display = 'none';
+            if(poidsMaxContainer) poidsMaxContainer.style.display = 'none';
+
+            const blocPlateauxManivelleChoix = document.getElementById('bloc-plateaux-manivelle-choix');
+            if(blocPlateauxManivelleChoix) blocPlateauxManivelleChoix.style.display = 'none';
+
+            const plateauxSeulsContPed = document.getElementById('config-plateaux-seuls-container');
+            if(plateauxSeulsContPed) { plateauxSeulsContPed.style.display = 'block'; plateauxSeulsContPed.classList.remove('hidden'); }
+            const tailleContainerPed = document.getElementById('config-taille-pneu-container');
+            if(tailleContainerPed) { tailleContainerPed.style.display = 'none'; tailleContainerPed.classList.add('hidden'); }
+            const galferContainerPed = document.getElementById('galfer-config-container');
+            if(galferContainerPed) galferContainerPed.style.display = 'none';
+            const minipompeContainerPed = document.getElementById('minipompe-config-container');
+            if(minipompeContainerPed) minipompeContainerPed.style.display = 'none';
+            const blocQuantitePed = document.getElementById('bloc-quantite-accessoire');
+            if(blocQuantitePed) blocQuantitePed.style.display = 'none';
+            const qteElPed = document.getElementById('config-quantite');
+            if(qteElPed) qteElPed.value = '1';
+
+            const cPricePed = document.getElementById('calc-price');
+            if(cPricePed) cPricePed.textContent = currentBasePrice > 0 ? currentBasePrice : '--';
+            const cWeightPed = document.getElementById('calc-weight');
+            if(cWeightPed) cWeightPed.textContent = currentBaseWeight > 0 ? currentBaseWeight : '--';
+            updateBadgeUI(true);
+            updateConfig();
 		} else if (isCurrentItemAccessory) {
             if(specJantesBox) specJantesBox.style.display = 'none';
             if(configuratorSection) configuratorSection.style.display = 'block';
@@ -2065,12 +2123,12 @@ function updateConfig() {
 	// ==========================================
 	// --- SUITE : LOGIQUE POUR LES ACCESSOIRES ET PLATEAUX SEULS ---
 	// ==========================================
-    if (isCurrentItemAccessory || titleLC.includes('plateaux pass quest') || titleLC.includes('pack étoile') || titleLC.includes('pack pro')) {
+    if (isCurrentItemAccessory || titleLC.includes('plateaux pass quest') || titleLC.includes('pack étoile') || titleLC.includes('pack pro') || titleLC.includes('pédalier')) {
         const qteEl = document.getElementById('config-quantite');
         const qte = qteEl ? parseInt(qteEl.value) : 1;
-        
+
         let unitPrice = currentBasePrice;
-        if (titleLC.includes('plateaux pass quest') || titleLC.includes('pack étoile') || titleLC.includes('pack pro')) {
+        if (titleLC.includes('plateaux pass quest') || titleLC.includes('pack étoile') || titleLC.includes('pack pro') || titleLC.includes('pédalier')) {
             const visserieEl = document.getElementById('config-visserie-plateaux-seuls');
             if (visserieEl && visserieEl.selectedIndex > 0) {
                 unitPrice += parseInt(visserieEl.options[visserieEl.selectedIndex].getAttribute('data-price')) || 0;
@@ -2163,13 +2221,34 @@ function updateConfig() {
                 if (techMaterial) techMaterial.textContent = selectedOption.getAttribute('data-material') || "";
             }
         }
+
+        // --- GESTION DYNAMIQUE DU PACK PÉDALIER COMPLET (Manivelles + Capteur XCADEY + Plateaux inclus) ---
+        // Prix : déjà correct via unitPrice (base + visserie titane éventuelle) calculé plus haut.
+        // Poids : le poids du pack Capteur+Plateaux (301g, identique à l'option groupée de "DFS
+        // Manivelles") s'ajoute au poids du modèle de manivelle choisi (variable selon CT1/CA1).
+        if (titleLC.includes('pédalier')) {
+            const modeleSelectPed = document.getElementById('config-modele-manivelle');
+            const PLATEAUX_PACK_WEIGHT = 301;
+            if (modeleSelectPed && modeleSelectPed.selectedIndex >= 0) {
+                const selectedOptionPed = modeleSelectPed.options[modeleSelectPed.selectedIndex];
+                const baseManivelleWeightPed = parseInt(selectedOptionPed.getAttribute('data-crank-weight')) || 290;
+                finalWeight = (baseManivelleWeightPed + PLATEAUX_PACK_WEIGHT) * qte;
+
+                const techAxisPed = document.getElementById('tech-axis');
+                const techQfactorPed = document.getElementById('tech-qfactor');
+                const techMaterialPed = document.getElementById('tech-material');
+                if (techAxisPed) techAxisPed.textContent = selectedOptionPed.getAttribute('data-axis') || "";
+                if (techQfactorPed) techQfactorPed.textContent = selectedOptionPed.getAttribute('data-qfactor') || "";
+                if (techMaterialPed) techMaterialPed.textContent = selectedOptionPed.getAttribute('data-material') || "";
+            }
+        }
         // --------------------------------------------------
         
         const cPrice = document.getElementById('calc-price');
         if(cPrice) cPrice.textContent = finalPrice > 0 ? finalPrice : '--';
         
         if(cWeightSpan) {
-            if (currentBaseWeight > 0 || titleLC.includes('manivelle') || titleLC.includes('axe') || titleLC.includes('disque') || titleLC.includes('galfer')) {
+            if (currentBaseWeight > 0 || titleLC.includes('manivelle') || titleLC.includes('pédalier') || titleLC.includes('axe') || titleLC.includes('disque') || titleLC.includes('galfer')) {
                 cWeightSpan.textContent = finalWeight > 0 ? finalWeight : '--';
             } else {
                 cWeightSpan.textContent = '--';

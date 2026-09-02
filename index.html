@@ -968,39 +968,47 @@
                             <option value="Logo Noir">Logo Noir (Furtif)</option>
                         </select>
 
-                        <label class="block text-xs font-bold text-gray-500 mb-1"><i class="fa-solid fa-gear text-brand-accent mr-1"></i> Étoile, Plateaux & Capteur <span class="text-green-600 font-normal">(Privilège)</span></label>
-                        <select id="config-plateaux-manivelle" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm font-semibold shadow-sm mb-3" onchange="updateConfig()">
-                            <option value="Manivelles Nues" data-price="0" data-weight="0" selected>Manivelles nues (sans étoile) [+0€]</option>
-                            <option value="Étoile Carbone 110BCD" data-price="99" data-weight="35">Adaptateur : Étoile Carbone 110 BCD (Pour Shimano) [+99€ au lieu de 109€]</option>
-                            <option value="Étoile Carbone 107BCD" data-price="99" data-weight="35">Adaptateur : Étoile Carbone 107 BCD (Pour SRAM) [+99€ au lieu de 109€]</option>
-                            <option value="Pack Complet : Étoile 110BCD + Plateaux PassQuest" data-price="209" data-weight="235">Pack Complet SHIMANO : Étoile + Plateaux Pass Quest [+209€ au lieu de 229€]</option>
-                            <option value="Pack Complet : Étoile 107BCD + Plateaux PassQuest" data-price="209" data-weight="235">Pack Complet SRAM : Étoile + Plateaux Pass Quest [+209€ au lieu de 229€]</option>
-                            <option value="Capteur de puissance XCADEY 110BCD" data-price="399" data-weight="101">Capteur puissance XCADEY 110 BCD (Pour Shimano) [+399€ au lieu de 439€]</option>
-                            <option value="Capteur de puissance XCADEY 107BCD" data-price="399" data-weight="101">Capteur puissance XCADEY 107 BCD (Pour SRAM) [+399€ au lieu de 439€]</option>
-                            <option value="Pack Complet SHIMANO : Capteur XCADEY + Plateaux PassQuest" data-price="519" data-weight="301">Pack Complet SHIMANO : Capteur XCADEY + Plateaux [+519€ au lieu de 549€]</option>
-                            <option value="Pack Complet SRAM : Capteur XCADEY + Plateaux PassQuest" data-price="519" data-weight="301">Pack Complet SRAM : Capteur XCADEY + Plateaux [+519€ au lieu de 549€]</option>
-                        </select>
-
-                        <!-- Choix de la denture (caché par défaut) -->
-                        <div id="config-denture-container" style="display: none;" class="mb-3">
-                            <label class="block text-xs font-bold text-gray-500 mb-1"><i class="fa-solid fa-cogs text-brand-accent mr-1"></i> Denture des Plateaux</label>
-                            <select id="config-denture-manivelle" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm font-semibold shadow-sm" onchange="updateConfig()">
-                                <option value="46/33">46/33 (Grimpette / SRAM 12v)</option>
-                                <option value="48/35">48/35 (Polyvalent / SRAM 12v)</option>
-                                <option value="50/34" selected>50/34 (Grimpeur / Cyclo)</option>
-                                <option value="52/36">52/36 (Vallonné / Polyvalent)</option>
-                                <option value="53/39">53/39 (Classique Pro)</option>
-                                <option value="54/40">54/40 (Plat / Coursier Aéro)</option>
+                        <div id="bloc-plateaux-manivelle-choix">
+                            <label class="block text-xs font-bold text-gray-500 mb-1"><i class="fa-solid fa-gear text-brand-accent mr-1"></i> Étoile, Plateaux & Capteur <span class="text-green-600 font-normal">(Privilège)</span></label>
+                            <select id="config-plateaux-manivelle" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm font-semibold shadow-sm mb-3" onchange="updateConfig()">
+                                <option value="Manivelles Nues" data-price="0" data-weight="0" selected>Manivelles nues (sans étoile) [+0€]</option>
+                                <option value="Étoile Carbone 110BCD" data-price="99" data-weight="35">Adaptateur : Étoile Carbone 110 BCD (Pour Shimano) [+99€ au lieu de 109€]</option>
+                                <option value="Étoile Carbone 107BCD" data-price="99" data-weight="35">Adaptateur : Étoile Carbone 107 BCD (Pour SRAM) [+99€ au lieu de 109€]</option>
+                                <option value="Pack Complet : Étoile 110BCD + Plateaux PassQuest" data-price="209" data-weight="235">Pack Complet SHIMANO : Étoile + Plateaux Pass Quest [+209€ au lieu de 229€]</option>
+                                <option value="Pack Complet : Étoile 107BCD + Plateaux PassQuest" data-price="209" data-weight="235">Pack Complet SRAM : Étoile + Plateaux Pass Quest [+209€ au lieu de 229€]</option>
+                                <option value="Capteur de puissance XCADEY 110BCD" data-price="399" data-weight="101">Capteur puissance XCADEY 110 BCD (Pour Shimano) [+399€ au lieu de 439€]</option>
+                                <option value="Capteur de puissance XCADEY 107BCD" data-price="399" data-weight="101">Capteur puissance XCADEY 107 BCD (Pour SRAM) [+399€ au lieu de 439€]</option>
+                                <option value="Pack Complet SHIMANO : Capteur XCADEY + Plateaux PassQuest" data-price="519" data-weight="301">Pack Complet SHIMANO : Capteur XCADEY + Plateaux [+519€ au lieu de 549€]</option>
+                                <option value="Pack Complet SRAM : Capteur XCADEY + Plateaux PassQuest" data-price="519" data-weight="301">Pack Complet SRAM : Capteur XCADEY + Plateaux [+519€ au lieu de 549€]</option>
                             </select>
+
+                            <!-- Choix de la denture (caché par défaut) -->
+                            <div id="config-denture-container" style="display: none;" class="mb-3">
+                                <label class="block text-xs font-bold text-gray-500 mb-1"><i class="fa-solid fa-cogs text-brand-accent mr-1"></i> Denture des Plateaux</label>
+                                <select id="config-denture-manivelle" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm font-semibold shadow-sm" onchange="updateConfig()">
+                                    <option value="46/33">46/33 (Grimpette / SRAM 12v)</option>
+                                    <option value="48/35">48/35 (Polyvalent / SRAM 12v)</option>
+                                    <option value="50/34" selected>50/34 (Grimpeur / Cyclo)</option>
+                                    <option value="52/36">52/36 (Vallonné / Polyvalent)</option>
+                                    <option value="53/39">53/39 (Classique Pro)</option>
+                                    <option value="54/40">54/40 (Plat / Coursier Aéro)</option>
+                                </select>
+                            </div>
                         </div>
+
+                        <!-- Config complète Plateaux/Capteur (denture, vitesses, design, visserie) réutilisée telle
+                             quelle pour le "Pack Pédalier Complet" : voir #config-plateaux-seuls-container plus bas,
+                             affiché en plus de ce bloc pour ce produit (bloc-plateaux-manivelle-choix caché à la place). -->
                     </div>
                     
                     <div id="accessory-config-container" class="mb-3 hidden">
-                        <label class="block text-xs font-bold text-gray-500 mb-1"><i class="fa-solid fa-list-ol text-brand-accent mr-1"></i> Quantité</label>
-                        <select id="config-quantite" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm font-semibold" onchange="updateConfig()">
-                            <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option>
-                            <option value="5">5</option><option value="6">6</option>
-                        </select>
+                        <div id="bloc-quantite-accessoire">
+                            <label class="block text-xs font-bold text-gray-500 mb-1"><i class="fa-solid fa-list-ol text-brand-accent mr-1"></i> Quantité</label>
+                            <select id="config-quantite" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm font-semibold" onchange="updateConfig()">
+                                <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option>
+                                <option value="5">5</option><option value="6">6</option>
+                            </select>
+                        </div>
 
                         <!-- SÉLECTION SPÉCIFIQUE GALFER (Caché par défaut) -->
                         <div id="galfer-config-container" class="mt-4" style="display: none;">
