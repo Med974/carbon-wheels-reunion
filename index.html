@@ -997,8 +997,20 @@
                         </div>
 
                         <!-- Config complète Plateaux/Capteur (denture, vitesses, design, visserie) réutilisée telle
-                             quelle pour le "Pack Pédalier Complet" : voir #config-plateaux-seuls-container plus bas,
-                             affiché en plus de ce bloc pour ce produit (bloc-plateaux-manivelle-choix caché à la place). -->
+                             quelle pour les "Pack ULTIME/PRO : Pédalier Complet" : voir #config-plateaux-seuls-container
+                             plus bas, affiché en plus de ce bloc pour ces produits (bloc-plateaux-manivelle-choix caché
+                             à la place). -->
+
+                        <!-- Choix Shimano/SRAM de l'Étoile, uniquement pour le "Pack PRO : Pédalier Complet"
+                             (Étoile + Plateaux) : contrairement au Pack ULTIME (Capteur XCADEY), où la denture
+                             suffit à déduire la compatibilité, ce choix est explicite ici à la demande de Mehdi. -->
+                        <div id="bloc-bcd-etoile-pedalier" class="mb-3" style="display: none;">
+                            <label class="block text-xs font-bold text-gray-500 mb-1"><i class="fa-solid fa-gear text-brand-accent mr-1"></i> Compatibilité de l'Étoile</label>
+                            <select id="config-bcd-etoile-pedalier" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm font-semibold shadow-sm" onchange="updateConfig()">
+                                <option value="SHIMANO" selected>Pour Shimano (110 BCD)</option>
+                                <option value="SRAM">Pour SRAM (107 BCD)</option>
+                            </select>
+                        </div>
                     </div>
                     
                     <div id="accessory-config-container" class="mb-3 hidden">
@@ -1033,6 +1045,17 @@
                             <div id="config-taille-pneu-container" class="mt-3 hidden">
                             <label class="block text-xs font-bold text-gray-500 mb-1"><i class="fa-solid fa-ruler text-brand-accent mr-1"></i> Taille</label>
                             <select id="config-taille-pneu" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm font-semibold" onchange="updateConfig()"></select>
+                        </div>
+
+                        <!-- Choix Shimano/SRAM pour le Capteur de Puissance XCADEY vendu seul (remplace le
+                             texte décoratif jusqu'ici dans la colonne Variantes du Sheet par un vrai choix
+                             fonctionnel dans la modale). -->
+                        <div id="bloc-bcd-xcadey-seul" class="mt-4 hidden">
+                            <label class="block text-xs font-bold text-gray-500 mb-1"><i class="fa-solid fa-gear text-brand-accent mr-1"></i> Compatibilité</label>
+                            <select id="config-bcd-xcadey-seul" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm font-semibold shadow-sm" onchange="updateConfig()">
+                                <option value="SHIMANO" selected>Pour Shimano (110 BCD)</option>
+                                <option value="SRAM">Pour SRAM (107 BCD)</option>
+                            </select>
                         </div>
 
                         <!-- NOUVEAU BLOC : PLATEAUX SEULS ET PACKS (Totalement indépendant) -->

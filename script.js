@@ -244,12 +244,32 @@ function addToCart() {
                 const visserieEl = document.getElementById('config-visserie-plateaux-seuls');
                 const visserie = (visserieEl && visserieEl.selectedIndex > 0) ? ` | ${visserieEl.options[visserieEl.selectedIndex].text.split(' [+')[0]}` : "";
 
-                configText = `${modele} | Longueur : ${longueur} | Finition : ${finition} | ${logo} | Capteur XCADEY + Plateaux inclus | Denture : ${denture} | Vitesses : ${vitesse} | Design : ${look}${visserie}`;
+                // Pack ULTIME (Capteur XCADEY) vs Pack PRO (Étoile) : la denture suffit à déduire la
+                // compatibilité pour le XCADEY, mais pour l'Étoile on garde un choix Shimano/SRAM
+                // explicite (demandé par Mehdi), affiché via #config-bcd-etoile-pedalier.
+                const estPackPedalierXcadeyCT = titleLC.includes('capteur') || titleLC.includes('xcadey');
+                let inclusText = "Capteur XCADEY + Plateaux inclus";
+                if (!estPackPedalierXcadeyCT) {
+                    const bcdEtoileEl = document.getElementById('config-bcd-etoile-pedalier');
+                    const marqueEtoile = (bcdEtoileEl && bcdEtoileEl.value === 'SRAM') ? 'SRAM' : 'SHIMANO';
+                    inclusText = `Pack Complet ${marqueEtoile} : Étoile + Plateaux inclus`;
+                }
 
-            } else if (isCurrentItemAccessory || titleLC.includes('plateaux pass quest') || titleLC.includes('pack étoile') || titleLC.includes('pack pro')) {
+                configText = `${modele} | Longueur : ${longueur} | Finition : ${finition} | ${logo} | ${inclusText} | Denture : ${denture} | Vitesses : ${vitesse} | Design : ${look}${visserie}`;
+
+            } else if (titleLC.includes('capteur') && titleLC.includes('xcadey') && !titleLC.includes('plateaux')) {
+                // Capteur de Puissance XCADEY vendu seul (sans manivelles ni plateaux) : choix
+                // Shimano/SRAM désormais géré en dur ici plutôt que via la colonne Variantes du Sheet.
                 const qteEl = document.getElementById('config-quantite');
                 const qte = qteEl ? parseInt(qteEl.value) : 1;
-                if (titleLC.includes('plateaux pass quest') || titleLC.includes('pack étoile') || titleLC.includes('pack pro')) {
+                const bcdXcadeySeulEl = document.getElementById('config-bcd-xcadey-seul');
+                const marqueXcadeySeul = (bcdXcadeySeulEl && bcdXcadeySeulEl.value === 'SRAM') ? 'SRAM (107 BCD)' : 'SHIMANO (110 BCD)';
+                configText = `Capteur puissance XCADEY (Pour ${marqueXcadeySeul}) | Quantité : ${qte}`;
+
+            } else if (isCurrentItemAccessory || titleLC.includes('plateaux pass quest') || titleLC.includes('pack étoile') || (titleLC.includes('plateaux') && titleLC.includes('xcadey'))) {
+                const qteEl = document.getElementById('config-quantite');
+                const qte = qteEl ? parseInt(qteEl.value) : 1;
+                if (titleLC.includes('plateaux pass quest') || titleLC.includes('pack étoile') || (titleLC.includes('plateaux') && titleLC.includes('xcadey'))) {
                     const dentureEl = document.getElementById('config-denture-plateaux-seuls');
                     const denture = dentureEl ? dentureEl.value : "";
                     const vitesseEl = document.getElementById('config-vitesse-plateaux-seuls');
@@ -1550,7 +1570,7 @@ function openModal(index) {
             const cWeight = document.getElementById('calc-weight');
             if(cWeight) cWeight.textContent = currentBaseWeight > 0 ? currentBaseWeight : '--';
             updateBadgeUI(true);
-        } else if (nomLC.includes('plateaux pass quest') || nomLC.includes('pack étoile') || nomLC.includes('pack pro')) {
+        } else if (nomLC.includes('plateaux pass quest') || nomLC.includes('pack étoile') || (nomLC.includes('plateaux') && nomLC.includes('xcadey'))) {
             if(specJantesBox) specJantesBox.style.display = 'none';
             if(configuratorSection) configuratorSection.style.display = 'block';
             if(wheelConfigOptions) wheelConfigOptions.style.display = 'none';
@@ -1591,6 +1611,14 @@ function openModal(index) {
             const blocPlateauxManivelleChoix = document.getElementById('bloc-plateaux-manivelle-choix');
             if(blocPlateauxManivelleChoix) blocPlateauxManivelleChoix.style.display = 'none';
 
+            // Pack PRO (Étoile) uniquement : affiche le choix Shimano/SRAM dédié de l'Étoile (absent
+            // du Pack ULTIME, où la denture suffit déjà à déduire la compatibilité du Capteur XCADEY).
+            // Détection par ABSENCE de "capteur"/"xcadey" dans le nom (plutôt que présence d'"étoile",
+            // absent du nom réel "Pack PRO : Pédalier complet") : plus robuste face aux noms exacts.
+            const estPackPedalierXcadey = nomLC.includes('capteur') || nomLC.includes('xcadey');
+            const blocBcdEtoilePed = document.getElementById('bloc-bcd-etoile-pedalier');
+            if(blocBcdEtoilePed) blocBcdEtoilePed.style.display = estPackPedalierXcadey ? 'none' : 'block';
+
             const plateauxSeulsContPed = document.getElementById('config-plateaux-seuls-container');
             if(plateauxSeulsContPed) { plateauxSeulsContPed.style.display = 'block'; plateauxSeulsContPed.classList.remove('hidden'); }
             const tailleContainerPed = document.getElementById('config-taille-pneu-container');
@@ -1609,6 +1637,33 @@ function openModal(index) {
             const cWeightPed = document.getElementById('calc-weight');
             if(cWeightPed) cWeightPed.textContent = currentBaseWeight > 0 ? currentBaseWeight : '--';
             updateBadgeUI(true);
+            updateConfig();
+        } else if (nomLC.includes('capteur') && nomLC.includes('xcadey') && !nomLC.includes('plateaux')) {
+            // Capteur de Puissance XCADEY vendu seul : choix Shimano/SRAM désormais géré en dur ici
+            // (remplace le texte jusque-là uniquement décoratif de la colonne Variantes du Sheet).
+            if(specJantesBox) specJantesBox.style.display = 'none';
+            if(configuratorSection) configuratorSection.style.display = 'block';
+            if(wheelConfigOptions) wheelConfigOptions.style.display = 'none';
+            if(manivellesConfigContainer) manivellesConfigContainer.style.display = 'none';
+            if(specialWheelConfigContainer) specialWheelConfigContainer.style.display = 'none';
+            if(testConfigContainer) testConfigContainer.style.display = 'none';
+            if(poidsMaxContainer) poidsMaxContainer.style.display = 'none';
+            if(accessoryConfigContainer) accessoryConfigContainer.style.display = 'block';
+
+            const plateauxSeulsContXc = document.getElementById('config-plateaux-seuls-container');
+            if(plateauxSeulsContXc) plateauxSeulsContXc.style.display = 'none';
+            const tailleContainerXc = document.getElementById('config-taille-pneu-container');
+            if(tailleContainerXc) { tailleContainerXc.style.display = 'none'; tailleContainerXc.classList.add('hidden'); }
+            const galferContainerXc = document.getElementById('galfer-config-container');
+            if(galferContainerXc) galferContainerXc.style.display = 'none';
+            const minipompeContainerXc = document.getElementById('minipompe-config-container');
+            if(minipompeContainerXc) minipompeContainerXc.style.display = 'none';
+            const blocBcdXcadeySeul = document.getElementById('bloc-bcd-xcadey-seul');
+            if(blocBcdXcadeySeul) blocBcdXcadeySeul.classList.remove('hidden');
+
+            const qteElXc = document.getElementById('config-quantite');
+            if(qteElXc) qteElXc.value = '1';
+
             updateConfig();
 		} else if (isCurrentItemAccessory) {
             if(specJantesBox) specJantesBox.style.display = 'none';
@@ -2123,12 +2178,12 @@ function updateConfig() {
 	// ==========================================
 	// --- SUITE : LOGIQUE POUR LES ACCESSOIRES ET PLATEAUX SEULS ---
 	// ==========================================
-    if (isCurrentItemAccessory || titleLC.includes('plateaux pass quest') || titleLC.includes('pack étoile') || titleLC.includes('pack pro') || titleLC.includes('pédalier')) {
+    if (isCurrentItemAccessory || titleLC.includes('plateaux pass quest') || titleLC.includes('pack étoile') || (titleLC.includes('plateaux') && titleLC.includes('xcadey')) || titleLC.includes('pédalier')) {
         const qteEl = document.getElementById('config-quantite');
         const qte = qteEl ? parseInt(qteEl.value) : 1;
 
         let unitPrice = currentBasePrice;
-        if (titleLC.includes('plateaux pass quest') || titleLC.includes('pack étoile') || titleLC.includes('pack pro') || titleLC.includes('pédalier')) {
+        if (titleLC.includes('plateaux pass quest') || titleLC.includes('pack étoile') || (titleLC.includes('plateaux') && titleLC.includes('xcadey')) || titleLC.includes('pédalier')) {
             const visserieEl = document.getElementById('config-visserie-plateaux-seuls');
             if (visserieEl && visserieEl.selectedIndex > 0) {
                 unitPrice += parseInt(visserieEl.options[visserieEl.selectedIndex].getAttribute('data-price')) || 0;
@@ -2222,13 +2277,15 @@ function updateConfig() {
             }
         }
 
-        // --- GESTION DYNAMIQUE DU PACK PÉDALIER COMPLET (Manivelles + Capteur XCADEY + Plateaux inclus) ---
+        // --- GESTION DYNAMIQUE DES PACKS PÉDALIER COMPLET (ULTIME : Capteur XCADEY + Plateaux, ou
+        // PRO : Étoile + Plateaux) ---
         // Prix : déjà correct via unitPrice (base + visserie titane éventuelle) calculé plus haut.
-        // Poids : le poids du pack Capteur+Plateaux (301g, identique à l'option groupée de "DFS
-        // Manivelles") s'ajoute au poids du modèle de manivelle choisi (variable selon CT1/CA1).
+        // Poids : le poids fixe du pack ajouté (301g pour XCADEY, 235g pour Étoile — identiques aux
+        // options groupées équivalentes de "DFS Manivelles") s'ajoute au poids du modèle de manivelle
+        // choisi (variable selon CT1/CA1).
         if (titleLC.includes('pédalier')) {
             const modeleSelectPed = document.getElementById('config-modele-manivelle');
-            const PLATEAUX_PACK_WEIGHT = 301;
+            const PLATEAUX_PACK_WEIGHT = (titleLC.includes('capteur') || titleLC.includes('xcadey')) ? 301 : 235;
             if (modeleSelectPed && modeleSelectPed.selectedIndex >= 0) {
                 const selectedOptionPed = modeleSelectPed.options[modeleSelectPed.selectedIndex];
                 const baseManivelleWeightPed = parseInt(selectedOptionPed.getAttribute('data-crank-weight')) || 290;
