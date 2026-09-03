@@ -2832,7 +2832,7 @@ function setLenticulaireMode(mode) {
 
         // Verrouiller obligatoirement avec le sticker Karbòn Péi d'origine
         if (selectSticker) {
-            selectSticker.value = "Avec Sticker";
+            selectSticker.value = "Avec Sticker Karbòn Péi";
             selectSticker.disabled = true;
         }
         
