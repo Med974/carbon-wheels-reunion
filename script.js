@@ -16,6 +16,8 @@ let isCurrentItemTestProgram = false;
 let isCurrentItemStockReady = false;
 let isCurrentItemTextile = false;
 let factoryStock = [];
+let factoryStockManivelles = [];
+let factoryStockAxes = [];
 let isCurrentItemAeroplugLocation = false;
 let unavailableAeroplugDates = { "50": [], "6065": [] }; // "50" = SL8/Roval Rapide, "6065" = Trek Madone
 let aeroplugDatesLoaded = false;
@@ -971,9 +973,25 @@ async function loadFactoryStock() {
     try {
         const response = await fetch(`${API_URL}?action=getFactoryStock`);
         factoryStock = await response.json();
-        renderFastTrackCards(); // Génère les cartes d'accueil
+        renderFastTrackCards(); // Génère les cartes d'accueil (roues)
     } catch (error) {
-        console.error("Erreur de chargement du stock usine :", error);
+        console.error("Erreur de chargement du stock usine (roues) :", error);
+    }
+
+    try {
+        const responseManivelles = await fetch(`${API_URL}?action=getFactoryStockManivelles`);
+        factoryStockManivelles = await responseManivelles.json();
+        renderFastTrackCardsManivelles(); // Génère les cartes d'accueil (manivelles)
+    } catch (error) {
+        console.error("Erreur de chargement du stock usine (manivelles) :", error);
+    }
+
+    try {
+        const responseAxes = await fetch(`${API_URL}?action=getFactoryStockAxes`);
+        factoryStockAxes = await responseAxes.json();
+        renderFastTrackCardsAxes(); // Génère les cartes d'accueil (axes)
+    } catch (error) {
+        console.error("Erreur de chargement du stock usine (axes) :", error);
     }
 }
 
@@ -1025,6 +1043,148 @@ function renderFastTrackCards() {
         `;
         container.insertAdjacentHTML('beforeend', cardHTML);
     });
+}
+
+function renderFastTrackCardsManivelles() {
+    const container = document.getElementById('fast-track-cards-container-manivelles');
+    const section = document.getElementById('stock-usine-coupe-file-manivelles');
+    if (!container) return;
+
+    container.innerHTML = '';
+    const inStockItems = factoryStockManivelles.filter(item => parseInt(item.Stock) > 0);
+
+    if (inStockItems.length === 0) {
+        if (section) section.style.display = 'none';
+        return;
+    }
+
+    if (section) section.style.display = 'block';
+
+    inStockItems.forEach(item => {
+        const isLastOne = parseInt(item.Stock) === 1;
+        const badgeClass = isLastOne ? 'bg-orange-100 text-orange-700 border-orange-200' : 'bg-green-100 text-green-700 border-green-200';
+        const badgeText = isLastOne ? '🚨 Dernière paire !' : `✅ ${parseInt(item.Stock) || 0} Paires dispo`;
+
+        const longueurAffichee = item["Crank Length"] ? item["Crank Length"].toString().replace('mm', '') : '';
+        const logoName = (item["Logo Color"] === 'Black') ? 'Noir' : 'Blanc';
+
+        const cardHTML = `
+            <div class="bg-gray-50 rounded-xl shadow-sm border border-gray-200 p-5 flex flex-col hover:shadow-md transition-all duration-300 hover:-translate-y-1 relative overflow-hidden group">
+                <div class="absolute top-0 right-0 w-16 h-16 bg-gradient-to-bl from-green-200 to-transparent opacity-50 rounded-bl-full z-0"></div>
+                <span class="text-[10px] font-black px-2 py-1 rounded border ${badgeClass} w-max mb-3 relative z-10">${badgeText}</span>
+                <h4 class="font-black text-gray-900 text-lg mb-1 relative z-10">Manivelles ${escapeHtml(item.Model)}</h4>
+                <p class="text-xs font-bold text-brand-accent mb-3 relative z-10">${longueurAffichee}mm</p>
+                <ul class="text-xs text-gray-500 space-y-1.5 mb-5 flex-grow relative z-10">
+                    <li><i class="fa-solid fa-check text-green-500 mr-1"></i> Finition : ${escapeHtml(item.Finish)}</li>
+                    <li><i class="fa-solid fa-check text-green-500 mr-1"></i> Logo : ${logoName}</li>
+                </ul>
+                <button onclick="openFastTrackConfigManivelle('${escapeHtml(item.Model)}', '${escapeHtml(item["Crank Length"])}', '${escapeHtml(item.Finish)}', '${escapeHtml(item["Logo Color"])}')" class="w-full bg-brand-main text-white text-xs font-bold py-2.5 rounded-lg hover:bg-gray-800 transition-colors relative z-10 shadow-sm">
+                    Configurer ces manivelles <i class="fa-solid fa-arrow-right ml-1"></i>
+                </button>
+            </div>
+        `;
+        container.insertAdjacentHTML('beforeend', cardHTML);
+    });
+}
+
+function openFastTrackConfigManivelle(model, length, finish, logoColor) {
+    // Trouve la ligne "DFS Manivelles" (produit nu) dans le catalogue — pas les Pack Pédalier
+    // (PRO/ULTIME), qui contiennent aussi "manivelle" dans leur description mais sont un autre produit.
+    const idx = globalCatalogue.findIndex(p => {
+        if (!p.Nom) return false;
+        const n = p.Nom.toLowerCase();
+        return n.includes('manivelle') && !n.includes('pédalier') && !n.includes('pack');
+    });
+
+    if (idx === -1) {
+        showCustomAlert("Ce modèle n'est plus au catalogue.");
+        return;
+    }
+
+    openModal(idx);
+
+    setTimeout(() => {
+        const mModele = document.getElementById('config-modele-manivelle');
+        if (mModele) mModele.value = model;
+
+        const longueurValue = length && length.toString().includes('mm') ? length : length + 'mm';
+        const mLongueur = document.getElementById('config-longueur-manivelle');
+        if (mLongueur) mLongueur.value = longueurValue;
+
+        const mFinition = document.getElementById('config-finition-manivelle');
+        if (mFinition) mFinition.value = finish;
+
+        const mLogo = document.getElementById('config-logo-manivelle');
+        if (mLogo) mLogo.value = (logoColor === 'Black' || logoColor === 'Noir') ? 'Logo Noir' : 'Logo Blanc';
+
+        updateConfig();
+
+        const configSection = document.getElementById('configurator-section');
+        if (configSection) {
+            configSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    }, 150);
+}
+
+function renderFastTrackCardsAxes() {
+    const container = document.getElementById('fast-track-cards-container-axes');
+    const section = document.getElementById('stock-usine-coupe-file-axes');
+    if (!container) return;
+
+    container.innerHTML = '';
+    const inStockItems = factoryStockAxes.filter(item => parseInt(item.Stock) > 0);
+
+    if (inStockItems.length === 0) {
+        if (section) section.style.display = 'none';
+        return;
+    }
+
+    if (section) section.style.display = 'block';
+
+    // Un seul type de référence côté Angler (pas de Variantes déclarées pour "DFS Axe de roues" dans
+    // le catalogue) : une carte par ligne quand même, au cas où plusieurs lignes apparaîtraient un jour.
+    inStockItems.forEach(item => {
+        const isLastOne = parseInt(item.Stock) === 1;
+        const badgeClass = isLastOne ? 'bg-orange-100 text-orange-700 border-orange-200' : 'bg-green-100 text-green-700 border-green-200';
+        const badgeText = isLastOne ? '🚨 Dernier axe !' : `✅ ${parseInt(item.Stock) || 0} Axes dispo`;
+
+        const cardHTML = `
+            <div class="bg-gray-50 rounded-xl shadow-sm border border-gray-200 p-5 flex flex-col hover:shadow-md transition-all duration-300 hover:-translate-y-1 relative overflow-hidden group">
+                <div class="absolute top-0 right-0 w-16 h-16 bg-gradient-to-bl from-green-200 to-transparent opacity-50 rounded-bl-full z-0"></div>
+                <span class="text-[10px] font-black px-2 py-1 rounded border ${badgeClass} w-max mb-3 relative z-10">${badgeText}</span>
+                <h4 class="font-black text-gray-900 text-lg mb-1 relative z-10">Axe de Roues DFS</h4>
+                <p class="text-xs font-bold text-brand-accent mb-3 relative z-10">${escapeHtml(item.Model || 'Thru-Axle')}</p>
+                <ul class="text-xs text-gray-500 space-y-1.5 mb-5 flex-grow relative z-10">
+                    <li><i class="fa-solid fa-check text-green-500 mr-1"></i> Ultra-léger, rigidité maximale</li>
+                    <li><i class="fa-solid fa-check text-green-500 mr-1"></i> Prêt à expédier, pas d'attente usine</li>
+                </ul>
+                <button onclick="openFastTrackConfigAxe()" class="w-full bg-brand-main text-white text-xs font-bold py-2.5 rounded-lg hover:bg-gray-800 transition-colors relative z-10 shadow-sm">
+                    Configurer cet axe <i class="fa-solid fa-arrow-right ml-1"></i>
+                </button>
+            </div>
+        `;
+        container.insertAdjacentHTML('beforeend', cardHTML);
+    });
+}
+
+function openFastTrackConfigAxe() {
+    const idx = globalCatalogue.findIndex(p => p.Nom && p.Nom.toLowerCase().includes('axe de roues'));
+
+    if (idx === -1) {
+        showCustomAlert("Ce produit n'est plus au catalogue.");
+        return;
+    }
+
+    openModal(idx);
+
+    // Pas de variante à pré-remplir (produit sans couleur/modèle au choix) : juste ouvrir la modale
+    // et scroller jusqu'au configurateur, comme pour les roues/manivelles.
+    setTimeout(() => {
+        const configSection = document.getElementById('configurator-section');
+        if (configSection) {
+            configSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    }, 150);
 }
 
 function openFastTrackConfig(series, height, type, finish, logo) {
