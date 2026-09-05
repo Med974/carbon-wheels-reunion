@@ -796,6 +796,10 @@ function applyPromoCode() {
     const input = document.getElementById('promo-code');
     if(!input) return;
     const code = input.value.trim().toUpperCase();
+    if (code === 'SOLDES26' && !isSoldes26Actif()) {
+        showCustomAlert("Le code SOLDES26 a expiré, l'opération soldes est terminée.");
+        return;
+    }
     if (code === 'CCPIKARBON' || code === 'PAPA26' || code === 'SOLDES26') {
         appliedPromo = code;
         input.value = '';
@@ -1309,14 +1313,27 @@ function renderGrid(filterCategory) {
         const isFixedPriceLocation = nomLC.includes('yoeleo') || nomLC.includes('aeroplug');
 
         let imageUrl = item.Image ? item.Image.split(',')[0].trim() : 'https://images.unsplash.com/photo-1511994298241-608e28f14fde?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80';
+
+        // Paire de roues éligible au -100€ SOLDES26 (mêmes critères que la remise elle-même dans
+        // updateCartUI : ni accessoire/composant, ni roue à prix fixe, ni location, prix >= 1399€).
+        const isEligibleSoldesRoue = !isAccessory && !isFixedPriceWheel && !isTestProgram && !isFixedPriceLocation && item.Prix && item.Prix >= 1399;
+        const soldesActifs = isEligibleSoldesRoue && isSoldes26Actif();
+
         let prixAffiche = 'Sur devis';
         if (item.Prix) {
-            prixAffiche = (isAccessory || isFixedPriceWheel || isTestProgram || isFixedPriceLocation) ? `${item.Prix} €` : `Dès ${item.Prix} €`;
+            if (soldesActifs) {
+                const prixSolde = item.Prix - 100;
+                prixAffiche = `<span class="line-through text-gray-400 text-base mr-2 align-middle">Dès ${item.Prix} €</span><span class="text-red-600 align-middle">Dès ${prixSolde} €</span>`;
+            } else {
+                prixAffiche = (isAccessory || isFixedPriceWheel || isTestProgram || isFixedPriceLocation) ? `${item.Prix} €` : `Dès ${item.Prix} €`;
+            }
         }
-        
+
         let statutBadge = '';
-        
-        if (nomLC.includes('50')) {
+
+        if (soldesActifs) {
+            statutBadge += `<span class="absolute top-4 right-4 bg-red-600 text-white text-xs font-black px-3 py-1 rounded shadow-md z-20 transform rotate-3">🔥 SOLDES -100€</span>`;
+        } else if (nomLC.includes('50')) {
             statutBadge += `<span class="absolute top-4 right-4 bg-brand-accent text-brand-main text-xs font-black px-3 py-1 rounded shadow-md z-20 transform rotate-3 border border-yellow-300">⭐ BEST-SELLER</span>`;
         }
 
@@ -3996,5 +4013,21 @@ function calculatePressure() {
     resultsDiv.classList.add('animate-pulse');
     setTimeout(() => resultsDiv.classList.remove('animate-pulse'), 500);
 }
+
+// Fenêtre de validité du code SOLDES26 : samedi 5 septembre 2026 (lancement) au dimanche 13
+// septembre 2026 au soir inclus (heure de La Réunion, UTC+4). Passé ce cap, le code est refusé à
+// l'application (voir applyPromoCode) et le bandeau du haut se masque tout seul, sans qu'il y ait
+// besoin d'y retoucher manuellement le 14 septembre.
+function isSoldes26Actif() {
+    const finSoldes = new Date('2026-09-14T00:00:00+04:00'); // minuit le 14 = fin du 13 au soir
+    return new Date() < finSoldes;
+}
+
+(function afficherBanniereSoldesSiActif() {
+    const banniere = document.getElementById('banniere-soldes');
+    if (banniere && isSoldes26Actif()) {
+        banniere.classList.remove('hidden');
+    }
+})();
 
 loadCatalogue();
