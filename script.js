@@ -1314,25 +1314,40 @@ function renderGrid(filterCategory) {
 
         let imageUrl = item.Image ? item.Image.split(',')[0].trim() : 'https://images.unsplash.com/photo-1511994298241-608e28f14fde?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80';
 
-        // Paire de roues éligible au -100€ SOLDES26 (mêmes critères que la remise elle-même dans
-        // updateCartUI : ni accessoire/composant, ni roue à prix fixe, ni location, prix >= 1399€).
-        const isEligibleSoldesRoue = !isAccessory && !isFixedPriceWheel && !isTestProgram && !isFixedPriceLocation && item.Prix && item.Prix >= 1399;
-        const soldesActifs = isEligibleSoldesRoue && isSoldes26Actif();
+        // Calcule la remise SOLDES26 "comme si cet article était seul dans le panier" (une carte
+        // catalogue ne connaît pas le reste d'un panier réel) — mêmes règles et mêmes seuils que
+        // updateCartUI : -100€ sur une paire de roues (>=1399€), -10% sur accessoire/composant/textile
+        // sous 500€, sinon le palier global -50€ (500-999€) / -75€ (1000€+) qui s'applique à tout le
+        // reste (Bâtons, Lenticulaire, Apex...). Jamais sur les locations/programmes d'essai.
+        const isTextileCat = cat.toLowerCase().includes('textile');
+        let soldesInfo = null;
+        if (item.Prix && !isTestProgram && !isFixedPriceLocation && isSoldes26Actif()) {
+            const prix = item.Prix;
+            if (!isAccessory && !isTextileCat && prix >= 1399) {
+                soldesInfo = { solde: prix - 100, badge: '🔥 SOLDES -100€' };
+            } else if ((isAccessory || isTextileCat) && prix < 500) {
+                soldesInfo = { solde: Math.round(prix * 0.9), badge: '🔥 SOLDES -10%' };
+            } else if (prix >= 500 && prix < 1000) {
+                soldesInfo = { solde: prix - 50, badge: '🔥 SOLDES -50€' };
+            } else if (prix >= 1000) {
+                soldesInfo = { solde: prix - 75, badge: '🔥 SOLDES -75€' };
+            }
+        }
 
         let prixAffiche = 'Sur devis';
         if (item.Prix) {
-            if (soldesActifs) {
-                const prixSolde = item.Prix - 100;
-                prixAffiche = `<span class="line-through text-gray-400 text-base mr-2 align-middle">Dès ${item.Prix} €</span><span class="text-red-600 align-middle">Dès ${prixSolde} €</span>`;
+            const prefixe = (isAccessory || isFixedPriceWheel || isTestProgram || isFixedPriceLocation) ? '' : 'Dès ';
+            if (soldesInfo) {
+                prixAffiche = `<span class="line-through text-gray-400 text-base mr-2 align-middle">${prefixe}${item.Prix} €</span><span class="text-red-600 align-middle">${prefixe}${soldesInfo.solde} €</span>`;
             } else {
-                prixAffiche = (isAccessory || isFixedPriceWheel || isTestProgram || isFixedPriceLocation) ? `${item.Prix} €` : `Dès ${item.Prix} €`;
+                prixAffiche = `${prefixe}${item.Prix} €`;
             }
         }
 
         let statutBadge = '';
 
-        if (soldesActifs) {
-            statutBadge += `<span class="absolute top-4 right-4 bg-red-600 text-white text-xs font-black px-3 py-1 rounded shadow-md z-20 transform rotate-3">🔥 SOLDES -100€</span>`;
+        if (soldesInfo) {
+            statutBadge += `<span class="absolute top-4 right-4 bg-red-600 text-white text-xs font-black px-3 py-1 rounded shadow-md z-20 transform rotate-3">${soldesInfo.badge}</span>`;
         } else if (nomLC.includes('50')) {
             statutBadge += `<span class="absolute top-4 right-4 bg-brand-accent text-brand-main text-xs font-black px-3 py-1 rounded shadow-md z-20 transform rotate-3 border border-yellow-300">⭐ BEST-SELLER</span>`;
         }
