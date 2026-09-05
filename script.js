@@ -584,9 +584,28 @@ function updateCartUI() {
 
             // -100€ UNIQUEMENT si c'est un produit principal (roues) ET que le prix est de 1399€ ou plus (paire de roues)
             if (!item.isAccessory && !isManivelle && !item.isTextile && item.price >= 1399) {
-                discountAmount += 100; 
+                discountAmount += 100;
             } else if (item.isAccessory && isPetitAccessoire) {
                 discountAmount += Math.round(item.price * 0.10); // -10% sur les petits accessoires
+            }
+        } else if (appliedPromo === 'SOLDES26') {
+            const titleLC = item.title.toLowerCase();
+            const isManivelle = titleLC.includes('manivelle');
+            // Le panier COMPLET (pas le "subtotal" en cours d'accumulation dans cette boucle, qui ne
+            // contient encore que les articles déjà parcourus) : nécessaire pour trancher chaque
+            // article dès le premier passage, plutôt qu'après coup comme le palier global ci-dessous.
+            const cartTotalSoldes = cart.reduce((sum, i) => sum + i.price, 0);
+
+            // Mêmes -100€ que PAPA26 sur les paires de roues, toujours. Le -10% couvre en plus les
+            // Composants (manivelles, packs Pédalier, étoile, plateaux, capteur XCADEY, axe de roues :
+            // tous flagués item.isAccessory=true, cf. isCurrentItemAccessory) et le Textile, que PAPA26
+            // excluait — MAIS uniquement sous 500€ de panier total, pour ne jamais cumuler avec le
+            // palier global (-75€/-50€) ci-dessous : simplification demandée par Mehdi le 05/09/2026
+            // suite à un panier à 919€ qui cumulait -10% ET -50€ (15,5% de remise au lieu de 10%).
+            if (!item.isAccessory && !isManivelle && !item.isTextile && item.price >= 1399) {
+                discountAmount += 100;
+            } else if (cartTotalSoldes < 500 && (item.isTextile || item.isAccessory)) {
+                discountAmount += Math.round(item.price * 0.10);
             }
         }
         
@@ -617,8 +636,8 @@ function updateCartUI() {
         }
     });
 
-	// Vérification post-boucle pour la promo PAPA26 (Paliers globaux)
-    if (appliedPromo === 'PAPA26') {
+	// Vérification post-boucle pour les paliers globaux (PAPA26 et SOLDES26 partagent les mêmes montants)
+    if (appliedPromo === 'PAPA26' || appliedPromo === 'SOLDES26') {
         // On vérifie si le client a une PAIRE de roues (prix >= 1399) qui a déjà bénéficié des 100€
         const hasPaireDeRoues = cart.some(item => !item.isAccessory && !item.title.toLowerCase().includes('manivelle') && !item.isTextile && item.price >= 1399);
         
@@ -777,7 +796,7 @@ function applyPromoCode() {
     const input = document.getElementById('promo-code');
     if(!input) return;
     const code = input.value.trim().toUpperCase();
-    if (code === 'CCPIKARBON' || code === 'PAPA26') {
+    if (code === 'CCPIKARBON' || code === 'PAPA26' || code === 'SOLDES26') {
         appliedPromo = code;
         input.value = '';
         updateCartUI();
