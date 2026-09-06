@@ -34,6 +34,20 @@ let discountAmount = 0;
 
 let lastHubSelected = "";
 
+// Arrondit au centime près (2 décimales), au lieu d'arrondir à l'euro entier comme le faisait
+// Math.round() seul — corrigé le 06/09/2026 : une remise de 10% sur 15€ affichait 14€ (voire 13€
+// une fois appliquée au panier, cumul d'arrondis) au lieu des 13,50€ mathématiquement corrects.
+function arrondiCentimes(nombre) {
+    return Math.round(nombre * 100) / 100;
+}
+
+// Formate un prix pour l'affichage : pas de décimales si le montant tombe rond (ex: "32 €"),
+// sinon 2 décimales avec une virgule à la française (ex: "13,50 €").
+function formatPrixEUR(nombre) {
+    const arrondi = arrondiCentimes(nombre);
+    return (arrondi % 1 === 0 ? arrondi.toString() : arrondi.toFixed(2).replace('.', ',')) + ' €';
+}
+
 function escapeHtml(value) {
     if (value === null || value === undefined) return '';
     return String(value)
@@ -575,7 +589,7 @@ function updateCartUI() {
             } else if (!item.isAccessory && !isSpecialWheel && !isManivelle) {
                 discountAmount += 50;
             } else if (item.isAccessory && isPetitAccessoire) {
-                discountAmount += Math.round(item.price * 0.08);
+                discountAmount += arrondiCentimes(item.price * 0.08);
             }
         } else if (appliedPromo === 'PAPA26') {
             const titleLC = item.title.toLowerCase();
@@ -586,7 +600,7 @@ function updateCartUI() {
             if (!item.isAccessory && !isManivelle && !item.isTextile && item.price >= 1399) {
                 discountAmount += 100;
             } else if (item.isAccessory && isPetitAccessoire) {
-                discountAmount += Math.round(item.price * 0.10); // -10% sur les petits accessoires
+                discountAmount += arrondiCentimes(item.price * 0.10); // -10% sur les petits accessoires
             }
         } else if (appliedPromo === 'SOLDES26') {
             const titleLC = item.title.toLowerCase();
@@ -605,7 +619,7 @@ function updateCartUI() {
             if (!item.isAccessory && !isManivelle && !item.isTextile && item.price >= 1399) {
                 discountAmount += 100;
             } else if (cartTotalSoldes < 500 && (item.isTextile || item.isAccessory)) {
-                discountAmount += Math.round(item.price * 0.10);
+                discountAmount += arrondiCentimes(item.price * 0.10);
             }
         }
         
@@ -650,6 +664,10 @@ function updateCartUI() {
             }
         }
     }
+
+    // Arrondi final au centime : les additions successives de remises déjà arrondies (arrondiCentimes)
+    // peuvent quand même laisser un résidu flottant du type 0.30000000000000004 en JavaScript.
+    discountAmount = arrondiCentimes(discountAmount);
 	
     const promoInputContainer = document.getElementById('promo-input-container');
     const promoActiveContainer = document.getElementById('promo-active-container');
@@ -662,7 +680,7 @@ function updateCartUI() {
             promoActiveContainer.classList.add('flex');
         }
         const activePromoName = document.getElementById('active-promo-name');
-        if (activePromoName) activePromoName.textContent = `${appliedPromo} (-${discountAmount}€)`;
+        if (activePromoName) activePromoName.textContent = `${appliedPromo} (-${formatPrixEUR(discountAmount)})`;
         
         if (originalTotalEl) {
             if (discountAmount > 0) {
@@ -890,7 +908,7 @@ function submitOrder() {
 
     if (appliedPromo) {
         factureNoms.push(`\nREMISE (Code : ${appliedPromo})`);
-        facturePrix.push(`\n-${discountAmount} €`);
+        facturePrix.push(`\n-${formatPrixEUR(discountAmount)}`);
     }
 
     if (transactionFees > 0) {
@@ -1326,7 +1344,7 @@ function renderGrid(filterCategory) {
             if (!isAccessory && !isTextileCat && prix >= 1399) {
                 soldesInfo = { solde: prix - 100, badge: '🔥 SOLDES -100€' };
             } else if ((isAccessory || isTextileCat) && prix < 500) {
-                soldesInfo = { solde: Math.round(prix * 0.9), badge: '🔥 SOLDES -10%' };
+                soldesInfo = { solde: arrondiCentimes(prix * 0.9), badge: '🔥 SOLDES -10%' };
             } else if (prix >= 500 && prix < 1000) {
                 soldesInfo = { solde: prix - 50, badge: '🔥 SOLDES -50€' };
             } else if (prix >= 1000) {
@@ -1338,7 +1356,7 @@ function renderGrid(filterCategory) {
         if (item.Prix) {
             const prefixe = (isAccessory || isFixedPriceWheel || isTestProgram || isFixedPriceLocation) ? '' : 'Dès ';
             if (soldesInfo) {
-                prixAffiche = `<span class="line-through text-gray-400 text-base mr-2 align-middle">${prefixe}${item.Prix} €</span><span class="text-red-600 align-middle">${prefixe}${soldesInfo.solde} €</span>`;
+                prixAffiche = `<span class="line-through text-gray-400 text-base mr-2 align-middle">${prefixe}${item.Prix} €</span><span class="text-red-600 align-middle">${prefixe}${formatPrixEUR(soldesInfo.solde)}</span>`;
             } else {
                 prixAffiche = `${prefixe}${item.Prix} €`;
             }
