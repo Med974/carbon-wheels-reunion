@@ -818,6 +818,14 @@ function applyPromoCode() {
         showCustomAlert("Le code SOLDES26 a expiré, l'opération soldes est terminée.");
         return;
     }
+    // Tarif privilège (CCPIKARBON) suspendu pendant la période soldes : pour éviter qu'un client
+    // qui le connaît déjà (donné après achat d'une paire de roues) ne cumule ou ne choisisse un
+    // avantage différent de SOLDES26 pendant l'opération. Se réactive automatiquement à la fin des
+    // soldes (même horodatage que isSoldes26Actif()), sans rien à refaire.
+    if (code === 'CCPIKARBON' && isSoldes26Actif()) {
+        showCustomAlert("Le tarif privilège est temporairement suspendu pendant les soldes. Utilisez le code SOLDES26 : c'est plus avantageux en ce moment !");
+        return;
+    }
     if (code === 'CCPIKARBON' || code === 'PAPA26' || code === 'SOLDES26') {
         appliedPromo = code;
         input.value = '';
@@ -2009,6 +2017,26 @@ function openModal(index) {
             if(mHousses) mHousses.value = 'Aucun';
 			const mLockrings = document.getElementById('config-lockrings');
             if(mLockrings) mLockrings.value = 'Aucun';
+
+            // Tarifs Privilège (encart vert accessoires 11-18) suspendus tant que SOLDES26 est actif :
+            // sans ça, un client cumulerait le prix déjà réduit "Privilège" de ces accessoires ET la
+            // remise -100€ SOLDES26 sur la paire de roues (demande de Mehdi le 07/09/2026). Le montage
+            // roue (config-montage-roue, hors encart vert) n'est pas concerné, ce n'est pas un tarif
+            // privilège mais une simple option de service.
+            const mDisques = document.getElementById('config-disques');
+            const mPlaquettes = document.getElementById('config-plaquettes');
+            const greenAccessoryBox = document.getElementById('green-accessory-box');
+            const greenAccessoryBoxSoldesNotice = document.getElementById('green-accessory-box-soldes-notice');
+            const selectsPrivilege = [mPneus, mBidons, mTpu, mKitTpu, mHousses, mLockrings, mDisques, mPlaquettes];
+            if (isSoldes26Actif()) {
+                selectsPrivilege.forEach(sel => { if (sel) { sel.value = 'Aucun'; sel.disabled = true; } });
+                if (greenAccessoryBox) greenAccessoryBox.classList.add('hidden');
+                if (greenAccessoryBoxSoldesNotice) greenAccessoryBoxSoldesNotice.classList.remove('hidden');
+            } else {
+                selectsPrivilege.forEach(sel => { if (sel) sel.disabled = false; });
+                if (greenAccessoryBox) greenAccessoryBox.classList.remove('hidden');
+                if (greenAccessoryBoxSoldesNotice) greenAccessoryBoxSoldesNotice.classList.add('hidden');
+            }
 
             const bannerStock = document.getElementById('stock-locked-banner');
 
