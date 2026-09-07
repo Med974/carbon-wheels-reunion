@@ -2,6 +2,10 @@ const API_URL = 'https://script.google.com/macros/s/AKfycbwi5uRAIjQ2vjbL7h9_LWAU
 
 let globalCatalogue = [];
 let currentLenticulaireMode = "achat"; // "achat" ou "location"
+// Demande explicite d'ouvrir la modale Lenticulaire directement en mode Location (ex: lien
+// "Voir aussi en Location" sur la carte catalogue) — consommé une fois puis remis à null,
+// sinon openModal() retombe sur son comportement par défaut (mode "achat" à l'ouverture).
+let pendingLenticulaireMode = null;
 let unavailableRentalDates = []; // Liste des dates bloquées renvoyées par le Sheet
 let rentalDatesLoaded = false; // true une fois la 1ère réponse de l'API reçue (évite d'afficher "disponible" par défaut le temps du chargement)
 let currentDeliveryZone = "reunion"; // "reunion" ou "metropole"
@@ -1337,6 +1341,11 @@ function renderGrid(filterCategory) {
         const isAccessory = cat.toLowerCase().includes('accessoire') || cat.toLowerCase().includes('composant');
         const isTestProgram = nomLC.includes('essai') || nomLC.includes('test');
         const isFixedPriceLocation = nomLC.includes('yoeleo') || nomLC.includes('aeroplug');
+        // Même condition que openModal() pour afficher le sélecteur Achat/Location dans la modale
+        // (bloc-mode-lenticulaire) : garantit que le bouton "Aussi en Location" n'apparaît que sur
+        // les roues qui proposent réellement ce mode. Demande de Mehdi le 07/09/2026 : l'offre de
+        // location était invisible dans le catalogue, cachée derrière un clic + bascule d'onglet.
+        const isLenticulaireRentable = nomLC.includes('lenticulaire') || nomLC.includes('disc');
 
         let imageUrl = item.Image ? item.Image.split(',')[0].trim() : 'https://images.unsplash.com/photo-1511994298241-608e28f14fde?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80';
 
@@ -1432,6 +1441,11 @@ function renderGrid(filterCategory) {
                         <span class="block text-xs uppercase tracking-wider text-gray-400 font-bold mb-1">${labelPrix}</span>
                         <span class="text-2xl font-black text-brand-accent">${prixAffiche}</span>
                     </div>
+                    ${isLenticulaireRentable ? `
+                    <button type="button" onclick="event.stopPropagation(); openModalLocation(${index});" class="mt-3 w-full flex items-center justify-center gap-2 bg-green-50 hover:bg-green-100 border border-green-300 text-green-800 text-xs font-black uppercase tracking-wider py-2.5 rounded-lg transition">
+                        <i class="fa-solid fa-calendar-days"></i> Aussi en location dès 50€/week-end
+                    </button>
+                    ` : ''}
                 </div>
             </div>
         `;
@@ -2197,7 +2211,10 @@ function openModal(index) {
 
         if (nomLC.includes('lenticulaire') || nomLC.includes('disc')) {
             if (blocModeLenti) blocModeLenti.style.display = 'flex';
-            setLenticulaireMode('achat'); // Par défaut en mode achat à l'ouverture
+            // Par défaut en mode achat à l'ouverture, sauf demande explicite (lien "Voir aussi en
+            // Location" du catalogue, cf. openModalLocation()).
+            setLenticulaireMode(pendingLenticulaireMode || 'achat');
+            pendingLenticulaireMode = null;
         } else {
             if (blocModeLenti) blocModeLenti.style.display = 'none';
             if (blocLocationDetails) blocLocationDetails.style.display = 'none';
@@ -3039,6 +3056,14 @@ function closeMobileMenu() {
             icon.classList.add('fa-bars');
         }
     }
+}
+
+// Ouvre la modale d'une roue lenticulaire/disc directement en mode Location, au lieu du mode
+// achat par défaut — utilisé par le lien "Voir aussi en Location" de la carte catalogue, pour
+// que l'offre de location ne soit plus cachée derrière un clic supplémentaire dans la modale.
+function openModalLocation(index) {
+    pendingLenticulaireMode = 'location';
+    openModal(index);
 }
 
 function setLenticulaireMode(mode) {
