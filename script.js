@@ -884,7 +884,11 @@ function submitOrder() {
         produitsPourFichier.push(`${item.title} (${item.config})`);
         
         factureNoms.push(`• ${item.title}\n  ${item.config}`);
-        facturePrix.push(`${item.price} €\n `); 
+        // formatPrixEUR() (pas de "${item.price} €" brut) : format cohérent avec les lignes REMISE/
+        // frais juste en dessous (virgule française, pas de point), et sans le "\n " parasite qui
+        // traînait ici avant — cause du bug de formatage incohérent en colonne T du Sheet (certaines
+        // lignes lues comme un nombre, d'autres comme du texte selon ce résidu de retour à la ligne).
+        facturePrix.push(formatPrixEUR(item.price));
     });
     
     const currentSubtotal = appliedPromo ? (total - discountAmount) : total;
