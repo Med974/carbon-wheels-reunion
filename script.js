@@ -606,25 +606,6 @@ function updateCartUI() {
             } else if (item.isAccessory && isPetitAccessoire) {
                 discountAmount += arrondiCentimes(item.price * 0.10); // -10% sur les petits accessoires
             }
-        } else if (appliedPromo === 'SOLDES26') {
-            const titleLC = item.title.toLowerCase();
-            const isManivelle = titleLC.includes('manivelle');
-            // Le panier COMPLET (pas le "subtotal" en cours d'accumulation dans cette boucle, qui ne
-            // contient encore que les articles déjà parcourus) : nécessaire pour trancher chaque
-            // article dès le premier passage, plutôt qu'après coup comme le palier global ci-dessous.
-            const cartTotalSoldes = cart.reduce((sum, i) => sum + i.price, 0);
-
-            // Mêmes -100€ que PAPA26 sur les paires de roues, toujours. Le -10% couvre en plus les
-            // Composants (manivelles, packs Pédalier, étoile, plateaux, capteur XCADEY, axe de roues :
-            // tous flagués item.isAccessory=true, cf. isCurrentItemAccessory) et le Textile, que PAPA26
-            // excluait — MAIS uniquement sous 500€ de panier total, pour ne jamais cumuler avec le
-            // palier global (-75€/-50€) ci-dessous : simplification demandée par Mehdi le 05/09/2026
-            // suite à un panier à 919€ qui cumulait -10% ET -50€ (15,5% de remise au lieu de 10%).
-            if (!item.isAccessory && !isManivelle && !item.isTextile && item.price >= 1399) {
-                discountAmount += 100;
-            } else if (cartTotalSoldes < 500 && (item.isTextile || item.isAccessory)) {
-                discountAmount += arrondiCentimes(item.price * 0.10);
-            }
         }
         
         if (container) {
@@ -654,8 +635,8 @@ function updateCartUI() {
         }
     });
 
-	// Vérification post-boucle pour les paliers globaux (PAPA26 et SOLDES26 partagent les mêmes montants)
-    if (appliedPromo === 'PAPA26' || appliedPromo === 'SOLDES26') {
+	// Vérification post-boucle pour le palier global PAPA26
+    if (appliedPromo === 'PAPA26') {
         // On vérifie si le client a une PAIRE de roues (prix >= 1399) qui a déjà bénéficié des 100€
         const hasPaireDeRoues = cart.some(item => !item.isAccessory && !item.title.toLowerCase().includes('manivelle') && !item.isTextile && item.price >= 1399);
         
@@ -818,19 +799,7 @@ function applyPromoCode() {
     const input = document.getElementById('promo-code');
     if(!input) return;
     const code = input.value.trim().toUpperCase();
-    if (code === 'SOLDES26' && !isSoldes26Actif()) {
-        showCustomAlert("Le code SOLDES26 a expiré, l'opération soldes est terminée.");
-        return;
-    }
-    // Tarif privilège (CCPIKARBON) suspendu pendant la période soldes : pour éviter qu'un client
-    // qui le connaît déjà (donné après achat d'une paire de roues) ne cumule ou ne choisisse un
-    // avantage différent de SOLDES26 pendant l'opération. Se réactive automatiquement à la fin des
-    // soldes (même horodatage que isSoldes26Actif()), sans rien à refaire.
-    if (code === 'CCPIKARBON' && isSoldes26Actif()) {
-        showCustomAlert("Le tarif privilège est temporairement suspendu pendant les soldes. Utilisez le code SOLDES26 : c'est plus avantageux en ce moment !");
-        return;
-    }
-    if (code === 'CCPIKARBON' || code === 'PAPA26' || code === 'SOLDES26') {
+    if (code === 'CCPIKARBON' || code === 'PAPA26') {
         appliedPromo = code;
         input.value = '';
         updateCartUI();
@@ -1353,41 +1322,15 @@ function renderGrid(filterCategory) {
 
         let imageUrl = item.Image ? item.Image.split(',')[0].trim() : 'https://images.unsplash.com/photo-1511994298241-608e28f14fde?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80';
 
-        // Calcule la remise SOLDES26 "comme si cet article était seul dans le panier" (une carte
-        // catalogue ne connaît pas le reste d'un panier réel) — mêmes règles et mêmes seuils que
-        // updateCartUI : -100€ sur une paire de roues (>=1399€), -10% sur accessoire/composant/textile
-        // sous 500€, sinon le palier global -50€ (500-999€) / -75€ (1000€+) qui s'applique à tout le
-        // reste (Bâtons, Lenticulaire, Apex...). Jamais sur les locations/programmes d'essai.
-        const isTextileCat = cat.toLowerCase().includes('textile');
-        let soldesInfo = null;
-        if (item.Prix && !isTestProgram && !isFixedPriceLocation && isSoldes26Actif()) {
-            const prix = item.Prix;
-            if (!isAccessory && !isTextileCat && prix >= 1399) {
-                soldesInfo = { solde: prix - 100, badge: '🔥 SOLDES -100€' };
-            } else if ((isAccessory || isTextileCat) && prix < 500) {
-                soldesInfo = { solde: arrondiCentimes(prix * 0.9), badge: '🔥 SOLDES -10%' };
-            } else if (prix >= 500 && prix < 1000) {
-                soldesInfo = { solde: prix - 50, badge: '🔥 SOLDES -50€' };
-            } else if (prix >= 1000) {
-                soldesInfo = { solde: prix - 75, badge: '🔥 SOLDES -75€' };
-            }
-        }
-
         let prixAffiche = 'Sur devis';
         if (item.Prix) {
             const prefixe = (isAccessory || isFixedPriceWheel || isTestProgram || isFixedPriceLocation) ? '' : 'Dès ';
-            if (soldesInfo) {
-                prixAffiche = `<span class="line-through text-gray-400 text-base mr-2 align-middle">${prefixe}${item.Prix} €</span><span class="text-red-600 align-middle">${prefixe}${formatPrixEUR(soldesInfo.solde)}</span>`;
-            } else {
-                prixAffiche = `${prefixe}${item.Prix} €`;
-            }
+            prixAffiche = `${prefixe}${item.Prix} €`;
         }
 
         let statutBadge = '';
 
-        if (soldesInfo) {
-            statutBadge += `<span class="absolute top-4 right-4 bg-red-600 text-white text-xs font-black px-3 py-1 rounded shadow-md z-20 transform rotate-3">${soldesInfo.badge}</span>`;
-        } else if (nomLC.includes('50')) {
+        if (nomLC.includes('50')) {
             statutBadge += `<span class="absolute top-4 right-4 bg-brand-accent text-brand-main text-xs font-black px-3 py-1 rounded shadow-md z-20 transform rotate-3 border border-yellow-300">⭐ BEST-SELLER</span>`;
         }
 
@@ -2035,26 +1978,6 @@ function openModal(index) {
             if(mHousses) mHousses.value = 'Aucun';
 			const mLockrings = document.getElementById('config-lockrings');
             if(mLockrings) mLockrings.value = 'Aucun';
-
-            // Tarifs Privilège (encart vert accessoires 11-18) suspendus tant que SOLDES26 est actif :
-            // sans ça, un client cumulerait le prix déjà réduit "Privilège" de ces accessoires ET la
-            // remise -100€ SOLDES26 sur la paire de roues (demande de Mehdi le 07/09/2026). Le montage
-            // roue (config-montage-roue, hors encart vert) n'est pas concerné, ce n'est pas un tarif
-            // privilège mais une simple option de service.
-            const mDisques = document.getElementById('config-disques');
-            const mPlaquettes = document.getElementById('config-plaquettes');
-            const greenAccessoryBox = document.getElementById('green-accessory-box');
-            const greenAccessoryBoxSoldesNotice = document.getElementById('green-accessory-box-soldes-notice');
-            const selectsPrivilege = [mPneus, mBidons, mTpu, mKitTpu, mHousses, mLockrings, mDisques, mPlaquettes];
-            if (isSoldes26Actif()) {
-                selectsPrivilege.forEach(sel => { if (sel) { sel.value = 'Aucun'; sel.disabled = true; } });
-                if (greenAccessoryBox) greenAccessoryBox.classList.add('hidden');
-                if (greenAccessoryBoxSoldesNotice) greenAccessoryBoxSoldesNotice.classList.remove('hidden');
-            } else {
-                selectsPrivilege.forEach(sel => { if (sel) sel.disabled = false; });
-                if (greenAccessoryBox) greenAccessoryBox.classList.remove('hidden');
-                if (greenAccessoryBoxSoldesNotice) greenAccessoryBoxSoldesNotice.classList.add('hidden');
-            }
 
             const bannerStock = document.getElementById('stock-locked-banner');
 
@@ -4103,21 +4026,5 @@ function calculatePressure() {
     resultsDiv.classList.add('animate-pulse');
     setTimeout(() => resultsDiv.classList.remove('animate-pulse'), 500);
 }
-
-// Fenêtre de validité du code SOLDES26 : samedi 5 septembre 2026 (lancement) au dimanche 13
-// septembre 2026 au soir inclus (heure de La Réunion, UTC+4). Passé ce cap, le code est refusé à
-// l'application (voir applyPromoCode) et le bandeau du haut se masque tout seul, sans qu'il y ait
-// besoin d'y retoucher manuellement le 14 septembre.
-function isSoldes26Actif() {
-    const finSoldes = new Date('2026-09-14T00:00:00+04:00'); // minuit le 14 = fin du 13 au soir
-    return new Date() < finSoldes;
-}
-
-(function afficherBanniereSoldesSiActif() {
-    const banniere = document.getElementById('banniere-soldes');
-    if (banniere && isSoldes26Actif()) {
-        banniere.classList.remove('hidden');
-    }
-})();
 
 loadCatalogue();
