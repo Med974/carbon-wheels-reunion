@@ -584,7 +584,6 @@ function updateCartUI() {
             const titleLC = item.title.toLowerCase();
             const isSpecialWheel = titleLC.includes('bâton') || titleLC.includes('tri-spoke') || titleLC.includes('lenticulaire') || titleLC.includes('disc');
             const isManivelle = titleLC.includes('manivelle');
-            const isPetitAccessoire = titleLC.includes('pneu') || titleLC.includes('gp5000') || titleLC.includes('tpu') || titleLC.includes('chambre') || titleLC.includes('galfer') || titleLC.includes('disque') || titleLC.includes('plaquette') || titleLC.includes('bidon') || titleLC.includes('ahyka') || titleLC.includes('housse') || titleLC.includes('lockring') || titleLC.includes('kit');
 
             if (item.isTextile) {
                 discountAmount += 10;
@@ -592,19 +591,22 @@ function updateCartUI() {
                 discountAmount += 25;
             } else if (!item.isAccessory && !isSpecialWheel && !isManivelle) {
                 discountAmount += 50;
-            } else if (item.isAccessory && isPetitAccessoire) {
+            } else if (item.isAccessory) {
+                // Généralisé à TOUS les accessoires/composants (item.isAccessory, déterminé par la
+                // Categorie du produit dans le Sheet), plus une liste de mots-clés à maintenir à la
+                // main à chaque nouvel article (cassettes, mini pompe, chaînes... ne matchaient aucun
+                // mot-clé et ne bénéficiaient d'aucune remise). Demande de Mehdi le 15/09/2026.
                 discountAmount += arrondiCentimes(item.price * 0.08);
             }
         } else if (appliedPromo === 'PAPA26') {
             const titleLC = item.title.toLowerCase();
             const isManivelle = titleLC.includes('manivelle');
-            const isPetitAccessoire = titleLC.includes('pneu') || titleLC.includes('gp5000') || titleLC.includes('tpu') || titleLC.includes('chambre') || titleLC.includes('galfer') || titleLC.includes('disque') || titleLC.includes('plaquette') || titleLC.includes('bidon') || titleLC.includes('ahyka') || titleLC.includes('housse') || titleLC.includes('lockring') || titleLC.includes('kit');
 
             // -100€ UNIQUEMENT si c'est un produit principal (roues) ET que le prix est de 1399€ ou plus (paire de roues)
             if (!item.isAccessory && !isManivelle && !item.isTextile && item.price >= 1399) {
                 discountAmount += 100;
-            } else if (item.isAccessory && isPetitAccessoire) {
-                discountAmount += arrondiCentimes(item.price * 0.10); // -10% sur les petits accessoires
+            } else if (item.isAccessory) {
+                discountAmount += arrondiCentimes(item.price * 0.10); // -10% sur tous les accessoires/composants
             }
         }
         
