@@ -1261,11 +1261,34 @@ function openFastTrackConfig(series, height, type, finish, logo) {
     }, 150);
 }
 
+// Une seule requête ratée (cold start Apps Script, blip réseau, réponse HTML/erreur transitoire au
+// lieu du JSON attendu) bloquait tout le catalogue pour le visiteur sans aucune chance de se
+// rattraper. Ici, jusqu'à 2 nouvelles tentatives (courte pause entre chaque) avant d'abandonner —
+// la plupart des "erreurs de connexion au catalogue" remontées par Mehdi sont probablement des blips
+// transitoires côté Apps Script que ce retry absorbe silencieusement pour le visiteur.
+async function recupererCatalogueAvecRetry(tentativesRestantes) {
+    try {
+        const response = await fetch(API_URL, { cache: 'no-store' });
+        if (!response.ok) throw new Error('HTTP ' + response.status);
+        const data = await response.json();
+        // doGet renvoie {error: "..."} (pas un tableau) en cas d'erreur serveur : sans cette
+        // vérification, ça passait le parsing JSON avec succès puis plantait plus loin dans
+        // renderGrid() sur globalCatalogue.forEach (qui n'existe pas sur un objet).
+        if (!Array.isArray(data)) throw new Error('Réponse inattendue du catalogue (pas un tableau)');
+        return data;
+    } catch (error) {
+        if (tentativesRestantes > 0) {
+            await new Promise(resolve => setTimeout(resolve, 1200));
+            return recupererCatalogueAvecRetry(tentativesRestantes - 1);
+        }
+        throw error;
+    }
+}
+
 async function loadCatalogue() {
     try {
         loadFactoryStock(); // NOUVEAU : Charge le stock usine (Fast-Track) en arrière-plan
-        const response = await fetch(API_URL);
-        globalCatalogue = await response.json();
+        globalCatalogue = await recupererCatalogueAvecRetry(2);
         const loader = document.getElementById('loading-message');
         if(loader) loader.style.display = 'none';
         renderGrid('Tout');
@@ -1273,10 +1296,12 @@ async function loadCatalogue() {
         console.error('Erreur:', error);
         const loader = document.getElementById('loading-message');
         if(loader) {
+            loader.style.display = 'block';
             loader.innerHTML = `
             <div class="bg-red-50 text-red-600 p-4 rounded-lg text-center border border-red-200">
                 <i class="fa-solid fa-triangle-exclamation text-2xl mb-2"></i>
                 <p class="font-bold">Erreur de connexion au catalogue.</p>
+                <button onclick="loadCatalogue()" class="mt-2 text-xs font-bold underline text-red-700">Réessayer</button>
             </div>`;
         }
     }
