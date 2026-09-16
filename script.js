@@ -925,8 +925,28 @@ function submitOrder() {
         headers: { 'Content-Type': 'text/plain;charset=utf-8' },
         body: JSON.stringify(orderData)
     })
-    .then(response => response.text())
-    .then(data => {
+    .then(response => response.json())
+    .then(result => {
+        // Lance la suite du traitement (PDF, sync Angler, brouillons, récap interne à Mehdi) via une
+        // 2ème requête envoyée tout de suite, sans faire attendre le client dessus : keepalive permet
+        // à la requête de partir même si le client ferme l'onglet juste après avoir vu la confirmation.
+        // Remplace l'ancien déclencheur Apps Script (ScriptApp.newTrigger), dont le délai réel s'est
+        // révélé pouvoir atteindre ~10 min en pratique au lieu du quasi-instantané espéré (mesuré par
+        // Mehdi le 16/09/2026). Si cette 2ème requête échoue malgré tout, la commande reste enregistrée
+        // (le Sheet est déjà écrit avant cette réponse) ; PDF/Proforma restent régénérables à la main
+        // depuis les menus existants du Sheet en dernier recours.
+        fetch(API_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            keepalive: true,
+            body: JSON.stringify(Object.assign({}, orderData, {
+                _suiteTraitement: true,
+                numFacture: result.numFacture,
+                numCmdDFS: result.numCmdDFS,
+                _bloc1Texte: result.bloc1Texte
+            }))
+        }).catch(() => {});
+
         const checkoutContent = document.getElementById('checkout-content');
         if (checkoutContent) {
             checkoutContent.classList.add('hidden');
