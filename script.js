@@ -19,6 +19,7 @@ let testDatesLoaded = false; // idem que rentalDatesLoaded, pour le programme d'
 let isCurrentItemTestProgram = false;
 let isCurrentItemStockReady = false;
 let isCurrentItemTextile = false;
+let isCurrentItemGravelWheel = false; // Gamme DFS Pulse Gravel : lu à la fois dans openModal() et updateConfig()
 let factoryStock = [];
 let factoryStockManivelles = [];
 let factoryStockAxes = [];
@@ -1269,8 +1270,15 @@ function openFastTrackConfig(series, height, type, finish, logo) {
 // la plupart des "erreurs de connexion au catalogue" remontées par Mehdi sont probablement des blips
 // transitoires côté Apps Script que ce retry absorbe silencieusement pour le visiteur.
 async function recupererCatalogueAvecRetry(tentativesRestantes) {
+    // Timeout de 7s par tentative (AbortController) : mesuré en direct le 16/09/2026, l'API Apps
+    // Script peut rester bloquée plus de 60 secondes avant de finir par échouer (404) au lieu
+    // d'échouer vite. Sans cette limite, un simple retry-sur-échec ne sert à rien : on attend le
+    // blocage en entier avant même de pouvoir retenter. Avec elle, le pire cas (3 tentatives) reste
+    // borné à environ 3×7s + les 2 courtes pauses entre tentatives, au lieu d'un temps illimité.
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 7000);
     try {
-        const response = await fetch(API_URL, { cache: 'no-store' });
+        const response = await fetch(API_URL, { cache: 'no-store', signal: controller.signal });
         if (!response.ok) throw new Error('HTTP ' + response.status);
         const data = await response.json();
         // doGet renvoie {error: "..."} (pas un tableau) en cas d'erreur serveur : sans cette
@@ -1280,10 +1288,12 @@ async function recupererCatalogueAvecRetry(tentativesRestantes) {
         return data;
     } catch (error) {
         if (tentativesRestantes > 0) {
-            await new Promise(resolve => setTimeout(resolve, 1200));
+            await new Promise(resolve => setTimeout(resolve, 600));
             return recupererCatalogueAvecRetry(tentativesRestantes - 1);
         }
         throw error;
+    } finally {
+        clearTimeout(timeoutId);
     }
 }
 
@@ -1563,8 +1573,10 @@ function openModal(index) {
         // Gamme DFS Pulse Gravel : passe par le configurateur route complet (ne contient ni "vtt" ni
         // "apex" ni "mtb", donc isCurrentItemWheelConfigurable reste true), mais avec moyeu/jante figés
         // (R2/UXL uniquement, aucun autre montage proposé) et freinage disque uniquement — voir plus
-        // bas dans openModal(). Demande de Mehdi le 16/09/2026.
-        const isGravelWheel = nomLC.includes('gravel');
+        // bas dans openModal(). Variable globale (pas locale) : updateConfig() en a aussi besoin pour
+        // le masquage de l'encart Privilèges (voir plus bas dans updateConfig(), bug corrigé le
+        // 16/09/2026 : un bloc plus ancien y remettait l'encart visible via style.display juste après).
+        isCurrentItemGravelWheel = nomLC.includes('gravel');
         isCurrentItemWheelConfigurable = !isCurrentItemAccessory && !isCurrentItemTestProgram && !isCurrentItemAeroplugLocation && !isCurrentItemEvocLocation && !isCurrentItemYoeleoLocation && !nomLC.includes('bâton') && !nomLC.includes('tri-spoke') && !nomLC.includes('lenticulaire') && !nomLC.includes('disc') && !nomLC.includes('manivelle') && !isMtbWheel;
 
         const isSpecialWheel = nomLC.includes('bâton') || nomLC.includes('tri-spoke') || nomLC.includes('lenticulaire') || nomLC.includes('disc');
@@ -2040,12 +2052,12 @@ function openModal(index) {
                 // rayons/finition/logos/couleur/ratchet/roulements, reste au libre choix du client)
                 if(bannerStock) bannerStock.classList.add('hidden');
 
-                if(mHub) { mHub.value = 'R2'; mHub.disabled = isGravelWheel; lastHubSelected = 'R2'; }
-                if(mJante) { mJante.value = 'UXL'; mJante.disabled = isGravelWheel; }
+                if(mHub) { mHub.value = 'R2'; mHub.disabled = isCurrentItemGravelWheel; lastHubSelected = 'R2'; }
+                if(mJante) { mJante.value = 'UXL'; mJante.disabled = isCurrentItemGravelWheel; }
                 if(mRayons) { mRayons.value = 'T33'; mRayons.disabled = false; }
                 if(mFinition) { mFinition.value = 'Glossy Black'; mFinition.disabled = false; }
                 if(mLogos) { mLogos.value = 'Petit logo noir'; mLogos.disabled = false; }
-                if(mFreinage) { mFreinage.value = 'Disques'; mFreinage.disabled = isGravelWheel; }
+                if(mFreinage) { mFreinage.value = 'Disques'; mFreinage.disabled = isCurrentItemGravelWheel; }
                 if(mRouelibre) { mRouelibre.value = 'Shimano HG'; mRouelibre.disabled = false; }
 
                 updateHubOptions();
@@ -2058,17 +2070,11 @@ function openModal(index) {
                 if(cRoulements) { cRoulements.disabled = false; }
             }
 
-            // Encart "Avantages Privilèges" (pneus, disques, plaquettes...) masqué pour la gamme
-            // Gravel : Mehdi ne veut pas proposer ces tarifs groupés sur cette gamme.
-            const greenAccessoryBoxGravel = document.getElementById('green-accessory-box');
-            if (greenAccessoryBoxGravel) {
-                if (isGravelWheel) {
-                    greenAccessoryBoxGravel.classList.add('hidden');
-                } else {
-                    greenAccessoryBoxGravel.classList.remove('hidden');
-                }
-            }
-
+            // Le masquage de l'encart "Avantages Privilèges" pour la gamme Gravel se fait dans
+            // updateConfig() (via isCurrentItemGravelWheel), pas ici : updateConfig() est appelé juste
+            // en dessous et gère déjà ailleurs la visibilité de cet encart selon la zone de livraison
+            // (style.display, pas classList) — un classList.add('hidden') posé ici serait aussitôt
+            // écrasé par ce bloc-là. Bug corrigé le 16/09/2026.
             updateConfig();
         } else if (isMtbWheel) {
             if(specJantesBox) specJantesBox.style.display = 'block';
@@ -2853,7 +2859,7 @@ function updateConfig() {
 
     const greenBox = document.getElementById('green-accessory-box');
     if (greenBox) {
-        if (currentDeliveryZone === 'metropole') {
+        if (currentDeliveryZone === 'metropole' || isCurrentItemGravelWheel) {
             greenBox.style.display = 'none';
             // Force les valeurs d'accessoires à zéro pour ne pas fausser le prix
             if (pneusSelect) pneusSelect.value = 'Aucun';
