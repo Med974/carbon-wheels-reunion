@@ -1560,6 +1560,11 @@ function openModal(index) {
         isCurrentItemEvocLocation = nomLC.includes('evoc');
         isCurrentItemYoeleoLocation = nomLC.includes('yoeleo');
         const isMtbWheel = nomLC.includes('apex') || nomLC.includes('vtt') || nomLC.includes('mtb');
+        // Gamme DFS Pulse Gravel : passe par le configurateur route complet (ne contient ni "vtt" ni
+        // "apex" ni "mtb", donc isCurrentItemWheelConfigurable reste true), mais avec moyeu/jante figés
+        // (R2/UXL uniquement, aucun autre montage proposé) et freinage disque uniquement — voir plus
+        // bas dans openModal(). Demande de Mehdi le 16/09/2026.
+        const isGravelWheel = nomLC.includes('gravel');
         isCurrentItemWheelConfigurable = !isCurrentItemAccessory && !isCurrentItemTestProgram && !isCurrentItemAeroplugLocation && !isCurrentItemEvocLocation && !isCurrentItemYoeleoLocation && !nomLC.includes('bâton') && !nomLC.includes('tri-spoke') && !nomLC.includes('lenticulaire') && !nomLC.includes('disc') && !nomLC.includes('manivelle') && !isMtbWheel;
 
         const isSpecialWheel = nomLC.includes('bâton') || nomLC.includes('tri-spoke') || nomLC.includes('lenticulaire') || nomLC.includes('disc');
@@ -2031,17 +2036,19 @@ function openModal(index) {
 
             } else {
                 // DÉVERROUILLAGE SI C'EST UNE ROUE SUR MESURE NORMALE
+                // (sauf Gravel : moyeu/jante figés sur R2/UXL, freinage figé sur Disques — le reste,
+                // rayons/finition/logos/couleur/ratchet/roulements, reste au libre choix du client)
                 if(bannerStock) bannerStock.classList.add('hidden');
 
-                if(mHub) { mHub.value = 'R2'; mHub.disabled = false; lastHubSelected = 'R2'; }
-                if(mJante) { mJante.value = 'UXL'; mJante.disabled = false; }
+                if(mHub) { mHub.value = 'R2'; mHub.disabled = isGravelWheel; lastHubSelected = 'R2'; }
+                if(mJante) { mJante.value = 'UXL'; mJante.disabled = isGravelWheel; }
                 if(mRayons) { mRayons.value = 'T33'; mRayons.disabled = false; }
                 if(mFinition) { mFinition.value = 'Glossy Black'; mFinition.disabled = false; }
                 if(mLogos) { mLogos.value = 'Petit logo noir'; mLogos.disabled = false; }
-                if(mFreinage) { mFreinage.value = 'Disques'; mFreinage.disabled = false; }
+                if(mFreinage) { mFreinage.value = 'Disques'; mFreinage.disabled = isGravelWheel; }
                 if(mRouelibre) { mRouelibre.value = 'Shimano HG'; mRouelibre.disabled = false; }
 
-                updateHubOptions(); 
+                updateHubOptions();
 
                 const cColor = document.getElementById('config-couleur-moyeu');
                 if(cColor) { cColor.value = 'Noir'; cColor.disabled = false; }
@@ -2050,7 +2057,18 @@ function openModal(index) {
                 const cRoulements = document.getElementById('config-roulements');
                 if(cRoulements) { cRoulements.disabled = false; }
             }
-            
+
+            // Encart "Avantages Privilèges" (pneus, disques, plaquettes...) masqué pour la gamme
+            // Gravel : Mehdi ne veut pas proposer ces tarifs groupés sur cette gamme.
+            const greenAccessoryBoxGravel = document.getElementById('green-accessory-box');
+            if (greenAccessoryBoxGravel) {
+                if (isGravelWheel) {
+                    greenAccessoryBoxGravel.classList.add('hidden');
+                } else {
+                    greenAccessoryBoxGravel.classList.remove('hidden');
+                }
+            }
+
             updateConfig();
         } else if (isMtbWheel) {
             if(specJantesBox) specJantesBox.style.display = 'block';
