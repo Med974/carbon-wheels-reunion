@@ -11,6 +11,7 @@ let rentalDatesLoaded = false; // true une fois la 1ère réponse de l'API reçu
 let currentDeliveryZone = "reunion"; // "reunion" ou "metropole"
 let currentBasePrice = 0;
 let currentBaseWeight = 0;
+let currentItemHauteur = ""; // Profil réel (ex: "60mm") — utilisé pour distinguer la variante Large du Gravel
 let isCurrentItemAccessory = false;
 let isCurrentItemWheelConfigurable = false;
 let currentItemStatut = "";
@@ -1559,6 +1560,7 @@ function openModal(index) {
 
         currentBasePrice = parseInt(item.Prix) || 0;
         currentBaseWeight = parseInt(item.Poids) || 0;
+        currentItemHauteur = item.Hauteur || "";
         currentItemStatut = item.Statut || "";
         
 		const nomLC = item.Nom ? String(item.Nom).toLowerCase() : "";
@@ -1638,13 +1640,26 @@ function openModal(index) {
         
         let largeurInt = "24 mm";
         let largeurExt = "32 mm";
-        
+
         if (nomLC.includes('lenticulaire') || nomLC.includes('disc')) {
             largeurInt = "18 mm";
             largeurExt = "25 mm";
         } else if (nomLC.includes('bâton') || nomLC.includes('tri-spoke')) {
             largeurInt = "21 mm";
             largeurExt = "28 mm";
+        } else if (nomLC.includes('gravel')) {
+            // Specs fabricant DFS Pulse Gravel : 32/38mm sur tous les profils standards
+            // (39/44/49/54/59/64mm), sauf la version Large 60mm en 35/41mm. On distingue via
+            // item.Hauteur (le profil réel) plutôt que le nom, pour ne pas dépendre d'une
+            // convention de nommage particulière pour la variante Large.
+            const hauteurGravelLC = (item.Hauteur || '').toString().toLowerCase();
+            if (hauteurGravelLC.includes('60')) {
+                largeurInt = "35 mm";
+                largeurExt = "41 mm";
+            } else {
+                largeurInt = "32 mm";
+                largeurExt = "38 mm";
+            }
         }
 
         const larIntEl = document.getElementById('modal-largeur-int');
@@ -2781,7 +2796,20 @@ function updateConfig() {
     const alerteLargeurPatins = document.getElementById('alerte-largeur-patins');
     
     if (freinageSelect && larIntEl && larExtEl) {
-        if (freinageSelect.value === 'Patins') {
+        if (isCurrentItemGravelWheel) {
+            // Specs fabricant DFS Pulse Gravel (voir aussi openModal()) : 32/38mm sur tous les profils
+            // standards, sauf la version Large 60mm en 35/41mm. Sans ce cas particulier, le freinage
+            // Gravel étant verrouillé sur "Disques", cette logique retombait sur le cas générique
+            // juste en dessous (24/32mm, spec Ghost) — bug remonté par Mehdi le 16/09/2026.
+            if (currentItemHauteur.toString().toLowerCase().includes('60')) {
+                larIntEl.textContent = '35 mm';
+                larExtEl.textContent = '41 mm';
+            } else {
+                larIntEl.textContent = '32 mm';
+                larExtEl.textContent = '38 mm';
+            }
+            if (alerteLargeurPatins) alerteLargeurPatins.classList.add('hidden');
+        } else if (freinageSelect.value === 'Patins') {
             const largeurPatinsSelect = document.getElementById('config-largeur-patins');
             if (largeurPatinsSelect && largeurPatinsSelect.value.includes('25mm')) {
                 larIntEl.textContent = '18 mm';
