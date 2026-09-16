@@ -1020,25 +1020,35 @@ function closeSuccessAndReset() {
 }
 
 async function loadFactoryStock() {
+    // Les 3 requêtes sont indépendantes (stocks Jante/Manivelle/Axe séparés) : on les lance en même
+    // temps plutôt que l'une après l'autre pour ne pas cumuler leurs temps de réponse (surtout côté
+    // Apps Script, dont chaque appel est déjà mis en cache 6h désormais, voir code.gs, mais qui reste
+    // sujet aux mêmes lenteurs que le catalogue tant que ce cache n'est pas encore rempli).
+    const [resRoues, resManivelles, resAxes] = await Promise.allSettled([
+        fetch(`${API_URL}?action=getFactoryStock`),
+        fetch(`${API_URL}?action=getFactoryStockManivelles`),
+        fetch(`${API_URL}?action=getFactoryStockAxes`)
+    ]);
+
     try {
-        const response = await fetch(`${API_URL}?action=getFactoryStock`);
-        factoryStock = await response.json();
+        if (resRoues.status !== 'fulfilled') throw resRoues.reason;
+        factoryStock = await resRoues.value.json();
         renderFastTrackCards(); // Génère les cartes d'accueil (roues)
     } catch (error) {
         console.error("Erreur de chargement du stock usine (roues) :", error);
     }
 
     try {
-        const responseManivelles = await fetch(`${API_URL}?action=getFactoryStockManivelles`);
-        factoryStockManivelles = await responseManivelles.json();
+        if (resManivelles.status !== 'fulfilled') throw resManivelles.reason;
+        factoryStockManivelles = await resManivelles.value.json();
         renderFastTrackCardsManivelles(); // Génère les cartes d'accueil (manivelles)
     } catch (error) {
         console.error("Erreur de chargement du stock usine (manivelles) :", error);
     }
 
     try {
-        const responseAxes = await fetch(`${API_URL}?action=getFactoryStockAxes`);
-        factoryStockAxes = await responseAxes.json();
+        if (resAxes.status !== 'fulfilled') throw resAxes.reason;
+        factoryStockAxes = await resAxes.value.json();
         renderFastTrackCardsAxes(); // Génère les cartes d'accueil (axes)
     } catch (error) {
         console.error("Erreur de chargement du stock usine (axes) :", error);
@@ -1291,13 +1301,15 @@ function openFastTrackConfig(series, height, type, finish, logo) {
 // la plupart des "erreurs de connexion au catalogue" remontées par Mehdi sont probablement des blips
 // transitoires côté Apps Script que ce retry absorbe silencieusement pour le visiteur.
 async function recupererCatalogueAvecRetry(tentativesRestantes) {
-    // Timeout de 7s par tentative (AbortController) : mesuré en direct le 16/09/2026, l'API Apps
-    // Script peut rester bloquée plus de 60 secondes avant de finir par échouer (404) au lieu
-    // d'échouer vite. Sans cette limite, un simple retry-sur-échec ne sert à rien : on attend le
-    // blocage en entier avant même de pouvoir retenter. Avec elle, le pire cas (3 tentatives) reste
-    // borné à environ 3×7s + les 2 courtes pauses entre tentatives, au lieu d'un temps illimité.
+    // Timeout de 20s par tentative (AbortController). Remonté de 7s à 20s le 16/09/2026 : Apps Script
+    // ne stoppe pas l'exécution d'une requête côté serveur quand le navigateur abandonne l'attente
+    // (l'ancien timeout de 7s coupait donc la tentative avant qu'elle ait fini, sans jamais laisser
+    // une chance à une réponse simplement lente-mais-valide d'aboutir) — un timeout trop court forçait
+    // ainsi presque systématiquement les 3 tentatives à échouer en parallèle plutôt qu'une seule à
+    // réussir. code.gs pose maintenant son propre verrou (LockService) pour qu'une seule exécution
+    // fasse le travail lourd à la fois ; laisser plus de temps ici lui donne une vraie chance d'aboutir.
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 7000);
+    const timeoutId = setTimeout(() => controller.abort(), 20000);
     try {
         const response = await fetch(API_URL, { cache: 'no-store', signal: controller.signal });
         if (!response.ok) throw new Error('HTTP ' + response.status);
@@ -1309,7 +1321,9 @@ async function recupererCatalogueAvecRetry(tentativesRestantes) {
         return data;
     } catch (error) {
         if (tentativesRestantes > 0) {
-            await new Promise(resolve => setTimeout(resolve, 600));
+            // Pause de 2s (plutôt que 600ms) : laisse le temps à la tentative précédente de finir son
+            // travail côté serveur et de remplir le cache, pour que celle-ci le trouve déjà prêt.
+            await new Promise(resolve => setTimeout(resolve, 2000));
             return recupererCatalogueAvecRetry(tentativesRestantes - 1);
         }
         throw error;
@@ -1319,17 +1333,28 @@ async function recupererCatalogueAvecRetry(tentativesRestantes) {
 }
 
 async function loadCatalogue() {
+    // Réaffiche le spinner de chargement d'origine (index.html) à chaque appel, y compris un "Réessayer"
+    // manuel : avant ce correctif, cliquer sur Réessayer relançait bien la requête mais laissait le
+    // message d'erreur affiché tel quel jusqu'à la réponse, sans aucune indication que ça travaillait
+    // (remonté par Mehdi le 16/09/2026).
+    const loader = document.getElementById('loading-message');
+    if (loader) {
+        loader.style.display = 'block';
+        loader.innerHTML = `
+        <i class="fa-solid fa-circle-notch fa-spin text-4xl text-brand-accent mb-4"></i>
+        <p class="text-gray-500 font-medium">Chargement du catalogue...</p>`;
+    }
+
     try {
-        loadFactoryStock(); // NOUVEAU : Charge le stock usine (Fast-Track) en arrière-plan
-        globalCatalogue = await recupererCatalogueAvecRetry(2);
-        const loader = document.getElementById('loading-message');
-        if(loader) loader.style.display = 'none';
+        loadFactoryStock(); // Charge le stock usine (Fast-Track) en arrière-plan
+        // 2 tentatives (au lieu de 3) : avec le timeout de 20s par tentative (voir
+        // recupererCatalogueAvecRetry), 3 tentatives porterait le pire cas à 60s avant d'abandonner.
+        globalCatalogue = await recupererCatalogueAvecRetry(1);
+        if (loader) loader.style.display = 'none';
         renderGrid('Tout');
     } catch (error) {
         console.error('Erreur:', error);
-        const loader = document.getElementById('loading-message');
-        if(loader) {
-            loader.style.display = 'block';
+        if (loader) {
             loader.innerHTML = `
             <div class="bg-red-50 text-red-600 p-4 rounded-lg text-center border border-red-200">
                 <i class="fa-solid fa-triangle-exclamation text-2xl mb-2"></i>
