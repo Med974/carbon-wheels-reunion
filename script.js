@@ -643,7 +643,7 @@ function updateCartUI() {
     if (appliedPromo === 'PAPA26') {
         // On vérifie si le client a une PAIRE de roues (prix >= 1399) qui a déjà bénéficié des 100€
         const hasPaireDeRoues = cart.some(item => !item.isAccessory && !item.title.toLowerCase().includes('manivelle') && !item.isTextile && item.price >= 1399);
-        
+
         // Si le client n'a PAS de paire de roues à 1399€, on applique les réductions sur le total du panier
         if (!hasPaireDeRoues) {
             if (subtotal >= 1000) {
@@ -651,6 +651,18 @@ function updateCartUI() {
             } else if (subtotal >= 500) {
                 discountAmount += 50;  // -50€ pour un panier entre 500€ et 999.99€ (ex: roue lenti seule de 700€)
             }
+        }
+    }
+
+    // GRAVEL26 : -50€ UNE SEULE FOIS dès que le panier contient au moins une roue Gravel (pas une
+    // remise cumulable par roue si plusieurs paires), reste du panier libre. Promo de lancement
+    // plafonnée aux 3 premiers clients : la limite est vérifiée à l'application du code
+    // (applyPromoCode, en direct auprès du serveur) et revérifiée côté serveur à la commande (doPost)
+    // par sécurité. Demande de Mehdi le 17/09/2026.
+    if (appliedPromo === 'GRAVEL26') {
+        const hasGravel = cart.some(item => item.title.toLowerCase().includes('gravel'));
+        if (hasGravel) {
+            discountAmount += 50;
         }
     }
 
@@ -799,11 +811,35 @@ function updateCartUI() {
     }
 }
 
-function applyPromoCode() {
+async function applyPromoCode() {
     const input = document.getElementById('promo-code');
     if(!input) return;
     const code = input.value.trim().toUpperCase();
     if (code === 'CCPIKARBON' || code === 'PAPA26') {
+        appliedPromo = code;
+        input.value = '';
+        updateCartUI();
+    } else if (code === 'GRAVEL26') {
+        const hasGravel = cart.some(item => item.title.toLowerCase().includes('gravel'));
+        if (!hasGravel) {
+            showCustomAlert("Ce code est réservé aux commandes contenant une roue Gravel.");
+            return;
+        }
+        // Promo de lancement limitée aux 3 premiers clients (demande de Mehdi le 17/09/2026) :
+        // vérification en direct auprès du serveur (compte les commandes déjà passées avec ce code
+        // dans le Sheet), un compteur local ne verrait pas les commandes des autres visiteurs.
+        try {
+            const response = await fetch(`${API_URL}?action=getPromoUsage&code=GRAVEL26`);
+            const usage = await response.json();
+            if ((usage.used || 0) >= 3) {
+                showCustomAlert("Ce code promo a déjà été utilisé par les 3 premiers clients, il n'est plus disponible.");
+                return;
+            }
+        } catch (error) {
+            console.error("Erreur de vérification du code GRAVEL26 :", error);
+            showCustomAlert("Impossible de vérifier ce code pour le moment, réessaie dans quelques instants.");
+            return;
+        }
         appliedPromo = code;
         input.value = '';
         updateCartUI();
