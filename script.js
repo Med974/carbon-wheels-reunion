@@ -2144,8 +2144,9 @@ function openModal(index) {
 
             } else {
                 // DÉVERROUILLAGE SI C'EST UNE ROUE SUR MESURE NORMALE
-                // (sauf Gravel : moyeu/jante figés sur R2/UXL, freinage figé sur Disques — le reste,
-                // rayons/finition/logos/couleur/ratchet/roulements, reste au libre choix du client)
+                // (sauf Gravel : moyeu/jante figés sur R2/UXL, freinage figé sur Disques — le rayon T32
+                // est en plus exclu du choix pour cette gamme, voir updateConfig() ; le reste,
+                // rayons T33/T40/T52/finition/logos/couleur/ratchet/roulements, reste au libre choix du client)
                 if(bannerStock) bannerStock.classList.add('hidden');
 
                 if(mHub) { mHub.value = 'R2'; mHub.disabled = isCurrentItemGravelWheel; lastHubSelected = 'R2'; }
@@ -2871,7 +2872,8 @@ function updateConfig() {
             optT52Interne.textContent = baseTextT52Interne;
         }
     }
-    
+
+
     const larIntEl = document.getElementById('modal-largeur-int');
     const larExtEl = document.getElementById('modal-largeur-ext');
     const alerteLargeurPatins = document.getElementById('alerte-largeur-patins');
@@ -2964,6 +2966,24 @@ function updateConfig() {
         
         if (patinsOption) { patinsOption.disabled = true; patinsOption.textContent = 'Freins à Patins (Incompatible avec RT240)'; }
         if (freinageSelect && freinageSelect.value === 'Patins') freinageSelect.value = 'Disques';
+    }
+
+    // Gamme Gravel : le T32 reste exclu même si le hub est R2 (rayon jugé trop fin/fragile pour ce
+    // terrain) — T33/T40/T52 restent au choix libre. Doit s'appliquer APRÈS la gestion par moyeu
+    // ci-dessus, qui réactive sinon systématiquement le T32 sur hub R2 — voir retour de Mehdi le 17/09/2026.
+    if (isCurrentItemGravelWheel) {
+        if (t32Option) {
+            t32Option.disabled = true;
+            t32Option.textContent = 'Carbone T32 (Non disponible sur Gravel)';
+        }
+        if (optT32Interne) {
+            optT32Interne.disabled = true;
+            optT32Interne.textContent = 'Carbone T32 (Non disponible sur Gravel)';
+        }
+        // Sécurité : si le client avait déjà cliqué sur T32, on le remet sur T33 par défaut
+        if (rayonSelect && (rayonSelect.value === 'T32' || rayonSelect.value === 'T32_interne')) {
+            rayonSelect.value = 'T33';
+        }
     }
 
     const greenBox = document.getElementById('green-accessory-box');
