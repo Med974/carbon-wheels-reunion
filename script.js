@@ -2222,9 +2222,9 @@ function openModal(index) {
 			const mLockrings = document.getElementById('config-lockrings');
             if(mLockrings) mLockrings.value = 'Aucun';
 			const mChaines = document.getElementById('config-chaines');
-            if(mChaines) mChaines.value = 'Aucune';
+            if(mChaines) mChaines.value = 'Aucun';
 			const mCassetteUltegra = document.getElementById('config-cassette-ultegra');
-            if(mCassetteUltegra) mCassetteUltegra.value = 'Aucune';
+            if(mCassetteUltegra) mCassetteUltegra.value = 'Aucun';
 
             const bannerStock = document.getElementById('stock-locked-banner');
 
