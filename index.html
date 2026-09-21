@@ -1853,7 +1853,31 @@
                                     </select>
                                 </div>
                             </div>
-                            
+
+                            <div class="grid grid-cols-2 gap-3 mb-4">
+                                <div id="config-chaines-container">
+                                    <label class="block text-xs font-bold text-gray-600 mb-1 flex justify-between items-end truncate">
+                                        <span>19. Chaînes Shimano</span>
+                                        <button type="button" onclick="showPictureGeneric('chaine')" class="text-[10px] text-brand-accent hover:underline font-bold uppercase tracking-wider shrink-0 ml-1"><i class="fa-solid fa-image mr-0.5"></i> Voir</button>
+                                    </label>
+                                    <select id="config-chaines" class="w-full bg-white border border-green-300 rounded-lg px-2 py-2 text-xs font-semibold shadow-sm" onchange="updateConfig()">
+                                        <option value="Aucune" data-price="0" selected>Ne pas ajouter [+0€]</option>
+                                        <option value="Chaîne Shimano Ultegra" data-price="45">⛓️ Ultegra [+45€]</option>
+                                        <option value="Chaîne Shimano Dura-Ace" data-price="75">⛓️ Dura-Ace [+75€]</option>
+                                    </select>
+                                </div>
+                                <div id="config-cassette-ultegra-container">
+                                    <label class="block text-xs font-bold text-gray-600 mb-1 flex justify-between items-end truncate">
+                                        <span>20. Cassette Ultegra</span>
+                                        <button type="button" onclick="showPictureGeneric('cassette')" class="text-[10px] text-brand-accent hover:underline font-bold uppercase tracking-wider shrink-0 ml-1"><i class="fa-solid fa-image mr-0.5"></i> Voir</button>
+                                    </label>
+                                    <select id="config-cassette-ultegra" class="w-full bg-white border border-green-300 rounded-lg px-2 py-2 text-xs font-semibold shadow-sm" onchange="updateConfig()">
+                                        <option value="Aucune" data-price="0" selected>Ne pas ajouter [+0€]</option>
+                                        <option value="Cassette Shimano Ultegra" data-price="99">🔧 Cassette Ultegra [+99€]</option>
+                                    </select>
+                                </div>
+                            </div>
+
                             <div class="mt-1 space-y-1">
                                 <p class="text-[9px] text-green-700 italic leading-tight"><i class="fa-solid fa-triangle-exclamation mr-1"></i>Mécanique : Des disques neufs exigent des plaquettes neuves pour ne pas les rayer.</p>
                             </div>

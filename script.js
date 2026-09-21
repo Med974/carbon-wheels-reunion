@@ -469,6 +469,8 @@ function addToCart() {
 				addAccessoryToConfigText('config-plaquettes');
 				addAccessoryToConfigText('config-housses');
 				addAccessoryToConfigText('config-lockrings');
+				addAccessoryToConfigText('config-chaines');
+				addAccessoryToConfigText('config-cassette-ultegra');
             }
         } else {
             configText = isCurrentItemAccessory ? "Accessoire" : "Modèle Standard";
@@ -2219,6 +2221,10 @@ function openModal(index) {
             if(mHousses) mHousses.value = 'Aucun';
 			const mLockrings = document.getElementById('config-lockrings');
             if(mLockrings) mLockrings.value = 'Aucun';
+			const mChaines = document.getElementById('config-chaines');
+            if(mChaines) mChaines.value = 'Aucune';
+			const mCassetteUltegra = document.getElementById('config-cassette-ultegra');
+            if(mCassetteUltegra) mCassetteUltegra.value = 'Aucune';
 
             const bannerStock = document.getElementById('stock-locked-banner');
 
@@ -2929,6 +2935,8 @@ function updateConfig() {
     const lockringsSelect = document.getElementById('config-lockrings');
     const montageRoueSelect = document.getElementById('config-montage-roue');
     const kitTpuSelect = document.getElementById('config-kit-tpu');
+    const chainesSelect = document.getElementById('config-chaines');
+    const cassetteUltegraSelect = document.getElementById('config-cassette-ultegra');
 
     const optT52 = rayonSelect ? Array.from(rayonSelect.options).find(opt => opt.value === 'T52') : null;
     const optT52Interne = document.getElementById('opt-t52-interne');
@@ -3123,7 +3131,9 @@ function updateConfig() {
     const bidonsPrice = getPrice(bidonsSelect);
     const tpuPrice = getPrice(tpuSelect);
     const montageRouePrice = getPrice(montageRoueSelect);
-    const accessoiresPrice = pneusPrice + bidonsPrice + tpuPrice + houssesPrice + lockringsPrice + kitTpuPrice + montageRouePrice;
+    const chainesPrice = getPrice(chainesSelect);
+    const cassetteUltegraPrice = getPrice(cassetteUltegraSelect);
+    const accessoiresPrice = pneusPrice + bidonsPrice + tpuPrice + houssesPrice + lockringsPrice + kitTpuPrice + montageRouePrice + chainesPrice + cassetteUltegraPrice;
     
     const hubWeight = moyeuSelect && moyeuSelect.selectedIndex >= 0 ? (parseInt(moyeuSelect.options[moyeuSelect.selectedIndex].getAttribute('data-hub-weight')) || 238) : 238;
     const spokeCount = moyeuSelect && moyeuSelect.selectedIndex >= 0 ? (parseInt(moyeuSelect.options[moyeuSelect.selectedIndex].getAttribute('data-spokes')) || 40) : 40;
