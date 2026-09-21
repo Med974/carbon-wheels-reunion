@@ -1024,7 +1024,7 @@ function submitOrder() {
         zoneLivraisonLabel = optZone.value;
     }
     const statutLivraisonVal = (retraitModeVal === 'velo' && zoneLivraisonLabel)
-        ? `Livraison à vélo — ${zoneLivraisonLabel} (${deliveryFee}€)`
+        ? `Livraison à domicile — ${zoneLivraisonLabel} (${deliveryFee}€)`
         : "En attente";
 
     const finalTotal = currentSubtotal + transactionFees + deliveryFee;
@@ -1040,7 +1040,7 @@ function submitOrder() {
     }
 
     if (deliveryFee > 0) {
-        factureNoms.push(`\nLivraison à vélo (${zoneLivraisonLabel})`);
+        factureNoms.push(`\nLivraison à domicile (${zoneLivraisonLabel})`);
         facturePrix.push(`\n+${deliveryFee.toFixed(2)} €`);
     }
 
