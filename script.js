@@ -703,6 +703,31 @@ function updateCartUI() {
     let currentSubtotal = subtotal - discountAmount;
     if (subtotalEl) subtotalEl.textContent = currentSubtotal;
 
+    // Livraison à vélo (Réunion uniquement, Mehdi livre lui-même) : indisponible si le panier contient
+    // un article non éligible (roue/location/essai — repérable via isAccessory/isTextile, déjà posés
+    // sur chaque item du panier), si le panier est sous le minimum de 40€, ou si le règlement choisi
+    // est en Espèces (il ne veut pas se déplacer pour rien si le client n'est finalement pas là).
+    // Demande de Mehdi le 21/09/2026.
+    const hasNonEligibleItemForVelo = cart.some(item => !item.isAccessory && !item.isTextile);
+    const MINIMUM_LIVRAISON_VELO = 40;
+    let veloIndisponibleRaison = "";
+    if (paymentMethod === 'especes') {
+        veloIndisponibleRaison = "Indisponible en paiement Espèces (réglé en amont pour les autres modes).";
+    } else if (hasNonEligibleItemForVelo) {
+        veloIndisponibleRaison = "Indisponible avec une roue, une location ou un essai dans le panier.";
+    } else if (currentSubtotal < MINIMUM_LIVRAISON_VELO) {
+        veloIndisponibleRaison = `Débloqué à partir de ${MINIMUM_LIVRAISON_VELO}€ d'achat (encore ${arrondiCentimes(MINIMUM_LIVRAISON_VELO - currentSubtotal)}€).`;
+    }
+    const veloEligible = veloIndisponibleRaison === "";
+
+    const retraitModeInput = document.querySelector('input[name="retrait-mode"]:checked');
+    const retraitMode = retraitModeInput ? retraitModeInput.value : 'atelier';
+    const zoneLivraisonSelect = document.getElementById('config-zone-livraison-velo');
+    let deliveryFee = 0;
+    if (veloEligible && retraitMode === 'velo' && zoneLivraisonSelect && zoneLivraisonSelect.selectedIndex >= 0) {
+        deliveryFee = parseInt(zoneLivraisonSelect.options[zoneLivraisonSelect.selectedIndex].getAttribute('data-price')) || 0;
+    }
+
     let transactionFees = 0;
 
     if (currentSubtotal > 0) {
@@ -724,8 +749,21 @@ function updateCartUI() {
         }
     }
 
+    const deliveryFeeEl = document.getElementById('cart-delivery-fee');
+    const deliveryFeeRow = document.getElementById('delivery-fee-row');
+    if (deliveryFeeEl) deliveryFeeEl.textContent = deliveryFee;
+    if (deliveryFeeRow) {
+        if (deliveryFee > 0) {
+            deliveryFeeRow.classList.remove('hidden');
+            deliveryFeeRow.classList.add('flex');
+        } else {
+            deliveryFeeRow.classList.add('hidden');
+            deliveryFeeRow.classList.remove('flex');
+        }
+    }
+
     const hasTextile = cart.some(item => item.isTextile || (item.config && item.config.includes('Coupe :')));
-    const finalTotal = currentSubtotal + transactionFees; 
+    const finalTotal = currentSubtotal + transactionFees + deliveryFee;
     if (finalTotalEl) finalTotalEl.textContent = finalTotal % 1 === 0 ? finalTotal : finalTotal.toFixed(2); // <-- MISE À JOUR DE L'AFFICHAGE !
     const isEligibleFor3X = finalTotal >= 899; // Le nouveau seuil d'éligibilité
 
@@ -743,7 +781,40 @@ function updateCartUI() {
             optionWero.classList.add('hidden');
         }
     }
-    
+
+    // GESTION DE LA LIVRAISON À VÉLO : container visible seulement pour la Réunion (la Métropole est
+    // expédiée en DDP depuis l'usine, pas concernée), option grisée + raison affichée si inéligible.
+    const deliveryMethodContainer = document.getElementById('delivery-method-container');
+    const optionLivraisonVelo = document.getElementById('option-livraison-velo');
+    const radioLivraisonVelo = document.getElementById('radio-livraison-velo');
+    const veloZoneContainer = document.getElementById('velo-zone-select-container');
+    const veloIndispoReasonEl = document.getElementById('velo-indispo-reason');
+
+    if (deliveryMethodContainer) {
+        if (cart.length > 0 && currentDeliveryZone === 'reunion') {
+            deliveryMethodContainer.classList.remove('hidden');
+        } else {
+            deliveryMethodContainer.classList.add('hidden');
+        }
+    }
+    if (radioLivraisonVelo) radioLivraisonVelo.disabled = !veloEligible;
+    if (optionLivraisonVelo) optionLivraisonVelo.classList.toggle('opacity-50', !veloEligible);
+    if (veloIndispoReasonEl) {
+        if (veloEligible) {
+            veloIndispoReasonEl.classList.add('hidden');
+        } else {
+            veloIndispoReasonEl.textContent = veloIndisponibleRaison;
+            veloIndispoReasonEl.classList.remove('hidden');
+        }
+    }
+    if (veloZoneContainer) {
+        if (retraitMode === 'velo' && veloEligible) {
+            veloZoneContainer.classList.remove('hidden');
+        } else {
+            veloZoneContainer.classList.add('hidden');
+        }
+    }
+
     const acompteMsg = document.getElementById('textile-acompte-msg');
     const acompteTotal = document.getElementById('cart-acompte-total');
 
@@ -798,6 +869,13 @@ function updateCartUI() {
             const virementRadio = document.querySelector('input[value="virement"]');
             if (virementRadio) virementRadio.checked = true;
         }
+    }
+
+    // 3bis. SÉCURITÉ : idem pour la livraison à vélo si elle vient de devenir inéligible (retour en
+    // Espèces, ajout d'une roue, panier repassé sous 40€...) ou si la zone n'est plus la Réunion.
+    if (retraitMode === 'velo' && (!veloEligible || currentDeliveryZone !== 'reunion')) {
+        const atelierRadio = document.querySelector('input[name="retrait-mode"][value="atelier"]');
+        if (atelierRadio) atelierRadio.checked = true;
     }
 
     // 4. TEXTE DU BOUTON FINAL (Mise à jour spécifique si acompte textile sur petit panier)
@@ -929,7 +1007,25 @@ function submitOrder() {
     if (hasTextile) {
         paymentMethodName += " (Précommande : Acompte 50%)";
     }
-    const finalTotal = currentSubtotal + transactionFees;
+
+    // Livraison à vélo : on relit le mode de réception choisi (l'UI n'affiche/n'autorise déjà cette
+    // option que si le panier y est éligible, cf. updateCartUI) pour ajouter le tarif de zone au
+    // total et le tracer sur la facture + colonne "Statut Livraison" du Sheet.
+    const retraitModeInput = document.querySelector('input[name="retrait-mode"]:checked');
+    const retraitModeVal = retraitModeInput ? retraitModeInput.value : 'atelier';
+    const zoneLivraisonSelect = document.getElementById('config-zone-livraison-velo');
+    let deliveryFee = 0;
+    let zoneLivraisonLabel = "";
+    if (retraitModeVal === 'velo' && zoneLivraisonSelect && zoneLivraisonSelect.selectedIndex >= 0) {
+        const optZone = zoneLivraisonSelect.options[zoneLivraisonSelect.selectedIndex];
+        deliveryFee = parseInt(optZone.getAttribute('data-price')) || 0;
+        zoneLivraisonLabel = optZone.value;
+    }
+    const statutLivraisonVal = (retraitModeVal === 'velo' && zoneLivraisonLabel)
+        ? `Livraison à vélo — ${zoneLivraisonLabel} (${deliveryFee}€)`
+        : "En attente";
+
+    const finalTotal = currentSubtotal + transactionFees + deliveryFee;
 
     if (appliedPromo) {
         factureNoms.push(`\nREMISE (Code : ${appliedPromo})`);
@@ -939,6 +1035,11 @@ function submitOrder() {
     if (transactionFees > 0) {
         factureNoms.push(`\nFrais de transaction (${paymentMethodName})`);
         facturePrix.push(`\n+${transactionFees.toFixed(2)} €`);
+    }
+
+    if (deliveryFee > 0) {
+        factureNoms.push(`\nLivraison à vélo (${zoneLivraisonLabel})`);
+        facturePrix.push(`\n+${deliveryFee.toFixed(2)} €`);
     }
 
     const orderData = {
@@ -953,7 +1054,7 @@ function submitOrder() {
         total: finalTotal % 1 === 0 ? finalTotal : finalTotal.toFixed(2),
         promo: appliedPromo || "Aucun",
         statutPaiement: "En attente via " + paymentMethodName,
-        statutLivraison: "En attente"
+        statutLivraison: statutLivraisonVal
     };
 
     fetch(API_URL, {
