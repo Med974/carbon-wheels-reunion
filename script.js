@@ -370,15 +370,12 @@ function addToCart() {
                 const dateLoc = slotTypeLoc ? getSlotAnchor(dateEl.value, slotTypeLoc) : "Date non précisée";
                 const slotLabelLoc = slotTypeLoc && SLOT_DEFS[slotTypeLoc] ? SLOT_DEFS[slotTypeLoc].label : "Vendredi → Dimanche";
                 const rl = document.getElementById('config-rouelibre-special').value;
-                const selectMontage = document.getElementById('config-montage-location');
-                const montageText = selectMontage ? selectMontage.value : "Sans Montage";
-                const montagePrice = selectMontage && selectMontage.selectedIndex >= 0 ? (parseInt(selectMontage.options[selectMontage.selectedIndex].getAttribute('data-price')) || 0) : 0;
 
                 const tarifBase = getLentiTarifDynamique(dateEl ? dateEl.value : "", slotTypeLoc);
 
                 finalTitle = `${title} (Location ${slotLabelLoc})`;
-                configText = `Créneau du : ${dateLoc} (${slotLabelLoc}) | Freins à Disques | Roue libre : ${rl} | Tarif : ${tarifBase}€ | Option : ${montageText}`;
-                finalPrice = tarifBase + montagePrice; // Tarif dégressif selon proximité de la date + option de montage
+                configText = `Créneau du : ${dateLoc} (${slotLabelLoc}) | Freins à Disques | Roue libre : ${rl} | Tarif : ${tarifBase}€ | Cassette Shimano Ultegra 11-34 12v + disques montés (inclus)`;
+                finalPrice = tarifBase; // Tarif dégressif selon proximité de la date. Montage retiré (roues louées avec cassette Ultegra 11-34 12v + disques déjà montés, demande de Mehdi le 29/09/2026)
             } else {
                     const freinEl = document.getElementById('config-freinage-special');
                     const rlEl = document.getElementById('config-rouelibre-special');
@@ -2797,13 +2794,11 @@ function updateConfig() {
 		let gammeWeightDiff = 0;
 
         if (currentLenticulaireMode === 'location') {
-            const selectMontage = document.getElementById('config-montage-location');
-            const montagePrice = selectMontage && selectMontage.selectedIndex >= 0 ? (parseInt(selectMontage.options[selectMontage.selectedIndex].getAttribute('data-price')) || 0) : 0;
             const dateElLive = document.getElementById('config-date-location');
             const slotTypeLive = dateElLive && dateElLive.value ? inferSlotType(dateElLive.value) : null;
             const tarifBaseLive = getLentiTarifDynamique(dateElLive ? dateElLive.value : "", slotTypeLive);
 
-            finalPrice = tarifBaseLive + montagePrice; // Tarif dégressif selon proximité de la date + option de montage
+            finalPrice = tarifBaseLive; // Tarif dégressif selon proximité de la date. Montage retiré (roues louées avec cassette Ultegra 11-34 12v + disques déjà montés, demande de Mehdi le 29/09/2026)
             finalWeight = 980; // Poids fixe de ta jante de location
             updateBadgeUI(false, "Disponible à la location");
         } else {
@@ -3309,7 +3304,7 @@ function setLenticulaireMode(mode) {
         // Afficher l'encart complet de location (date + conditions)
         if (blocLocationDetails) blocLocationDetails.style.display = 'block';
 
-        // Le montage à l'atelier a déjà sa propre option dans l'encart de location (config-montage-location)
+        // Pas d'option de montage en location : roues louées avec cassette Ultegra 11-34 12v + disques déjà montés (demande de Mehdi le 29/09/2026)
         if (blocMontageSpecial) blocMontageSpecial.style.display = 'none';
 
         // Verrouiller la gamme sur la version de ta flotte de location (Série STD)
@@ -3349,8 +3344,6 @@ function setLenticulaireMode(mode) {
         if (selectFreinage) selectFreinage.disabled = false;
 		if (selectLargeur) selectLargeur.disabled = false;
         if (selectSticker) selectSticker.disabled = false;
-		const selectMontage = document.getElementById('config-montage-location');
-        if (selectMontage) selectMontage.value = "Sans Montage";
         if (blocMontageSpecial) blocMontageSpecial.style.display = 'block';
         
         // Masquer l'alerte d'indisponibilité si elle était affichée
