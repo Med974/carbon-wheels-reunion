@@ -222,9 +222,9 @@ function addToCart() {
                     chaussettesText = ` | + ${chaussettesQte}x Chaussettes Aéro`;
                 }
                 
-                configText = `Type : ${type} | Coupe : ${coupe} | Couleur : ${color} | Taille : ${size}${chaussettesText} | Quantité : ${qte} (Tarif Lancement)`;
+                configText = `Type : ${type} | Coupe : ${coupe} | Couleur : ${color} | Taille : ${size}${chaussettesText} | Quantité : ${qte}`;
                 // On calcule le prix des tenues d'un côté, et le prix des chaussettes de l'autre
-                finalPrice = (159 * qte) + (29 * chaussettesQte);
+                finalPrice = ((currentBasePrice > 0 ? currentBasePrice : 169) * qte) + (29 * chaussettesQte);
                 finalWeight = "--";
             } else if (titleLC.includes('manivelle')) {
                 const modeleEl = document.getElementById('config-modele-manivelle');
@@ -1989,7 +1989,7 @@ function openModal(index) {
             if(poidsMaxContainer) poidsMaxContainer.style.display = 'none';
 
 			const cPrice = document.getElementById('calc-price');
-            if(cPrice) cPrice.innerHTML = '<span class="text-xl text-gray-400 line-through mr-2 font-medium">169€</span>159';
+            if(cPrice) cPrice.textContent = currentBasePrice > 0 ? currentBasePrice : 169;
             const cWeight = document.getElementById('calc-weight');
             if(cWeight) cWeight.textContent = '--';
             updateBadgeUI(false, "Précommande");
@@ -2525,11 +2525,11 @@ function updateConfig() {
         }
 
         // On sépare bien les multiplications pour ne pas surfacturer le client
-        const finalPrice = (159 * qte) + (29 * chaussettesQte);
-        const basePrice = (169 * qte) + (29 * chaussettesQte);
+        const prixTenue = currentBasePrice > 0 ? currentBasePrice : 169;
+        const finalPrice = (prixTenue * qte) + (29 * chaussettesQte);
         
         const cPrice = document.getElementById('calc-price');
-        if(cPrice) cPrice.innerHTML = `<span class="text-xl text-gray-400 line-through mr-2 font-medium">${basePrice}€</span>${finalPrice}`;
+        if(cPrice) cPrice.textContent = finalPrice;
         if(cWeightSpan) cWeightSpan.textContent = '--';
         
         updateBadgeUI(false, "Précommande");
