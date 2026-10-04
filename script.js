@@ -199,6 +199,10 @@ function addToCart() {
                 finalPrice = currentBasePrice > 0 ? currentBasePrice : 50;
                 finalWeight = currentBaseWeight > 0 ? currentBaseWeight : "--";
 			} else if (isCurrentItemTextile) {
+                if (!textileSelectedPiece) {
+                    showCustomAlert("Choisissez d'abord votre taille parmi les pièces en stock.");
+                    return;
+                }
                 const typeSelect = document.getElementById('config-textile-type');
                 const type = typeSelect ? typeSelect.value : "";
                 const coupeSelect = document.getElementById('config-textile-coupe');
@@ -485,11 +489,6 @@ function addToCart() {
         };
 
         cart.push(item);
-		// Auto-sélectionner l'acompte si on ajoute une tenue
-        if (isCurrentItemTextile) {
-            const acompteRadio = document.querySelector('input[value="acompte_textile"]');
-            if (acompteRadio) acompteRadio.checked = true;
-        }
         updateCartUI();
         closeModal();
         toggleCart();
@@ -761,12 +760,10 @@ function updateCartUI() {
         }
     }
 
-    const hasTextile = cart.some(item => item.isTextile || (item.config && item.config.includes('Coupe :')));
     const finalTotal = currentSubtotal + transactionFees + deliveryFee;
     if (finalTotalEl) finalTotalEl.textContent = finalTotal % 1 === 0 ? finalTotal : finalTotal.toFixed(2); // <-- MISE À JOUR DE L'AFFICHAGE !
     const isEligibleFor3X = finalTotal >= 899; // Le nouveau seuil d'éligibilité
 
-    const radioCB = document.querySelector('input[value="card1x"]')?.parentElement;
     const radio3x = document.querySelector('input[value="3x_pei"]')?.parentElement;
     const radio5050 = document.getElementById('option-pay-5050');
     const optionWero = document.getElementById('option-pay-wero');
@@ -814,9 +811,6 @@ function updateCartUI() {
         }
     }
 
-    const acompteMsg = document.getElementById('textile-acompte-msg');
-    const acompteTotal = document.getElementById('cart-acompte-total');
-
     // 1. GESTION DU 3X (Réunion) et 50/50 (Métropole) selon le seuil de 899€
     if (currentDeliveryZone === 'reunion') {
         if (isEligibleFor3X) {
@@ -834,29 +828,7 @@ function updateCartUI() {
         if (radio3x) radio3x.classList.add('hidden');
     }
 
-    // 2. GESTION DU TEXTILE & ACOMPTE
-    if (hasTextile) {
-        // On affiche toujours l'alerte d'acompte (qui indique 50% du total)
-        if (acompteMsg && acompteTotal) {
-            acompteMsg.classList.remove('hidden');
-            acompteMsg.classList.add('inline-block');
-            acompteTotal.textContent = (finalTotal / 2).toFixed(2).replace('.00', '');
-        }
-
-        // On laisse toujours l'option Carte Bancaire visible, même pour les petits paniers
-        if (radioCB) {
-            radioCB.classList.remove('hidden');
-        }
-    } else {
-        // Pas de textile : on cache le message d'acompte et on garantit que la CB est visible
-        if (acompteMsg) {
-            acompteMsg.classList.add('hidden');
-            acompteMsg.classList.remove('inline-block');
-        }
-        if (radioCB) radioCB.classList.remove('hidden');
-    }
-
-    // 3. SÉCURITÉ : Réinitialiser la méthode de paiement si l'option choisie vient d'être cachée
+    // 2. SÉCURITÉ : Réinitialiser la méthode de paiement si l'option choisie vient d'être cachée
     const currentChecked = document.querySelector('input[name="payment-method"]:checked');
     if (currentChecked) {
         let needsReset = false;
@@ -870,21 +842,11 @@ function updateCartUI() {
         }
     }
 
-    // 3bis. SÉCURITÉ : idem pour la livraison à vélo si elle vient de devenir inéligible (retour en
+    // 2bis. SÉCURITÉ : idem pour la livraison à vélo si elle vient de devenir inéligible (retour en
     // Espèces, ajout d'une roue, panier repassé sous 40€...) ou si la zone n'est plus la Réunion.
     if (retraitMode === 'velo' && (!veloEligible || currentDeliveryZone !== 'reunion')) {
         const atelierRadio = document.querySelector('input[name="retrait-mode"][value="atelier"]');
         if (atelierRadio) atelierRadio.checked = true;
-    }
-
-    // 4. TEXTE DU BOUTON FINAL (Mise à jour spécifique si acompte textile sur petit panier)
-    const finalChecked = document.querySelector('input[name="payment-method"]:checked');
-    if (checkoutBtn && finalChecked && hasTextile && !isEligibleFor3X) {
-        if (finalChecked.value === 'virement') {
-            checkoutBtn.innerHTML = 'Valider & Payer 50% par Virement <i class="fa-solid fa-paper-plane ml-2 text-xl"></i>';
-        } else if (finalChecked.value === 'especes') {
-            checkoutBtn.innerHTML = 'Valider & Payer 50% en Espèces <i class="fa-solid fa-hand-holding-dollar ml-2 text-xl"></i>';
-        }
     }
 }
 
@@ -1002,10 +964,6 @@ function submitOrder() {
 	}
 	
     transactionFees = Math.round(transactionFees * 100) / 100;
-	const hasTextile = cart.some(item => item.isTextile || (item.config && item.config.includes('Coupe :')));
-    if (hasTextile) {
-        paymentMethodName += " (Précommande : Acompte 50%)";
-    }
 
     // Livraison à vélo : on relit le mode de réception choisi (l'UI n'affiche/n'autorise déjà cette
     // option que si le panier y est éligible, cf. updateCartUI) pour ajouter le tarif de zone au
@@ -1097,9 +1055,7 @@ function submitOrder() {
         
         const successPayText = document.getElementById('success-payment-method');
         if (successPayText) {
-            if (hasTextile) {
-                successPayText.textContent = "le récapitulatif pour effectuer ton acompte de 50% et valider la production de ta tenue à l'usine";
-            } else if(paymentMethodVal === 'virement') {
+            if(paymentMethodVal === 'virement') {
                 successPayText.textContent = "le RIB pour finaliser la réservation";
             } else if(paymentMethodVal === 'especes') {
                 successPayText.textContent = "un message pour se voir afin de procéder au paiement en espèces";
@@ -1734,6 +1690,150 @@ function updateBadgeUI(isOriginalStatus, overrideStatus = null) {
     }
 }
 
+// --- STOCK DES TENUES (textile) ---
+// Le stock se gère dans la colonne Variantes du Sheet catalogue, une entrée par couleur :
+//   "Combinaison Aéro / Homme / Team White : S M L, Combinaison Aéro / Homme / Team Full Black : M"
+// Avant les ":" = type / coupe (facultative) / couleur. Après = tailles en stock (une taille
+// répétée = plusieurs pièces, "M M" = 2 pièces en M). Sans Variantes, la tenue s'affiche épuisée.
+let textileStock = [];
+let textileSelectedPiece = null;
+
+function normaliserTexteTextile(texte) {
+    return String(texte || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/\s+/g, ' ').trim();
+}
+
+function parseTextileStock(variantes) {
+    const selType = document.getElementById('config-textile-type');
+    const selCoupe = document.getElementById('config-textile-coupe');
+    const selCouleur = document.getElementById('config-textile-couleur');
+    const selTaille = document.getElementById('config-textile-taille');
+    if (!selType || !selCoupe || !selCouleur || !selTaille) return [];
+
+    const alias = { blanc: 'white', blanche: 'white', noir: 'black', noire: 'black', combi: 'combinaison' };
+    const trouverOption = (select, texte) => {
+        const cherche = normaliserTexteTextile(texte).split(' ').map(mot => alias[mot] || mot).join(' ');
+        const options = Array.from(select.options);
+        const trouvee = options.find(o => normaliserTexteTextile(o.value) === cherche)
+            || options.find(o => normaliserTexteTextile(o.value).includes(cherche));
+        return trouvee ? trouvee.value : null;
+    };
+    const taillesValides = Array.from(selTaille.options).map(o => o.value);
+    const ajouterTailles = (groupe, texte) => {
+        texte.split(/[\s;/]+/).map(t => t.trim().toUpperCase()).filter(Boolean).forEach(t => {
+            if (taillesValides.includes(t)) groupe.tailles[t] = (groupe.tailles[t] || 0) + 1;
+            else console.warn('Tenue : taille inconnue dans Variantes :', t);
+        });
+    };
+
+    const groupes = [];
+    String(variantes || '').split(',').forEach(entree => {
+        const separateur = entree.lastIndexOf(':');
+        if (separateur < 0) {
+            // Tailles séparées par des virgules ("S, M, L") : suite de la liste du groupe précédent
+            const dernier = groupes[groupes.length - 1];
+            if (dernier) ajouterTailles(dernier, entree);
+            return;
+        }
+        const groupe = { type: null, coupe: null, couleur: null, tailles: {} };
+        entree.slice(0, separateur).split('/').map(c => c.trim()).filter(Boolean).forEach(composant => {
+            const optType = trouverOption(selType, composant);
+            const optCoupe = trouverOption(selCoupe, composant);
+            const optCouleur = trouverOption(selCouleur, composant);
+            if (optType) groupe.type = optType;
+            else if (optCoupe) groupe.coupe = optCoupe;
+            else if (optCouleur) groupe.couleur = optCouleur;
+            else console.warn('Tenue : composant inconnu dans Variantes :', composant);
+        });
+        ajouterTailles(groupe, entree.slice(separateur + 1));
+        groupes.push(groupe);
+    });
+
+    return groupes.filter(g => {
+        const valide = g.type && g.couleur && Object.keys(g.tailles).length > 0;
+        if (!valide) console.warn('Tenue : entrée Variantes ignorée (type, couleur ou tailles manquants) :', g);
+        return valide;
+    });
+}
+
+function renderTextileStock() {
+    const conteneur = document.getElementById('textile-stock-groups');
+    if (!conteneur) return;
+    const ordreTailles = Array.from(document.getElementById('config-textile-taille').options).map(o => o.value);
+
+    conteneur.innerHTML = textileStock.map((g, gIdx) => {
+        const couleurLC = normaliserTexteTextile(g.couleur);
+        const pastille = couleurLC.includes('white') ? '#ffffff' : (couleurLC.includes('black') ? '#111111' : '#9ca3af');
+        const libelle = [g.type, g.coupe, g.couleur].filter(Boolean).join(' · ');
+        const boutonsTailles = ordreTailles.filter(t => g.tailles[t] > 0).map(t => {
+            const choisie = textileSelectedPiece && textileSelectedPiece.gIdx === gIdx && textileSelectedPiece.taille === t;
+            const classes = choisie ? 'border-brand-accent bg-yellow-50 text-brand-main' : 'border-gray-300 bg-white text-gray-700 hover:border-brand-accent';
+            const compteur = g.tailles[t] > 1 ? `<span class="text-[10px] font-semibold text-gray-400 ml-1">x${g.tailles[t]}</span>` : '';
+            return `<button type="button" onclick="selectTextilePiece(${gIdx}, '${t}')" class="min-w-[3rem] px-3 py-2 rounded-lg border-2 text-sm font-black transition ${classes}">${t}${compteur}</button>`;
+        }).join('');
+        return `
+            <div>
+                <div class="flex items-center gap-2 mb-1.5">
+                    <span class="inline-block w-3 h-3 rounded-full border border-gray-300 flex-shrink-0" style="background:${pastille}"></span>
+                    <span class="text-xs font-bold text-gray-700">${escapeHtml(libelle)}</span>
+                </div>
+                <div class="flex flex-wrap gap-2">${boutonsTailles}</div>
+            </div>`;
+    }).join('');
+
+    const vide = document.getElementById('textile-stock-empty');
+    if (vide) vide.classList.toggle('hidden', textileStock.length > 0);
+
+    // Coupe : masquée quand la pièce choisie (ou tout le stock) l'impose déjà
+    const blocCoupe = document.getElementById('textile-bloc-coupe');
+    if (blocCoupe) {
+        const piece = textileSelectedPiece ? textileStock[textileSelectedPiece.gIdx] : null;
+        const coupeImposee = piece ? !!piece.coupe : (textileStock.length > 0 && textileStock.every(g => g.coupe));
+        blocCoupe.classList.toggle('hidden', coupeImposee);
+    }
+}
+
+function selectTextilePiece(gIdx, taille) {
+    const groupe = textileStock[gIdx];
+    if (!groupe || !groupe.tailles[taille]) return;
+    textileSelectedPiece = { gIdx, taille };
+
+    // Les menus type/coupe/couleur/taille restent la source de config pour le panier : on les pilote ici
+    const definir = (id, valeur) => { const el = document.getElementById(id); if (el && valeur) el.value = valeur; };
+    definir('config-textile-type', groupe.type);
+    definir('config-textile-coupe', groupe.coupe);
+    definir('config-textile-couleur', groupe.couleur);
+    definir('config-textile-taille', taille);
+
+    // Quantité limitée au nombre de pièces en stock (3 maximum, taille du menu)
+    const qteSelect = document.getElementById('config-textile-quantite');
+    const maxQte = Math.min(groupe.tailles[taille], 3);
+    if (qteSelect) {
+        qteSelect.innerHTML = Array.from({ length: maxQte }, (_, i) => `<option value="${i + 1}">${i + 1}</option>`).join('');
+        qteSelect.value = '1';
+    }
+    const blocQte = document.getElementById('textile-bloc-quantite');
+    if (blocQte) blocQte.classList.toggle('hidden', maxQte === 1);
+
+    renderTextileStock();
+    updateConfig();
+}
+
+function refreshTextileAddButton() {
+    const submitBtn = document.querySelector('button[onclick="addToCart()"]');
+    if (!submitBtn || !isCurrentItemTextile) return;
+
+    const raison = textileStock.length === 0 ? 'Épuisé pour le moment' : (!textileSelectedPiece ? 'Choisissez votre taille' : '');
+    if (raison) {
+        submitBtn.disabled = true;
+        submitBtn.className = "w-full bg-gray-300 text-gray-500 font-bold py-3 rounded-xl flex justify-center items-center gap-3 cursor-not-allowed shrink-0";
+        submitBtn.innerHTML = `${raison} <i class="fa-solid fa-ban text-xl"></i>`;
+    } else {
+        submitBtn.disabled = false;
+        submitBtn.className = "w-full bg-brand-accent hover:bg-yellow-400 text-brand-main font-bold py-3 rounded-xl flex justify-center items-center gap-3 transition shadow-lg shrink-0";
+        submitBtn.innerHTML = 'Ajouter au panier <i class="fa-solid fa-cart-plus text-xl"></i>';
+    }
+}
+
 function openModal(index) {
     try {
         const item = globalCatalogue[index];
@@ -1992,7 +2092,15 @@ function openModal(index) {
             if(cPrice) cPrice.textContent = currentBasePrice > 0 ? currentBasePrice : 169;
             const cWeight = document.getElementById('calc-weight');
             if(cWeight) cWeight.textContent = '--';
-            updateBadgeUI(false, "Précommande");
+
+            // Stock lu dans la colonne Variantes du Sheet (voir parseTextileStock)
+            textileStock = parseTextileStock(item.Variantes);
+            textileSelectedPiece = null;
+            const qteTextile = document.getElementById('config-textile-quantite');
+            if (qteTextile) { qteTextile.innerHTML = '<option value="1">1</option>'; qteTextile.value = '1'; }
+            const blocQteTextile = document.getElementById('textile-bloc-quantite');
+            if (blocQteTextile) blocQteTextile.classList.add('hidden');
+            renderTextileStock();
             updateConfig();    
         } else if (nomLC.includes('manivelle')) {
             if(specJantesBox) specJantesBox.style.display = 'none';
@@ -2420,6 +2528,9 @@ function openModal(index) {
             document.body.style.overflow = 'hidden';
         }
 
+        // Tenue : bouton bloqué tant qu'aucune taille en stock n'est choisie
+        if (isCurrentItemTextile) refreshTextileAddButton();
+
         // --- VERROUILLAGE SÉCURITÉ : Forcer la vérification des champs date obligatoires ---
         if (isCurrentItemTestProgram) checkTestDateAvailability();
         if (isSpecialWheel && currentLenticulaireMode === 'location') checkDateAvailability();
@@ -2532,7 +2643,8 @@ function updateConfig() {
         if(cPrice) cPrice.textContent = finalPrice;
         if(cWeightSpan) cWeightSpan.textContent = '--';
         
-        updateBadgeUI(false, "Précommande");
+        updateBadgeUI(false, textileStock.length > 0 ? "En Stock" : "Épuisé");
+        refreshTextileAddButton();
         return; 
     }
 
