@@ -208,7 +208,8 @@ function addToCart() {
                 const coupeSelect = document.getElementById('config-textile-coupe');
                 const coupe = coupeSelect ? coupeSelect.value : "";
                 const colorSelect = document.getElementById('config-textile-couleur');
-                const color = colorSelect ? colorSelect.options[colorSelect.selectedIndex].text : "";
+                // .value et non .text : le libellé du menu porte un emoji 4 octets que GmailApp corrompt dans le mail client
+                const color = colorSelect ? colorSelect.value : "";
                 const sizeSelect = document.getElementById('config-textile-taille');
                 const size = sizeSelect ? sizeSelect.value : "";
                 const qteSelect = document.getElementById('config-textile-quantite');
