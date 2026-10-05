@@ -1820,7 +1820,8 @@ function selectTextilePiece(gIdx, taille) {
 
 function refreshTextileAddButton() {
     const submitBtn = document.querySelector('button[onclick="addToCart()"]');
-    if (!submitBtn || !isCurrentItemTextile) return;
+    // En Métropole, openModal() a déjà bloqué le bouton (tenues réservées à La Réunion)
+    if (!submitBtn || !isCurrentItemTextile || currentDeliveryZone === 'metropole') return;
 
     const raison = textileStock.length === 0 ? 'Épuisé pour le moment' : (!textileSelectedPiece ? 'Choisissez votre taille' : '');
     if (raison) {
@@ -2508,7 +2509,7 @@ function openModal(index) {
         }
 
 		const submitBtn = document.querySelector('button[onclick="addToCart()"]');
-        if ((isCurrentItemAccessory || isCurrentItemTestProgram || isCurrentItemAeroplugLocation || isCurrentItemEvocLocation || isCurrentItemYoeleoLocation) && currentDeliveryZone === 'metropole') {
+        if ((isCurrentItemAccessory || isCurrentItemTextile || isCurrentItemTestProgram || isCurrentItemAeroplugLocation || isCurrentItemEvocLocation || isCurrentItemYoeleoLocation) && currentDeliveryZone === 'metropole') {
             if (submitBtn) {
                 submitBtn.disabled = true;
                 submitBtn.className = "w-full bg-gray-300 text-gray-500 font-bold py-3 rounded-xl flex justify-center items-center gap-3 cursor-not-allowed shrink-0";
@@ -3984,7 +3985,7 @@ function setDeliveryZone(zone) {
         cart = cart.filter(item => {
             const titleLCFilter = item.title.toLowerCase();
             const isTest = titleLCFilter.includes('test') || titleLCFilter.includes('essai') || titleLCFilter.includes('aeroplug') || titleLCFilter.includes('evoc') || titleLCFilter.includes('yoeleo');
-            if (item.isAccessory || isTest) {
+            if (item.isAccessory || item.isTextile || isTest) {
                 hadTestsOrAcc = true;
                 return false;
             }
@@ -3992,7 +3993,7 @@ function setDeliveryZone(zone) {
         });
 
         if (optionsModifiees || hadTestsOrAcc) {
-            showCustomAlert("📍 Mode Métropole activé : Les accessoires ou programmes d'essai ont été retirés de votre panier car ils sont réservés aux clients de La Réunion. Le prix a été mis à jour.");
+            showCustomAlert("📍 Mode Métropole activé : Les accessoires, tenues ou programmes d'essai ont été retirés de votre panier car ils sont réservés aux clients de La Réunion. Le prix a été mis à jour.");
         }
     } else {
         if (btnReunion) btnReunion.className = "flex-1 py-2 text-xs font-black rounded-lg bg-brand-main text-white shadow-sm border border-brand-main transition-all";
