@@ -21,6 +21,8 @@ let isCurrentItemTestProgram = false;
 let isCurrentItemStockReady = false;
 let isCurrentItemTextile = false;
 let isCurrentItemGravelWheel = false; // Gamme DFS Pulse Gravel : lu à la fois dans openModal() et updateConfig()
+let isCurrentItemVantaWheel = false; // Gamme DFS Vanta (jantes à écailles) : moyeu RT240 verrouillé, 23/31mm, hors stock usine
+let finitionOptionsOrigine = null; // Liste d'origine du menu Finition (remplacée par un choix unique sur la gamme Vanta)
 let factoryStock = [];
 let factoryStockManivelles = [];
 let factoryStockAxes = [];
@@ -1862,6 +1864,7 @@ function openModal(index) {
         // le masquage de l'encart Privilèges (voir plus bas dans updateConfig(), bug corrigé le
         // 16/09/2026 : un bloc plus ancien y remettait l'encart visible via style.display juste après).
         isCurrentItemGravelWheel = nomLC.includes('gravel');
+        isCurrentItemVantaWheel = nomLC.includes('vanta');
         isCurrentItemWheelConfigurable = !isCurrentItemAccessory && !isCurrentItemTestProgram && !isCurrentItemAeroplugLocation && !isCurrentItemEvocLocation && !isCurrentItemYoeleoLocation && !nomLC.includes('bâton') && !nomLC.includes('tri-spoke') && !nomLC.includes('lenticulaire') && !nomLC.includes('disc') && !nomLC.includes('manivelle') && !isMtbWheel;
 
         const isSpecialWheel = nomLC.includes('bâton') || nomLC.includes('tri-spoke') || nomLC.includes('lenticulaire') || nomLC.includes('disc');
@@ -1943,6 +1946,12 @@ function openModal(index) {
                 largeurInt = "32 mm";
                 largeurExt = "38 mm";
             }
+        }
+
+        if (isCurrentItemVantaWheel) {
+            // Specs fabricant DFS Vanta (jantes à écailles, à crochet) : 23mm interne / 31mm externe
+            largeurInt = "23 mm";
+            largeurExt = "31 mm";
         }
 
         const larIntEl = document.getElementById('modal-largeur-int');
@@ -2315,6 +2324,15 @@ function openModal(index) {
             const mRouelibre = document.getElementById('config-rouelibre');
             const mFreinage = document.getElementById('config-freinage');
 
+            // Finition : gamme Vanta = un seul choix (écailles moulées dans la jante), les autres gammes
+            // retrouvent la liste d'origine (UD Matte / Glossy Black), mémorisée à la première ouverture
+            if (mFinition) {
+                if (finitionOptionsOrigine === null) finitionOptionsOrigine = mFinition.innerHTML;
+                mFinition.innerHTML = isCurrentItemVantaWheel
+                    ? '<option value="Écailles (mat satiné)" selected>Écailles (mat satiné)</option>'
+                    : finitionOptionsOrigine;
+            }
+
             // Réinitialiser les menus d'accessoires
             const mPneus = document.getElementById('config-pneus');
             if(mPneus) mPneus.value = 'Aucun';
@@ -2363,10 +2381,13 @@ function openModal(index) {
                 // rayons T33/T40/T52/finition/logos/couleur/ratchet/roulements, reste au libre choix du client)
                 if(bannerStock) bannerStock.classList.add('hidden');
 
-                if(mHub) { mHub.value = 'R2'; mHub.disabled = isCurrentItemGravelWheel; lastHubSelected = 'R2'; }
+                if(mHub) { mHub.value = isCurrentItemVantaWheel ? 'RT240' : 'R2'; mHub.disabled = isCurrentItemGravelWheel || isCurrentItemVantaWheel; lastHubSelected = 'R2'; }
                 if(mJante) { mJante.value = 'UXL'; mJante.disabled = isCurrentItemGravelWheel; }
                 if(mRayons) { mRayons.value = 'T33'; mRayons.disabled = false; }
-                if(mFinition) { mFinition.value = 'Glossy Black'; mFinition.disabled = false; }
+                if(mFinition) {
+                    if (!isCurrentItemVantaWheel) mFinition.value = 'Glossy Black';
+                    mFinition.disabled = isCurrentItemVantaWheel;
+                }
                 if(mLogos) { mLogos.value = 'Petit logo noir'; mLogos.disabled = false; }
                 if(mFreinage) { mFreinage.value = 'Disques'; mFreinage.disabled = isCurrentItemGravelWheel; }
                 if(mRouelibre) { mRouelibre.value = 'Shimano HG'; mRouelibre.disabled = false; }
@@ -3109,6 +3130,12 @@ function updateConfig() {
                 larIntEl.textContent = '32 mm';
                 larExtEl.textContent = '38 mm';
             }
+            if (alerteLargeurPatins) alerteLargeurPatins.classList.add('hidden');
+        } else if (isCurrentItemVantaWheel) {
+            // Specs fabricant DFS Vanta (voir aussi openModal()) : 23/31mm, sinon le cas générique
+            // juste en dessous afficherait 24/32mm (spec Ghost)
+            larIntEl.textContent = '23 mm';
+            larExtEl.textContent = '31 mm';
             if (alerteLargeurPatins) alerteLargeurPatins.classList.add('hidden');
         } else if (freinageSelect.value === 'Patins') {
             const largeurPatinsSelect = document.getElementById('config-largeur-patins');
