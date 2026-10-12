@@ -2406,7 +2406,7 @@ function openModal(index) {
                 updateHubOptions();
 
                 const cColor = document.getElementById('config-couleur-moyeu');
-                if(cColor) { cColor.value = 'Noir'; cColor.disabled = false; }
+                if(cColor) { cColor.value = isCurrentItemVantaWheel ? 'Argent' : 'Noir'; cColor.disabled = false; } // Vanta : moyeu RT240, argent par défaut (noir reste au choix)
                 const cRatchet = document.getElementById('config-ratchet');
                 if(cRatchet) { cRatchet.disabled = false; }
                 const cRoulements = document.getElementById('config-roulements');
