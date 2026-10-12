@@ -23,6 +23,7 @@ let isCurrentItemTextile = false;
 let isCurrentItemGravelWheel = false; // Gamme DFS Pulse Gravel : lu à la fois dans openModal() et updateConfig()
 let isCurrentItemVantaWheel = false; // Gamme DFS Vanta (jantes à écailles) : moyeu RT240 verrouillé, 23/31mm, hors stock usine
 let finitionOptionsOrigine = null; // Liste d'origine du menu Finition (remplacée par un choix unique sur la gamme Vanta)
+let logosOptionsOrigine = null; // Idem pour le menu Logos (aucun logo possible sur la surface à écailles)
 let factoryStock = [];
 let factoryStockManivelles = [];
 let factoryStockAxes = [];
@@ -2324,13 +2325,20 @@ function openModal(index) {
             const mRouelibre = document.getElementById('config-rouelibre');
             const mFreinage = document.getElementById('config-freinage');
 
-            // Finition : gamme Vanta = un seul choix (écailles moulées dans la jante), les autres gammes
-            // retrouvent la liste d'origine (UD Matte / Glossy Black), mémorisée à la première ouverture
+            // Finition et logos : gamme Vanta = un seul choix chacun (écailles moulées dans la jante, aucun
+            // logo possible dessus), les autres gammes retrouvent les listes d'origine (UD Matte / Glossy
+            // Black, logos noir/blanc), mémorisées à la première ouverture
             if (mFinition) {
                 if (finitionOptionsOrigine === null) finitionOptionsOrigine = mFinition.innerHTML;
                 mFinition.innerHTML = isCurrentItemVantaWheel
                     ? '<option value="Écailles (mat satiné)" selected>Écailles (mat satiné)</option>'
                     : finitionOptionsOrigine;
+            }
+            if (mLogos) {
+                if (logosOptionsOrigine === null) logosOptionsOrigine = mLogos.innerHTML;
+                mLogos.innerHTML = isCurrentItemVantaWheel
+                    ? '<option value="Sans logo" selected>Sans logo (écailles)</option>'
+                    : logosOptionsOrigine;
             }
 
             // Réinitialiser les menus d'accessoires
@@ -2388,7 +2396,10 @@ function openModal(index) {
                     if (!isCurrentItemVantaWheel) mFinition.value = 'Glossy Black';
                     mFinition.disabled = isCurrentItemVantaWheel;
                 }
-                if(mLogos) { mLogos.value = 'Petit logo noir'; mLogos.disabled = false; }
+                if(mLogos) {
+                    if (!isCurrentItemVantaWheel) mLogos.value = 'Petit logo noir';
+                    mLogos.disabled = isCurrentItemVantaWheel;
+                }
                 if(mFreinage) { mFreinage.value = 'Disques'; mFreinage.disabled = isCurrentItemGravelWheel; }
                 if(mRouelibre) { mRouelibre.value = 'Shimano HG'; mRouelibre.disabled = false; }
 
