@@ -476,6 +476,11 @@ function addToCart() {
 				addAccessoryToConfigText('config-lockrings');
 				addAccessoryToConfigText('config-chaines');
 				addAccessoryToConfigText('config-cassette-ultegra');
+
+                const garantieEl = document.getElementById('config-garantie-vie');
+                if (garantieEl && garantieEl.value === 'Garantie à vie') {
+                    configText += ` | + Garantie à vie (défauts de fabrication) [+${parseInt(garantieEl.options[garantieEl.selectedIndex].getAttribute('data-price')) || 0}€]`;
+                }
             }
         } else {
             configText = isCurrentItemAccessory ? "Accessoire" : "Modèle Standard";
@@ -2358,6 +2363,12 @@ function openModal(index) {
             if(mChaines) mChaines.value = 'Aucun';
 			const mCassetteUltegra = document.getElementById('config-cassette-ultegra');
             if(mCassetteUltegra) mCassetteUltegra.value = 'Aucun';
+            // Option "Garantie à vie" (249 € la paire, défauts de fabrication) : réinitialisée à chaque
+            // ouverture, et masquée pour les paires "prêt-à-rouler" déjà en stock (pas commandées à l'usine)
+            const mGarantie = document.getElementById('config-garantie-vie');
+            if(mGarantie) mGarantie.value = 'Standard';
+            const mGarantieBox = document.getElementById('config-garantie-vie-container');
+            if(mGarantieBox) mGarantieBox.style.display = isCurrentItemStockReady ? 'none' : 'block';
 
             const bannerStock = document.getElementById('stock-locked-banner');
 
@@ -3280,7 +3291,8 @@ function updateConfig() {
     const montageRouePrice = getPrice(montageRoueSelect);
     const chainesPrice = getPrice(chainesSelect);
     const cassetteUltegraPrice = getPrice(cassetteUltegraSelect);
-    const accessoiresPrice = pneusPrice + bidonsPrice + tpuPrice + houssesPrice + lockringsPrice + kitTpuPrice + montageRouePrice + chainesPrice + cassetteUltegraPrice;
+    const garantiePrice = getPrice(document.getElementById('config-garantie-vie'));
+    const accessoiresPrice = pneusPrice + bidonsPrice + tpuPrice + houssesPrice + lockringsPrice + kitTpuPrice + montageRouePrice + chainesPrice + cassetteUltegraPrice + garantiePrice;
     
     const hubWeight = moyeuSelect && moyeuSelect.selectedIndex >= 0 ? (parseInt(moyeuSelect.options[moyeuSelect.selectedIndex].getAttribute('data-hub-weight')) || 238) : 238;
     const spokeCount = moyeuSelect && moyeuSelect.selectedIndex >= 0 ? (parseInt(moyeuSelect.options[moyeuSelect.selectedIndex].getAttribute('data-spokes')) || 40) : 40;

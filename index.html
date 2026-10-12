@@ -705,6 +705,16 @@
 
                             <details class="group bg-gray-50 rounded-xl shadow-sm border border-gray-100 overflow-hidden [&_summary::-webkit-details-marker]:hidden">
                                 <summary class="flex justify-between items-center font-bold cursor-pointer list-none p-5 text-gray-900 hover:text-brand-accent transition-colors">
+                                    <span class="pr-4">Existe-t-il une garantie à vie ?</span>
+                                    <span class="transition group-open:rotate-180 flex-shrink-0"><i class="fa-solid fa-chevron-down text-brand-accent"></i></span>
+                                </summary>
+                                <div class="text-gray-600 p-5 pt-0 text-sm leading-relaxed bg-gray-50">
+                                    Oui, en option à 249 € la paire, à choisir au moment de la commande. Elle prolonge la garantie de 5 ans à vie sur les défauts de fabrication des jantes carbone, avec les mêmes conditions de prise en charge. Elle ne couvre pas la casse après une chute (voir le programme "Crash Replacement" ci-dessous).
+                                </div>
+                            </details>
+
+                            <details class="group bg-gray-50 rounded-xl shadow-sm border border-gray-100 overflow-hidden [&_summary::-webkit-details-marker]:hidden">
+                                <summary class="flex justify-between items-center font-bold cursor-pointer list-none p-5 text-gray-900 hover:text-brand-accent transition-colors">
                                     <span class="pr-4">Que se passe-t-il si je casse ma roue lors d'une chute ?</span>
                                     <span class="transition group-open:rotate-180 flex-shrink-0"><i class="fa-solid fa-chevron-down text-brand-accent"></i></span>
                                 </summary>
@@ -809,6 +819,24 @@
                     <p class="text-xs text-gray-500 mt-4 italic">*Si le modèle original n'est plus fabriqué, DFS procédera à une mise à niveau vers le dernier modèle équivalent sans frais supplémentaires.</p>
                     <p class="text-xs text-gray-500 mt-2 italic">*Une fois la roue de remplacement reçue, pensez à l'inspecter rapidement : tout défaut sur ce remplacement doit être signalé sous 7 jours après réception.</p>
                 </div>
+            </div>
+
+            <!-- SECTION 1 BIS : GARANTIE À VIE (OPTION) -->
+            <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-200 relative overflow-hidden">
+                <div class="absolute top-0 left-0 w-2 h-full bg-green-500"></div>
+                <h2 class="text-2xl font-black text-gray-900 mb-4 flex items-center gap-3">
+                    <i class="fa-solid fa-infinity text-green-500"></i> Option "Garantie à Vie" (défauts de fabrication)
+                </h2>
+                <p class="text-gray-600 mb-4 leading-relaxed">
+                    Pour rouler sans limite de durée : cette option prolonge la garantie standard de 5 ans <strong>à vie</strong> sur les défauts de fabrication de vos jantes carbone DFS.
+                </p>
+                <ul class="space-y-2 text-sm text-gray-700 mb-4">
+                    <li class="flex items-start gap-2"><i class="fa-solid fa-check text-green-500 mt-0.5"></i><span><strong>Prix :</strong> 249 € la paire de roues, à choisir à la commande (étape "Garantie" de la configuration).</span></li>
+                    <li class="flex items-start gap-2"><i class="fa-solid fa-check text-green-500 mt-0.5"></i><span><strong>Mêmes conditions que la garantie standard :</strong> prise en charge locale par Karbòn Péi, exclusions et règles d'or identiques (voir ci-dessus et ci-dessous).</span></li>
+                    <li class="flex items-start gap-2"><i class="fa-solid fa-check text-green-500 mt-0.5"></i><span><strong>Bénéficiaire :</strong> l'acheteur d'origine, sur présentation de la facture.</span></li>
+                    <li class="flex items-start gap-2"><i class="fa-solid fa-xmark text-red-400 mt-0.5"></i><span><strong>Ne couvre pas la casse après une chute</strong> : le programme "Crash Replacement" (-30% sur une jante neuve) reste applicable.</span></li>
+                </ul>
+                <p class="text-xs text-gray-500 italic">Cette garantie commerciale s'ajoute aux garanties légales (conformité et vices cachés), qui restent applicables.</p>
             </div>
 
             <!-- SECTION 2 : CRASH REPLACEMENT -->
@@ -1699,6 +1727,17 @@
                                 <option value="Sans Montage" data-price="0" selected>Je monte mes propres disques et cassette (+0€)</option>
                                 <option value="Avec Montage (+30€)" data-price="30">Montage professionnel de mes disques et cassette à l'atelier (+30€)</option>
                             </select>
+                        </div>
+
+                        <div id="config-garantie-vie-container" class="mb-4">
+                            <label class="block text-xs font-bold text-gray-600 mb-1">
+                                <i class="fa-solid fa-shield-halved text-brand-accent mr-1"></i> <span>Garantie (défauts de fabrication)</span>
+                            </label>
+                            <select id="config-garantie-vie" class="w-full bg-white border border-gray-300 rounded-lg px-2 py-2 text-xs font-semibold shadow-sm" onchange="updateConfig()">
+                                <option value="Standard" data-price="0" selected>Garantie standard 5 ans (incluse)</option>
+                                <option value="Garantie à vie" data-price="249">Garantie à vie sur les défauts de fabrication [+249€ la paire]</option>
+                            </select>
+                            <p class="text-[10px] text-gray-500 mt-1 leading-tight">Option à choisir à la commande. Ne couvre pas la casse après chute (voir « Garanties & SAV »).</p>
                         </div>
 
                         <div id="config-largeur-patins-container" class="hidden mb-4">
