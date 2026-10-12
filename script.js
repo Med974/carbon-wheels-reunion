@@ -3304,9 +3304,10 @@ function updateConfig() {
     if (poidsMaxSpan && moyeuSelect && janteSelect) {
         let maxWeight = '90 kg'; // Sécurité par défaut (RT220)
         if (moyeuSelect.value === 'R2') {
-            maxWeight = '120 kg';
+            maxWeight = '130 kg';
         } else if (moyeuSelect.value === 'RT240') {
-            maxWeight = janteSelect.value.includes('EVO') ? '110 kg' : '100 kg';
+            // RT240 : 110 kg avec la jante renforcée (UXL) ou l'EVO, 100 kg avec la SUXL ultra-légère
+            maxWeight = (janteSelect.value === 'UXL' || janteSelect.value.includes('EVO')) ? '110 kg' : '100 kg';
         } else if (moyeuSelect.value === 'RT220') {
             maxWeight = '90 kg';
         }
