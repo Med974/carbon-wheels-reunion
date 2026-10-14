@@ -268,9 +268,9 @@ function addToCart() {
                 const dentureEl = document.getElementById('config-denture-plateaux-seuls');
                 const denture = dentureEl ? dentureEl.value : "";
                 const vitesseEl = document.getElementById('config-vitesse-plateaux-seuls');
-                const vitesse = vitesseEl ? vitesseEl.value : "";
+                const vitesse = vitesseEl ? (String(denture).startsWith('SRAM') ? '12V (chaîne SRAM AXS)' : vitesseEl.value) : "";
                 const lookEl = document.getElementById('config-look-plateaux-seuls');
-                const look = lookEl ? lookEl.value : "";
+                const look = lookEl ? libelleDesignPlateaux(denture, lookEl.value) : "";
                 const visserieEl = document.getElementById('config-visserie-plateaux-seuls');
                 const visserie = (visserieEl && visserieEl.selectedIndex > 0) ? ` | ${visserieEl.options[visserieEl.selectedIndex].text.split(' [+')[0]}` : "";
 
@@ -303,9 +303,9 @@ function addToCart() {
                     const dentureEl = document.getElementById('config-denture-plateaux-seuls');
                     const denture = dentureEl ? dentureEl.value : "";
                     const vitesseEl = document.getElementById('config-vitesse-plateaux-seuls');
-                    const vitesse = vitesseEl ? vitesseEl.value : "";
+                    const vitesse = vitesseEl ? (String(denture).startsWith('SRAM') ? '12V (chaîne SRAM AXS)' : vitesseEl.value) : "";
                     const lookEl = document.getElementById('config-look-plateaux-seuls');
-                    const look = lookEl ? lookEl.value : "";
+                    const look = lookEl ? libelleDesignPlateaux(denture, lookEl.value) : "";
                     const visserieEl = document.getElementById('config-visserie-plateaux-seuls');
                     const visserie = (visserieEl && visserieEl.selectedIndex > 0) ? ` | ${visserieEl.options[visserieEl.selectedIndex].text.split(' [+')[0]}` : "";
                     configText = `Denture : ${denture} | Vitesses : ${vitesse} | Design : ${look}${visserie} | Quantité : ${qte}`;
@@ -1588,6 +1588,34 @@ function renderGrid(filterCategory) {
     }
 }
 
+// Plateaux SRAM 12v (107 BCD, Pass Quest "107-Q") : uniquement noir ou argent. Les designs Devil Smiley et
+// Checkerboard ne sont proposés par Pass Quest que pour le Shimano 110 BCD : on les masque donc dès qu'une
+// denture SRAM est choisie, et on renomme les deux choix restants en "Noir" / "Argent".
+function majDesignPlateauxSelonDenture() {
+    const dentureEl = document.getElementById('config-denture-plateaux-seuls');
+    const lookEl = document.getElementById('config-look-plateaux-seuls');
+    if (!dentureEl || !lookEl) return;
+    const estSram = String(dentureEl.value).startsWith('SRAM');
+    const libelles = { 'Full Black': estSram ? 'Noir' : 'Full Black (Furtif)', 'Aluminium': estSram ? 'Argent' : 'Aluminium Brut' };
+    Array.from(lookEl.options).forEach(opt => {
+        if (libelles[opt.value]) opt.textContent = libelles[opt.value];
+        const reserveShimano = (opt.value === 'Devil Smiley' || opt.value === 'Checkerboard');
+        opt.disabled = estSram && reserveShimano;
+        opt.hidden = estSram && reserveShimano;
+    });
+    const choisie = lookEl.options[lookEl.selectedIndex];
+    if (choisie && choisie.disabled) lookEl.value = 'Full Black';
+}
+
+// Libellé du design pour le texte du panier / de la facture (sans emoji) : "Noir" / "Argent" côté SRAM
+function libelleDesignPlateaux(denture, look) {
+    if (String(denture).startsWith('SRAM')) {
+        if (look === 'Full Black') return 'Noir';
+        if (look === 'Aluminium') return 'Argent';
+    }
+    return look;
+}
+
 function updateHubOptions() {
     const moyeuSelect = document.getElementById('config-moyeu');
     const colorSelect = document.getElementById('config-couleur-moyeu');
@@ -2791,6 +2819,8 @@ function updateConfig() {
     if (isCurrentItemAccessory || titleLC.includes('plateaux pass quest') || titleLC.includes('pack étoile') || (titleLC.includes('plateaux') && titleLC.includes('xcadey')) || titleLC.includes('pédalier')) {
         const qteEl = document.getElementById('config-quantite');
         const qte = qteEl ? parseInt(qteEl.value) : 1;
+
+        majDesignPlateauxSelonDenture();
 
         let unitPrice = currentBasePrice;
         if (titleLC.includes('plateaux pass quest') || titleLC.includes('pack étoile') || (titleLC.includes('plateaux') && titleLC.includes('xcadey')) || titleLC.includes('pédalier')) {
