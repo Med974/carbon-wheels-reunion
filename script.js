@@ -2624,6 +2624,31 @@ function closeModal() {
     }
 }
 
+// Logo holographique (ajouté le 28/10/2026) : quand le client le choisit, les 2 photos du rendu
+// s'ajoutent en miniatures dans la galerie de la modale et la première passe en grand ; elles
+// disparaissent dès qu'un autre logo est choisi. Pas de surcoût côté site (aucun data-price).
+const LOGO_HOLO_VALUE = 'Gros logo holographique';
+const LOGO_HOLO_PHOTOS = ['images/newlogocolor.jpg', 'images/newlogocolor2.jpg'];
+
+function previewLogoPhoto() {
+    const logoSel = document.getElementById('config-logos');
+    const gallery = document.getElementById('modal-gallery');
+    if (!logoSel || !gallery) return;
+
+    gallery.querySelectorAll('[data-logo-holo]').forEach(el => el.remove());
+
+    if (logoSel.value === LOGO_HOLO_VALUE) {
+        gallery.insertAdjacentHTML('afterbegin', LOGO_HOLO_PHOTOS.map(url => `
+            <div data-logo-holo onclick="changeModalMedia('${url}')" class="group cursor-pointer border-2 border-transparent hover:border-brand-main rounded-lg overflow-hidden relative h-20 min-w-[5rem] bg-gray-100 flex-shrink-0 transition-all shadow-sm">
+                <img src="${url}" class="w-full h-full object-cover">
+            </div>`).join(''));
+        gallery.classList.remove('hidden');
+        changeModalMedia(LOGO_HOLO_PHOTOS[0]);
+    } else if (!gallery.children.length) {
+        gallery.classList.add('hidden');
+    }
+}
+
 function changeModalMedia(url) {
     try {
         const imgEl = document.getElementById('modal-image');
