@@ -1466,7 +1466,68 @@ async function loadCatalogue() {
     }
 }
 
+// Sous-filtres des roues carbone (ajoutés le 29/10/2026) : une rangée "Gamme" (Ghost, Vanta, Vanta Wave,
+// bâtons/lenticulaires, déduite du nom du produit) et une rangée "Profondeur" (déduite des nombres de la
+// colonne Hauteur du Sheet : une fiche qui couvre plusieurs profondeurs, comme la Vanta Wave, apparaît dans
+// chaque fourchette qu'elle chevauche). Visibles seulement sur "Roues Carbone", et seules les pastilles
+// qui contiennent au moins un produit sont affichées.
+let currentCatalogueCategory = 'Tout';
+let currentGammeFilter = 'toutes';
+let currentDepthFilter = 'toutes';
+const GAMME_LABELS = { ghost: 'Ghost', vanta: 'Vanta', wave: 'Vanta Wave', autres: 'Bâtons &amp; lenticulaires', essai: 'Essai' };
+const DEPTH_RANGES = { '30-40': [0, 42.5], '45-55': [42.5, 57.5], '60-65': [57.5, 70], '75+': [70, 999] };
+const DEPTH_LABELS = { '30-40': '30 à 40 mm', '45-55': '45 à 55 mm', '60-65': '60 à 65 mm', '75+': '75 mm et +' };
+
+function getWheelGamme(nomLC) {
+    if (nomLC.includes('essai') || nomLC.includes('test')) return 'essai';
+    if (nomLC.includes('vanta') && nomLC.includes('wave')) return 'wave';
+    if (nomLC.includes('vanta')) return 'vanta';
+    if (nomLC.includes('ghost')) return 'ghost';
+    return 'autres';
+}
+
+function wheelDepthMatches(item, key) {
+    const nums = (String(item.Hauteur || '').match(/\d+/g) || []).map(Number);
+    if (!nums.length) return false;
+    const lo = Math.min(...nums), hi = Math.max(...nums);
+    const [a, b] = DEPTH_RANGES[key];
+    return hi >= a && lo < b;
+}
+
+function renderWheelSubFilters() {
+    const box = document.getElementById('wheel-subfilters');
+    if (!box) return;
+    if (currentCatalogueCategory !== 'Roues') { box.classList.add('hidden'); return; }
+
+    const roues = globalCatalogue.filter(i => i.Nom && (i.Categorie || 'Roues').toLowerCase().includes('roues'));
+    const gammes = Object.keys(GAMME_LABELS).filter(g => roues.some(i => getWheelGamme(i.Nom.toLowerCase()) === g));
+    const depths = Object.keys(DEPTH_RANGES).filter(k => roues.some(i => wheelDepthMatches(i, k)));
+
+    const chip = (type, key, label, current) => `<button type="button" onclick="setWheelSubFilter('${type}', '${key}')" class="sub-filter-btn${current === key ? ' active' : ''} px-3 py-1.5 rounded-full border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 text-xs font-bold whitespace-nowrap">${label}</button>`;
+    const row = (title, type, keys, labels, current) => keys.length < 2 ? '' : `
+        <div class="flex items-center gap-3">
+            <span class="text-xs font-black uppercase tracking-wider text-gray-400 w-24 shrink-0">${title}</span>
+            <div class="flex gap-2 overflow-x-auto md:flex-wrap md:overflow-x-visible no-scrollbar pb-1">
+                ${chip(type, 'toutes', 'Toutes', current)}${keys.map(k => chip(type, k, labels[k], current)).join('')}
+            </div>
+        </div>`;
+
+    box.innerHTML = row('Gamme', 'gamme', gammes, GAMME_LABELS, currentGammeFilter)
+                  + row('Profondeur', 'depth', depths, DEPTH_LABELS, currentDepthFilter);
+    box.classList.toggle('hidden', box.innerHTML.trim() === '');
+}
+
+function setWheelSubFilter(type, key) {
+    if (type === 'gamme') currentGammeFilter = key; else currentDepthFilter = key;
+    renderWheelSubFilters();
+    renderGrid('Roues');
+}
+
 function filterCatalogue(category) {
+    currentCatalogueCategory = category;
+    currentGammeFilter = 'toutes';
+    currentDepthFilter = 'toutes';
+    renderWheelSubFilters();
     const btns = document.querySelectorAll('.filter-btn');
     btns.forEach(btn => {
         if (btn.textContent.includes(category) || (category === 'Tout' && btn.textContent === 'Tout voir')) {
@@ -1491,6 +1552,10 @@ function renderGrid(filterCategory) {
         
         const cat = (item.Categorie && item.Categorie.trim() !== "") ? item.Categorie.trim() : "Roues";
         if (filterCategory !== 'Tout' && !cat.toLowerCase().includes(filterCategory.toLowerCase())) return;
+        if (filterCategory === 'Roues') {
+            if (currentGammeFilter !== 'toutes' && getWheelGamme(item.Nom.toLowerCase()) !== currentGammeFilter) return;
+            if (currentDepthFilter !== 'toutes' && !wheelDepthMatches(item, currentDepthFilter)) return;
+        }
         count++;
 
         const nomLC = item.Nom.toLowerCase();
@@ -1584,7 +1649,8 @@ function renderGrid(filterCategory) {
     });
     
     if (count === 0) {
-        grid.innerHTML = `<p class="col-span-full text-center text-gray-500 py-10">Aucun produit dans cette catégorie pour le moment.</p>`;
+        const combinaison = filterCategory === 'Roues' && (currentGammeFilter !== 'toutes' || currentDepthFilter !== 'toutes');
+        grid.innerHTML = `<p class="col-span-full text-center text-gray-500 py-10">${combinaison ? 'Aucune roue ne correspond à cette combinaison de filtres. Essayez une autre gamme ou une autre profondeur.' : 'Aucun produit dans cette catégorie pour le moment.'}</p>`;
     }
 }
 
