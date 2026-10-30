@@ -21,7 +21,8 @@ let isCurrentItemTestProgram = false;
 let isCurrentItemStockReady = false;
 let isCurrentItemTextile = false;
 let isCurrentItemGravelWheel = false; // Gamme DFS Pulse Gravel : lu à la fois dans openModal() et updateConfig()
-let isCurrentItemVantaWheel = false; // Gamme DFS Vanta (jantes à écailles) : moyeu RT240 verrouillé, 23/31mm, hors stock usine
+let isCurrentItemVantaWheel = false; // Gamme DFS Vanta (jantes à écailles, hors Vanta Wave) : moyeu RT240 verrouillé, 23/31mm, hors stock usine
+let isCurrentItemWaveWheel = false; // DFS Vanta Wave (jante ondulée) : une seule fiche, menus Profondeur + Modèle (rayons acier R260 / carbone "Pro"), moyeu RT245, 25/31mm, 110 kg
 let finitionOptionsOrigine = null; // Liste d'origine du menu Finition (remplacée par un choix unique sur la gamme Vanta)
 let logosOptionsOrigine = null; // Idem pour le menu Logos (aucun logo possible sur la surface à écailles)
 let factoryStock = [];
@@ -457,6 +458,16 @@ function addToCart() {
                 const couleurMoyeu = (colorEl && colorEl.value) ? " (" + colorEl.value + ")" : "";
 
                 configText = `${moyeu}${couleurMoyeu} | Jantes ${jante} | ${rayon} | Ratchet ${ratchet} | Roulements ${roulements} | ${rouelibre} | ${finition} | Logos : ${logos} | ${freinage}${largeurPatinsText}${disquesText}${montageRoueText}`;
+
+                // Vanta Wave : la profondeur choisie en tête de config, et "Pro" dans le nom de l'article pour
+                // le modèle carbone (le coût usine est cherché dans Compta par nom : lignes "DFS Vanta Wave Pro"
+                // puis "DFS Vanta Wave", dans cet ordre)
+                if (isCurrentItemWaveWheel) {
+                    const profEl = document.getElementById('config-wave-profondeur');
+                    const modeleEl = document.getElementById('config-wave-modele');
+                    configText = `Profondeur ${profEl ? profEl.value : ''} | ${configText}`;
+                    if (modeleEl && modeleEl.value === 'carbone') finalTitle = `${title} Pro`;
+                }
                 
                 // Ajout des accessoires optionnels (Étapes 10, 11, 12)
                 const addAccessoryToConfigText = (selectId) => {
@@ -1682,17 +1693,113 @@ function libelleDesignPlateaux(denture, look) {
     return look;
 }
 
+// --- DFS VANTA WAVE (ajoutée le 30/10/2026) ---
+// Une seule fiche avec deux menus : Profondeur (30/35 à 60/65) et Modèle. Le moyeu est toujours le RT245.
+//   Wave (acier R260)  : jante XL, ratchet 36T, roulements Acier SS, moyeu noir, 999 € de base
+//   Wave Pro (carbone) : jante UXL, ratchet 54T, roulements Céramique SS, moyeu noir ou argent, +400 €,
+//                        rayons carbone T32/T33/T40/T52
+// Les deux : roulements Céramique TPI en option (+79 €), 110 kg maxi, finition brillante ou mate.
+function configureWaveOptions(isWave) {
+    const waveBox = document.getElementById('wave-config-container');
+    if (waveBox) waveBox.classList.toggle('hidden', !isWave);
+
+    const sets = [
+        ['config-moyeu', 'RT245'],
+        ['config-jante', 'XL'],
+        ['config-rayons', 'R260']
+    ];
+    sets.forEach(([id, waveOnly]) => {
+        const sel = document.getElementById(id);
+        if (!sel) return;
+        Array.from(sel.options).forEach(opt => {
+            if (isWave) {
+                // Moyeu : seul le RT245 reste visible. Jante et rayons : choisis par updateWaveModel().
+                const garder = (id === 'config-moyeu') ? opt.value === waveOnly : false;
+                opt.hidden = !garder;
+                opt.disabled = !garder;
+            } else {
+                const reserve = opt.value === waveOnly;
+                opt.hidden = reserve;
+                opt.disabled = reserve;
+            }
+        });
+    });
+}
+
+function updateWaveModel() {
+    const modele = (document.getElementById('config-wave-modele') || {}).value || 'acier';
+    const acier = modele === 'acier';
+
+    const mJante = document.getElementById('config-jante');
+    if (mJante) {
+        Array.from(mJante.options).forEach(opt => {
+            const ok = acier ? opt.value === 'XL' : opt.value === 'UXL';
+            opt.hidden = !ok;
+            opt.disabled = !ok;
+        });
+        mJante.value = acier ? 'XL' : 'UXL';
+        mJante.disabled = true;
+    }
+
+    const mRayons = document.getElementById('config-rayons');
+    if (mRayons) {
+        const carbone = ['T32', 'T33', 'T40', 'T52'];
+        const precedent = mRayons.value;
+        Array.from(mRayons.options).forEach(opt => {
+            const ok = acier ? opt.value === 'R260' : carbone.includes(opt.value);
+            opt.hidden = !ok;
+            opt.disabled = !ok;
+            if (opt.value === 'T32') { opt.textContent = 'Carbone T32 (2.1g)'; opt.setAttribute('data-price', '0'); }
+        });
+        mRayons.value = acier ? 'R260' : (carbone.includes(precedent) ? precedent : 'T32');
+        mRayons.disabled = acier;
+    }
+
+    updateHubOptions();
+    updateConfig();
+}
+
+// Couleur, ratchet et roulements du RT245 selon le modèle choisi (appelée par updateHubOptions())
+function applyWaveHubOptions() {
+    const modele = (document.getElementById('config-wave-modele') || {}).value || 'acier';
+    const acier = modele === 'acier';
+    const colorSelect = document.getElementById('config-couleur-moyeu');
+    const ratchetSelect = document.getElementById('config-ratchet');
+    const roulementsSelect = document.getElementById('config-roulements');
+    if (!colorSelect || !ratchetSelect || !roulementsSelect) return;
+
+    const couleurPrecedente = colorSelect.value;
+    const roulementPrecedent = roulementsSelect.value;
+
+    colorSelect.innerHTML = acier
+        ? '<option value="Noir" data-price="0">Noir (Standard)</option>'
+        : '<option value="Noir" data-price="0">Noir (Standard)</option><option value="Argent" data-price="0">Argent</option>';
+    ratchetSelect.innerHTML = acier
+        ? '<option value="36T" data-price="0">36T (Inclus)</option>'
+        : '<option value="54T" data-price="0">54T (Inclus)</option>';
+    roulementsSelect.innerHTML = (acier
+        ? '<option value="Acier SS" data-price="0">Acier SS (Inclus)</option>'
+        : '<option value="Céramique SS" data-price="0">Céramique SS (Inclus)</option>')
+        + '<option value="Céramique TPI" data-price="79">Céramique TPI (Ultra-fluide) [+79€]</option>';
+
+    colorSelect.value = Array.from(colorSelect.options).some(o => o.value === couleurPrecedente) ? couleurPrecedente : 'Noir';
+    roulementsSelect.value = Array.from(roulementsSelect.options).some(o => o.value === roulementPrecedent) ? roulementPrecedent : roulementsSelect.options[0].value;
+    ratchetSelect.selectedIndex = 0;
+}
+
 function updateHubOptions() {
     const moyeuSelect = document.getElementById('config-moyeu');
     const colorSelect = document.getElementById('config-couleur-moyeu');
     const ratchetSelect = document.getElementById('config-ratchet');
     const roulementsSelect = document.getElementById('config-roulements');
-    
+
     if(!moyeuSelect || !colorSelect || !ratchetSelect || !roulementsSelect) return;
 
     const currentHub = moyeuSelect.value;
     const isHubChange = (lastHubSelected !== "" && lastHubSelected !== currentHub);
     lastHubSelected = currentHub;
+
+    if (currentHub === 'RT245') { applyWaveHubOptions(); return; }
 
     // Bascule automatiquement sur SUXL et T32 si on choisit un moyeu ultra-léger
     const configJante = document.getElementById('config-jante');
@@ -1964,7 +2071,8 @@ function openModal(index) {
         // le masquage de l'encart Privilèges (voir plus bas dans updateConfig(), bug corrigé le
         // 16/09/2026 : un bloc plus ancien y remettait l'encart visible via style.display juste après).
         isCurrentItemGravelWheel = nomLC.includes('gravel');
-        isCurrentItemVantaWheel = nomLC.includes('vanta');
+        isCurrentItemWaveWheel = nomLC.includes('vanta') && nomLC.includes('wave');
+        isCurrentItemVantaWheel = nomLC.includes('vanta') && !isCurrentItemWaveWheel;
         isCurrentItemWheelConfigurable = !isCurrentItemAccessory && !isCurrentItemTestProgram && !isCurrentItemAeroplugLocation && !isCurrentItemEvocLocation && !isCurrentItemYoeleoLocation && !nomLC.includes('bâton') && !nomLC.includes('tri-spoke') && !nomLC.includes('lenticulaire') && !nomLC.includes('disc') && !nomLC.includes('manivelle') && !isMtbWheel;
 
         const isSpecialWheel = nomLC.includes('bâton') || nomLC.includes('tri-spoke') || nomLC.includes('lenticulaire') || nomLC.includes('disc');
@@ -2051,6 +2159,12 @@ function openModal(index) {
         if (isCurrentItemVantaWheel) {
             // Specs fabricant DFS Vanta (jantes à écailles, à crochet) : 23mm interne / 31mm externe
             largeurInt = "23 mm";
+            largeurExt = "31 mm";
+        }
+
+        if (isCurrentItemWaveWheel) {
+            // Specs fabricant DFS Vanta Wave : 25mm interne / 31mm externe (XL et UXL)
+            largeurInt = "25 mm";
             largeurExt = "31 mm";
         }
 
@@ -2424,6 +2538,10 @@ function openModal(index) {
             const mRouelibre = document.getElementById('config-rouelibre');
             const mFreinage = document.getElementById('config-freinage');
 
+            // Vanta Wave : affiche les menus Profondeur/Modèle et le moyeu RT245 ; toutes les autres roues
+            // les masquent et retrouvent leurs listes habituelles (voir configureWaveOptions())
+            configureWaveOptions(isCurrentItemWaveWheel);
+
             // Finition et logos : gamme Vanta = un seul choix chacun (écailles moulées dans la jante, aucun
             // logo possible dessus), les autres gammes retrouvent les listes d'origine (UD Matte / Glossy
             // Black, logos noir/blanc), mémorisées à la première ouverture
@@ -2494,7 +2612,7 @@ function openModal(index) {
                 // rayons T33/T40/T52/finition/logos/couleur/ratchet/roulements, reste au libre choix du client)
                 if(bannerStock) bannerStock.classList.add('hidden');
 
-                if(mHub) { mHub.value = isCurrentItemVantaWheel ? 'RT240' : 'R2'; mHub.disabled = isCurrentItemGravelWheel || isCurrentItemVantaWheel; lastHubSelected = 'R2'; }
+                if(mHub) { mHub.value = isCurrentItemWaveWheel ? 'RT245' : (isCurrentItemVantaWheel ? 'RT240' : 'R2'); mHub.disabled = isCurrentItemGravelWheel || isCurrentItemVantaWheel || isCurrentItemWaveWheel; lastHubSelected = isCurrentItemWaveWheel ? 'RT245' : 'R2'; }
                 if(mJante) { mJante.value = 'UXL'; mJante.disabled = isCurrentItemGravelWheel; }
                 if(mRayons) { mRayons.value = 'T33'; mRayons.disabled = false; }
                 if(mFinition) {
@@ -2505,17 +2623,29 @@ function openModal(index) {
                     if (!isCurrentItemVantaWheel) mLogos.value = 'Petit logo noir';
                     mLogos.disabled = isCurrentItemVantaWheel;
                 }
-                if(mFreinage) { mFreinage.value = 'Disques'; mFreinage.disabled = isCurrentItemGravelWheel; }
+                if(mFreinage) { mFreinage.value = 'Disques'; mFreinage.disabled = isCurrentItemGravelWheel || isCurrentItemWaveWheel; }
                 if(mRouelibre) { mRouelibre.value = 'Shimano HG'; mRouelibre.disabled = false; }
 
+                if (isCurrentItemWaveWheel) {
+                    // Retour aux valeurs d'ouverture : profondeur 45/50, modèle acier (Wave)
+                    const wProf = document.getElementById('config-wave-profondeur');
+                    if (wProf) wProf.value = '45/50';
+                    const wModele = document.getElementById('config-wave-modele');
+                    if (wModele) wModele.value = 'acier';
+                }
                 updateHubOptions();
 
                 const cColor = document.getElementById('config-couleur-moyeu');
                 if(cColor) { cColor.value = isCurrentItemVantaWheel ? 'Argent' : 'Noir'; cColor.disabled = false; } // Vanta : moyeu RT240, argent par défaut (noir reste au choix)
+                // Ratchet et roulements repartent de leur choix de base à chaque ouverture (sinon un TPI ou un
+                // 72T choisi sur une autre fiche restait coché et faussait le prix affiché)
                 const cRatchet = document.getElementById('config-ratchet');
-                if(cRatchet) { cRatchet.disabled = false; }
+                if(cRatchet) { cRatchet.disabled = false; cRatchet.selectedIndex = 0; }
                 const cRoulements = document.getElementById('config-roulements');
-                if(cRoulements) { cRoulements.disabled = false; }
+                if(cRoulements) { cRoulements.disabled = false; cRoulements.selectedIndex = 0; }
+
+                // Vanta Wave : applique le modèle (jante, rayons, ratchet, couleur, roulements) une fois les menus de base prêts
+                if (isCurrentItemWaveWheel) updateWaveModel();
             }
 
             // Le masquage de l'encart "Avantages Privilèges" pour la gamme Gravel se fait dans
@@ -3280,6 +3410,11 @@ function updateConfig() {
             larIntEl.textContent = '23 mm';
             larExtEl.textContent = '31 mm';
             if (alerteLargeurPatins) alerteLargeurPatins.classList.add('hidden');
+        } else if (isCurrentItemWaveWheel) {
+            // Specs fabricant DFS Vanta Wave : 25/31mm (jantes XL et UXL)
+            larIntEl.textContent = '25 mm';
+            larExtEl.textContent = '31 mm';
+            if (alerteLargeurPatins) alerteLargeurPatins.classList.add('hidden');
         } else if (freinageSelect.value === 'Patins') {
             const largeurPatinsSelect = document.getElementById('config-largeur-patins');
             if (largeurPatinsSelect && largeurPatinsSelect.value.includes('25mm')) {
@@ -3307,7 +3442,15 @@ function updateConfig() {
 	const evoOption = document.getElementById('opt-evo');
 
     // === GESTION DES INCOMPATIBILITÉS PAR MOYEU ===
-    if (moyeuSelect && moyeuSelect.value === 'R2') {
+    if (isCurrentItemWaveWheel) {
+        // Vanta Wave : menus jante/rayons/ratchet pilotés par updateWaveModel(), rien à faire ici
+        // sauf remettre le T32 à son libellé et à son prix normaux (une fiche R2 ouverte avant l'avait changé)
+        if (msgRecoR2) msgRecoR2.style.display = 'none';
+        if (t32Option) {
+            t32Option.textContent = 'Carbone T32 (2.1g)';
+            t32Option.setAttribute('data-price', '0');
+        }
+    } else if (moyeuSelect && moyeuSelect.value === 'R2') {
         if(msgRecoR2) msgRecoR2.style.display = 'flex';
         // Le T32 est permis, facturé 69€ de plus (via attribut data-price)
         if(t32Option) { 
@@ -3423,11 +3566,28 @@ function updateConfig() {
     
     const freinageWeight = freinageSelect && freinageSelect.value === 'Patins' ? 130 : 0;
 
-    const finalPrice = currentBasePrice + moyeuPrice + rayonPrice + jantePrice + finitionPrice + colorPrice + ratchetPrice + roulementsPrice + accessoiresPrice + disquesPrice + plaquettesPrice;
-    
-    const baseComboWeight = 322; 
+    // Vanta Wave : +400 € pour le modèle carbone (Wave Pro) par rapport au modèle acier (prix de base du Sheet)
+    const waveModeleSelect = document.getElementById('config-wave-modele');
+    const wavePrice = isCurrentItemWaveWheel ? getPrice(waveModeleSelect) : 0;
+
+    const finalPrice = currentBasePrice + wavePrice + moyeuPrice + rayonPrice + jantePrice + finitionPrice + colorPrice + ratchetPrice + roulementsPrice + accessoiresPrice + disquesPrice + plaquettesPrice;
+
+    const baseComboWeight = 322;
     const newComboWeight = hubWeight + (spokeCount * spokeWeight) + rimDiff + finitionWeight + freinageWeight;
-    const finalWeight = Math.round(currentBaseWeight - baseComboWeight + newComboWeight);
+    let finalWeight = Math.round(currentBaseWeight - baseComboWeight + newComboWeight);
+
+    if (isCurrentItemWaveWheel) {
+        // Poids constructeur de la paire complète (±30 g) selon la profondeur et le modèle ; pour le carbone,
+        // les tables sont données avec des rayons T32 (2.1 g) : on ajoute l'écart des 48 rayons si T33/T40/T52
+        const profSelect = document.getElementById('config-wave-profondeur');
+        const carbone = waveModeleSelect && waveModeleSelect.value === 'carbone';
+        const opt = profSelect && profSelect.selectedIndex >= 0 ? profSelect.options[profSelect.selectedIndex] : null;
+        const poidsTable = opt ? (parseInt(opt.getAttribute(carbone ? 'data-weight-carbone' : 'data-weight-acier')) || 0) : 0;
+        const ecartRayons = carbone ? Math.round(spokeCount * (spokeWeight - 2.1)) : 0;
+        finalWeight = poidsTable > 0 ? poidsTable + ecartRayons + finitionWeight : 0;
+        const hauteurEl = document.getElementById('modal-hauteur');
+        if (hauteurEl && profSelect) hauteurEl.textContent = profSelect.value + ' mm';
+    }
 
     const cPrice = document.getElementById('calc-price');
     if(cPrice) cPrice.textContent = finalPrice > 0 ? finalPrice : '--';
@@ -3443,6 +3603,8 @@ function updateConfig() {
             maxWeight = (janteSelect.value === 'UXL' || janteSelect.value.includes('EVO')) ? '110 kg' : '100 kg';
         } else if (moyeuSelect.value === 'RT220') {
             maxWeight = '90 kg';
+        } else if (moyeuSelect.value === 'RT245') {
+            maxWeight = '110 kg'; // Vanta Wave (Angler, 29/10/2026), pour les deux modèles
         }
         poidsMaxSpan.textContent = maxWeight;
     }
