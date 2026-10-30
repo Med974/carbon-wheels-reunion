@@ -1537,7 +1537,8 @@ function libelleDesignPlateaux(denture, look) {
 //   Wave (acier R260)  : jante XL, ratchet 36T, roulements Acier SS, moyeu noir, 999 € de base
 //   Wave Pro (carbone) : jante UXL, ratchet 54T, roulements Céramique SS, moyeu noir ou argent, +400 €,
 //                        rayons carbone T32/T33/T40/T52
-// Les deux : roulements Céramique TPI en option (+79 €), 110 kg maxi, finition brillante ou mate.
+// Les deux : roulements Céramique TPI en option (+99 € sur la Wave, +79 € sur la Pro ; la Wave propose aussi
+// Céramique SS à +59 €), 110 kg maxi, finition brillante ou mate.
 function configureWaveOptions(isWave) {
     const waveBox = document.getElementById('wave-config-container');
     if (waveBox) waveBox.classList.toggle('hidden', !isWave);
@@ -1616,10 +1617,14 @@ function applyWaveHubOptions() {
     ratchetSelect.innerHTML = acier
         ? '<option value="36T" data-price="0">36T (Inclus)</option>'
         : '<option value="54T" data-price="0">54T (Inclus)</option>';
-    roulementsSelect.innerHTML = (acier
+    // Prix de vente fixés le 30/10/2026 d'après le coût Angler : Wave acier = Céramique SS +59€ (25$) et TPI +99€ (85$),
+    // Wave Pro (Céramique SS déjà incluse) = TPI +79€ (60$)
+    roulementsSelect.innerHTML = acier
         ? '<option value="Acier SS" data-price="0">Acier SS (Inclus)</option>'
-        : '<option value="Céramique SS" data-price="0">Céramique SS (Inclus)</option>')
-        + '<option value="Céramique TPI" data-price="79">Céramique TPI (Ultra-fluide) [+79€]</option>';
+            + '<option value="Céramique SS" data-price="59">Céramique SS (Fluide) [+59€]</option>'
+            + '<option value="Céramique TPI" data-price="99">Céramique TPI (Ultra-fluide) [+99€]</option>'
+        : '<option value="Céramique SS" data-price="0">Céramique SS (Inclus)</option>'
+            + '<option value="Céramique TPI" data-price="79">Céramique TPI (Ultra-fluide) [+79€]</option>';
 
     colorSelect.value = Array.from(colorSelect.options).some(o => o.value === couleurPrecedente) ? couleurPrecedente : 'Noir';
     roulementsSelect.value = Array.from(roulementsSelect.options).some(o => o.value === roulementPrecedent) ? roulementPrecedent : roulementsSelect.options[0].value;
