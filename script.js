@@ -22,6 +22,7 @@ let isCurrentItemStockReady = false;
 let isCurrentItemTextile = false;
 let isCurrentItemGravelWheel = false; // Gamme DFS Pulse Gravel : lu à la fois dans openModal() et updateConfig()
 let isCurrentItemVantaWheel = false; // Gamme DFS Vanta (jantes à écailles, hors Vanta Wave) : moyeu RT240 verrouillé, 23/31mm, hors stock usine
+let isCurrentItemVantaDepthMenu = false; // Fiche unique "DFS Vanta" (nom sans chiffre) : menu Hauteur 45/55/65 ; les anciennes fiches "DFS Vanta 45/55/65" restent sans menu
 let isCurrentItemWaveWheel = false; // DFS Vanta Wave (jante ondulée) : une seule fiche, menus Profondeur + Modèle (rayons acier R260 / carbone "Pro"), moyeu RT245, 25/31mm, 110 kg
 let finitionOptionsOrigine = null; // Liste d'origine du menu Finition (remplacée par un choix unique sur la gamme Vanta)
 let logosOptionsOrigine = null; // Idem pour le menu Logos (aucun logo possible sur la surface à écailles)
@@ -462,6 +463,12 @@ function addToCart() {
                 // Vanta Wave : la profondeur choisie en tête de config, et "Pro" dans le nom de l'article pour
                 // le modèle carbone (le coût usine est cherché dans Compta par nom : lignes "DFS Vanta Wave Pro"
                 // puis "DFS Vanta Wave", dans cet ordre)
+                // Vanta (fiche unique) : la hauteur choisie est ajoutée au nom, comme avant avec les 3 fiches
+                // ("DFS Vanta 55") ; la ligne Compta "DFS Vanta" correspond toujours
+                if (isCurrentItemVantaDepthMenu) {
+                    const vProfEl = document.getElementById('config-vanta-profondeur');
+                    if (vProfEl) finalTitle = `${title} ${vProfEl.value}`;
+                }
                 if (isCurrentItemWaveWheel) {
                     const profEl = document.getElementById('config-wave-profondeur');
                     const modeleEl = document.getElementById('config-wave-modele');
@@ -2073,6 +2080,7 @@ function openModal(index) {
         isCurrentItemGravelWheel = nomLC.includes('gravel');
         isCurrentItemWaveWheel = nomLC.includes('vanta') && nomLC.includes('wave');
         isCurrentItemVantaWheel = nomLC.includes('vanta') && !isCurrentItemWaveWheel;
+        isCurrentItemVantaDepthMenu = isCurrentItemVantaWheel && !/\d/.test(nomLC);
         isCurrentItemWheelConfigurable = !isCurrentItemAccessory && !isCurrentItemTestProgram && !isCurrentItemAeroplugLocation && !isCurrentItemEvocLocation && !isCurrentItemYoeleoLocation && !nomLC.includes('bâton') && !nomLC.includes('tri-spoke') && !nomLC.includes('lenticulaire') && !nomLC.includes('disc') && !nomLC.includes('manivelle') && !isMtbWheel;
 
         const isSpecialWheel = nomLC.includes('bâton') || nomLC.includes('tri-spoke') || nomLC.includes('lenticulaire') || nomLC.includes('disc');
@@ -2541,6 +2549,12 @@ function openModal(index) {
             // Vanta Wave : affiche les menus Profondeur/Modèle et le moyeu RT245 ; toutes les autres roues
             // les masquent et retrouvent leurs listes habituelles (voir configureWaveOptions())
             configureWaveOptions(isCurrentItemWaveWheel);
+
+            // Vanta (fiche unique) : menu Hauteur visible, ouverture sur le 55 mm
+            const vantaBox = document.getElementById('vanta-config-container');
+            if (vantaBox) vantaBox.classList.toggle('hidden', !isCurrentItemVantaDepthMenu);
+            const vantaProf = document.getElementById('config-vanta-profondeur');
+            if (vantaProf) vantaProf.value = '55';
 
             // Finition et logos : gamme Vanta = un seul choix chacun (écailles moulées dans la jante, aucun
             // logo possible dessus), les autres gammes retrouvent les listes d'origine (UD Matte / Glossy
@@ -3575,6 +3589,15 @@ function updateConfig() {
     const baseComboWeight = 322;
     const newComboWeight = hubWeight + (spokeCount * spokeWeight) + rimDiff + finitionWeight + freinageWeight;
     let finalWeight = Math.round(currentBaseWeight - baseComboWeight + newComboWeight);
+
+    if (isCurrentItemVantaDepthMenu) {
+        // Fiche unique "DFS Vanta" : le poids de base suit la hauteur choisie (1120 / 1180 / 1260 g la paire)
+        const vantaProfSelect = document.getElementById('config-vanta-profondeur');
+        const poidsVanta = vantaProfSelect && vantaProfSelect.selectedIndex >= 0 ? (parseInt(vantaProfSelect.options[vantaProfSelect.selectedIndex].getAttribute('data-weight')) || 0) : 0;
+        if (poidsVanta > 0) finalWeight = Math.round(poidsVanta - baseComboWeight + newComboWeight);
+        const hauteurVantaEl = document.getElementById('modal-hauteur');
+        if (hauteurVantaEl && vantaProfSelect) hauteurVantaEl.textContent = vantaProfSelect.value + ' mm';
+    }
 
     if (isCurrentItemWaveWheel) {
         // Poids constructeur de la paire complète (±30 g) selon la profondeur et le modèle ; pour le carbone,
