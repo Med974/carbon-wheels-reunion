@@ -3587,18 +3587,6 @@ function updateConfig() {
         finalWeight = poidsTable > 0 ? poidsTable + ecartRayons + finitionWeight : 0;
         const hauteurEl = document.getElementById('modal-hauteur');
         if (hauteurEl && profSelect) hauteurEl.textContent = profSelect.value + ' mm';
-
-        // Justifie le +400 € du modèle carbone : gain de poids réel à la profondeur choisie (tables constructeur,
-        // rayons T32) et roulements Acier SS -> Céramique SS, plus jante UXL et ratchet 54T
-        if (opt) {
-            const gain = (parseInt(opt.getAttribute('data-weight-acier')) || 0) - (parseInt(opt.getAttribute('data-weight-carbone')) || 0);
-            const optCarbone = waveModeleSelect ? Array.from(waveModeleSelect.options).find(o => o.value === 'carbone') : null;
-            if (optCarbone && gain > 0) optCarbone.textContent = `Wave Pro : carbone, -${gain} g, roulements céramique [+400€]`;
-            const noteEl = document.getElementById('wave-model-note');
-            if (noteEl && gain > 0) {
-                noteEl.textContent = `Pour +400 € en profondeur ${opt.value} : la paire passe de ${opt.getAttribute('data-weight-acier')} g à ${opt.getAttribute('data-weight-carbone')} g avec les rayons T32 (-${gain} g). Vous passez aussi des rayons acier aux rayons carbone, des roulements Acier SS aux Céramique SS, de la jante XL à la UXL et du ratchet 36T au 54T. Moyeu noir ou argent.`;
-            }
-        }
     }
 
     const cPrice = document.getElementById('calc-price');
