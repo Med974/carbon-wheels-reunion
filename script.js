@@ -1011,7 +1011,8 @@ function submitOrder() {
         total: finalTotal % 1 === 0 ? finalTotal : finalTotal.toFixed(2),
         promo: appliedPromo || "Aucun",
         statutPaiement: "En attente via " + paymentMethodName,
-        statutLivraison: statutLivraisonVal
+        statutLivraison: statutLivraisonVal,
+        zone: currentDeliveryZone // "reunion" ou "metropole" : code.gs en déduit le surcoût Angler (+85 $ par colis en Métropole)
     };
 
     fetch(API_URL, {
