@@ -623,16 +623,6 @@ function updateCartUI() {
                 // mot-clé et ne bénéficiaient d'aucune remise). Demande de Mehdi le 15/09/2026.
                 discountAmount += arrondiCentimes(item.price * 0.08);
             }
-        } else if (appliedPromo === 'PAPA26') {
-            const titleLC = item.title.toLowerCase();
-            const isManivelle = titleLC.includes('manivelle');
-
-            // -100€ UNIQUEMENT si c'est un produit principal (roues) ET que le prix est de 1399€ ou plus (paire de roues)
-            if (!item.isAccessory && !isManivelle && !item.isTextile && item.price >= 1399) {
-                discountAmount += 100;
-            } else if (item.isAccessory) {
-                discountAmount += arrondiCentimes(item.price * 0.10); // -10% sur tous les accessoires/composants
-            }
         }
         
         if (container) {
@@ -661,21 +651,6 @@ function updateCartUI() {
             container.appendChild(div);
         }
     });
-
-	// Vérification post-boucle pour le palier global PAPA26
-    if (appliedPromo === 'PAPA26') {
-        // On vérifie si le client a une PAIRE de roues (prix >= 1399) qui a déjà bénéficié des 100€
-        const hasPaireDeRoues = cart.some(item => !item.isAccessory && !item.title.toLowerCase().includes('manivelle') && !item.isTextile && item.price >= 1399);
-
-        // Si le client n'a PAS de paire de roues à 1399€, on applique les réductions sur le total du panier
-        if (!hasPaireDeRoues) {
-            if (subtotal >= 1000) {
-                discountAmount += 75;  // -75€ pour un panier de plus de 1000€ (ex: roue lenti seule + accessoires)
-            } else if (subtotal >= 500) {
-                discountAmount += 50;  // -50€ pour un panier entre 500€ et 999.99€ (ex: roue lenti seule de 700€)
-            }
-        }
-    }
 
     // GRAVEL26 : -50€ UNE SEULE FOIS dès que le panier contient au moins une roue Gravel (pas une
     // remise cumulable par roue si plusieurs paires), reste du panier libre. Promo de lancement
@@ -879,7 +854,7 @@ async function applyPromoCode() {
     const input = document.getElementById('promo-code');
     if(!input) return;
     const code = input.value.trim().toUpperCase();
-    if (code === 'CCPIKARBON' || code === 'PAPA26') {
+    if (code === 'CCPIKARBON') {
         appliedPromo = code;
         input.value = '';
         updateCartUI();
