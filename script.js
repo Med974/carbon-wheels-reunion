@@ -41,6 +41,31 @@ let cart = [];
 let appliedPromo = null;
 let discountAmount = 0;
 
+// BLACK26 : Black Week du lundi 23 au dimanche 29 novembre 2026 (heure de La Réunion, UTC+4), à la
+// demande de Mehdi le 23/11/2026. -100€ par paire de roues dont le prix configuré est de 1399€ et
+// plus, -10% sur les accessoires/composants. Pas de remise sur les tenues, locations et essais. Le
+// code s'éteint tout seul après la date de fin (vérifié à l'application, à chaque mise à jour du
+// panier et à la commande) ; le bandeau du haut de page disparaît aussi.
+const BLACK_WEEK_DEBUT = new Date('2026-11-23T00:00:00+04:00');
+const BLACK_WEEK_FIN = new Date('2026-11-29T23:59:59+04:00');
+function blackWeekActive() {
+    const maintenant = new Date();
+    return maintenant >= BLACK_WEEK_DEBUT && maintenant <= BLACK_WEEK_FIN;
+}
+function remiseBlackWeek(item) {
+    const titleLC = item.title.toLowerCase();
+    const isLocationOuEssai = titleLC.includes('test') || titleLC.includes('essai') || titleLC.includes('location') ||
+        titleLC.includes('aeroplug') || titleLC.includes('evoc') || titleLC.includes('yoeleo');
+    if (item.isTextile || isLocationOuEssai) return 0;
+    if (item.isAccessory) return arrondiCentimes(item.price * 0.10);
+    if (item.price >= 1399) return 100;
+    return 0;
+}
+document.addEventListener('DOMContentLoaded', function () {
+    const bandeau = document.getElementById('bandeau-black-week');
+    if (bandeau && !blackWeekActive()) bandeau.remove();
+});
+
 let lastHubSelected = "";
 
 // Arrondit au centime près (2 décimales), au lieu d'arrondir à l'euro entier comme le faisait
@@ -599,12 +624,21 @@ function updateCartUI() {
         });
     }
 
+    // Black Week terminée : le code BLACK26 n'est plus appliqué (ex. panier laissé ouvert après dimanche minuit).
+    if (appliedPromo === 'BLACK26' && !blackWeekActive()) {
+        appliedPromo = null;
+    }
+
     let subtotal = 0;
     discountAmount = 0;
-    
+
     cart.forEach(item => {
         subtotal += item.price;
-        
+
+        if (appliedPromo === 'BLACK26') {
+            discountAmount += remiseBlackWeek(item);
+        }
+
         if (appliedPromo === 'CCPIKARBON') {
             const titleLC = item.title.toLowerCase();
             const isSpecialWheel = titleLC.includes('bâton') || titleLC.includes('tri-spoke') || titleLC.includes('lenticulaire') || titleLC.includes('disc');
@@ -858,6 +892,18 @@ async function applyPromoCode() {
         appliedPromo = code;
         input.value = '';
         updateCartUI();
+    } else if (code === 'BLACK26') {
+        if (!blackWeekActive()) {
+            showCustomAlert("Le code BLACK26 n'est plus valable : la Black Week s'est terminée dimanche 29 novembre à minuit.");
+            return;
+        }
+        if (!cart.some(item => remiseBlackWeek(item) > 0)) {
+            showCustomAlert("Le code BLACK26 s'applique aux paires de roues à 1399€ et plus et aux accessoires. Ajoutez-en un à votre panier pour en profiter.");
+            return;
+        }
+        appliedPromo = code;
+        input.value = '';
+        updateCartUI();
     } else if (code === 'GRAVEL26') {
         const hasGravel = cart.some(item => item.title.toLowerCase().includes('gravel'));
         if (!hasGravel) {
@@ -895,7 +941,14 @@ function removePromoCode() {
 
 function submitOrder() {
     if (cart.length === 0) return;
-    
+
+    // Sécurité : le code BLACK26 a pu expirer pendant que le panier restait ouvert.
+    if (appliedPromo === 'BLACK26' && !blackWeekActive()) {
+        showCustomAlert("Le code BLACK26 a expiré : la Black Week s'est terminée dimanche 29 novembre à minuit. Votre panier a été recalculé au tarif normal.");
+        removePromoCode();
+        return;
+    }
+
     const nameEl = document.getElementById('client-name');
     const emailEl = document.getElementById('client-email');
     const phoneEl = document.getElementById('client-phone');
